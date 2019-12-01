@@ -1,0 +1,304 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\contact;
+use App\other_term;
+use App\coa;
+use App\default_account;
+use App\expense;
+use App\other_transaction;
+use App\purchase_delivery;
+use App\purchase_invoice;
+use App\purchase_order;
+use App\purchase_payment;
+use App\purchase_quote;
+use App\sale_delivery;
+use App\sale_invoice;
+use App\sale_order;
+use App\sale_payment;
+use App\sale_quote;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+
+class ContactController extends Controller
+{
+    public function indexCustomer()
+    {
+        if (request()->ajax()) {
+            return datatables()->of(contact::where('type_customer', true)->get())
+                ->make(true);
+        }
+
+        return view('admin.contacts.customer.index');
+    }
+
+    public function indexVendor()
+    {
+        if (request()->ajax()) {
+            return datatables()->of(contact::where('type_vendor', true)->get())
+                ->make(true);
+        }
+
+        return view('admin.contacts.vendor.index');
+    }
+
+    public function indexEmployee()
+    {
+        if (request()->ajax()) {
+            return datatables()->of(contact::where('type_employee', true)->get())
+                ->make(true);
+        }
+
+        return view('admin.contacts.employee.index');
+    }
+
+    public function indexOther()
+    {
+        if (request()->ajax()) {
+            return datatables()->of(contact::where('type_other', true)->get())
+                ->make(true);
+        }
+
+        return view('admin.contacts.other.index');
+    }
+
+    public function indexAll()
+    {
+        if (request()->ajax()) {
+            return datatables()->of(contact::all())
+                ->make(true);
+        }
+
+        return view('admin.contacts.all.index');
+    }
+
+    public function create()
+    {
+        $coa_receive        = coa::where('coa_category_id', '1')->get();
+        $coa_payable        = coa::where('coa_category_id', '8')->get();
+        $term               = other_term::get();
+        return view('admin.contacts.create', compact(['coa_receive', 'coa_payable', 'term']));
+    }
+
+    public function store(Request $request)
+    {
+        $rules = array(
+            'display_name'       => 'required',
+        );
+
+        $default_account_receivable     = default_account::find(15);
+        $default_account_payable        = default_account::find(16);
+        $default_term                   = other_term::find(1);
+
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        DB::beginTransaction();
+        try {
+            if ($request->has('contact_type1')) {
+                $contact_type1 = 1;
+            } else {
+                $contact_type1 = 0;
+            };
+
+            if ($request->has('contact_type2')) {
+                $contact_type2 = 1;
+            } else {
+                $contact_type2 = 0;
+            };
+
+            if ($request->has('contact_type3')) {
+                $contact_type3 = 1;
+            } else {
+                $contact_type3 = 0;
+            };
+
+            if ($request->has('contact_type4')) {
+                $contact_type4 = 1;
+            } else {
+                $contact_type4 = 0;
+            };
+
+            if ($request->get('account_receivable')) {
+                $account_receivable = $request->get('account_receivable');
+            } else {
+                $account_receivable = $default_account_receivable->account_id;
+            };
+
+            if ($request->get('account_payable')) {
+                $account_payable = $request->get('account_payable');
+            } else {
+                $account_payable = $default_account_payable->account_id;
+            };
+
+            if ($request->get('default_term')) {
+                $account_term = $request->get('default_term');
+            } else {
+                $account_term = $default_term->id;
+            };
+
+            $share = new contact([
+                'user_id'                   => Auth::id(),
+                'account_receivable_id'     => $account_receivable,
+                'account_payable_id'        => $account_payable,
+                'term_id'                   => $account_term,
+                'display_name'      => $request->get('display_name'),
+                'type_customer'     => $contact_type1,
+                'type_vendor'       => $contact_type2,
+                'type_employee'     => $contact_type3,
+                'type_other'       => $contact_type4,
+                //'contact_status'          => $request->get('contact_status'),
+                'first_name'        => $request->get('first_name'),
+                'middle_name'       => $request->get('middle_name'),
+                'last_name'         => $request->get('last_name'),
+                'handphone'         => $request->get('handphone'),
+                'identity_type'     => $request->get('identity_type'),
+                'identity_id'       => $request->get('identity_number'),
+                'email'             => $request->get('email'),
+                'another_info'      => $request->get('another_info'),
+                'company_name'      => $request->get('company_name'),
+                'telephone'         => $request->get('telephone'),
+                'fax'               => $request->get('fax'),
+                'npwp'              => $request->get('npwp'),
+                'billing_address'   => $request->get('billing_address'),
+                'shipping_address'  => $request->get('shipping_address'),
+            ]);
+            $share->save();
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully added', 'id' => $share->id]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function show($id)
+    {
+        $contact            = contact::find($id);
+        $other_transaction  = other_transaction::with('status')->where('contact', $id)->get();
+        $pq                 = purchase_quote::where('contact_id', $id)->get();
+        $po                 = purchase_order::where('contact_id', $id)->get();
+        $pd                 = purchase_delivery::where('contact_id', $id)->get();
+        $pi                 = purchase_invoice::where('contact_id', $id)->get();
+        $pp                 = purchase_payment::where('contact_id', $id)->get();
+        $sq                 = sale_quote::where('contact_id', $id)->get();
+        $so                 = sale_order::where('contact_id', $id)->get();
+        $sd                 = sale_delivery::where('contact_id', $id)->get();
+        $si                 = sale_invoice::where('contact_id', $id)->get();
+        $sp                 = sale_payment::where('contact_id', $id)->get();
+        $expense            = expense::where('contact_id', $id)->get();
+
+        return view('admin.contacts.show', compact(['contact', 'other_transaction', 'pq', 'po', 'pd', 'pi', 'pp', 'sq', 'so', 'sd', 'si', 'sp', 'expense']));
+    }
+
+    public function edit($id)
+    {
+        $contact            = contact::find($id);
+        $coa_receive        = coa::where('coa_category_id', '1')->get();
+        $coa_payable        = coa::where('coa_category_id', '8')->get();
+        $term               = other_term::get();
+
+        return view('admin.contacts.edit', compact(['contact', 'coa_receive', 'coa_payable', 'term']));
+    }
+
+    public function update(Request $request)
+    {
+        $rules = array(
+            'display_name'    => 'required',
+        );
+
+        $error = Validator::make($request->all(), $rules);
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        DB::beginTransaction();
+        try {
+            $id                         = $request->hidden_id;
+            if ($request->has('contact_type1')) {
+                $contact_type1 = 1;
+            } else {
+                $contact_type1 = 0;
+            };
+
+            if ($request->has('contact_type2')) {
+                $contact_type2 = 1;
+            } else {
+                $contact_type2 = 0;
+            };
+
+            if ($request->has('contact_type3')) {
+                $contact_type3 = 1;
+            } else {
+                $contact_type3 = 0;
+            };
+
+            if ($request->has('contact_type4')) {
+                $contact_type4 = 1;
+            } else {
+                $contact_type4 = 0;
+            };
+
+            $form_data = array(
+                'account_receivable_id'     => $request->get('account_receivable'),
+                'account_payable_id'        => $request->get('account_payable'),
+                'term_id'                   => $request->get('default_term'),
+                'display_name'      => $request->get('display_name'),
+                'type_customer'     => $contact_type1,
+                'type_vendor'       => $contact_type2,
+                'type_employee'     => $contact_type3,
+                'type_other'       => $contact_type4,
+                //'contact_status'          => $request->get('contact_status'),
+                'first_name'        => $request->get('first_name'),
+                'middle_name'       => $request->get('middle_name'),
+                'last_name'         => $request->get('last_name'),
+                'handphone'         => $request->get('handphone'),
+                'identity_type'     => $request->get('identity_type'),
+                'identity_id'       => $request->get('identity_number'),
+                'email'             => $request->get('email'),
+                'another_info'      => $request->get('another_info'),
+                'company_name'      => $request->get('company_name'),
+                'telephone'         => $request->get('telephone'),
+                'fax'               => $request->get('fax'),
+                'npwp'              => $request->get('npwp'),
+                'billing_address'   => $request->get('billing_address'),
+                'shipping_address'  => $request->get('shipping_address'),
+            );
+            contact::whereId($id)->update($form_data);
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function destroy($contact)
+    {
+        DB::beginTransaction();
+        try {
+            $data = contact::find($contact);
+            if (
+                $data->sale_delivery()->exists() or $data->sale_invoice()->exists() or $data->sale_payment()->exists()
+                or $data->sale_order()->exists() or $data->sale_quote()->exists() or $data->sale_return()->exists()
+                or $data->purchase_delivery()->exists() or $data->purchase_invoice()->exists() or $data->purchase_payment()->exists()
+                or $data->purchase_order()->exists() or $data->purchase_quote()->exists() or $data->purchase_return()->exists()
+                or $data->spk()->exists() or $data->wip()->exists()
+                or $data->stock_adjustment()->exists() or $data->expense()->exists() or $data->cashbank()->exists()
+            ) {
+                DB::rollBack();
+                return response()->json(['errors' => 'Cannot delete contact with transactions!']);
+            }
+            $data->delete();
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully deleted']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+}

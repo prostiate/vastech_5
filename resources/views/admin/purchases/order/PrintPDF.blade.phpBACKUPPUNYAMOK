@@ -1,0 +1,513 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<style>
+    td,
+    tr,
+    th {
+        font-size: 12px;
+    }
+
+    #invoice {
+        padding: 30px;
+    }
+
+    .invoice {
+        position: relative;
+        background-color: #FFF;
+        min-height: 680px;
+        padding: 15px
+    }
+
+    .invoice header {
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #3989c6
+    }
+
+    .invoice .company-details {
+        text-align: right
+    }
+
+    .invoice .company-details .name {
+        margin-top: 0;
+        margin-bottom: 0
+    }
+
+    .invoice .contacts {
+        margin-bottom: 20px
+    }
+
+    .invoice .invoice-to {
+        text-align: left
+    }
+
+    .invoice .invoice-to .to {
+        margin-top: 0;
+        margin-bottom: 0
+    }
+
+    .invoice .invoice-details {
+        text-align: right
+    }
+
+    .invoice .invoice-details .invoice-id {
+        margin-top: 0;
+        color: #3989c6
+    }
+
+    .invoice main {
+        padding-bottom: 50px
+    }
+
+    .invoice main .thanks {
+        margin-top: -100px;
+        font-size: 2em;
+        margin-bottom: 50px
+    }
+
+    .invoice main .notices {
+        padding-left: 6px;
+        border-left: 6px solid #3989c6
+    }
+
+    .invoice main .notices .notice {
+        font-size: 1.2em
+    }
+
+    .invoice table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 20px
+    }
+
+    .invoice table td,
+    .invoice table th {
+        padding: 15px;
+        background: #eee;
+        border-bottom: 1px solid #fff
+    }
+
+    .invoice table th {
+        white-space: nowrap;
+        font-weight: 400;
+        font-size: 16px
+    }
+
+    .invoice table td h3 {
+        margin: 0;
+        font-weight: 400;
+        color: #3989c6;
+        font-size: 1.2em
+    }
+
+    .invoice table .qty,
+    .invoice table .total,
+    .invoice table .unit {
+        text-align: right;
+        font-size: 1.2em
+    }
+
+    .invoice table .no {
+        color: #fff;
+        font-size: 1.6em;
+        background: #3989c6
+    }
+
+    .invoice table .unit {
+        background: #ddd
+    }
+
+    .invoice table .total {
+        background: #3989c6;
+        color: #fff
+    }
+
+    .invoice table tbody tr:last-child td {
+        border: none
+    }
+
+    .invoice table tbody td {
+        background: 0 0;
+        border-bottom: none;
+        white-space: nowrap;
+        text-align: right;
+        padding: 10px 20px;
+        font-size: 0.875em;
+        border-top: 1px solid #aaa
+    }
+
+    .invoice table tfoot td {
+        background: 0 0;
+        border-bottom: none;
+        text-align: left;
+        padding: 10px 20px;
+        font-size: 1.2em;
+        border-top: 1px solid #aaa
+    }
+
+    .invoice table tfoot td.footer-price {
+        background: 0 0;
+        border-bottom: none;
+        text-align: left;
+        padding: 10px 20px;
+        font-size: 0.875em;
+        border-top: 1px solid #aaa
+    }
+
+    .invoice table tfoot tr:first-child td {
+        border-top: none
+    }
+
+    .invoice table tfoot tr:last-child td {
+        color: #3989c6;
+        font-size: 1.4em;
+        border-top: 1px solid #3989c6
+    }
+
+    .invoice table tfoot tr td:first-child {
+        border: none
+    }
+
+    .invoice footer {
+        width: 100%;
+        text-align: center;
+        color: #777;
+        border-top: 1px solid #aaa;
+        padding: 8px 0
+    }
+
+    @media print {
+        .invoice {
+            font-size: 11px !important;
+            overflow: hidden !important
+        }
+
+        .invoice footer {
+            position: absolute;
+            bottom: 10px;
+            page-break-after: always
+        }
+
+        .invoice>div:last-child {
+            page-break-before: always
+        }
+    }
+
+    /* Font */
+    @import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
+
+    /* Design */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        background-color: #ecf9ff;
+    }
+
+    body {
+        color: #272727;
+        font-family: 'Quicksand', serif;
+        font-style: normal;
+        font-weight: 400;
+        letter-spacing: 0;
+        padding: 1rem;
+    }
+
+    .main {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: 400;
+        text-align: center;
+    }
+
+    img {
+        height: auto;
+        max-width: 100%;
+        vertical-align: middle;
+    }
+
+    .btn {
+        color: #ffffff;
+        padding: 0.8rem;
+        font-size: 14px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        font-weight: 400;
+        display: block;
+        width: 100%;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: transparent;
+    }
+
+    .btn:hover {
+        background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cards_item {
+        display: flex;
+        padding: 1rem;
+    }
+
+    @media (min-width: 40rem) {
+        .cards_item {
+            width: 50%;
+        }
+    }
+
+    @media (min-width: 56rem) {
+        .cards_item {
+            width: 33.3333%;
+        }
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 0.25rem;
+        box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .card_content {
+        padding: 1rem;
+        background: linear-gradient(to bottom left, #EF8D9C 40%, #FFC39E 100%);
+    }
+
+    .card_title {
+        color: #000000;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: capitalize;
+        margin: 0px;
+    }
+
+    .card_text {
+        color: #000000;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        font-weight: 400;
+    }
+
+    .made_by {
+        font-weight: 400;
+        font-size: 13px;
+        margin-top: 35px;
+        text-align: center;
+    }
+</style>
+<!------ Include the above in your HEAD tag ---------->
+
+<!--Author      : @arboshiki-->
+<div id="invoice">
+    <div class="invoice overflow-auto">
+        <div style="min-width: 600px">
+            <header>
+                <div class="row">
+                    <div class="col">
+
+                    </div>
+                    <div class="col company-details">
+                        <h2 class="name">
+                            <a target="_blank" href="https://lobianijs.com">
+                                Vastech
+                            </a>
+                        </h2>
+                        <div>springLake, AZ 85004, ID</div>
+                        <div>(123) 456-789</div>
+                        <div>company@example.com</div>
+                    </div>
+                </div>
+            </header>
+            <main>
+                <div class="row contacts">
+                    <div class="col invoice-to">
+                        <div class="text-gray-light">ORDER TO:</div>
+                        <h2 class="to">{{$pi->contact->display_name}}}</h2>
+                        <div class="address">{{$pi->address}}</div>
+                        <div class="email"><a href="mailto:john@example.com">{{$pi->email}}</a></div>
+                    </div>
+                    <div class="col invoice-details">
+                        <h1 class="invoice-id">Purchase Order #{{$pi->number}}</h1>
+                        <div class="date">Date of Order: {{$pi->transaction_date}}</div>
+                        <div class="date">Due Date: {{$pi->due_date}}</div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="column-title">No</th>
+                            <th class="column-title">Product</th>
+                            <th class="column-title">Description</th>
+                            <th class="column-title">Qty</th>
+                            <th class="column-title"">Units</th>
+                            <th class=" column-title">Unit Price</th>
+                            <th class="column-title">Tax</th>
+                            <th class="column-title">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $product)
+                        <tr>
+                            <td></td>
+                            <td>{{$product->product->name}}</td>
+                            <td>{{$product->desc}}</td>
+                            <td>{{$product->qty}}</td>
+                            <td>{{$product->unit->name}}</td>
+                            <td>{{$product->unit_price}}</td>
+                            <td>{{$product->tax->name}}</td>
+                            <td>Rp. @number($product->amount)</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5"> kontol </td>
+                            <td colspan="2"> Sub Total </td>
+                            <td class="footer-price">Rp. @number($pi->grandtotal) </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"> kontol </td>
+                            <td colspan="2"> Tax </td>
+                            <td class="footer-price"> </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"> kontol </td>
+                            <td colspan="2"> Total </td>
+                            <td class="footer-price">Rp. @number($pi->grandtotal) </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="main">
+                    <ul class="cards">
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout 11111111</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout 22222222</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout 444444444</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <ul class="cards">
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="cards_item">
+                            <div class="card">
+                                <div class="card_image"></div>
+                                <div class="card_content">
+                                    <h2 class="card_title">Card Grid Layout</h2>
+                                    <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
+                                    <button class="btn card_btn">Read More</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--
+                <div class="thanks">Thank you!</div>
+                <div class="notices">
+                    <div>NOTICE:</div>
+                    <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+                </div>
+-->
+            </main>
+            <footer>
+                Invoice was created on a computer and is valid without the signature and seal.
+            </footer>
+        </div>
+        <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+        <div></div>
+    </div>
+</div>

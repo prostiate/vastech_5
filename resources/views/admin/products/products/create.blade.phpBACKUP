@@ -1,0 +1,284 @@
+@extends('layouts.admin')
+
+@section('content')
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Create Product / Service</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <form method="post" id="formCreate">
+                    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel">
+                            <a class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <h4 class="panel-title"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Info Product / Service</h4>
+                            </a>
+                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <div id="demo-form2" class="form-horizontal form-label-left">
+                                        <!--<div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="image">Image
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input disabled placeholder="Image" type="text" id="image" name="image" class="form-control col-md-7 col-xs-12">
+                                            </div>
+                                        </div>-->
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name_product">Product Name <span class="required">*</span>
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input placeholder="Product Name" type="text" id="name_product" name="name_product" required="required" class="form-control col-md-7 col-xs-12">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="code_product">Code / SKU
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input placeholder="Code / SKU" type="text" id="code_product" name="code_product" class="form-control col-md-7 col-xs-12">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="category_product">Category
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select id="category_product" name="category_product" class="form-control col-md-12 col-xs-12 selectcategory">
+                                                    @foreach($categories as $a)
+                                                    <option value="{{$a->id}}">
+                                                        {{$a->name}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="unit_product">Unit
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select id="unit_product" name="unit_product" class="form-control col-md-12 col-xs-12 selectunit">
+                                                    @foreach($units as $a)
+                                                    <option value="{{$a->id}}">
+                                                        {{$a->name}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="desc_product">Description
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input placeholder="Description" type="text" id="desc_product" name="desc_product" class="form-control col-md-7 col-xs-12">
+                                            </div>
+                                        </div>
+                                        <!--<div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="product_type">Product Type
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select disabled id="product_type" name="product_type" class="form-control col-md-12 col-xs-12 selectproduct">
+                                                    <option></option>
+                                                    <option value="KTP">KTP</option>
+                                                    <option value="SIM">SIM</option>
+                                                    <option value="Passport">Passport</option>
+                                                </select>
+                                            </div>
+                                        </div>-->
+                                        <!-- {{--<div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="min_stock">Minimum Stock Quantity
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input placeholder="Minimum Stock Quantity" type="text" id="min_stock" name="min_stock" class="form-control col-md-7 col-xs-12">
+                                                <input placeholder="Minimum Stock Quantity" type="hidden" id="is_track" name="is_track" class="form-control col-md-7 col-xs-12" hidden value="1">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="default_account_product">Default Inventory Account
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select id="default_account_product" name="default_account_product" class="form-control col-md-12 col-xs-12 selectproduct">
+                                                    @foreach($inventory_accounts as $a)
+                                                    <option value="{{$a->id}}">
+                                                        {{$a->name}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>--}} -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <a class="panel-heading collapsed" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <h4 class="panel-title"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Product Setting</h4>
+                            </a>
+                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                <div class="panel-body">
+                                    <div id="demo-form2" class="form-horizontal form-label-left">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="x_panel">
+                                                        <div class="x_title">
+                                                            <div class="">
+                                                                <label>
+                                                                    <input type="checkbox" class="js-switch" value="1" name="is_buy" checked /> I Buy This Item
+                                                                </label>
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                        <div class="x_content" data-parsley-validate>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="buy_account_product">Buy Account
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select id="buy_account_product" name="buy_account_product" class="form-control col-md-7 col-xs-12 selectbankname">
+                                                                        @foreach($buy_accounts as $a)
+                                                                        <option value="{{$a->id}}" @if($a->id == $default_buy_account->account_id) selected="selected" @endif>
+                                                                            {{$a->name}}
+                                                                        </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="buy_tax">Default Buy Tax
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select id="buy_tax" name="buy_tax" class="form-control col-md-7 col-xs-12 selectbankname">
+                                                                        @foreach($taxes as $a)
+                                                                        <option value="{{$a->id}}">
+                                                                            {{$a->name}}
+                                                                        </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="buy_price">Buy Unit Price
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <input value="0" placeholder="Buy Unit Price" type="number" id="buy_price" name="buy_price" class="form-control col-md-7 col-xs-12">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="x_panel">
+                                                        <div class="x_title">
+                                                            <div class="">
+                                                                <label>
+                                                                    <input type="checkbox" class="js-switch" value="1" name="is_sell" checked /> I Sell This Item
+                                                                </label>
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                        <div class="x_content" data-parsley-validate>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sell_account_product">Sell Account
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select d="sell_account_product" name="sell_account_product" class="form-control col-md-7 col-xs-12 selectbankname">
+                                                                        @foreach($sell_accounts as $a)
+                                                                        <option value="{{$a->id}}" @if($a->id == $default_sell_account->account_id) selected="selected" @endif>
+                                                                            {{$a->name}}
+                                                                        </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sell_tax">Default Sell Tax
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select id="sell_tax" name="sell_tax" class="form-control col-md-7 col-xs-12 selectbankname">
+                                                                        @foreach($taxes as $a)
+                                                                        <option value="{{$a->id}}">
+                                                                            {{$a->name}}
+                                                                        </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sell_price">Sell Unit Price
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <input value="0" placeholder="Sell Unit Price" type="number" id="sell_price" name="sell_price" class="form-control col-md-7 col-xs-12">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 center-margin">
+                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="x_panel">
+                                                        <div class="x_title">
+                                                            <div class="">
+                                                                <label>
+                                                                    <input type="checkbox" class="js-switch" value="1" name="is_track" checked/> I Track Stock for This Item
+                                                                </label>
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+                                                        <div class="x_content" data-parsley-validate>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sell_account_product">Default Inventory Account
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select id="default_inventory_account" name="default_inventory_account" class="form-control col-md-12 col-xs-12 selectproduct">
+                                                                        @foreach($inventory_accounts as $a)
+                                                                        <option value="{{$a->id}}">
+                                                                            {{$a->name}}
+                                                                        </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sell_price">Minimum Stock Quantity
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <input value="0" placeholder="Minimum Stock Quantity" type="number" id="min_stock" name="min_stock" class="form-control col-md-7 col-xs-12">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                <button class="btn btn-primary" type="button" onclick="window.location.href = '/products';">Cancel</button>
+                                <button type="button" id="click" class="btn btn-success">Create</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script src="{{asset('js/products/products/createForm.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
+<script>
+    $(document).on('click', '.myCheckbox', function() {
+        var target = $(this).data('target');
+        if ($(this).is(':checked')) $('#' + target).addClass('disabled');
+        else $('#' + target).removeClass('disabled');
+    });
+</script>
+@endpush
