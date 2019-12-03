@@ -319,7 +319,7 @@ class SpkController extends Controller
         $pp                         = spk::find($id);
         $pp_item                    = spk_item::where('spk_id', $id)->get();
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.request.sukses.spk.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.request.sukses.spk.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

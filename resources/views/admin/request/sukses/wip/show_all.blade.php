@@ -104,50 +104,36 @@
                                                     @foreach ($get_all_detail as $po)
                                                     <tr>
                                                         <td>
-                                                            <div class="form-group">
-                                                                <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->code}}</a>
-                                                            </div>
+                                                            <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->code}}</a>
                                                         </td>
                                                         <td>
-                                                            <div class="form-group">
-                                                                <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->name}}</a>
-                                                            </div>
+                                                            <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->name}}</a>
                                                         </td>
                                                         <td>
-                                                            <div class="form-group">
-                                                                @if($po->debit == 0)
-                                                                @else
-                                                                <a>Rp @number($po->debit)</a>
-                                                                @endif
-                                                            </div>
+                                                            @if($po->debit == 0)
+                                                            @else
+                                                            <a>Rp @number($po->debit)</a>
+                                                            @endif
                                                         </td>
                                                         <td>
-                                                            <div class="form-group">
-                                                                @if($po->credit == 0)
-                                                                @else
-                                                                <a>Rp @number($po->credit)</a>
-                                                                @endif
-                                                            </div>
+                                                            @if($po->credit == 0)
+                                                            @else
+                                                            <a>Rp @number($po->credit)</a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach
                                                     <tr class="headings">
                                                         <td>
-                                                            <div class="form-group">
-                                                                <strong><b>Total</b></strong>
-                                                            </div>
+                                                            <strong><b>Total</b></strong>
                                                         </td>
                                                         <td>
                                                         </td>
                                                         <td>
-                                                            <div class="form-group">
-                                                                <strong><b>Rp @number($total_debit)</b></strong>
-                                                            </div>
+                                                            <strong><b>Rp @number($total_debit)</b></strong>
                                                         </td>
                                                         <td>
-                                                            <div class="form-group">
-                                                                <strong><b>Rp @number($total_credit)</b></strong>
-                                                            </div>
+                                                            <strong><b>Rp @number($total_credit)</b></strong>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -231,7 +217,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Proyek</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a></h5>
                                 </div>
@@ -262,13 +248,19 @@
                                     <h5><a>{{$wip->desc}}</a></h5>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Production Method</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a>@if($wip->production_method == 0) Material Per Product Qty @else Material For All Product Qty @endif</a></h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <br>
                     <div class="form-group tiles"></div>
                     <br>
                     <div>
-                        <a>Note* : Quantity dan price untuk per satu barang {{$wip->product->name}}</a>
+                        <a>Note* : Below product material is used to make <strong><span class="text_product_qty">{{$wip->result_qty}}</span></strong> of <strong>{{$wip->product->name}}</strong></a>
                     </div>
                     <br>
                     <div class="table-responsive my-5">
@@ -325,7 +317,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="text-right">
-                                        <h5><strong>HPP</strong></h5>
+                                        <h5><strong>Cost of Goods Sold</strong></h5>
                                     </td>
                                     <td>
                                         <h5>Rp @number($wip->grandtotal_with_qty + $wip->margin_total)</h5>
@@ -353,5 +345,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/deleteForm_all.js') }}" charset="utf-8"></script>
 @endpush

@@ -6,8 +6,8 @@ $.ajaxSetup({
 $(document).ready(function() {
     $("#click").click(function() {
         event.preventDefault();
-        $('#click').prop('disabled', true);
-        $('#click').html('Processing');
+        $("#click").prop("disabled", true);
+        $("#click").html("Processing");
         var user_id = document.getElementById("form_id").value;
         Swal.fire({
             title: "Are you sure?",
@@ -22,7 +22,7 @@ $(document).ready(function() {
                 $("#click").prop("disabled", true);
                 $(this).html("Processing");
                 $.ajax({
-                    url: "/wip/delete/" + user_id,
+                    url: "/wip/delete/" + user_id + "/all",
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -30,17 +30,21 @@ $(document).ready(function() {
                         if (data.errors) {
                             typeswal = "error";
                             titleswal = "Oops...";
-                            for (var count = 0; count < data.errors.length; count++) {
+                            for (
+                                var count = 0;
+                                count < data.errors.length;
+                                count++
+                            ) {
                                 html += data.errors[count];
                             }
-                            $('#click').prop('disabled', false);
-                            $('#click').html('Delete');
+                            $("#click").prop("disabled", false);
+                            $("#click").html("Delete");
                         }
                         if (data.success) {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            window.location.href = "/wip";
+                            window.location.href = "/spk/" + data.id;
                         }
                         Swal.fire({
                             type: typeswal,
@@ -50,6 +54,9 @@ $(document).ready(function() {
                     }
                 });
                 //Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            } else {
+                $("#click").prop("disabled", false);
+                $("#click").html("Delete");
             }
         });
     });

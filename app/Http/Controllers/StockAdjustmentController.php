@@ -43,9 +43,9 @@ class StockAdjustmentController extends Controller
 
         return view(
             'admin.products.stock_adjustment.createPartOne',
-            compact(
+            compact([
                 'warehouses',
-            )
+            ])
         );
     }
 
@@ -67,7 +67,7 @@ class StockAdjustmentController extends Controller
 
         return view(
             'admin.products.stock_adjustment.createPartTwoStockCount',
-            compact(
+            compact([
                 'products',
                 'accounts',
                 'today',
@@ -79,7 +79,7 @@ class StockAdjustmentController extends Controller
                 'default_inventory4',
                 'adtype',
                 'adcat',
-            )
+            ])
         );
     }
 
@@ -101,7 +101,7 @@ class StockAdjustmentController extends Controller
 
         return view(
             'admin.products.stock_adjustment.createPartTwoStockInOut',
-            compact(
+            compact([
                 'products',
                 'accounts',
                 'today',
@@ -113,7 +113,7 @@ class StockAdjustmentController extends Controller
                 'default_inventory4',
                 'adtype',
                 'adcat',
-            )
+            ])
         );
     }
 
@@ -511,7 +511,7 @@ class StockAdjustmentController extends Controller
 
         return view(
             'admin.products.stock_adjustment.edit',
-            compact(
+            compact([
                 'header',
                 'details',
                 'products',
@@ -522,7 +522,7 @@ class StockAdjustmentController extends Controller
                 'default_inventory2',
                 'default_inventory3',
                 'default_inventory4'
-            )
+            ])
         );
     }
 

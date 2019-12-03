@@ -57,6 +57,16 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if($check_transaction == 0)
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="limit">Limit Balance
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <input onClick="this.select();" value="{{$contact->limit_balance}}" type="text" class="form-control col-md-7 col-xs-12 limit_balance_display">
+                                                <input value="{{$contact->limit_balance}}" type="text" name="limit_balance" class="hidden_limit_balance" hidden>
+                                            </div>
+                                        </div>
+                                        @endif
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_name">Contact Name
@@ -153,7 +163,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="panel">
+                        <!--<div class="panel">
                             <a class="panel-heading collapsed" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 <h4 class="panel-title"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> List of Bank</h4>
                             </a>
@@ -196,7 +206,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                         <div class="panel">
                             <a class="panel-heading collapsed" role="tab" id="headingThree" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                 <h4 class="panel-title"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Chart of Account</h4>
@@ -269,4 +279,40 @@
 @push('scripts')
 <script src="{{asset('js/contacts/updateForm.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
+<script>
+    function inputMasking() {
+        Inputmask.extendAliases({
+            numeric: {
+                prefix: "Rp",
+                digits: 2,
+                digitsOptional: false,
+                decimalProtect: true,
+                groupSeparator: ",",
+                radixPoint: ".",
+                radixFocus: true,
+                autoGroup: true,
+                autoUnmask: true,
+                removeMaskOnSubmit: true
+            }
+        });
+        Inputmask.extendAliases({
+            IDR: {
+                alias: "numeric",
+                prefix: "Rp "
+            }
+        });
+        $(".limit_balance_display").inputmask("IDR");
+    }
+    $(document).ready(function() {
+        inputMasking();
+        $(".limit_balance_display").on("keyup change", function() {
+            if ($(this).val() < 0) {
+                $(this).val('0');
+            } else {
+                var limit_balance_display = $(".limit_balance_display").val();
+                $(".hidden_limit_balance").val(limit_balance_display);
+            }
+        });
+    });
+</script>
 @endpush

@@ -151,7 +151,17 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.invoices.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.sales.invoices.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function createRequestSukses()
@@ -178,7 +188,17 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.request.sukses.sales.invoices.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.request.sukses.sales.invoices.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function createFromDelivery($id)
@@ -202,7 +222,7 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.invoices.createFromDelivery', compact('today', 'trans_no', 'terms', 'po', 'po_item'));
+        return view('admin.sales.invoices.createFromDelivery', compact(['today', 'trans_no', 'terms', 'po', 'po_item']));
     }
 
     public function createFromOrder($id)
@@ -226,7 +246,7 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.invoices.createFromOrder', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item'));
+        return view('admin.sales.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
 
     public function createFromQuote($id)
@@ -253,7 +273,17 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.invoices.createFromQuote', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item', 'products', 'units', 'taxes'));
+        return view('admin.sales.invoices.createFromQuote', compact([
+            'today',
+            'trans_no',
+            'terms',
+            'warehouses',
+            'po',
+            'po_item',
+            'products',
+            'units',
+            'taxes'
+        ]));
     }
 
     public function createFromSPK($id)
@@ -320,7 +350,7 @@ class SaleInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.request.sukses.sales.invoices.createFromOrder', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item'));
+        return view('admin.request.sukses.sales.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
 
     public function store(Request $request)
@@ -368,6 +398,19 @@ class SaleInvoiceController extends Controller
             $id_contact                         = $request->vendor_name;
             // DEFAULT DARI SETTING
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
@@ -523,7 +566,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $trans_no;
                 $wh->product_id                 = $request->products[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -592,6 +635,19 @@ class SaleInvoiceController extends Controller
             $id_contact                         = $request->vendor_name;
             // DEFAULT DARI SETTING
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
@@ -851,6 +907,13 @@ class SaleInvoiceController extends Controller
             ]);
 
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                }
+            }
             coa_detail::create([
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
@@ -1088,6 +1151,19 @@ class SaleInvoiceController extends Controller
             }
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
@@ -1340,6 +1416,19 @@ class SaleInvoiceController extends Controller
             $id_contact                     = $request->vendor_name;
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account                = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
@@ -1553,6 +1642,19 @@ class SaleInvoiceController extends Controller
             };
 
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             if ($jasa_only == 0) {
                 coa_detail::create([
                     'coa_id'                    => $contact_account->account_receivable_id,
@@ -1947,6 +2049,19 @@ class SaleInvoiceController extends Controller
             }
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
@@ -2360,6 +2475,11 @@ class SaleInvoiceController extends Controller
             $id_contact                         = $request->vendor_name2;
             $contact_account                    = contact::find($id_contact);
             $default_tax                        = default_account::find(8);
+            if ($contact_id->is_limit == 1) {
+                $contact_id->update([
+                    'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                ]);
+            }
             // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
             $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
             coa::find($get_current_balance_on_coa->id)->update([
@@ -2443,6 +2563,19 @@ class SaleInvoiceController extends Controller
             sale_invoice_item::where('sale_invoice_id', $id)->delete();
             // BARU BIKIN BARU
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             if ($contact_account->account_receivable_id == null) { } else {
                 coa_detail::create([
                     'coa_id'                    => $contact_account->account_receivable_id,
@@ -2682,6 +2815,11 @@ class SaleInvoiceController extends Controller
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
             $default_tax                        = default_account::find(8);
+            if ($contact_id->is_limit == 1) {
+                $contact_id->update([
+                    'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                ]);
+            }
             // BUAT NGECHECK INI QUANTITY YANG DIINPUT LEBIH DARI YANG DI ORDER ATAU TIDAK
             foreach ($request->products as $i => $keys) {
                 if ($request->qty[$i] < 0) {
@@ -3003,6 +3141,11 @@ class SaleInvoiceController extends Controller
             $contact_id                         = contact::find($pi->contact_id);
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
+            if ($contact_id->is_limit == 1) {
+                $contact_id->update([
+                    'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                ]);
+            }
             // UPDATE STATUS ON SALES QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus                     = array(
                 'status'                        => 1,
@@ -3247,7 +3390,12 @@ class SaleInvoiceController extends Controller
             $contact_id                         = contact::find($pi->contact_id);
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
-            $default_tax                            = default_account::find(8);
+            $default_tax                        = default_account::find(8);
+            if ($contact_id->is_limit == 1) {
+                $contact_id->update([
+                    'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                ]);
+            }
             // BUAT NGECHECK INI QUANTITY YANG DIINPUT LEBIH DARI YANG DI ORDER ATAU TIDAK
             foreach ($request->products as $i => $keys) {
                 if ($request->qty[$i] < 0) {
@@ -3346,6 +3494,19 @@ class SaleInvoiceController extends Controller
             // BARU BIKIN BARU
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account                    = contact::find($id_contact);
+            if ($contact_account->is_limit == 1) {
+                if ($contact_account->current_limit_balance >= $request->balance) {
+                    $contact_account->update([
+                        'current_limit_balance'         => $contact_account->current_limit_balance - $request->balance,
+                    ]);
+                } else {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($contact_account->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             coa_detail::create([
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
@@ -3541,6 +3702,11 @@ class SaleInvoiceController extends Controller
             $default_revenue                        = default_account::find(1);
             $default_tax                            = default_account::find(8);
             if ($pi->selected_sq_id) {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 // UPDATE STATUS ON SALES QUOTE & OTHER TRANSACTION QUOTE'S
                 $updatepdstatus                     = array(
                     'status'                        => 1,
@@ -3633,6 +3799,11 @@ class SaleInvoiceController extends Controller
                 // FINALLY DELETE THE INVOICE
                 $pi->delete();
             } else if ($pi->selected_sd_id) {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 // DEFAULT SETTING UNBILLED REVENUE
                 $default_unbilled_revenue           = default_account::find(6);
                 coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('debit', 0)->delete();
@@ -3706,6 +3877,11 @@ class SaleInvoiceController extends Controller
                 // FINALLY DELETE THE INVOICE
                 $pi->delete();
             } else if ($pi->selected_so_id && $pi->is_marketting == 0) {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
                 $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
                 coa::find($get_current_balance_on_coa->id)->update([
@@ -3796,6 +3972,11 @@ class SaleInvoiceController extends Controller
                 // FINALLY DELETE THE INVOICE
                 $pi->delete();
             } else if ($pi->selected_spk_id) {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 if ($pi->jasa_only == 0) {
                     // NGUBAH STATUS SI SPK MENJADI CLOSED
                     /*spk::find($pi->selected_spk_id)->update(['status' => 2]);
@@ -3952,6 +4133,11 @@ class SaleInvoiceController extends Controller
                     $pi->delete();
                 }
             } else if ($pi->selected_so_id && $pi->is_marketting == 1) {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
                 $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
                 coa::find($get_current_balance_on_coa->id)->update([
@@ -4042,6 +4228,11 @@ class SaleInvoiceController extends Controller
                 // FINALLY DELETE THE INVOICE
                 $pi->delete();
             } else {
+                if ($contact_id->is_limit == 1) {
+                    $contact_id->update([
+                        'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
+                    ]);
+                }
                 // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
                 $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
                 coa::find($get_current_balance_on_coa->id)->update([
@@ -4140,9 +4331,9 @@ class SaleInvoiceController extends Controller
     {
         $pp                         = sale_invoice::find($id);
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
-        $today                      = Carbon::today()->format('d F Y');        
+        $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF', compact('pp', 'pp_item', 'today','company'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -4152,7 +4343,7 @@ class SaleInvoiceController extends Controller
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact('pp', 'pp_item', 'today','company'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

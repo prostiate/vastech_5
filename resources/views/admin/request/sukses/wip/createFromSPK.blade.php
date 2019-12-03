@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Proyek</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$spk->warehouse_id}}">{{$spk->warehouse->name}}</a></h5>
                                     <input value="{{$spk->warehouse_id}}" name="warehouse" hidden>
@@ -90,105 +90,223 @@
                                     <textarea class="form-control" name="desc" rows="4"></textarea>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Production Method</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select name="production_method" class="form-control selectcategory production_method">
+                                        <option value="0" selected>Material Per Product Qty</option>
+                                        <option value="1">Material For All Product Qty</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <br>
                     <div class="form-group tiles"></div>
                     <br>
-                    <div>
-                        <a>Note* : Quantity dan price untuk per satu barang {{$spk_item->product->name}}</a>
+                    <div id="material_per_product">
+                        <div>
+                            <a>Note* : Below product material will be used to make <strong><span>1</span></strong> per <strong>{{$spk_item->product->name}}</strong></a>
+                        </div>
+                        <br>
+                        <div class="table-responsive my-5">
+                            <table id="example" class="table table-striped jambo_table bulk_action">
+                                <thead>
+                                    <tr class="headings">
+                                        <th class="column-title" style="width: 350px">Product Name</th>
+                                        <th class="column-title" style="width: 250px">Quantity
+                                            <!-- per {{$spk_item->product->other_unit->name}}-->
+                                        </th>
+                                        <th class="column-title" style="width: 300px">Price</th>
+                                        <th class="column-title" style="width: 300px">Total Price
+                                            <!-- per {{$spk_item->product->other_unit->name}}-->
+                                        </th>
+                                        <th class="column-title" style="width: 50px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="neworderbody_per">
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <!--<select class="form-control select_product product_id" name="wip_product_id[]">
+                                                    <option></option>
+                                                </select>
+                                                <input class="selected_product_id" hidden>
+                                                <input class="selected_product_price" hidden>
+                                                <input class="tampungan_product_id" name="wip_product_id2[]" hidden>
+                                                <input class="tampungan_product_price" hidden>-->
+                                                <select class="form-control selectproduct_normal product_id_per" name="wip_product_id_per[]">
+                                                    <option></option>
+                                                    @foreach($wd as $qis)
+                                                    @foreach($products as $pro)
+                                                    @if($pro->id == $qis->product_id)
+                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}">{{$pro->name}}</option>
+                                                    @endif
+                                                    @endforeach
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty" name="wip_product_req_qty_per[]" value="0">
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="text" class="wip_product_price_display_per form-control" value="0">
+                                            <input type="text" class="wip_product_price_per" name="wip_product_price_per[]" value="0" hidden>
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="text" class="wip_product_total_price_display_per form-control" value="0" readonly>
+                                            <input type="text" class="wip_product_total_price_per" name="wip_product_total_price_per[]" value="0" hidden>
+                                        </td>
+                                        <td>
+                                            <input type="button" class="btn btn-danger delete_per" value="x">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="neworderfoot_per">
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-right">
+                                            <h5><strong>Margin </strong>
+                                                <select class="form-control selectmargin" id="margin_per" style="width: 50px" name="margin_type_per">
+                                                    <option value="rp" selected>Rp</option>
+                                                    <option value="per">%</option>
+                                                </select>
+                                            </h5>
+                                        </td>
+                                        <td colspan="2">
+                                            <input onClick="this.select();" type="text" class="form-control wip_margin_display_per" value="0">
+                                            <input type="text" class="wip_margin_hidden_per_per" name="margin_value_per" value="0" hidden>
+                                            <input type="text" class="wip_margin_hidden_total_per" name="margin_total_per" value="0" hidden>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-right">
+                                            <h5><strong>Cost of Goods Sold</strong></h5>
+                                        </td>
+                                        <td colspan="2">
+                                            <input type="text" class="form-control wip_total_price_display_per" readonly>
+                                            <input type="text" class="wip_total_price_hidden_pure_per" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_input_per" name="grandtotal_with_qty_per" hidden>
+                                            <input type="text" class="wip_total_price_hidden_grand_per" name="grandtotal_without_qty_per" hidden>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <input type="button" class="btn btn-dark add_per" value="+ Add More Item">
+                        </div>
+                        <br>
+                        <div class="col-md-3 center-margin">
+                            <div class="form-group">
+                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
+                                <div class="btn-group">
+                                    <button id="click_per" type="button" class="btn btn-success">Create</button>
+                                    <input value="{{$spk->id}}" name="spk_id" hidden>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <br>
-                    <div class="table-responsive my-5">
-                        <table id="example" class="table table-striped jambo_table bulk_action">
-                            <thead>
-                                <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Product Name</th>
-                                    <th class="column-title" style="width: 250px">Quantity<!-- per {{$spk_item->product->other_unit->name}}--></th>
-                                    <th class="column-title" style="width: 300px">Price</th>
-                                    <th class="column-title" style="width: 300px">Total Price<!-- per {{$spk_item->product->other_unit->name}}--></th>
-                                    <th class="column-title" style="width: 50px"></th>
-                                </tr>
-                            </thead>
-                            <tbody class="neworderbody">
-                                <tr>
-                                    <td>
-                                        <div class="form-group">
-                                            <!--<select class="form-control select_product product_id" name="wip_product_id[]">
-                                                <option></option>
-                                            </select>
-                                            <input class="selected_product_id" hidden>
-                                            <input class="selected_product_price" hidden>
-                                            <input class="tampungan_product_id" name="wip_product_id2[]" hidden>
-                                            <input class="tampungan_product_price" hidden>-->
-                                            <select class="form-control selectproduct_normal product_id" name="wip_product_id[]">
-                                                <option></option>
-                                                @foreach($wd as $qis)
-                                                @foreach($products as $pro)
-                                                @if($pro->id == $qis->product_id)
-                                                <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}">{{$pro->name}}</option>
-                                                @endif
-                                                @endforeach
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input onClick="this.select();" type="number" class="wip_req_qty_display form-control qty" name="wip_product_req_qty[]" value="0">
-                                    </td>
-                                    <td>
-                                        <input onClick="this.select();" type="text" class="wip_product_price_display form-control" value="0">
-                                        <input type="text" class="wip_product_price" name="wip_product_price[]" value="0" hidden>
-                                    </td>
-                                    <td>
-                                        <input onClick="this.select();" type="text" class="wip_product_total_price_display form-control" value="0" readonly>
-                                        <input type="text" class="wip_product_total_price" name="wip_product_total_price[]" value="0" hidden>
-                                    </td>
-                                    <td>
-                                        <input type="button" class="btn btn-danger delete" value="x">
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="neworderfoot">
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <h5><strong>Margin </strong>
-                                            <select class="form-control selectmargin" id="margin" style="width: 50px" name="margin_type">
-                                                <option value="rp" selected>Rp</option>
-                                                <option value="per">%</option>
-                                            </select>
-                                        </h5>
-                                    </td>
-                                    <td colspan="2">
-                                        <input onClick="this.select();" type="text" class="form-control wip_margin_display" value="0">
-                                        <input type="text" class="wip_margin_hidden_per" name="margin_value" value="0" hidden>
-                                        <input type="text" class="wip_margin_hidden_total" name="margin_total" value="0" hidden>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-right">
-                                        <h5><strong>HPP</strong></h5>
-                                    </td>
-                                    <td colspan="2">
-                                        <input type="text" class="form-control wip_total_price_display" readonly>
-                                        <input type="text" class="wip_total_price_hidden_pure" hidden>
-                                        <input type="text" class="wip_total_price_hidden_pure_input" name="grandtotal_with_qty" hidden>
-                                        <input type="text" class="wip_total_price_hidden_grand" name="grandtotal_without_qty" hidden>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <input type="button" class="btn btn-dark add" value="+ Add More Item">
-                    </div>
-                    <br>
-                    <div class="col-md-3 center-margin">
-                        <div class="form-group">
-                            <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
-                            <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Create</button>
-                                <input value="{{$spk->id}}" name="spk_id" hidden>
+                    <div id="material_all_product" hidden>
+                        <div>
+                            <a>Note* : Below product material will be used to make <strong><span class="text_product_qty">{{$spk_item->qty_remaining}}</span></strong> of <strong>{{$spk_item->product->name}}</strong></a>
+                        </div>
+                        <br>
+                        <div class="table-responsive my-5">
+                            <table id="example" class="table table-striped jambo_table bulk_action">
+                                <thead>
+                                    <tr class="headings">
+                                        <th class="column-title" style="width: 350px">Product Name</th>
+                                        <th class="column-title" style="width: 250px">Quantity
+                                            <!-- per {{$spk_item->product->other_unit->name}}-->
+                                        </th>
+                                        <th class="column-title" style="width: 300px">Price</th>
+                                        <th class="column-title" style="width: 300px">Total Price
+                                            <!-- per {{$spk_item->product->other_unit->name}}-->
+                                        </th>
+                                        <th class="column-title" style="width: 50px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="neworderbody_all">
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <!--<select class="form-control select_product product_id" name="wip_product_id[]">
+                                                    <option></option>
+                                                </select>
+                                                <input class="selected_product_id" hidden>
+                                                <input class="selected_product_price" hidden>
+                                                <input class="tampungan_product_id" name="wip_product_id2[]" hidden>
+                                                <input class="tampungan_product_price" hidden>-->
+                                                <select class="form-control selectproduct_normal product_id_all" name="wip_product_id_all[]">
+                                                    <option></option>
+                                                    @foreach($wd as $qis)
+                                                    @foreach($products as $pro)
+                                                    @if($pro->id == $qis->product_id)
+                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}">{{$pro->name}}</option>
+                                                    @endif
+                                                    @endforeach
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="number" class="wip_req_qty_display_all form-control qty" name="wip_product_req_qty_all[]" value="0">
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="text" class="wip_product_price_display_all form-control" value="0">
+                                            <input type="text" class="wip_product_price_all" name="wip_product_price_all[]" value="0" hidden>
+                                        </td>
+                                        <td>
+                                            <input onClick="this.select();" type="text" class="wip_product_total_price_display_all form-control" value="0" readonly>
+                                            <input type="text" class="wip_product_total_price_all" name="wip_product_total_price_all[]" value="0" hidden>
+                                        </td>
+                                        <td>
+                                            <input type="button" class="btn btn-danger delete_all" value="x">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="neworderfoot_all">
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-right">
+                                            <h5><strong>Margin </strong>
+                                                <select class="form-control selectmargin" id="margin_all" style="width: 50px" name="margin_type_all">
+                                                    <option value="rp" selected>Rp</option>
+                                                    <option value="per">%</option>
+                                                </select>
+                                            </h5>
+                                        </td>
+                                        <td colspan="2">
+                                            <input onClick="this.select();" type="text" class="form-control wip_margin_display_all" value="0">
+                                            <input type="text" class="wip_margin_hidden_per_all" name="margin_value_all" value="0" hidden>
+                                            <input type="text" class="wip_margin_hidden_total_all" name="margin_total_all" value="0" hidden>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-right">
+                                            <h5><strong>Cost of Goods Sold</strong></h5>
+                                        </td>
+                                        <td colspan="2">
+                                            <input type="text" class="form-control wip_total_price_display_all" readonly>
+                                            <input type="text" class="wip_total_price_hidden_pure_all" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_input_all" name="grandtotal_with_qty_all" hidden>
+                                            <input type="text" class="wip_total_price_hidden_grand_all" name="grandtotal_without_qty_all" hidden>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <input type="button" class="btn btn-dark add_all" value="+ Add More Item">
+                        </div>
+                        <br>
+                        <div class="col-md-3 center-margin">
+                            <div class="form-group">
+                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
+                                <div class="btn-group">
+                                    <button id="click_all" type="button" class="btn btn-success">Create</button>
+                                    <input value="{{$spk->id}}" name="spk_id" hidden>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -200,8 +318,23 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/counting.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script>
+    $(document).ready(function() {
+        $('.production_method').change(function() {
+            if ($(this).val() == '0') {
+                document.getElementById("material_per_product").removeAttribute("hidden");
+                document.getElementById("material_all_product").setAttribute("hidden", "hidden");
+            } else if ($(this).val() == '1') {
+                document.getElementById("material_per_product").setAttribute("hidden", "hidden");
+                document.getElementById("material_all_product").removeAttribute("hidden");
+            }
+        });
+    });
+</script>
 @endpush

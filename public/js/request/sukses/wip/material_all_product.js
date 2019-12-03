@@ -21,9 +21,9 @@ function inputMaskingTotal() {
         }
     });
 
-    $(".wip_product_price_display").inputmask("IDR");
-    $(".wip_product_total_price_display").inputmask("IDR");
-    $(".wip_total_price_display").inputmask("IDR");
+    $(".wip_product_price_display_all").inputmask("IDR");
+    $(".wip_product_total_price_display_all").inputmask("IDR");
+    $(".wip_total_price_display_all").inputmask("IDR");
 }
 
 function inputMaskingTotal2() {
@@ -44,7 +44,7 @@ function inputMaskingTotal2() {
         }
     });
 
-    $(".wip_total_price_hidden_pure").inputmask("numeric");
+    $(".wip_total_price_hidden_pure_all").inputmask("numeric");
 }
 
 function inputMaskingMarginRp() {
@@ -65,7 +65,7 @@ function inputMaskingMarginRp() {
         }
     });
 
-    $(".wip_margin_display").inputmask("numeric");
+    $(".wip_margin_display_all").inputmask("numeric");
 }
 
 function inputMaskingMarginPer() {
@@ -86,41 +86,43 @@ function inputMaskingMarginPer() {
         }
     });
 
-    $(".wip_margin_display").inputmask("numeric");
+    $(".wip_margin_display_all").inputmask("numeric");
 }
 
 function totalPrice(tr) {
-    var price_display = tr.find(".wip_product_price_display").val() - 0;
-    var qty_display = tr.find(".wip_req_qty_display").val() - 0;
-    //var qty = $(".product_qty").val() - 0;
+    var price_display = tr.find(".wip_product_price_display_all").val() - 0;
+    var qty_display = tr.find(".wip_req_qty_display_all").val() - 0;
+    var qty = $(".product_qty").val() - 0;
     var subtotal = price_display * qty_display;
-    tr.find(".wip_product_price").val(price_display);
-    tr.find(".wip_product_total_price_display").val(subtotal);
-    tr.find(".wip_product_total_price").val(subtotal);
+    tr.find(".wip_product_price_all").val(price_display);
+    tr.find(".wip_product_total_price_display_all").val(subtotal);
+    tr.find(".wip_product_total_price_all").val(subtotal);
     totalGrandAll();
 }
 
 function totalGrandAll(a) {
     var t = 0;
-    $(".wip_product_total_price_display").each(function(i, e) {
+    $(".wip_product_total_price_display_all").each(function(i, e) {
         var amt = $(this).val() - 0;
         t += amt;
     });
 
-    //var qty = $(".product_qty").val() - 0;
-    var margin = $(".wip_margin_display").val() - 0;
-    var total = t + margin;
+    var qty = $(".product_qty").val() - 0;
+    var margin = $(".wip_margin_display_all").val() - 0;
+    var total = t / qty + margin;
 
-    $(".wip_total_price_display").val(total);
-    $(".wip_total_price_hidden_pure").val(total);
-    $(".wip_total_price_hidden_pure_input").val($(".wip_total_price_hidden_pure").val() - 0);
-    $(".wip_total_price_hidden_grand").val(t);
+    $(".wip_total_price_display_all").val(total);
+    $(".wip_total_price_hidden_pure_all").val(total);
+    $(".wip_total_price_hidden_pure_input_all").val(
+        $(".wip_total_price_hidden_pure_all").val() - 0
+    );
+    $(".wip_total_price_hidden_grand_all").val(t);
 }
 
 function selectProduct() {
-    $(".product_id").select2({
+    $(".product_id_all").select2({
         placeholder: "Select Product",
-        width: "100%",
+        width: "100%"
     });
 }
 
@@ -131,94 +133,98 @@ $(function() {
     inputMaskingTotal2();
     selectProduct();
 
-    $(".add").click(function() {
-        var product = $(".product_id").html();
+    $(".add_all").click(function() {
+        var product = $(".product_id_all").html();
         tr =
             "<tr>" +
             "<td>" +
             '<div class="form-group">' +
-            '<select class="form-control selectproduct_normal product_id" name="wip_product_id[]">' +
+            '<select class="form-control selectproduct_normal product_id_all" name="wip_product_id_all[]">' +
             product +
             "</select>" +
             "</div>" +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="number" class="wip_req_qty_display form-control qty" name="wip_product_req_qty[]" value="0">' +
+            '<input onClick="this.select();" type="number" class="wip_req_qty_display_all form-control qty_all" name="wip_product_req_qty_all[]" value="0">' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="wip_product_price_display form-control" value="0">' +
-            '<input type="text" class="wip_product_price" name="wip_product_price[]" value="0" hidden>' +
+            '<input onClick="this.select();" type="text" class="wip_product_price_display_all form-control" value="0">' +
+            '<input type="text" class="wip_product_price_all" name="wip_product_price_all[]" value="0" hidden>' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="wip_product_total_price_display form-control" value="0" readonly>' +
-            '<input type="text" class="wip_product_total_price" name="wip_product_total_price[]" value="0" hidden>' +
+            '<input onClick="this.select();" type="text" class="wip_product_total_price_display_all form-control" value="0" readonly>' +
+            '<input type="text" class="wip_product_total_price_all" name="wip_product_total_price_all[]" value="0" hidden>' +
             "</td>" +
             "<td>" +
-            '<input type="button" class="btn btn-danger delete" value="x">' +
+            '<input type="button" class="btn btn-danger delete_all" value="x">' +
             "</td>" +
             "</tr>";
 
-        $(".neworderbody").append(tr);
+        $(".neworderbody_all").append(tr);
 
         selectProduct();
         inputMaskingMarginRp();
         inputMaskingTotal();
     });
 
-    //$(".product_qty").on("keyup change", function() {
-    //    totalGrandAll();
-    //});
+    $(".product_qty").on("keyup change", function() {
+        totalGrandAll();
+        $(".text_product_qty").html($(".product_qty").val() - 0);
+    });
 
-    $(".neworderbody").on(
+    $(".neworderbody_all").on(
         "keyup change",
-        ".wip_req_qty_display, .wip_product_price_display",
+        ".wip_req_qty_display_all, .wip_product_price_display_all",
         function() {
             var tr = $(this).closest("tr");
             totalPrice(tr);
         }
     );
 
-    $(".neworderfoot").on(
+    $(".neworderfoot_all").on(
         "keyup change",
-        "#margin, .wip_margin_display",
+        "#margin_all, .wip_margin_display_all",
         function() {
             var tr = $(this).closest("tr");
             var margin = tr
-                .find("#margin")
+                .find("#margin_all")
                 .find("option:selected")
                 .val();
-            var marginValue = tr.find(".wip_margin_display").val() - 0;
+            var marginValue = tr.find(".wip_margin_display_all").val() - 0;
             if (margin == "rp") {
                 inputMaskingMarginRp();
                 var grandTotalBeforeMargin =
-                    $(".wip_total_price_hidden_pure").val() - 0;
+                    $(".wip_total_price_hidden_pure_all").val() - 0;
                 var grandTotal = marginValue + grandTotalBeforeMargin;
-                $(".wip_margin_hidden_per").val(marginValue);
-                $(".wip_margin_hidden_total").val(marginValue);
-                $(".wip_total_price_display").val(grandTotal);
+                $(".wip_margin_hidden_per_all").val(marginValue);
+                $(".wip_margin_hidden_total_all").val(marginValue);
+                $(".wip_total_price_display_all").val(grandTotal);
             } else {
                 inputMaskingMarginPer();
                 var grandTotalBeforeMargin =
-                    $(".wip_total_price_hidden_pure").val() - 0;
+                    $(".wip_total_price_hidden_pure_all").val() - 0;
                 var grandTotal =
                     (marginValue * grandTotalBeforeMargin) / 100 +
                     grandTotalBeforeMargin;
                 var marginTotal = (marginValue * grandTotalBeforeMargin) / 100;
-                $(".wip_margin_hidden_per").val(marginValue);
-                $(".wip_margin_hidden_total").val(marginTotal);
-                $(".wip_total_price_display").val(grandTotal);
+                $(".wip_margin_hidden_per_all").val(marginValue);
+                $(".wip_margin_hidden_total_all").val(marginTotal);
+                $(".wip_total_price_display_all").val(grandTotal);
             }
         }
     );
 
-    $(".neworderbody").on(
+    $(".neworderbody_all").on(
         "keyup change select2-selecting",
-        ".product_id",
+        ".product_id_all",
         function() {
             var tr = $(this).closest("tr");
-            var price = tr.find('.product_id').find('option:selected').attr('unitprice');
-            tr.find(".wip_product_price_display").val(price);
-            tr.find(".wip_product_price").val(price);
+            var price = tr
+                .find(".product_id_all")
+                .find("option:selected")
+                .attr("unitprice");
+            tr.find(".wip_product_price_display_all").val(price);
+            tr.find(".wip_product_price_all").val(price);
             totalPrice(tr);
         }
     );

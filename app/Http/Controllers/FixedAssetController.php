@@ -47,14 +47,24 @@ class FixedAssetController extends Controller
         $accounts                                   = coa::all();
         $expense_accounts                           = coa::where('coa_category_id', 16)->get();
         $depreciation_accounts                      = coa::where('coa_category_id', 7)->get();
-        $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16,17,15])->get();
+        $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16, 17, 15])->get();
         $today                                      = Carbon::today()->toDateString();
         $number                                     = asset::max('number');
         if ($number == 0)
             $number = 10000;
         $trans_no                       = $number + 1;
 
-        return view('admin.asset_managements.create', compact('fixed_accounts', 'accounts', 'depreciation_accounts', 'depreciation_accumulated_accounts', 'expense_accounts', 'today', 'trans_no'));
+        return view('admin.asset_managements.create', compact(
+            [
+                'fixed_accounts',
+                'accounts',
+                'depreciation_accounts',
+                'depreciation_accumulated_accounts',
+                'expense_accounts',
+                'today',
+                'trans_no'
+            ]
+        ));
     }
 
     public function store(Request $request)
@@ -100,7 +110,7 @@ class FixedAssetController extends Controller
                 'credit'                    => 0,
             ]);
             $transactions->coa_detail()->save($cd1);
-            
+
             $cd2 = new coa_detail([
                 'coa_id'                    => $request->get('asset_account_credited'),
                 'date'                      => $request->get('asset_date'),
@@ -115,12 +125,11 @@ class FixedAssetController extends Controller
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'       => $get_current_balance_on_coa->balance - $request->get('asset_cost'),
             ]);
-            
+
             $get_current_balance_on_coa = coa::find($request->get('asset_account_credited'));
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'       => $get_current_balance_on_coa->balance + $request->get('asset_cost'),
             ]);
-
         } else {
             $asset = new asset([
                 'name' => $request->get('asset_name'),
@@ -132,7 +141,7 @@ class FixedAssetController extends Controller
                 'credited_account' => $request->get('asset_account_credited'),
                 'isDepreciable' => 1,
             ]);
-            
+
             $depreciate = new asset_detail([
                 'method' => $request->get('depreciate_method'),
                 'life' =>  $request->get('depreciate_life'),
@@ -155,7 +164,7 @@ class FixedAssetController extends Controller
                 'credit'                    => 0,
             ]);
             $transactions->coa_detail()->save($cd1);
-            
+
             $cd2 = new coa_detail([
                 'coa_id'                    => $request->get('asset_account_credited'),
                 'date'                      => $request->get('asset_date'),
@@ -170,7 +179,7 @@ class FixedAssetController extends Controller
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'       => $get_current_balance_on_coa->balance - $request->get('asset_cost'),
             ]);
-            
+
             $get_current_balance_on_coa = coa::find($request->get('asset_account_credited'));
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'       => $get_current_balance_on_coa->balance + $request->get('asset_cost'),
@@ -192,12 +201,12 @@ class FixedAssetController extends Controller
     {
         $assets = asset::find($id);
 
-        if($assets->isDepreciable == 1){
-            $detail = asset_detail::where('asset_id',$id)->first();
-        }else{
+        if ($assets->isDepreciable == 1) {
+            $detail = asset_detail::where('asset_id', $id)->first();
+        } else {
             $detail = null;
         }
-        return view('admin.asset_managements.show', compact('assets','detail'));
+        return view('admin.asset_managements.show', compact(['assets', 'detail']));
     }
 
     /**
@@ -220,7 +229,7 @@ class FixedAssetController extends Controller
         $accounts                                   = coa::all();
         $expense_accounts                           = coa::where('coa_category_id', 16)->get();
         $depreciation_accounts                      = coa::where('coa_category_id', 7)->get();
-        $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16,17,15])->get();
+        $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16, 17, 15])->get();
         $today                                      = Carbon::today();
 
         $number                                      = asset::max('number');
@@ -229,7 +238,17 @@ class FixedAssetController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.asset_managements.edit', compact('asset', 'detail', 'fixed_accounts', 'accounts', 'depreciation_accounts', 'depreciation_accumulated_accounts', 'expense_accounts', 'today', 'trans_no'));
+        return view('admin.asset_managements.edit', compact([
+            'asset',
+            'detail',
+            'fixed_accounts',
+            'accounts',
+            'depreciation_accounts',
+            'depreciation_accumulated_accounts',
+            'expense_accounts',
+            'today',
+            'trans_no'
+        ]));
     }
     /*
     public function edit()
@@ -267,7 +286,6 @@ class FixedAssetController extends Controller
                 'credited_account' => $request->get('asset_account_credited'),
                 'isDepreciable' => 0,
             ]);
-
         } else {
             $asset = asset::find($id)->update([
                 'name' => $request->get('asset_name'),
@@ -278,9 +296,9 @@ class FixedAssetController extends Controller
                 'cost' => $request->get('asset_cost'),
                 'credited_account' => $request->get('asset_account_credited'),
                 'isDepreciable' => 1,
-            ]);            
-            
-            $depreciate = asset_detail::where('asset_id',$id)->updateOrCreate([
+            ]);
+
+            $depreciate = asset_detail::where('asset_id', $id)->updateOrCreate([
                 'asset_id' => $id,
                 'method' => $request->get('depreciate_method'),
                 'life' =>  $request->get('depreciate_life'),

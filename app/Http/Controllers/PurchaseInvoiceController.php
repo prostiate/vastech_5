@@ -149,7 +149,17 @@ class PurchaseInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.purchases.invoices.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.purchases.invoices.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function createRequestSuksesPartOne()
@@ -215,7 +225,7 @@ class PurchaseInvoiceController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.purchases.invoices.createFromDelivery', compact('today', 'trans_no', 'terms', 'po', 'po_item'));
+        return view('admin.purchases.invoices.createFromDelivery', compact(['today', 'trans_no', 'terms', 'po', 'po_item']));
     }
 
     public function createFromOrder($id)
@@ -239,8 +249,8 @@ class PurchaseInvoiceController extends Controller
         if ($number == 0)
             $number = 10000;
         $trans_no = $number + 1;
-        
-        return view('admin.purchases.invoices.createFromOrder', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item'));
+
+        return view('admin.purchases.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
 
     public function createFromQuote($id)
@@ -267,8 +277,18 @@ class PurchaseInvoiceController extends Controller
         if ($number == 0)
             $number = 10000;
         $trans_no = $number + 1;
-        
-        return view('admin.purchases.invoices.createFromQuote', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item', 'products', 'units', 'taxes'));
+
+        return view('admin.purchases.invoices.createFromQuote', compact([
+            'today',
+            'trans_no',
+            'terms',
+            'warehouses',
+            'po',
+            'po_item',
+            'products',
+            'units',
+            'taxes'
+        ]));
     }
 
     public function store(Request $request)
@@ -453,7 +473,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -643,7 +663,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -882,7 +902,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -1095,7 +1115,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -1224,8 +1244,14 @@ class PurchaseInvoiceController extends Controller
                                 $ambil_po_balance->update([
                                     'status'                => 2,
                                 ]);
+                                other_transaction::where('number', $ambil_po_balance->number)->where('type', 'purchase order')->update([
+                                    'status'                => 2,
+                                ]);
                             } else {
                                 $ambil_po_balance->update([
+                                    'status'                => 4,
+                                ]);
+                                other_transaction::where('number', $ambil_po_balance->number)->where('type', 'purchase order')->update([
                                     'status'                => 4,
                                 ]);
                             }
@@ -1286,7 +1312,7 @@ class PurchaseInvoiceController extends Controller
                             $qty                        = $request->po_qty_dateng[$x];
                             $price                      = $request->po_amount[$x];
                             $dibagi                     = $produk->qty + $qty;
-                            if ($dibagi <= 0) {
+                            if ($dibagi == 0) {
                                 $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                             } else {
                                 $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -1334,8 +1360,14 @@ class PurchaseInvoiceController extends Controller
                                 $ambil_po_balance->update([
                                     'status'                => 2,
                                 ]);
+                                other_transaction::where('number', $ambil_po_balance->number)->where('type', 'purchase order')->update([
+                                    'status'                => 2,
+                                ]);
                             } else {
                                 $ambil_po_balance->update([
+                                    'status'                => 4,
+                                ]);
+                                other_transaction::where('number', $ambil_po_balance->number)->where('type', 'purchase order')->update([
                                     'status'                => 4,
                                 ]);
                             }
@@ -1900,7 +1932,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $a->qty;
                 $price                      = $a->unit_price;
                 $dibagi                     = $produk->qty - $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2059,7 +2091,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -2159,7 +2191,7 @@ class PurchaseInvoiceController extends Controller
                     $qty                        = $a->qty;
                     $price                      = $a->unit_price;
                     $dibagi                     = $produk->qty - $qty;
-                    if ($dibagi <= 0) {
+                    if ($dibagi == 0) {
                         $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                     } else {
                         $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2185,7 +2217,7 @@ class PurchaseInvoiceController extends Controller
                     $qty                        = $a->qty;
                     $price                      = $a->unit_price;
                     $dibagi                     = $produk->qty - $qty;
-                    if ($dibagi <= 0) {
+                    if ($dibagi == 0) {
                         $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                     } else {
                         $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2326,7 +2358,7 @@ class PurchaseInvoiceController extends Controller
                 $qty                        = $request->qty[$i];
                 $price                      = $request->unit_price[$i];
                 $dibagi                     = $produk->qty + $qty;
-                if ($dibagi <= 0) {
+                if ($dibagi == 0) {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
                 } else {
                     $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
@@ -2385,17 +2417,23 @@ class PurchaseInvoiceController extends Controller
                                 if ($api->purchase_order_item_id == $apii->id) {
                                     //var_dump('api ' . $api->id);
                                     $apii->update(['qty_remaining' => $apii->qty_remaining + $api->qty]);
-                                    $ambil_po               = purchase_order::find($apii->purchase_order_id);
+                                    $ambil_po                       = purchase_order::find($apii->purchase_order_id);
                                     $ambil_po->update([
-                                        'balance_due'   => $ambil_po->balance_due + $api->amount,
+                                        'balance_due'               => $ambil_po->balance_due + $api->amount,
                                     ]);
                                     if ($ambil_po->balance_due == $ambil_po->grandtotal) {
                                         $ambil_po->update([
-                                            'status'   => 1,
+                                            'status'                => 1,
+                                        ]);
+                                        other_transaction::where('number', $ambil_po->number)->where('type', 'purchase order')->update([
+                                            'status'                => 1,
                                         ]);
                                     } else {
                                         $ambil_po->update([
-                                            'status'   => 4,
+                                            'status'                => 4,
+                                        ]);
+                                        other_transaction::where('number', $ambil_po->number)->where('type', 'purchase order')->update([
+                                            'status'                => 4,
                                         ]);
                                     }
                                 }
@@ -2422,7 +2460,7 @@ class PurchaseInvoiceController extends Controller
                                 $qty                        = $api->qty;
                                 $price                      = $api->amount;
                                 $dibagi                     = $produk->qty - $qty;
-                                if ($dibagi <= 0) {
+                                if ($dibagi == 0) {
                                     $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                                 } else {
                                     $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2457,17 +2495,23 @@ class PurchaseInvoiceController extends Controller
                                 if ($api->purchase_order_item_id == $apii->id) {
                                     //var_dump('api ' . $api->id);
                                     $apii->update(['qty_remaining' => $apii->qty_remaining + $api->qty]);
-                                    $ambil_po               = purchase_order::find($apii->purchase_order_id);
+                                    $ambil_po                       = purchase_order::find($apii->purchase_order_id);
                                     $ambil_po->update([
-                                        'balance_due'   => $ambil_po->balance_due + $api->amount,
+                                        'balance_due'               => $ambil_po->balance_due + $api->amount,
                                     ]);
                                     if ($ambil_po->balance_due == $ambil_po->grandtotal) {
                                         $ambil_po->update([
-                                            'status'   => 1,
+                                            'status'                => 1,
+                                        ]);
+                                        other_transaction::where('number', $ambil_po->number)->where('type', 'purchase order')->update([
+                                            'status'                => 1,
                                         ]);
                                     } else {
                                         $ambil_po->update([
-                                            'status'   => 4,
+                                            'status'                => 4,
+                                        ]);
+                                        other_transaction::where('number', $ambil_po->number)->where('type', 'purchase order')->update([
+                                            'status'                => 4,
                                         ]);
                                     }
                                 }
@@ -2545,7 +2589,7 @@ class PurchaseInvoiceController extends Controller
                         $qty                        = $a->qty;
                         $price                      = $a->unit_price;
                         $dibagi                     = $produk->qty - $qty;
-                        if ($dibagi <= 0) {
+                        if ($dibagi == 0) {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                         } else {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2595,7 +2639,7 @@ class PurchaseInvoiceController extends Controller
                         $qty                        = $a->qty;
                         $price                      = $a->unit_price;
                         $dibagi                     = $produk->qty - $qty;
-                        if ($dibagi <= 0) {
+                        if ($dibagi == 0) {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                         } else {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2708,7 +2752,7 @@ class PurchaseInvoiceController extends Controller
                         $qty                        = $a->qty;
                         $price                      = $a->unit_price;
                         $dibagi                     = $produk->qty - $qty;
-                        if ($dibagi <= 0) {
+                        if ($dibagi == 0) {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                         } else {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2765,7 +2809,7 @@ class PurchaseInvoiceController extends Controller
                         $qty                        = $a->qty;
                         $price                      = $a->unit_price;
                         $dibagi                     = $produk->qty - $qty;
-                        if ($dibagi <= 0) {
+                        if ($dibagi == 0) {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                         } else {
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
@@ -2800,7 +2844,7 @@ class PurchaseInvoiceController extends Controller
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact('pp', 'pp_item', 'today', 'company'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

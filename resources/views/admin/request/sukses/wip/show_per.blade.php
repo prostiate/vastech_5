@@ -7,7 +7,7 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">Payment History
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">Surat Perintah Kerja History
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -15,10 +15,10 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Payment History</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Expense #{{$pi->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">Surat Perintah Kerja History</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>Work In Progress #{{$wip->number}}</strong></h3>
                                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Payment History</a>
+                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Surat Perintah Kerja History</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -30,43 +30,39 @@
                                                         <table id="example" class="table table-striped jambo_table bulk_action">
                                                             <thead>
                                                                 <tr class="headings">
-                                                                    <th class="column-title" style="width:250px">Transaction Number</th>
-                                                                    <th class="column-title" style="width:200px">Transaction Date</th>
-                                                                    <th class="column-title" style="width:150px">Pay From</th>
-                                                                    <th class="column-title" style="width:150px">Payment Status</th>
-                                                                    <th class="column-title" style="width:150px">Amount</th>
+                                                                    <th class="column-title">Transaction Date</th>
+                                                                    <th class="column-title">Number</th>
+                                                                    <th class="column-title">SPK Ref No</th>
+                                                                    <th class="column-title">Contact</th>
+                                                                    <th class="column-title">Proyek</th>
+                                                                    <th class="column-title">Note</th>
+                                                                    <th class="column-title">Status</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="neworderbody">
-                                                                @foreach ($bank_withdrawal as $a)
                                                                 <tr>
                                                                     <td>
-                                                                        <a href="{{ url('/cashbank/bank_withdrawal/'.$a->id) }}">Bank Withdrawal #{{$a->cashbank->number}}</a>
+                                                                        <a>{{$wip->spk->transaction_date}}</a>
                                                                     </td>
                                                                     <td>
-                                                                        <a>{{$a->cashbank->date}}</a>
+                                                                        <a href="/spk/{{$wip->selected_spk_id}}">Surat Perintah Kerja #{{$wip->spk->number}}</a>
                                                                     </td>
                                                                     <td>
-                                                                        <a href="{{ url('/chart_of_accounts/'.$a->cashbank->pay_from) }}">{{$a->cashbank->coa_pay_from->name}}</a>
+                                                                        <a href="/spk/{{$wip->selected_spk_id}}">{{$wip->spk->vendor_ref_no}}</a>
                                                                     </td>
                                                                     <td>
-                                                                        @if($a->cashbank->status == 1)
-                                                                        <a>Open</a>
-                                                                        @elseif($a->cashbank->status == 2)
-                                                                        <a>Closed</a>
-                                                                        @elseif($a->cashbank->status == 3)
-                                                                        <a>Paid</a>
-                                                                        @elseif($a->cashbank->status == 4)
-                                                                        <a>Partial</a>
-                                                                        @else
-                                                                        <a>Overdue</a>
-                                                                        @endif
+                                                                        <a href="/contacts/{{$wip->spk->contact_id}}">{{$wip->spk->contact->display_name}}</a>
                                                                     </td>
                                                                     <td>
-                                                                        <a>Rp @number($a->cashbank->amount)</a>
+                                                                        <a href="/warehouses/{{$wip->spk->warehouse_id}}">{{$wip->spk->warehouse->name}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a>{{$wip->spk->desc}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a>{{$wip->spk->spk_status->name}}</a>
                                                                     </td>
                                                                 </tr>
-                                                                @endforeach
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -91,7 +87,7 @@
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
                                         <h5 class="modal-title" id="myModalLabel">Journal Report</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Expense #{{$pi->number}}</strong></h3>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>Work In Progress #{{$wip->number}}</strong></h3>
                                     </div>
                                     <div class="modal-body">
                                         <div class="table-responsive my-5">
@@ -105,24 +101,24 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="neworderbody">
-                                                    @foreach ($get_all_detail as $a)
+                                                    @foreach ($get_all_detail as $po)
                                                     <tr>
                                                         <td>
-                                                            <a href="{{ url('/chart_of_accounts/'.$a->coa_id) }}">{{$a->coa->code}}</a>
+                                                            <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->code}}</a>
                                                         </td>
                                                         <td>
-                                                            <a href="{{ url('/chart_of_accounts/'.$a->coa_id) }}">{{$a->coa->name}}</a>
+                                                            <a href="{{ url('/purchases_invoice/'.$po->coa_id) }}">{{$po->coa->name}}</a>
                                                         </td>
                                                         <td>
-                                                            @if($a->debit == 0)
+                                                            @if($po->debit == 0)
                                                             @else
-                                                            <a>Rp @number($a->debit)</a>
+                                                            <a>Rp @number($po->debit)</a>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($a->credit == 0)
+                                                            @if($po->credit == 0)
                                                             @else
-                                                            <a>Rp @number($a->credit)</a>
+                                                            <a>Rp @number($po->credit)</a>
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -156,27 +152,21 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            @if($pi->status == 1 or $pi->status == 4)
-                            <li><a href="/cashbank/bank_withdrawal/expense/new/{{$pi->id}}">Pay Bill</a></li>
-                            @endif
-                            <li><a href="#">Clone Transaction</a></li>
-                            <li><a href="#">Set as Recurring</a></li>
-                            <li class="divider"></li>
-                            <li><a target="_blank" href="/expenses/print/PDF1/{{$pi->id}}">Print & Preview</a></li>
+                            <li><a target="_blank" href="/wip/print/PDF/{{$wip->id}}">Print & Preview</a></li>
                         </ul>
                     </li>
                 </ul>
-                <h3><b>Expense #{{$pi->number}}</b></h3>
+                <h3><b>Work In Progress #{{$wip->number}}</b></h3>
                 <a>Status: </a>
-                @if($pi->status == 1)
+                @if($wip->status == 1)
                 <span class="label label-warning" style="color:white;">Open</span>
-                @elseif($pi->status == 2)
+                @elseif($wip->status == 2)
                 <span class="label label-success" style="color:white;">Closed</span>
-                @elseif($pi->status == 3)
+                @elseif($wip->status == 3)
                 <span class="label label-success" style="color:white;">Paid</span>
-                @elseif($pi->status == 4)
+                @elseif($wip->status == 4)
                 <span class="label label-warning" style="color:white;">Partial</span>
-                @elseif($pi->status == 5)
+                @elseif($wip->status == 5)
                 <span class="label label-danger" style="color:white;">Overdue</span>
                 @else
                 <span class="label label-success" style="color:white;">Sent</span>
@@ -191,61 +181,77 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->number}}</h5>
+                                    <h5><a>{{$wip->number}}</a></h5>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Pay From</label>
-                                <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5><a href="/chart_of_accounts/{{$pi->pay_from_coa_id}}">{{$pi->coa->name}}</a></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="form-horizontal form-label-left">
-                            <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Beneficiary</label>
-                                <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5><a href="/contacts/{{$pi->contact_id}}">{{$pi->expense_contact->display_name}}</a></h5>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Payment Method</label>
-                                <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->payment_method->name}}</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->transaction_date}}</h5>
+                                    <h5><a>{{$wip->transaction_date}}</a></h5>
                                 </div>
                             </div>
-                            <!--<div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Due Date</label>
-                                <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->due_date}}</h5>
-                                </div>
-                            </div>-->
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Billing Address</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->address}}</h5>
+                                    <h5><a href="/spk/{{$wip->selected_spk_id}}">Surat Perintah Kerja #{{$wip->transaction_no_spk}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Term</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Contact</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->term->name}}</h5>
+                                    <h5><a href="/contacts/{{$wip->contact_id}}">{{$wip->contact->display_name}}</a></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK Ref No</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a href="/spk/{{$wip->selected_spk_id}}">{{$wip->spk->vendor_ref_no}}</a></h5>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Product Name</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a href="/products/{{$wip->result_product}}">{{$wip->product->name}}</a></h5>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Product Qty</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a>{{$wip->result_qty}} {{$wip->product->other_unit->name}}</a></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Note</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a>{{$wip->desc}}</a></h5>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Production Method</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h5><a>@if($wip->production_method == 0) Material Per Product Qty @else Material For All Product Qty @endif</a></h5>
                                 </div>
                             </div>
                         </div>
@@ -253,87 +259,82 @@
                     <br>
                     <div class="form-group tiles"></div>
                     <br>
+                    <div>
+                        <a>Note* : Below product material is used to make <strong><span>1</span></strong> per <strong>{{$wip->product->name}}</strong></a>
+                    </div>
+                    <br>
                     <div class="table-responsive my-5">
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 400px">Expense Account</th>
-                                    <th class="column-title">Description</th>
-                                    <th class="column-title">Tax</th>
-                                    <th class="column-title">Amount</th>
+                                    <th class="column-title" style="width: 350px">Product Name</th>
+                                    <th class="column-title" style="width: 250px">Quantity</th>
+                                    <!--<th class="column-title" style="width: 250px">Quantity In Stock</th>-->
+                                    <th class="column-title" style="width: 300px">Price</th>
+                                    <th class="column-title" style="width: 300px">Total Price</th>
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
-                                @foreach ($products as $a)
+                                <?php $qtyin = 0 ?>
+                                <?php $qtyout = 0 ?>
+                                <?php $qty = 0 ?>
+                                @foreach($wip_item as $cpbi)
                                 <tr>
                                     <td>
-                                        <a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->name}}</a>
+                                        <a href="/products/{{$cpbi->product_id}}">{{$cpbi->product->name}}</a>
                                     </td>
                                     <td>
-                                        <a>{{$a->desc}}</a>
+                                        <a>{{$cpbi->qty_require}}</a>
+                                    </td>
+                                    <!--<td>
+                                        @foreach($quantity_in_stock as $qis)
+                                        @if($qis->product_id == $cpbi->product_id)
+                                        <?php $qtyin += $qis->qty_in ?>
+                                        <?php $qtyout += $qis->qty_out ?>
+                                        <?php $qty = $qis->qty_in - $qis->qty_out ?>
+                                        @endif
+                                        @endforeach
+                                        <a>{{$qty}}</a>
+                                    </td>-->
+                                    <td>
+                                        <a>Rp @number($cpbi->price)</a>
                                     </td>
                                     <td>
-                                        <a>{{$a->tax->name}}</a>
-                                    </td>
-                                    <td>
-                                        <a>Rp @number($a->amount)</a>
+                                        <a>Rp @number($cpbi->total_price)</a>
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
+                            <tfoot class="neworderfoot">
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <h5><strong>Margin </strong>@if($wip->margin_type == 'rp') (Rp) @else (%) @endif
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        <h5>Rp @number($wip->margin_value)</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <h5><strong>Cost of Goods Sold</strong></h5>
+                                    </td>
+                                    <td>
+                                        <h5>Rp @number($wip->grandtotal_with_qty + $wip->margin_total)</h5>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="form-horizontal form-label-left">
-                            <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Memo</label>
-                                <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$pi->memo}}</h5>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <h5> Sub Total </h5>
-                                        <h5> Tax Total </h5>
-                                        <br>
-                                        <h3><b> Expense Paid </b></h3>
-                                        <br>
-                                        <h3><b> Balance Due </b></h3>
-                                    </div>
-                                    <div class="col-md-4 float-right">
-                                        <h5 class="subtotal text-right"> Rp @number($pi->subtotal) </h5>
-                                        <input type="text" class="subtotal_input" name="subtotal" hidden>
-                                        <h5 class="subtotal text-right"> Rp @number($pi->taxtotal) </h5>
-                                        <input type="text" class="subtotal_input" name="subtotal" hidden>
-                                        <br>
-                                        <h3 class="currency balance text-right"><b> Rp @number($pi->amount_paid) </b></h3>
-                                        <input type="text" class="currency balance_input" name="balance" hidden>
-                                        <div class="form-group tile"></div>
-                                        <br>
-                                        <h3 class="currency balance text-right"><b> Rp @number($pi->balance_due) </b></h3>
-                                        <input type="text" class="currency balance_input" name="balance" hidden>
-                                        <div class="form-group tile"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="{{ url('/expenses') }}" class="btn btn-dark">Cancel</a>
-                            @if(!$pi->amount_paid > 0)
+                            <a href="{{ url('/wip') }}" class="btn btn-dark">Cancel</a>
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/expenses/edit/' + {{$pi->id}};">Edit
-                                </button>
-                            </div>
-                            @endif
-                            <input type="text" value="{{$pi->id}}" id="form_id" hidden>
+                            <!--{{--<div class="btn-group">
+                                <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/wip/edit/{{$wip->id}}';">Update</button>
+                            </div>--}}-->
+                            <input type="text" value="{{$wip->id}}" id="form_id" hidden>
                         </div>
                     </div>
                 </form>
@@ -344,5 +345,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expenses/deleteFormNotNull.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/deleteForm_per.js') }}" charset="utf-8"></script>
 @endpush

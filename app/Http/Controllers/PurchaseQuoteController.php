@@ -134,7 +134,17 @@ class PurchaseQuoteController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.purchases.quote.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.purchases.quote.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function store(Request $request)
@@ -272,7 +282,17 @@ class PurchaseQuoteController extends Controller
         $today              = Carbon::today();
         $taxes              = other_tax::all();
 
-        return view('admin.purchases.quote.edit', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'pq', 'pq_item'));
+        return view('admin.purchases.quote.edit', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'pq',
+            'pq_item'
+        ]));
     }
 
     public function update(Request $request)
@@ -382,7 +402,7 @@ class PurchaseQuoteController extends Controller
         $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.purchases.quote.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.quote.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

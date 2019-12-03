@@ -222,6 +222,6 @@
 
 @endsection
 
-@push('scripts')
+{{--@push('scripts')
 <script src="{{ asset('js/settings/user/dataTable.js') }}" charset="utf-8"></script>
-@endpush
+@endpush--}}

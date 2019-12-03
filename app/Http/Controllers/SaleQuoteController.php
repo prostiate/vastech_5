@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\sale_quote;
 use App\contact;
+use App\company_setting;
 use App\product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -126,7 +127,17 @@ class SaleQuoteController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.quote.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.sales.quote.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function store(Request $request)
@@ -168,6 +179,16 @@ class SaleQuoteController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $transactions = other_transaction::create([
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
@@ -259,7 +280,7 @@ class SaleQuoteController extends Controller
         $today          = Carbon::today();
         $taxes          = other_tax::all();
 
-        return view('admin.sales.quote.edit', compact('vendors', 'terms', 'products', 'units', 'taxes', 'today', 'sq', 'sq_item'));
+        return view('admin.sales.quote.edit', compact(['vendors', 'terms', 'products', 'units', 'taxes', 'today', 'sq', 'sq_item']));
     }
 
     public function update(Request $request)
@@ -290,6 +311,16 @@ class SaleQuoteController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name2);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $id                                 = $request->hidden_id;
             $idd                                = sale_quote::find($id);
 
@@ -369,7 +400,8 @@ class SaleQuoteController extends Controller
         $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.sales.quote.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $company                    = company_setting::where('company_id', 1)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

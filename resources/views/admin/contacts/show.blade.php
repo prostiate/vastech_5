@@ -29,7 +29,7 @@
                             <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/edit/{{$contact->id}}';">Edit Profile
                             </button>
                         </li>
-                        <li>
+                        <!--<li>
                             <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Create Transaction <span class="caret"></span>
                             </button>
                             <ul role="menu" class="dropdown-menu">
@@ -59,14 +59,95 @@
                                 <li><a href="#">Debit Memo</a></li>
                                 @endif
                             </ul>
+                        </li>-->
+                        @if($check_transaction == 1)
+                        <li>
+                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">Adjust Limit Balance
+                            </button>
+                            <div class="modal fade bs-example-modal-lg-2" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <form method="post" id="formCreate">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                                </button>
+                                                <h3 class="modal-title" id="myModalLabel"><strong>Adjust Limit Balance</strong></h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-md-6">
+                                                    <div class="form-horizontal form-label-left">
+                                                        <div class="form-group row">
+                                                            <label>Type Adjustment</label>
+                                                            <select name="type_limit_balance" class="form-control selectbankname">
+                                                                <option value="add" selected>Add</option>
+                                                                <option value="minus">Minus</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-horizontal form-label-left">
+                                                        <div class="form-group row">
+                                                            <label>Value</label>
+                                                            <input onClick="this.select();" type="text" class="form-control to_limit_balance_display">
+                                                            <input type="text" class="to_limit_balance_hidden" name="to_limit_balance" hidden>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="col-md-1 center-margin">
+                                                    <div class="form-horizontal">
+                                                        <div class="form-group row">
+                                                            <button id="clickLimit" type="button" class="btn btn-success">Create</button>
+                                                            <input value="{{$contact->id}}" type="text" name="hidden_id" id="hidden_id" hidden>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group tiles"></div>
+                                                <br>
+                                                <div class="table-responsive my-5">
+                                                    <table id="example" class="table table-striped jambo_table bulk_action">
+                                                        <thead>
+                                                            <tr class="headings">
+                                                                <th class="column-title" style="width:200px">By</th>
+                                                                <th class="column-title" style="width:200px">Type Adjustment</th>
+                                                                <th class="column-title" style="width:200px">From</th>
+                                                                <th class="column-title" style="width:200px">To</th>
+                                                                <th class="column-title" style="width:200px">Value</th>
+                                                                <th class="column-title" style="width:200px">Created At</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($hlb as $hlb)
+                                                            <tr>
+                                                                <td>{{$hlb->user->name}}</td>
+                                                                <td>@if($hlb->type_limit_balance == 'add') Add @else Minus @endif</td>
+                                                                <td>@number($hlb->from_limit_balance)</td>
+                                                                <td>@number($hlb->to_limit_balance)</td>
+                                                                <td>@number($hlb->value)</td>
+                                                                <td>{{$hlb->created_at}}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </li>
+                        @endif
                         <li>
                             <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                             </button>
                             <ul role="menu" class="dropdown-menu">
                                 <!--<li><a href="#">View Statement Report</a>
-                                <li><a href="#">Merge Contacts</a>
-                                <li><a href="#">Archive Contact</a>-->
+                                <li><a href="#">Merge Contacts</a>-->
+
                                 <li><a href="#" id="click">Delete</a>
                                     <input type="text" value="{{$contact->id}}" id="form_id" hidden>
                                 </li>
@@ -231,6 +312,14 @@
                                         <h5>Default Payment Terms</h5>
                                         <h5><b>{{$contact->term->name}}</b></h5>
                                     </div>
+                                    <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                        <h5>Limit Balance</h5>
+                                        <h5><b>Rp @number($contact->limit_balance)</b></h5>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                                        <h5>Current Limit Balance</h5>
+                                        <h5><b>Rp @number($contact->current_limit_balance)</b></h5>
+                                    </div>
                                 </div>
                             </blockquote>
                         </div>
@@ -251,222 +340,68 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Transaction Number </th>
                                                     <th class="column-title">Transaction Date </th>
+                                                    <th class="column-title">Transaction Number </th>
                                                     <th class="column-title">Due Date </th>
                                                     <th class="column-title">Status </th>
                                                     <th class="column-title">Amount </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($pq as $pq)
+                                                @foreach($other_transaction as $ot)
                                                 <tr>
-                                                    <td><a href="/purchases_quote/{{$pq->id}}">Purchase Quote #{{$pq->number}}</a></td>
-                                                    <td>{{$pq->transaction_date}}</td>
-                                                    <td>{{$pq->due_date}}</td>
-                                                    @if($pq->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($pq->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($pq->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($pq->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
+                                                    <td>{{$ot->transaction_date}}</td>
+                                                    @if($ot->type == 'purchase quote')
+                                                    <td><a href="/purchases_quote/{{$ot->ref_id}}">Purchase Quote #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'purchase order')
+                                                    <td><a href="/purchases_order/{{$ot->ref_id}}">Purchase Order #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'purchase delivery')
+                                                    <td><a href="/purchases_delivery/{{$ot->ref_id}}">Purchase Delivery #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'purchase invoice')
+                                                    <td><a href="/purchases_invoice/{{$ot->ref_id}}">Purchase Invoice #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'purchase payment')
+                                                    <td><a href="/purchases_payment/{{$ot->ref_id}}">Purchase Payment #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'purchase return')
+                                                    <td><a href="/purchases_return/{{$ot->ref_id}}">Purchase Return #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales quote')
+                                                    <td><a href="/sales_quote/{{$ot->ref_id}}">Sales Quote #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales order')
+                                                    <td><a href="/sales_order/{{$ot->ref_id}}">Sales Order #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales delivery')
+                                                    <td><a href="/sales_delivery/{{$ot->ref_id}}">Sales Delivery #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales invoice')
+                                                    <td><a href="/sales_invoice/{{$ot->ref_id}}">Sales Invoice #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales payment')
+                                                    <td><a href="/sales_payment/{{$ot->ref_id}}">Sales Payment #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'sales return')
+                                                    <td><a href="/sales_return/{{$ot->ref_id}}">Sales Return #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'spk')
+                                                    <td><a href="/spk/{{$ot->ref_id}}">SPK #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'wip')
+                                                    <td><a href="/wip/{{$ot->ref_id}}">WIP #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'bankdeposit')
+                                                    <td><a href="/cashbank/bank_deposit/{{$ot->ref_id}}">Bank Deposit #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'bankwithdrawalaccount')
+                                                    <td><a href="/cashbank/bank_withdrawal/{{$ot->ref_id}}">Bank Withdrawal #{{$ot->number}}</a></td>
+                                                    @elseif($ot->type == 'bankwithdrawalfromexpense')
+                                                    <td><a href="/cashbank/bank_withdrawal/{{$ot->ref_id}}">Bank Withdrawal #{{$ot->number}}</a></td>
                                                     @endif
-                                                    <td>Rp @number($pq->grandtotal)</td>
+                                                    <td>{{$ot->due_date}}</td>
+                                                    @if($ot->status == 1)
+                                                    <td>Open</td>
+                                                    @elseif($ot->status == 2)
+                                                    <td>Closed</td>
+                                                    @elseif($ot->status == 3)
+                                                    <td>Paid</td>
+                                                    @elseif($ot->status == 4)
+                                                    <td>Partial</td>
+                                                    @elseif($ot->status == 5)
+                                                    <td>Overdue</td>
+                                                    @else
+                                                    <td>Sent</td>
+                                                    @endif
+                                                    <td>Rp @number($ot->total)</td>
                                                 </tr>
-                                                @endforeach
-                                                @foreach($po as $po)
-                                                <tr>
-                                                    <td><a href="/purchases_order/{{$po->id}}">Purchase Order #{{$po->number}}</a></td>
-                                                    <td>{{$po->transaction_date}}</td>
-                                                    <td>{{$po->due_date}}</td>
-                                                    @if($po->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($po->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($po->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($po->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($po->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($pd as $pd)
-                                                <tr>
-                                                    <td><a href="/purchases_delivery/{{$pd->id}}">Purchase Delivery #{{$pd->number}}</a></td>
-                                                    <td>{{$pd->transaction_date}}</td>
-                                                    <td>{{$pd->due_date}}</td>
-                                                    @if($pd->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($pd->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($pd->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($pd->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($pd->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($pi as $pi)
-                                                <tr>
-                                                    <td><a href="/purchases_invoice/{{$pi->id}}">Purchase Invoice #{{$pi->number}}</a></td>
-                                                    <td>{{$pi->transaction_date}}</td>
-                                                    <td>{{$pi->due_date}}</td>
-                                                    @if($pi->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($pi->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($pi->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($pi->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($pi->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($pp as $pp)
-                                                <tr>
-                                                    <td><a href="/purchases_payment/{{$pp->id}}">Purchase Payment #{{$pp->number}}</a></td>
-                                                    <td>{{$pp->transaction_date}}</td>
-                                                    <td>{{$pp->due_date}}</td>
-                                                    @if($pp->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($pp->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($pp->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($pp->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($pp->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($sq as $sq)
-                                                <tr>
-                                                    <td><a href="/sales_quote/{{$sq->id}}">Sales Quote #{{$sq->number}}</a></td>
-                                                    <td>{{$sq->transaction_date}}</td>
-                                                    <td>{{$sq->due_date}}</td>
-                                                    @if($sq->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($sq->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($sq->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($sq->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($sq->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($so as $so)
-                                                <tr>
-                                                    <td><a href="/sales_order/{{$so->id}}">Sales Order #{{$so->number}}</a></td>
-                                                    <td>{{$so->transaction_date}}</td>
-                                                    <td>{{$so->due_date}}</td>
-                                                    @if($so->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($so->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($so->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($so->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($so->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($sd as $sd)
-                                                <tr>
-                                                    <td><a href="/sales_delivery/{{$sd->id}}">Sales Delivery #{{$sd->number}}</a></td>
-                                                    <td>{{$sd->transaction_date}}</td>
-                                                    <td>{{$sd->due_date}}</td>
-                                                    @if($sd->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($sd->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($sd->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($sd->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($sd->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($si as $si)
-                                                <tr>
-                                                    <td><a href="/sales_invoice/{{$si->id}}">Sales Invoice #{{$si->number}}</a></td>
-                                                    <td>{{$si->transaction_date}}</td>
-                                                    <td>{{$si->due_date}}</td>
-                                                    @if($si->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($si->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($si->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($si->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($si->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($sp as $sp)
-                                                <tr>
-                                                    <td><a href="/sales_payment/{{$sp->id}}">Sales Payment #{{$sp->number}}</a></td>
-                                                    <td>{{$sp->transaction_date}}</td>
-                                                    <td>{{$sp->due_date}}</td>
-                                                    @if($sp->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($sp->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($sp->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($sp->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($sp->grandtotal)</td>
-                                                </tr>
-                                                @endforeach
-                                                @foreach($expense as $ex)
-                                                <td>
-                                                    <td><a href="/expenses/{{$ex->id}}">Expense #{{$ex->number}}</a></td>
-                                                    <td>{{$ex->transaction_date}}</td>
-                                                    <td>{{$ex->due_date}}</td>
-                                                    @if($ex->status == 1)
-                                                    <td>Open</td>
-                                                    @elseif($ex->status == 2)
-                                                    <td>Closed</td>
-                                                    @elseif($ex->status == 3)
-                                                    <td>Paid</td>
-                                                    @elseif($ex->status == 4)
-                                                    <td>Partially Sent</td>
-                                                    @else
-                                                    <td>Overdue</td>
-                                                    @endif
-                                                    <td>Rp @number($ex->grandtotal)</td>
-                                                </td>
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -483,5 +418,43 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/contacts/createLimitForm.js') }}" charset="utf-8"></script>
 <script src="{{ asset('js/contacts/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
+<script>
+    function inputMasking() {
+        Inputmask.extendAliases({
+            numeric: {
+                prefix: "Rp",
+                digits: 2,
+                digitsOptional: false,
+                decimalProtect: true,
+                groupSeparator: ",",
+                radixPoint: ".",
+                radixFocus: true,
+                autoGroup: true,
+                autoUnmask: true,
+                removeMaskOnSubmit: true
+            }
+        });
+        Inputmask.extendAliases({
+            IDR: {
+                alias: "numeric",
+                prefix: "Rp "
+            }
+        });
+        $(".to_limit_balance_display").inputmask("IDR");
+    }
+    $(document).ready(function() {
+        inputMasking();
+        $(".to_limit_balance_display").on("keyup change", function() {
+            if ($(this).val() < 0) {
+                $(this).val('0');
+            } else {
+                var to_limit_balance_display = $(".to_limit_balance_display").val();
+                $(".to_limit_balance_hidden").val(to_limit_balance_display);
+            }
+        });
+    });
+</script>
 @endpush

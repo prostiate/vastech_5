@@ -182,7 +182,17 @@ class SaleOrderController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.order.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.sales.order.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function createFromQuote($id)
@@ -209,7 +219,17 @@ class SaleOrderController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.order.createFromQuote', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item', 'products', 'units', 'taxes'));
+        return view('admin.sales.order.createFromQuote', compact([
+            'today',
+            'trans_no',
+            'terms',
+            'warehouses',
+            'po',
+            'po_item',
+            'products',
+            'units',
+            'taxes'
+        ]));
     }
 
     public function createRequestSukses()
@@ -236,7 +256,17 @@ class SaleOrderController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.request.sukses.sales.order.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.request.sukses.sales.order.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function store(Request $request)
@@ -281,6 +311,16 @@ class SaleOrderController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $transactions = other_transaction::create([
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
@@ -391,6 +431,16 @@ class SaleOrderController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             // AMBIL ID SI SALES QUOTE
             $id                     = $request->hidden_id;
             // AMBIL NUMBER SI SALES QUOTE
@@ -514,6 +564,16 @@ class SaleOrderController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $transactions = other_transaction::create([
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
@@ -641,9 +701,29 @@ class SaleOrderController extends Controller
         $today                  = Carbon::today();
         $taxes                  = other_tax::all();
         if ($po->is_marketting == 0) {
-            return view('admin.sales.order.edit', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'po', 'po_item'));
+            return view('admin.sales.order.edit', compact([
+                'vendors',
+                'warehouses',
+                'terms',
+                'products',
+                'units',
+                'taxes',
+                'today',
+                'po',
+                'po_item'
+            ]));
         } else {
-            return view('admin.request.sukses.sales.order.edit', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'po', 'po_item'));
+            return view('admin.request.sukses.sales.order.edit', compact([
+                'vendors',
+                'warehouses',
+                'terms',
+                'products',
+                'units',
+                'taxes',
+                'today',
+                'po',
+                'po_item'
+            ]));
         }
     }
 
@@ -676,6 +756,16 @@ class SaleOrderController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name2);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $id                                 = $request->hidden_id;
             $ambilheader    = sale_order::find($id);
             $pp                                 = sale_order_item::where('sale_order_id', $id)->get();
@@ -831,6 +921,16 @@ class SaleOrderController extends Controller
         }
         DB::beginTransaction();
         try {
+            $check_limit_balance    = contact::find($request->vendor_name2);
+            if ($check_limit_balance->is_limit == 1) {
+                if ($check_limit_balance->current_limit_balance < $request->balance) {
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Cannot make a transaction because the balance has exceeded the limit!<br><br>
+                    Total Limit Balance = ' . number_format($check_limit_balance->limit_balance, 2, ',', '.') . '<br>
+                    Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
+                }
+            }
+
             $id                                 = $request->hidden_id;
             $ambilheader    = sale_order::find($id);
             $pp                                 = sale_order_item::where('sale_order_id', $id)->get();
@@ -1014,7 +1114,7 @@ class SaleOrderController extends Controller
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.sales.order.PrintPDF', compact('pp', 'pp_item', 'today','company'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         //return $pdf->download('laporan-pegawai-pdf');
         // TANDA DOWNLOAD
         return $pdf->stream();

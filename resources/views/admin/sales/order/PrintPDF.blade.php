@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Purchase Invoice #{{$pp->number}}</title>
+    <title>Sales Order #{{$pp->number}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style type="text/css">
         * {
@@ -184,7 +184,7 @@
                             <td> : {{$pp->number}} </td>
                         </tr>
                         <tr>
-                            <td> Tanggal Invoice </td>
+                            <td> Tanggal Order </td>
                             <td> : {{$today}} </td>
                         </tr>
                         <tr>

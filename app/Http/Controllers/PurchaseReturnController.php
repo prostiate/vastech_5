@@ -62,7 +62,7 @@ class PurchaseReturnController extends Controller
         if ($number == 0)
             $number = 10000;
         $trans_no = $number + 1;
-        return view('admin.purchases.return.create', compact('today', 'trans_no', 'warehouses', 'po', 'po_item'));
+        return view('admin.purchases.return.create', compact(['today', 'trans_no', 'warehouses', 'po', 'po_item']));
     }
 
     public function store(Request $request)
@@ -417,7 +417,7 @@ class PurchaseReturnController extends Controller
         $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

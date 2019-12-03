@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Purchase Invoice #{{$pp->number}}</title>
+    <title>Surat Jalan #{{$pp->number}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style type="text/css">
         * {
@@ -39,6 +39,11 @@
         .column-25 {
             float: left;
             width: 25%;
+        }
+
+        .column-20 {
+            float: left;
+            width: 20%;
         }
 
         /* Remove extra left and right margins, due to padding in columns */
@@ -111,6 +116,7 @@
             margin-bottom: 0;
             text-align: center;
         }
+
         .table-foot {
             padding: 50px 100px;
             border-top: 3px solid #000;
@@ -121,7 +127,8 @@
             width: 100%;
             border: solid 1px;
         }
-        .table-none tr td{
+
+        .table-none tr td {
             padding: 2px;
             border: none;
         }
@@ -166,51 +173,87 @@
         </div>
         <table class="table-data">
             <thead class="table-head">
-                <tr >
+                <tr>
                     <th>No</th>
-                    <th colspan="2" >BANYAKNYA</th>
-                    <th>NAMA BARANG</th>
+                    <th colspan="2">Quantity ( Unit ) </th>
+                    <th>Nama Barang</th>
                 </tr>
             </thead>
             <tbody>
-                <?php 
-                    $number = 1;
-                    ?>
+                <?php
+                $number = 1;
+                ?>
                 @foreach($pp_item as $a)
-                <tr >
+                <tr>
                     <td>{{$number}}</td>
-                    <td style="text-align: center; border-right: 0px;">{{$a->qty}}</td>
+                    <td style="text-align: right; border-right: 0px;">{{$a->qty}}</td>
                     <td style="border-left: 0px">{{$a->unit->name}}</td>
                     <td style="text-align: left;">{{$a->product->name}}</td>
                 </tr>
                 <?php $number++ ?>
                 @endforeach
-            </tbody>            
+            </tbody>
         </table>
         <br>
         <br>
         <div class="row">
-            <div class="column-33">
-                <p>Terima kasih, </p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p> {{$pp->contact->display_name}} </p>
-            </div>            
-            <div class="column-33">
-                
-            </div>            
-            <div class="column-33">
-                <p>Hormat Kami, </p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p> {{Auth::user()->name}} </p>
-            </div>            
-        </div>        
-        <br>       
+            <div class="column-20">
+                <div class="card">
+                    <a>Ka.Gudang</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <a> (................................)</a>
+                </div>
+            </div>
+            <div class="column-20">
+                <div class="card">
+                    <a>Mengetahui</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <a> (................................)</a>
+                </div>
+            </div>
+            <div class="column-20">
+                <div class="card">
+                    <a>Sopir</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <a> (................................)</a>
+                </div>
+            </div>
+            <div class="column-20">
+                <div class="card">
+                    <a>Security</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <a> (................................)</a>
+                </div>
+            </div>
+            <div class="column-20">
+                <div class="card">
+                    <a>Penerima</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <a> (................................)</a>
+                </div>
+            </div>
+        </div>
+        <br>
     </div>
     </div>
 </body>

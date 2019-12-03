@@ -57,7 +57,7 @@ class PurchasePaymentController extends Controller
         if ($number == 0)
             $number = 10000;
         $trans_no = $number + 1;
-        return view('admin.purchases.payment.createFromPurchase', compact('today', 'trans_no', 'po', 'get_all_invoice', 'coa', 'payment_method'));
+        return view('admin.purchases.payment.createFromPurchase', compact(['today', 'trans_no', 'po', 'get_all_invoice', 'coa', 'payment_method']));
     }
 
     public function store(Request $request)
@@ -212,7 +212,7 @@ class PurchasePaymentController extends Controller
         $get_all_invoice        = purchase_payment_item::where('purchase_payment_id', $id)->with('purchase_invoice', 'purchase_payment')->get();
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_methods::get();
-        return view('admin.purchases.payment.edit', compact('po', 'get_all_invoice', 'coa', 'payment_method'));
+        return view('admin.purchases.payment.edit', compact(['po', 'get_all_invoice', 'coa', 'payment_method']));
     }
 
     public function update(Request $request)
@@ -445,7 +445,7 @@ class PurchasePaymentController extends Controller
         $total_debit                = $get_all_detail->sum('debit');
         $total_credit               = $get_all_detail->sum('credit');
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact('pp', 'pp_item', 'get_all_detail', 'total_debit', 'total_credit', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact(['pp', 'pp_item', 'get_all_detail', 'total_debit', 'total_credit', 'today']))->setPaper('a4', 'portrait');
         //return $pdf->download('laporan-pegawai-pdf');
         // TANDA DOWNLOAD
         return $pdf->stream();

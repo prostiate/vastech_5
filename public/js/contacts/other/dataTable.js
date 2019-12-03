@@ -2,113 +2,49 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[0, 'asc']],
+        aaSorting: [[0, "asc"]],
         ajax: {
             url: "/contacts_other"
         },
         columns: [
             {
                 data: "company_name",
-                name: "company_name",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.company_name == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>" + row.company_name + "</a>";
-                    }
-                }
+                render: $.fn.dataTable.render.text()
             },
             {
                 data: "display_name",
-                name: "display_name",
                 render: function(data, type, row) {
-                    if (row.display_name == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return '<a href="/contacts/' + row.id + '">' + row.display_name + '</a></a>';
-                    }
+                    return (
+                        '<a href="/contacts/' +
+                        row.id +
+                        '">' +
+                        row.display_name +
+                        "</a>"
+                    );
                 }
             },
             {
                 data: "billing_address",
-                name: "billing_address",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.billing_address == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>" + row.billing_address + "</a>";
-                    }
-                }
+                render: $.fn.dataTable.render.text()
             },
             {
                 data: "email",
-                name: "email",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.email == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>" + row.email + "</a>";
-                    }
-                }
+                render: $.fn.dataTable.render.text()
             },
             {
                 data: "handphone",
-                name: "handphone",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.handphone == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>" + row.handphone + "</a>";
-                    }
-                }
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "npwp",
-                name: "npwp",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.npwp == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>-</a>";
-                    }
-                }
+                data: "limit_balance",
+                className: "text-right",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
             },
             {
-                data: "npwp",
-                name: "npwp",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.npwp == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>-</a>";
-                    }
-                }
-            },
-            {
-                data: "npwp",
-                name: "npwp",
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    if (row.npwp == null) {
-                        return "<a>-</a>";
-                    } else {
-                        return "<a>-</a>";
-                    }
-                }
-            },
+                data: "current_limit_balance",
+                className: "text-right",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+            }
         ]
     });
 });

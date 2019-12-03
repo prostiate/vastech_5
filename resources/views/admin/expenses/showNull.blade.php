@@ -213,7 +213,7 @@
                                         <h5> Sub Total </h5>
                                         <h5> Tax Total </h5>
                                         <br>
-                                        <h3><b> Payment Paid </b></h3>
+                                        <h3><b> Expense Paid </b></h3>
                                         <br>
                                         <h3><b> Balance Due </b></h3>
                                     </div>

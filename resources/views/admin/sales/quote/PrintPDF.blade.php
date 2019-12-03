@@ -8,137 +8,254 @@
     <title>Sales Quote #{{$pp->number}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style type="text/css">
-        .footer {
-            position: absolute;
-        }
-
-        .footer {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            color: #333;
-            text-align: left;
-            font-size: 14px;
-            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
         }
 
-        .container {
-            margin: 0 auto;
-            margin-top: 35px;
-            height: auto;
-            background-color: #fff;
-        }
-
-        caption {
-            font-size: 28px;
-            margin-bottom: 15px;
-        }
-
-        table {
-            border: 1px solid #333;
+        table,
+        th,
+        td {
             border-collapse: collapse;
-            margin: 0 auto;
+            border: none;
+            padding: 10px 5px;
         }
 
-        td,
-        tr,
-        th {
-            padding: 12px;
-            width: auto;
-            border-left: 0px solid;
+        /* Float four columns side by side */
+        .column-50 {
+            float: left;
+            width: 50%;
         }
 
-        th {
-            background-color: #f0f0f0;
+        .column-33 {
+            float: left;
+            width: 33.33%;
         }
 
-        h4,
-        p {
-            margin: 0px;
+        .column-25 {
+            float: left;
+            width: 25%;
+        }
+
+        /* Remove extra left and right margins, due to padding in columns */
+        .row {
+            margin: 0 -5px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Style the counter cards */
+        .card {
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card.card-costumer {
+            text-align: left;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-heading {
+            padding: 10px 15px;
+            border-bottom: 1px solid transparent;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        .card-heading>.dropdown .dropdown-toggle {
+            color: inherit;
+        }
+
+        .card-title {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 16px;
+            color: inherit;
+        }
+
+        .card-title>a,
+        .card-title>small,
+        .card-title>.small,
+        .card-title>small>a,
+        .card-title>.small>a {
+            color: inherit;
+        }
+
+        .card-footer {
+            padding: 10px 15px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            border-bottom-right-radius: 3px;
+            border-bottom-left-radius: 3px;
+        }
+
+        .align-mid {
+            margin-bottom: 0;
+            text-align: center;
+        }
+
+        .table-head {
+            padding: 50px 100px;
+            border-bottom: 3px solid #000;
+            border-spacing: 8px 10px
+        }
+        .table-foot {
+            padding: 50px 100px;
+            border-top: 3px solid #000;
+            border-spacing: 8px 10px
+        }
+
+        .table-data {
+            width: 100%; 
+        }
+        .table-none tr td{
+            padding: 2px;
+            border: none;
+        }
+
+        .table-body>tr>td,
+        .table-head>tr>th {
+            text-align: center;
+        }
+
+
+        /* Responsive columns - one column layout (vertical) on small screens */
+        @media screen and (max-width: 600px) {
+            .column {
+                width: 100%;
+                display: block;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <caption>
-            Sales Quote
-        </caption>
         <br>
-        <br>
-        <br>
-        <table style="width: 100%">
-            <thead>
-                <tr>
-                    <th colspan="4" style="text-align: right;"><strong>Quote #{{$pp->number}}</strong></th>
-                    <!--<th colspan="2" style="border-left: 1px solid;"></th>-->
-                </tr>
-                <tr>
-                    <td colspan="2" style="border-top: 1px solid;">
-                        <p>{{$pp->contact->display_name}}</p>
-                        <br>
-                        <p>{{$pp->address}}</p>
-                        <br>
-                        <p>{{$pp->email}}</p>
-                    </td>
-                    <td style="width: 116px; border-left: 1px solid; border-top: 1px solid;">
-                        <p>Transaction Date</p>
-                        <br>
-                        <p>Expired Date</p>
-                        <br>
-                        <p>Customer Ref</p>
-                    </td>
-                    <td style="border-top: 1px solid;">
-                        <p>{{$pp->transaction_date}}</p>
-                        <br>
-                        <p>{{$pp->due_date}}</p>
-                        <br>
-                        <p>{{$pp->vendor_ref_no}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th style="width: 150px; border-top: 1px solid;">Product</th>
-                    <th style="width: 50px; border-left: 1px solid; border-top: 1px solid; text-align: center;">Qty</th>
-                    <th style="width: 120px; border-left: 1px solid; border-top: 1px solid; text-align: right;">Unit Price (Rp)</th>
-                    <th style="width: 120px; border-left: 1px solid; border-top: 1px solid; text-align: right;">Amount (Rp)</th>
+        <div class="row">
+            <div class="column-50">
+                <div class="card card-costumer align-mid">
+                    <h2 class="align-mid"><b> {{$company->name}} </b></h2>
+                    <h3 class="align-mid"><b> {{$company->address}} </b></h3>
+                    <hr><br>
+                    <p class="align-mid"><b><u> Penawaran </u></b></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column-50">
+                <div class="card card-costumer">
+                    <table class="table-none">
+                        <tr>
+                            <td> Kepada </td>
+                            <td> : {{$pp->contact->display_name}} </td>
+                        </tr>
+                        <tr>
+                            <td> Alamat </td>
+                            <td> : {{$pp->address}} </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="column-50">
+                <div class="card card-costumer">
+                    <table class="table-none">>
+                        <tr>
+                            <td> No. Penawaran </td>
+                            <td> : {{$pp->number}} </td>
+                        </tr>
+                        <tr>
+                            <td> Tanggal Penawaran </td>
+                            <td> : {{$today}} </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <table class="table-data">
+            <thead class="table-head">
+                <tr >
+                    <th>No</th>
+                    <th>Type</th>
+                    <th colspan="2">Qty</th>
+                    <th colspan="2">Harga/Unit</th>
+                    <th colspan="2">Harga Total</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="table-body">
+                <?php 
+                    $number = 1;
+                    $total = 0;
+                    $qty = 0;
+                    ?>
                 @foreach($pp_item as $a)
                 <tr>
-                    <td>{{$a->product->name}}</td>
-                    <td style="border-left: 1px solid; text-align: right;">{{$a->qty}} - {{$a->unit->name}}</td>
-                    <td style="border-left: 1px solid; text-align: right;">Rp @number($a->unit_price)</td>
-                    <td style="border-left: 1px solid; text-align: right;">Rp @number($a->amount)</td>
+                    <td>{{$number}}</td>
+                    <td style="text-align: left;">{{$a->product->name}}</td>
+                    <td style="text-align: right;">{{$a->qty}}</td>
+                    <td>{{$a->unit->name}}</td>
+                    <td> Rp </td>
+                    <td style="text-align: right;"> @number($a->unit_price) <span></td>
+                    <td> Rp </td>
+                    <td style="text-align: right;"> @number($a->amount) <span></td>
+                    <?php $number++;$total += $a->amount; $qty += $a->qty?>
                 </tr>
                 @endforeach
             </tbody>
-            <tfoot>
+            <tfoot class="table-foot">
                 <tr>
-                    <td colspan="2" style="border-top: 1px solid;"><strong>PLEASE NOTE</strong></td>
-                    <td style="border-top: 1px solid; border-left: 1px solid;">Subtotal</td>
-                    <td style="border-top: 1px solid; border-left: 1px solid; text-align: right;">Rp @number($pp->grandtotal)</td>
-                </tr>
-                <tr>
-                    <td colspan="2">{{$pp->message}}</td>
-                    <td style="border-top: 1px solid; border-left: 1px solid;"><strong>TOTAL</strong></td>
-                    <th style="border-top: 1px solid; border-left: 1px solid; text-align: right;"><strong>Rp @number($pp->grandtotal)</strong></th>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td style="border-top: 1px solid; border-left: 1px solid;">Balance Due</td>
-                    <td style="border-top: 1px solid; border-left: 1px solid; text-align: right;">Rp @number($pp->balance_due)</td>
+                    <td colspan="6">
+                    </td>
+                    <td style="text-align: center;"> Rp </td>
+                    <td style="text-align: right; margin-right: 5px;">
+                        @number($total)
+                    </td>
                 </tr>
             </tfoot>
         </table>
+        <br>
+        <br>
+        <div class="row">
+            <div class="column-50">
+                <p>Hormat Kami, </p>
+                <br>
+                <br>
+                <br>
+                <br>
+                <p> {{Auth::user()->name}} </p>
+            </div>            
+        </div>        
+        <br>
+        @if($pp->memo)
+        <div class="row">
+            <div class="column-33">
+                <p><strong>Note :</strong></p>
+                <p> {{$pp->memo}} </p>
+            </div>
+        </div>
+        @endif
     </div>
-    <div class="footer"><small><i>Sales Quote #{{$pp->number}}</i></small></div>
+    </div>
 </body>
 
 </html>

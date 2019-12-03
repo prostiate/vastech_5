@@ -204,7 +204,7 @@
                                                         <a>{{$so->transaction_date}}</a>
                                                     </td>
                                                     <td>
-                                                        @foreach($so->sales_order_item as $soi)
+                                                        @foreach($so->sale_order_item as $soi)
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>
@@ -221,7 +221,7 @@
                                                         <a>{{$sd->transaction_date}}</a>
                                                     </td>
                                                     <td>
-                                                        @foreach($sd->sales_delivery_item as $sdi)
+                                                        @foreach($sd->sale_delivery_item as $sdi)
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>
@@ -238,7 +238,7 @@
                                                         <a>{{$si->transaction_date}}</a>
                                                     </td>
                                                     <td>
-                                                        @foreach($si->sales_invoice_item as $sii)
+                                                        @foreach($si->sale_invoice_item as $sii)
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>

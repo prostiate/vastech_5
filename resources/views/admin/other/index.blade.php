@@ -25,10 +25,10 @@
             <div class="x_title">
                 <h2>Other Lists</h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    <li><a class="collapse-link"></a>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"></a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Settings 1</a>
                             </li>
@@ -36,7 +36,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    <li><a class="close-link"></a>
                     </li>
                 </ul>
                 <div class="clearfix"></div>
@@ -55,7 +55,7 @@
                                         <h4>Displays the list of tags</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                         <h4>List of all transactions</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/altransactions3.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                                         <h4>List of setting a schedule for recurring transactions</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                     <h4>Display list of your closed books per period, including reports per period</h4>
                                 </div>
                                 <div class="right col-xs-5 text-center">
-                                    <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                    <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                         <h4>Display list of product categories</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/productcategories.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                         <h4>List of all attachments associate with transactions</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                                         <h4>Displays Cash, Check, and any other ways you categorize payments you receive from customer</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/paymentmethod.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +160,7 @@
                                         <h4>Display the list of taxes that is used in the payments from customer or payments to vendors</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/taxes.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
                                         <h4>Display the list of product units that is used in to track SKU or standard international units for products. Eg. kg, m, cm, l, box, pcs, unit, etc</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/productunits.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +190,7 @@
                                         <h4>Displays the list of terms that determine the due date of payments from customer or payments to vendors. From here you, can add or edit terms</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/terms.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +205,7 @@
                                         <h4>List of changes that have been made</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +220,7 @@
                                         <h4>Display list of import and export history in Jurnal. You can see status and data from each import & export, and delete data per import</h4>
                                     </div>
                                     <div class="right col-xs-5 text-center">
-                                        <img src="/assets/img/defaultuser.png" alt="" class="img-circle img-responsive">
+                                        <img src="/assets/img/defaultuser.png" alt="" class="img-responsive">
                                     </div>
                                 </div>
                             </div>

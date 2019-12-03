@@ -9,63 +9,92 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <form method="post" id="formCreate">
-                    <div id="demo-form2" class="form-horizontal form-label-left">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name_product">Product Name <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input placeholder="Product Name" type="text" id="name_product" name="name_product" required="required" class="form-control col-md-7 col-xs-12">
+                <form method="post" id="formCreate" class="form-horizontal">
+                    <br>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Product Name *</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input class="form-control" type="text" id="name_product" name="name_product">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Category</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="category_product" name="category_product" class="form-control selectcategory">
+                                        @foreach($categories as $a)
+                                        <option value="{{$a->id}}">
+                                            {{$a->name}}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="code_product">Code / SKU
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input placeholder="Code / SKU" type="text" id="code_product" name="code_product" class="form-control col-md-7 col-xs-12">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Code / SKU</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input class="form-control" type="text" id="code_product" name="code_product">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Unit</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="unit_product" name="unit_product" class="form-control selectunit">
+                                        @foreach($units as $a)
+                                        <option value="{{$a->id}}">
+                                            {{$a->name}}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="category_product">Category
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select id="category_product" name="category_product" class="form-control col-md-12 col-xs-12 selectcategory">
-                                    @foreach($categories as $a)
-                                    <option value="{{$a->id}}">
-                                        {{$a->name}}
-                                    </option>
-                                    @endforeach
-                                </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bundle</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input type="checkbox" class="js-switch is_bundle" value="1" name="is_bundle" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Description</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input class="form-control" type="text" id="desc_product" name="desc_product">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="unit_product">Unit
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select id="unit_product" name="unit_product" class="form-control col-md-12 col-xs-12 selectunit">
-                                    @foreach($units as $a)
-                                    <option value="{{$a->id}}">
-                                        {{$a->name}}
-                                    </option>
-                                    @endforeach
-                                </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Discount</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input type="checkbox" class="js-switch is_discount" value="1" name="is_discount" />
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="desc_product">Description
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input placeholder="Description" type="text" id="desc_product" name="desc_product" class="form-control col-md-7 col-xs-12">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="desc_product">Bundle
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <div class="">
-                                    <label>
-                                        <input type="checkbox" class="js-switch" value="1" name="is_bundle" />
-                                    </label>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Price Lock</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="is_price_lock" name="is_price_lock[]" class="form-control selectcategory" multiple="multiple">
+                                        <option value="Sales">Sales</option>
+                                        <option value="Purchase">Purchase</option>
+                                        <option value="Production">Production</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -73,9 +102,11 @@
                     <br>
                     <div class="" role="tabpanel" data-example-id="togglable-tabs">
                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Price & Setting</a>
+                            <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Price & Account Setting</a>
                             </li>
                             <li role="presentation" class=""><a href="#tab_content2" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
+                            </li>
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="discount-tab" data-toggle="tab" aria-expanded="false">Discount Setting</a>
                             </li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
@@ -370,11 +401,21 @@
 <script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
-        $('input[type="checkbox"]').click(function() {
+        $('#product-tab').removeAttr("data-toggle", "tab");
+        $('#discount-tab').removeAttr("data-toggle", "tab");
+        $('.is_bundle').click(function() {
             if ($(this).prop("checked") == true) {
                 $('#product-tab').attr("data-toggle", "tab");
             } else if ($(this).prop("checked") == false) {
                 $('#product-tab').removeAttr("data-toggle", "tab");
+                $('#myTab a[href="#tab_content1"]').tab('show');
+            }
+        });
+        $('.is_discount').click(function() {
+            if ($(this).prop("checked") == true) {
+                $('#discount-tab').attr("data-toggle", "tab");
+            } else if ($(this).prop("checked") == false) {
+                $('#discount-tab').removeAttr("data-toggle", "tab");
                 $('#myTab a[href="#tab_content1"]').tab('show');
             }
         });

@@ -30,7 +30,7 @@ class SettingController extends Controller
         $cs = company_setting::where('company_id', 1)->first();
         //$logo = logo_uploaded::where('company_id', 1)->first();
 
-        return view('admin.settings.company', compact('cs', 'users', 'roles'));
+        return view('admin.settings.company', compact(['cs', 'users', 'roles']));
     }
 
     public function company_store(Request $request)

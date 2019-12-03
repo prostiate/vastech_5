@@ -160,7 +160,17 @@ class PurchaseOrderController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.purchases.order.create', compact('vendors', 'warehouses', 'terms', 'products', 'units', 'taxes', 'today', 'todaytambahtiga', 'trans_no'));
+        return view('admin.purchases.order.create', compact([
+            'vendors',
+            'warehouses',
+            'terms',
+            'products',
+            'units',
+            'taxes',
+            'today',
+            'todaytambahtiga',
+            'trans_no'
+        ]));
     }
 
     public function createFromQuote($id)
@@ -187,7 +197,17 @@ class PurchaseOrderController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.purchases.order.createFromQuote', compact('today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item', 'products', 'units', 'taxes'));
+        return view('admin.purchases.order.createFromQuote', compact([
+            'today',
+            'trans_no',
+            'terms',
+            'warehouses',
+            'po',
+            'po_item',
+            'products',
+            'units',
+            'taxes'
+        ]));
     }
 
     public function createRequestSukses()
@@ -283,7 +303,7 @@ class PurchaseOrderController extends Controller
             ]);
 
             $po = new purchase_order([
-                'user_id'                   => Auth::id(),
+                'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
                 'email'             => $request->get('email'),
@@ -293,8 +313,8 @@ class PurchaseOrderController extends Controller
                 'term_id'           => $request->get('term'),
                 'vendor_ref_no'     => $request->get('vendor_no'),
                 'warehouse_id'      => $request->get('warehouse'),
-                'subtotal'                  => $request->get('subtotal'),
-                'taxtotal'                  => $request->get('taxtotal'),
+                'subtotal'          => $request->get('subtotal'),
+                'taxtotal'          => $request->get('taxtotal'),
                 'balance_due'       => $request->get('balance'),
                 'grandtotal'        => $request->get('balance'),
                 'message'           => $request->get('message'),
@@ -710,8 +730,8 @@ class PurchaseOrderController extends Controller
                 'term_id'           => $request->get('term_date'),
                 'vendor_ref_no'     => $request->get('vendor_no'),
                 'warehouse_id'      => $request->get('warehouse'),
-                'subtotal'                  => $request->get('subtotal'),
-                'taxtotal'                  => $request->get('taxtotal'),
+                'subtotal'          => $request->get('subtotal'),
+                'taxtotal'          => $request->get('taxtotal'),
                 'balance_due'       => $request->get('balance'),
                 'grandtotal'        => $request->get('balance'),
                 'message'           => $request->get('message'),
@@ -1049,7 +1069,7 @@ class PurchaseOrderController extends Controller
         //$total_debit                = $get_all_detail->sum('debit');
         //$total_credit               = $get_all_detail->sum('credit');
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.purchases.order.PrintPDF', compact('pp', 'pp_item', 'today', 'company'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         //return $pdf->download('laporan-pegawai-pdf');
         // TANDA DOWNLOAD
         return $pdf->stream();

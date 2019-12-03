@@ -4,13 +4,13 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function() {
-    $("#click").click(function() {
+    $("#click_per").click(function() {
         event.preventDefault();
-        $("#click").prop("disabled", true);
-        $("#click").html("Processing");
+        $("#click_per").prop("disabled", true);
+        $("#click_per").html("Processing");
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/wip/newWIP",
+            url: "/wip/newWIP_per",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -28,8 +28,8 @@ $(document).ready(function() {
                     for (var count = 0; count < data.errors.length; count++) {
                         html += data.errors[count];
                     }
-                    $("#click").prop("disabled", false);
-                    $("#click").html("Create");
+                    $("#click_per").prop("disabled", false);
+                    $("#click_per").html("Create");
                 }
                 if (data.success) {
                     typeswal = "success";

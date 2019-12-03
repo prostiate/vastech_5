@@ -58,7 +58,7 @@ class SaleDeliveryController extends Controller
                 $number = 10000;
             $trans_no = $number + 1;
 
-            return view('admin.sales.delivery.po.create_baru', compact('today', 'trans_no', 'po', 'po_item'));
+            return view('admin.sales.delivery.po.create_baru', compact(['today', 'trans_no', 'po', 'po_item']));
         } else {
             $po                 = sale_delivery::where('selected_so_id', $id)->first();
             $po_item            = sale_delivery_item::where('sale_delivery_id', $check->id)->get();
@@ -77,7 +77,7 @@ class SaleDeliveryController extends Controller
                 $number = 10000;
             $trans_no = $number + 1;
 
-            return view('admin.sales.delivery.po.create_lama', compact('today', 'trans_no', 'po', 'po_item'));
+            return view('admin.sales.delivery.po.create_lama', compact(['today', 'trans_no', 'po', 'po_item']));
         }
     }
 
@@ -292,7 +292,7 @@ class SaleDeliveryController extends Controller
         $total_credit               = $get_all_detail->sum('credit');
         $check_invoice              = sale_invoice::where('selected_sd_id', $id)->first();
 
-        return view('admin.sales.delivery.show', compact('pd', 'products', 'get_all_detail', 'total_debit', 'total_credit', 'check_invoice'));
+        return view('admin.sales.delivery.show', compact(['pd', 'products', 'get_all_detail', 'total_debit', 'total_credit', 'check_invoice']));
     }
 
     public function edit($id)
@@ -300,7 +300,7 @@ class SaleDeliveryController extends Controller
         $pd                 = sale_delivery::find($id);
         $products           = sale_delivery_item::where('sale_delivery_id', $id)->get();
 
-        return view('admin.sales.delivery.edit', compact('pd', 'products'));
+        return view('admin.sales.delivery.edit', compact(['pd', 'products']));
     }
 
     public function updateFromPO(Request $request)
@@ -617,7 +617,7 @@ class SaleDeliveryController extends Controller
         $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

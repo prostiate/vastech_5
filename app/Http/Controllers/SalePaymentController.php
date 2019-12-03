@@ -65,7 +65,7 @@ class SalePaymentController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.payment.createFromSale', compact('today', 'trans_no', 'po', 'get_all_invoice', 'coa', 'payment_method'));
+        return view('admin.sales.payment.createFromSale', compact(['today', 'trans_no', 'po', 'get_all_invoice', 'coa', 'payment_method']));
     }
 
     public function store(Request $request)
@@ -160,6 +160,12 @@ class SalePaymentController extends Controller
                     // CHECK YANG DIBAYAR SAMA GA DENGAN BALANCE DUENYA BUAT NENTUIN STATUS DI INVOICE
                     $total_balance[$i]          = $request->pibalancedue[$i] - $request->pipayment_amount[$i];
                     $pi                         = sale_invoice::find($request->pinumber[$i]);
+                    $check_limit                = contact::find($pi->contact_id);
+                    if ($check_limit->is_limit == 1) {
+                        $check_limit->update([
+                            'current_limit_balance' => $check_limit->current_limit_balance + $request->pipayment_amount[$i],
+                        ]);
+                    }
                     if ($total_balance[$i] == 0) {
                         sale_invoice::find($request->pinumber[$i])->update([
                             'balance_due'           => $total_balance[$i],
@@ -215,7 +221,7 @@ class SalePaymentController extends Controller
         $get_all_invoice        = sale_payment_item::where('sale_payment_id', $id)->with('sale_invoice', 'sale_payment')->get();
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_methods::get();
-        return view('admin.sales.payment.edit', compact('po', 'get_all_invoice', 'coa', 'payment_method'));
+        return view('admin.sales.payment.edit', compact(['po', 'get_all_invoice', 'coa', 'payment_method']));
     }
 
     public function update(Request $request)
@@ -242,6 +248,12 @@ class SalePaymentController extends Controller
                     'balance'                   => $get_current_balance_on_coa->balance + $a->payment_amount,
                 ]);
                 $get_pi_data                    = sale_invoice::find($a->sale_invoice_id);
+                $check_limit                    = contact::find($get_pi_data->contact_id);
+                if ($check_limit->is_limit == 1) {
+                    $check_limit->update([
+                        'current_limit_balance' => $check_limit->current_limit_balance - $a->payment_amount,
+                    ]);
+                }
                 sale_invoice::find($a->sale_invoice_id)->update([
                     'amount_paid'               => $get_pi_data->amount_paid - $a->payment_amount,
                     'balance_due'               => $get_pi_data->balance_due + $a->payment_amount,
@@ -333,6 +345,12 @@ class SalePaymentController extends Controller
                     ]);
                     // CHECK YANG DIBAYAR SAMA GA DENGAN BALANCE DUENYA BUAT NENTUIN STATUS DI INVOICE
                     $pi                         = sale_invoice::find($request->pinumber[$i]);
+                    $check_limit                = contact::find($pi->contact_id);
+                    if ($check_limit->is_limit == 1) {
+                        $check_limit->update([
+                            'current_limit_balance' => $check_limit->current_limit_balance + $request->pipayment_amount[$i],
+                        ]);
+                    }
                     $total_balance[$i]          = $pi->balance_due - $request->pipayment_amount[$i];
                     if ($total_balance[$i] == 0) {
                         sale_invoice::find($request->pinumber[$i])->update([
@@ -388,6 +406,12 @@ class SalePaymentController extends Controller
                     'balance'                   => $get_current_balance_on_coa->balance + $a->payment_amount,
                 ]);
                 $get_pi_data                    = sale_invoice::find($a->sale_invoice_id);
+                $check_limit                    = contact::find($get_pi_data->contact_id);
+                if ($check_limit->is_limit == 1) {
+                    $check_limit->update([
+                        'current_limit_balance' => $check_limit->current_limit_balance - $a->payment_amount,
+                    ]);
+                }
                 sale_invoice::find($a->sale_invoice_id)->update([
                     'amount_paid'               => $get_pi_data->amount_paid - $a->payment_amount,
                     'balance_due'               => $get_pi_data->balance_due + $a->payment_amount,
@@ -448,7 +472,15 @@ class SalePaymentController extends Controller
 
         $pegawai = sale_payment::all();
 
-        $pdf = PDF::loadview('admin.sales.payment.PrintPDF', compact('pegawai', 'pp', 'pp_item', 'get_all_detail', 'total_debit', 'total_credit', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.payment.PrintPDF', compact([
+            'pegawai',
+            'pp',
+            'pp_item',
+            'get_all_detail',
+            'total_debit',
+            'total_credit',
+            'today'
+        ]))->setPaper('a4', 'portrait');
         //return $pdf->download('laporan-pegawai-pdf');
         // TANDA DOWNLOAD
         return $pdf->stream();

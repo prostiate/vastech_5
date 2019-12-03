@@ -63,7 +63,7 @@ class SaleReturnController extends Controller
             $number = 10000;
         $trans_no = $number + 1;
 
-        return view('admin.sales.return.create', compact('today', 'trans_no', 'warehouses', 'po', 'po_item'));
+        return view('admin.sales.return.create', compact(['today', 'trans_no', 'warehouses', 'po', 'po_item']));
     }
 
     public function store(Request $request)
@@ -471,7 +471,7 @@ class SaleReturnController extends Controller
         $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF', compact('pp', 'pp_item', 'today'))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

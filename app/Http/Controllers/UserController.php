@@ -15,7 +15,7 @@ class UserController extends Controller
         $users = User::all();
         $roles = Role::pluck('name', 'name')->all();
 
-        return view('admin.settings.user_management.index', compact('users', 'roles'));
+        return view('admin.settings.user_management.index', compact(['users', 'roles']));
     }
 
     public function store(Request $request)
@@ -49,7 +49,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.settings.user_management.edit', compact('user'));
+        return view('admin.settings.user_management.edit', compact(['user']));
     }
 
     public function update(Request $request, $id)
@@ -82,7 +82,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::all()->pluck('name');
 
-        return view('admin.settings.user_management.role', compact('user', 'roles'));
+        return view('admin.settings.user_management.role', compact(['user', 'roles']));
     }
 
     public function setRole(Request $request, $id)

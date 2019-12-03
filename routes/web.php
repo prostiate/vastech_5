@@ -307,6 +307,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/contacts/new',                                             'ContactController@create');
     Route::post('/contacts/newContact',                                     'ContactController@store');
+    Route::post('/contacts/newContactLimit/{id}',                           'ContactController@storeLimit');
     Route::get('/contacts/{id}',                                            'ContactController@show');
     Route::get('/contacts/edit/{id}',                                       'ContactController@edit');
     Route::post('/contacts/updateContact',                                  'ContactController@update');
@@ -529,11 +530,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/wip',                                                      'WipController@index');
     Route::get('/wip/new',                                                  'WipController@create');
     Route::get('/wip/new/fromSPK/{id}_{uid}',                               'WipController@createFromSPK');
-    Route::post('/wip/newWIP',                                              'WipController@store');
+    Route::post('/wip/newWIP_per',                                          'WipController@store_per');
+    Route::post('/wip/newWIP_all',                                          'WipController@store_all');
     Route::get('/wip/{id}',                                                 'WipController@show');
     Route::get('/wip/edit/{id}',                                            'WipController@edit');
     Route::post('/wip/updateWIP',                                           'WipController@update');
-    Route::get('/wip/delete/{id}',                                          'WipController@destroy');
+    Route::get('/wip/delete/{id}/per',                                      'WipController@destroy_per');
+    Route::get('/wip/delete/{id}/all',                                      'WipController@destroy_all');
 
     ##############################################################
     ####################### REQUEST SUKSES #######################

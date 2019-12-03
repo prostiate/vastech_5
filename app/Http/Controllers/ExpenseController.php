@@ -164,7 +164,7 @@ class ExpenseController extends Controller
                     'subtotal'              => $request->get('subtotal'),
                     'taxtotal'              => $request->get('taxtotal'),
                     'balance_due'           => 0,
-                    'grandtotal'            => 0,
+                    'grandtotal'            => $request->get('balance'),
                     'status'                => 3,
                 ]);
             }
@@ -480,7 +480,7 @@ class ExpenseController extends Controller
                 'memo'                                          => $request->get('memo'),
                 'subtotal'                                      => $request->get('subtotal'),
                 'taxtotal'                                      => $request->get('taxtotal'),
-                'balance_due'                                   => $request->get('balance'),
+                'balance_due'                                   => 0,
                 'grandtotal'                                    => $request->get('balance'),
             ]);
             if ($request->taxtotal > 0) {

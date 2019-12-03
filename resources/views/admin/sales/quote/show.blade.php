@@ -11,11 +11,11 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            <li><a href="#">Clone Transaction</a></li>
                             <li><a href="/sales_invoice/new/fromQuote/{{$pi->id}}">Create Invoice</a></li>
                             <li><a href="/sales_order/new/fromQuote/{{$pi->id}}">Create Order</a></li>
                             <li class="divider"></li>
                             <li><a target="_blank" href="/sales_quote/print/PDF/{{$pi->id}}">Print & Preview</a></li>
-                            <li><a href="#">Clone Transaction</a></li>
                         </ul>
                     </li>
                     @else

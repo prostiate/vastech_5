@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>All Contact</h3>
+        <h3>Contact Others</h3>
     </div>
     <!--<div class="title_right">
         <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
@@ -37,14 +37,13 @@
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">Company Name </th>
-                                <th class="column-title">Name </th>
-                                <th class="column-title">Address </th>
-                                <th class="column-title">Email </th>
-                                <th class="column-title">Phone </th>
-                                <th class="column-title">Tax Number </th>
-                                <th class="column-title">Balance </th>
-                                <th class="column-title">Other </th>
+                                <th class="column-title">Company Name</th>
+                                <th class="column-title">Name</th>
+                                <th class="column-title">Address</th>
+                                <th class="column-title">Email</th>
+                                <th class="column-title">Phone</th>
+                                <th class="column-title">Limit Balance</th>
+                                <th class="column-title">Current Limit Balance</th>
                             </tr>
                         </thead>
                     </table>
