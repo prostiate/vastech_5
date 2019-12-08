@@ -17,9 +17,11 @@ use App\spk_item;
 use App\warehouse_detail;
 use App\coa;
 use App\coa_detail;
+use App\product_production_item;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class WipController extends Controller
 {
@@ -72,18 +74,22 @@ class WipController extends Controller
         $contacts           = contact::get();
         $number             = wip::max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.request.sukses.wip.create', compact(['products', 'trans_no', 'today', 'warehouses', 'contacts']));
     }
@@ -92,52 +98,75 @@ class WipController extends Controller
     {
         $spk                            = spk::find($id);
         $spk_item                       = spk_item::find($uid);
+        $production_bundle              = product_production_item::where('product_id', $spk_item->product_id)->get();
         $current_product_bundle_item    = product_bundle_item::where('product_id', $spk_item->product_id)->get();
         $quantity_in_stock              = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->get();
         $number                         = wip::max('number');
         $today                          = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $products                       = product::where('is_track', 1)->get();
         $wd                             = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->whereNotIn('type', ['initial qty', 'wip', 'initial qty warehouse'])->groupBy('product_id')->get();
 
-        return view('admin.request.sukses.wip.createFromSPK', compact([
-            'spk',
-            'spk_item',
-            'current_product_bundle_item',
-            'quantity_in_stock',
-            'trans_no',
-            'today',
-            'products',
-            'wd',
-        ]));
+        if ($spk_item->product->is_production_bundle == 1) {
+            return view('admin.request.sukses.wip_production_bundle.createFromSPK', compact([
+                'spk',
+                'spk_item',
+                'production_bundle',
+                'current_product_bundle_item',
+                'quantity_in_stock',
+                'trans_no',
+                'today',
+                'products',
+                'wd',
+            ]));
+        } else {
+            return view('admin.request.sukses.wip.createFromSPK', compact([
+                'spk',
+                'spk_item',
+                'current_product_bundle_item',
+                'quantity_in_stock',
+                'trans_no',
+                'today',
+                'products',
+                'wd',
+            ]));
+        }
     }
 
     public function store_per(Request $request)
     {
         $number             = wip::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'wip_product_id_per'   => 'required|array|min:1',
             'wip_product_id_per.*' => 'required',
@@ -178,6 +207,8 @@ class WipController extends Controller
             }
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'WIP #' . $trans_no,
@@ -191,6 +222,7 @@ class WipController extends Controller
             $transactions->save();
 
             $header                             = wip::create([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'transaction_no_spk'            => $request->spk_no,
                 'selected_spk_id'               => $spk_id,
@@ -246,6 +278,8 @@ class WipController extends Controller
             ]);
             // BIKIN COA DETAIL DAN BALANCE BUAT PRODUCT JADINYA
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -261,6 +295,8 @@ class WipController extends Controller
             // BIKIN COA DETAIL DAN BALANCE BUAT MARGIN
             if ($request->margin_total_per > 0) {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -304,6 +340,8 @@ class WipController extends Controller
                 // BIKIN COA DETAIL DAN BALANCE BUAT PER BARANG RAW (MASUK KE INVENTORY CREDIT)
                 $default_product_account        = product::find($request->wip_product_id_per[$i]);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -328,18 +366,22 @@ class WipController extends Controller
     public function store_all(Request $request)
     {
         $number             = wip::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'wip_product_id_all'   => 'required|array|min:1',
             'wip_product_id_all.*' => 'required',
@@ -380,6 +422,8 @@ class WipController extends Controller
             }
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'WIP #' . $trans_no,
@@ -393,6 +437,7 @@ class WipController extends Controller
             $transactions->save();
 
             $header                             = wip::create([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'transaction_no_spk'            => $request->spk_no,
                 'selected_spk_id'               => $spk_id,
@@ -448,6 +493,8 @@ class WipController extends Controller
             ]);
             // BIKIN COA DETAIL DAN BALANCE BUAT PRODUCT JADINYA
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -463,6 +510,8 @@ class WipController extends Controller
             // BIKIN COA DETAIL DAN BALANCE BUAT MARGIN
             if ($request->margin_total_all > 0) {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -506,6 +555,8 @@ class WipController extends Controller
                 // BIKIN COA DETAIL DAN BALANCE BUAT PER BARANG RAW (MASUK KE INVENTORY CREDIT)
                 $default_product_account        = product::find($request->wip_product_id_all[$i]);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',

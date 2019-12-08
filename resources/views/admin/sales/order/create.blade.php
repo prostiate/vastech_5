@@ -134,11 +134,13 @@
                                             <input class="selected_product_unit" hidden>
                                             <input class="selected_product_price" hidden>
                                             <input class="selected_product_tax" hidden>
+                                            <input class="selected_product_is_lock_sales" hidden>
                                             <input class="tampungan_product_id" hidden>
                                             <input class="tampungan_product_desc" hidden>
                                             <input class="tampungan_product_unit" hidden>
                                             <input class="tampungan_product_price" hidden>
                                             <input class="tampungan_product_tax" hidden>
+                                            <input class="tampungan_product_is_lock_sales" hidden>
                                         </div>
                                     </td>
                                     <td>

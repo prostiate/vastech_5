@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Proyek</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="{{ url('/warehouses/'.$po->warehouse_id) }}">
                                         <h5>{{$po->warehouse->name}}</h5>
@@ -110,7 +110,7 @@
                     <br>
                     <div class="">
                         <label>
-                            <input type="checkbox" class="js-switch" value="1" name="jasa_only" /> Jasa Pabrikasi Only
+                            <input type="checkbox" class="js-switch" value="1" name="jasa_only" /> Fabrication Services Only
                         </label>
                     </div>
                     <div class="table-responsive my-5">

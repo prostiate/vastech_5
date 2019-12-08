@@ -35,7 +35,7 @@
                                 <th class="column-title">Number</th>
                                 <th class="column-title">SPK Ref No</th>
                                 <th class="column-title">Contact</th>
-                                <th class="column-title">Proyek</th>
+                                <th class="column-title">Warehouse</th>
                                 <th class="column-title">Status</th>
                             </tr>
                         </thead>

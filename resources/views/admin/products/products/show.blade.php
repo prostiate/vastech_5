@@ -32,14 +32,24 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a href="#">Archive</a>
+                            <!--<li><a href="#">Archive</a>-->
                             <li><a href="#" id="click">Delete</a>
                                 <input type="text" value="{{$products->id}}" id="form_id" hidden>
                             </li>
                         </ul>
                     </li>
                 </ul>
-                <h2><b>{{$products->name}}</b></h2>
+                <h3><b>{{$products->name}}</b></h3>
+                <a>Price Lock : </a>
+                @if($products->is_lock_sales == 1)
+                <span class="label label-primary" style="color:white;">Sales</span>
+                @endif
+                @if($products->is_lock_purchase == 1)
+                <span class="label label-primary" style="color:white;">Purchase</span>
+                @endif
+                @if($products->is_lock_production == 1)
+                <span class="label label-primary" style="color:white;">Production</span>
+                @endif
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -50,7 +60,15 @@
                         <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">List Transactions</a>
                         </li>
                         @if($products->is_bundle == 1)
-                        <li role="presentation" class=""><a href="#tab_content3" role="tab" id="hehe-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
+                        <li role="presentation" class=""><a href="#tab_content3" role="tab" id="bundle-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
+                        </li>
+                        @endif
+                        @if($products->is_discount == 1)
+                        <li role="presentation" class=""><a href="#tab_content4" role="tab" id="discount-tab" data-toggle="tab" aria-expanded="false">Discount Price List</a>
+                        </li>
+                        @endif
+                        @if($products->is_production_bundle == 1)
+                        <li role="presentation" class=""><a href="#tab_content5" role="tab" id="production-tab" data-toggle="tab" aria-expanded="false">Production Bundle</a>
                         </li>
                         @endif
                     </ul>
@@ -308,7 +326,7 @@
                             </div>
                         </div>
                         @if($products->is_bundle == 1)
-                        <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="hehe-tab">
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="bundle-tab">
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>Bundled Product</h2>
@@ -362,6 +380,78 @@
                                                     </td>
                                                     <td>
                                                         <a>Rp @number($bc->amount)</a>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($products->is_discount == 1)
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="discount-tab">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Discount Price List</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped jambo_table bulk_action">
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th class="column-title">Quantity</th>
+                                                    <th class="column-title">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($discount as $dc)
+                                                <tr>
+                                                    <td>
+                                                        <a>{{$dc->qty}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Rp @number($dc->price)</a>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($products->is_production_bundle == 1)
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="production-tab">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Product Bundled for Production</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped jambo_table bulk_action">
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th class="column-title" style="width: 450px">Product Name</th>
+                                                    <th class="column-title">Quantity</th>
+                                                    <th class="column-title" style="width: 350px">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($production as $pr)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/products/{{$pr->bundle_product_id}}">{{$pr->bundle_product->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>{{$pr->qty}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>Rp @number($pr->price)</a>
                                                     </td>
                                                 </tr>
                                                 @endforeach

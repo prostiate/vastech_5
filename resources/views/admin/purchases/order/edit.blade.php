@@ -136,11 +136,13 @@
                                             <input class="selected_product_unit" hidden>
                                             <input class="selected_product_price" hidden>
                                             <input class="selected_product_tax" hidden>
+                                            <input class="selected_product_is_lock_purchase" hidden>
                                             <input class="tampungan_product_id" name="products2[]" value="{{$product->product_id}}" hidden>
                                             <input class="tampungan_product_desc" value="{{$product->desc}}" hidden>
                                             <input class="tampungan_product_unit" value="{{$product->unit_id}}" hidden>
                                             <input class="tampungan_product_price" value="{{$product->unit_price}}" hidden>
                                             <input class="tampungan_product_tax" value="{{$product->tax_id}}" hidden>
+                                            <input class="tampungan_product_is_lock_purchase" hidden>
                                         </div>
                                     </td>
                                     <td>
@@ -159,7 +161,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" value="{{$product->unit_price}}" type="text" class="unit_price_display form-control" name="unit_price_display[]" required>
+                                        <input onClick="this.select();" value="{{$product->unit_price}}" type="text" class="unit_price_display form-control" name="unit_price_display[]" required @if($product->product->is_lock_purchase == 1) readonly @endif>
                                         <input value="{{$product->unit_price}}" type="text" class="unit_price form-control form-control-sm" name="unit_price[]" hidden>
                                     </td>
                                     <td>

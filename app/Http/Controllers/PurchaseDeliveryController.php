@@ -15,6 +15,7 @@ use App\coa_detail;
 use App\product;
 use App\coa;
 use App\purchase_invoice;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,6 +23,7 @@ class PurchaseDeliveryController extends Controller
 {
     public function index()
     {
+        $user               = User::find(Auth::id());
         $open_po            = purchase_delivery::where('status', 1)->count();
         $payment_last       = purchase_delivery::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
         $overdue            = purchase_delivery::where('status', 5)->count();
@@ -34,7 +36,7 @@ class PurchaseDeliveryController extends Controller
                 ->make(true);
         }
 
-        return view('admin.purchases.delivery.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.purchases.delivery.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function createFromPO($id)
@@ -45,18 +47,22 @@ class PurchaseDeliveryController extends Controller
             $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
             $number             = purchase_delivery::max('number');
-            /*if ($number != null) {
-                $misahm             = explode("/", $number);
-                $misahy             = explode(".", $misahm[1]);
+            $user               = User::find(Auth::id());
+            if ($user->company_id == 5) {
+                if ($number != null) {
+                    $misahm             = explode("/", $number);
+                    $misahy             = explode(".", $misahm[1]);
+                }
+                if (isset($misahy[1]) == 0) {
+                    $misahy[1]      = 10000;
+                }
+                $number1                    = $misahy[1] + 1;
+                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            } else {
+                if ($number == 0)
+                    $number = 10000;
+                $trans_no = $number + 1;
             }
-            if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
-            }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-            if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
 
             return view('admin.purchases.delivery.po.create_baru', compact(['today', 'trans_no', 'po', 'po_item']));
         } else {
@@ -64,18 +70,22 @@ class PurchaseDeliveryController extends Controller
             $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
             $number             = purchase_delivery::max('number');
-            /*if ($number != null) {
-                $misahm             = explode("/", $number);
-                $misahy             = explode(".", $misahm[1]);
+            $user               = User::find(Auth::id());
+            if ($user->company_id == 5) {
+                if ($number != null) {
+                    $misahm             = explode("/", $number);
+                    $misahy             = explode(".", $misahm[1]);
+                }
+                if (isset($misahy[1]) == 0) {
+                    $misahy[1]      = 10000;
+                }
+                $number1                    = $misahy[1] + 1;
+                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            } else {
+                if ($number == 0)
+                    $number = 10000;
+                $trans_no = $number + 1;
             }
-            if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
-            }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-            if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
 
             return view('admin.purchases.delivery.po.create_lama', compact(['today', 'trans_no', 'po', 'po_item']));
         }
@@ -84,18 +94,22 @@ class PurchaseDeliveryController extends Controller
     public function storeFromPO(Request $request)
     {
         $number             = purchase_delivery::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'shipping_date' => 'required',
@@ -150,6 +164,8 @@ class PurchaseDeliveryController extends Controller
             }
             $default_unbilled_account_payable   = default_account::find(13);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $default_unbilled_account_payable->account_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'purchase delivery',
@@ -164,6 +180,8 @@ class PurchaseDeliveryController extends Controller
             ]);
 
             $transactions = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Purchase Delivery #' . $trans_no,
                 'type'                          => 'purchase delivery',
@@ -176,6 +194,7 @@ class PurchaseDeliveryController extends Controller
             ]);
 
             $pd = new purchase_delivery([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -225,6 +244,8 @@ class PurchaseDeliveryController extends Controller
                 // DEFAULT INVENTORY 17 dan yang di input di debit ini adalah total harga dari per barang
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',
@@ -239,6 +260,8 @@ class PurchaseDeliveryController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',

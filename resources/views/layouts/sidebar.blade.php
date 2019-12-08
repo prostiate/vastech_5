@@ -28,7 +28,7 @@
                 <ul class="nav side-menu">
                     <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
                     <!-- <li><a href="/sales"><i class="fa fa-tag"></i> Sales </a></li> -->
-                    @hasrole('Owner|Ultimate|Sales|GT|MT|WS')
+                    @hasrole('Owner|Ultimate|Sales|GT|MT|WS|Production')
                     <li><a><i class="fa fa-tag"></i> Sales <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/sales_quote">Sales Quote</a></li>
@@ -53,7 +53,7 @@
                     </li>
                     @endrole
                     <!-- <li><a href="/purchases"><i class="fa fa-credit-card"></i> Purchases </a></li> -->
-                    @hasrole('Owner|Ultimate|Accountant|Finance')
+                    @hasrole('Owner|Ultimate|Accountant|Finance|Production')
                     <li><a href="/expenses"><i class="fa fa-outdent"></i> Expenses </a></li>
                     @endrole
                     @hasrole('Owner|Ultimate|Production')
@@ -77,9 +77,9 @@
                     <li><a><i class="fa fa-dropbox"></i> Products <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/products">Goods & Services</a></li>
+                            <li><a href="/warehouses">Warehouses</a></li>
                             @hasrole('Owner|Ultimate|Warehouse')
                             <li><a href="/stock_adjustment">Stock Adjustment</a></li>
-                            <li><a href="/warehouses">Warehouses</a></li>
                             <li><a href="/warehouses_transfer">Warehouse Transfer List</a></li>
                             <!--<li><a>Production<span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -93,7 +93,7 @@
                         </ul>
                     </li>
                     <!--<li><a href="/products"><i class="fa fa-dropbox"></i> Products </a></li>-->
-                    @hasrole('Owner|Ultimate|Accountant|Finance')
+                    @hasrole('Owner|Ultimate|Accountant|Finance|Production')
                     <li><a href="/cashbank"><i class="fa fa-bank"></i> Cash & Bank </a></li>
                     <!--<li><a href="#"><i class="fa fa-desktop"></i> Assets Management </a></li>-->
                     <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> Chart of Accounts </a></li>

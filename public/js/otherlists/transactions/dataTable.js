@@ -171,6 +171,22 @@ $(document).ready(function() {
                                 row.number_complete +
                                 "</a>"
                             );
+                        } else if (row.type == "stock adjustment") {
+                            return (
+                                '<a href="/stock_adjustment/' +
+                                row.ref_id +
+                                '">' +
+                                row.number_complete +
+                                "</a>"
+                            );
+                        } else if (row.type == "warehouse transfer") {
+                            return (
+                                '<a href="/warehouses_transfer/' +
+                                row.ref_id +
+                                '">' +
+                                row.number_complete +
+                                "</a>"
+                            );
                         }
                     }
                 }
@@ -178,11 +194,9 @@ $(document).ready(function() {
             {
                 data: "ot_contact.display_name",
                 render: function(data, type, row) {
-                    if(row.ot_contact == null){
-                        return (
-                            '<a></a>'
-                        );
-                    }else{
+                    if (row.ot_contact == null) {
+                        return "<a></a>";
+                    } else {
                         return (
                             '<a href="/contacts/' +
                             row.ot_contact.id +
@@ -197,28 +211,28 @@ $(document).ready(function() {
                 data: "memo",
                 searchable: false,
                 orderable: false,
-                render: $.fn.dataTable.render.text(),
+                render: $.fn.dataTable.render.text()
             },
             {
                 data: "due_date",
                 searchable: false,
-                render: $.fn.dataTable.render.text(),
+                render: $.fn.dataTable.render.text()
             },
             {
                 data: "balance_due",
                 className: "text-right",
-                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
                 data: "total",
                 className: "text-right",
-                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
                 data: "status.name",
                 className: "text-center",
                 searchable: false,
-                render: $.fn.dataTable.render.text(),
+                render: $.fn.dataTable.render.text()
             }
         ]
     });

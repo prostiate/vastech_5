@@ -57,12 +57,22 @@
                     </div>
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
-                            <div class="col-md-6">
+                            <!--<div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bundle</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <div class="">
                                         <label>
                                             <input type="checkbox" class="js-switch is_bundle" value="1" name="is_bundle" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Production Bundle</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input type="checkbox" class="js-switch is_production_bundle" value="1" name="is_production_bundle" />
                                         </label>
                                     </div>
                                 </div>
@@ -82,31 +92,63 @@
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <div class="">
                                         <label>
-                                            <input type="checkbox" class="js-switch is_discount" value="1" name="is_discount" />
+                                            <input type="checkbox" class="js-switch is_discount" value="1" name="is_discount" id="is_discount" />
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Price Lock</label>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="is_lock_sales" name="is_lock_sales" id="is_lock_sales"> Sales
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="" name="is_lock_purchase"> Purchase
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="" name="is_lock_production"> Production
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if($user->roles->first()->name == 'GT' or $user->roles->first()->name == 'MT' or $user->roles->first()->name == 'WS')
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Sales Type</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select id="is_price_lock" name="is_price_lock[]" class="form-control selectcategory" multiple="multiple">
-                                        <option value="Sales">Sales</option>
-                                        <option value="Purchase">Purchase</option>
-                                        <option value="Production">Production</option>
+                                    <select id="sales_type" name="sales_type" class="form-control selectunit">
+                                        <option value="GT" @if($user->roles->first()->name == 'GT') selected @endif>General Trade</option>
+                                        <option value="MT" @if($user->roles->first()->name == 'MT') selected @endif>Modern Trade</option>
+                                        <option value="WS" @if($user->roles->first()->name == 'WS') selected @endif>Wholesaler</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @endif
                     <br>
                     <div class="" role="tabpanel" data-example-id="togglable-tabs">
                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                             <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Price & Account Setting</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content2" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
-                            </li>
+                            <!--<li role="presentation" class=""><a href="#tab_content2" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
+                            </li>-->
                             <li role="presentation" class=""><a href="#tab_content3" role="tab" id="discount-tab" data-toggle="tab" aria-expanded="false">Discount Setting</a>
+                            </li>
+                            <li role="presentation" class=""><a href="#tab_content4" role="tab" id="production-tab" data-toggle="tab" aria-expanded="false">Production Bundle</a>
                             </li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
@@ -252,7 +294,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="product-tab">
+                            <!--<div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="product-tab">
                                 <div class="x_panel">
                                     <div class="x_content">
                                         <div class="table-responsive">
@@ -367,6 +409,110 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>-->
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="discount-tab">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped jambo_table bulk_action">
+                                                <thead>
+                                                    <tr class="headings">
+                                                        <th class="column-title">Discount Quantity</th>
+                                                        <th class="column-title">Discount Price</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="neworderbody_discount">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_a">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_a">
+                                                            <input type="text" class="discount_price_hidden_a" name="discount_price_a" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_b">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_b">
+                                                            <input type="text" class="discount_price_hidden_b" name="discount_price_b" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_c">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_c">
+                                                            <input type="text" class="discount_price_hidden_c" name="discount_price_c" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_d">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_d">
+                                                            <input type="text" class="discount_price_hidden_d" name="discount_price_d" hidden>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="production-tab">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped jambo_table bulk_action">
+                                                <thead>
+                                                    <tr class="headings">
+                                                        <th class="column-title" style="width: 350px">Product Name</th>
+                                                        <th class="column-title">Quantity</th>
+                                                        <th class="column-title" style="width: 350px">Price</th>
+                                                        <th class="column-title" style="width: 50px"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="neworderbody_production">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <select class="form-control select_product_production product_id_production" name="product_id_production[]">
+                                                                    <option></option>
+                                                                </select>
+                                                                <input class="selected_product_id_production" hidden>
+                                                                <input class="tampungan_product_id_production" name="product_id_production2[]" hidden>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="number" class="form-control qty_production" name="product_qty_production[]" value="0">
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control product_price_display_production" value="0">
+                                                            <input type="text" class="hidden_product_price_production" name="product_price_production[]" value="0" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <input type="button" class="btn btn-danger delete_production" value="x">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <input type="button" class="btn btn-dark add-item_production" value="+ Add More Item">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -396,13 +542,15 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/products/addmoreitem.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/products/products/addmoreitem_product_bundle.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/products/products/addmoreitem_production_bundle.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/products/products/createForm.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('#product-tab').removeAttr("data-toggle", "tab");
         $('#discount-tab').removeAttr("data-toggle", "tab");
+        $('#production-tab').removeAttr("data-toggle", "tab");
         $('.is_bundle').click(function() {
             if ($(this).prop("checked") == true) {
                 $('#product-tab').attr("data-toggle", "tab");
@@ -411,13 +559,51 @@
                 $('#myTab a[href="#tab_content1"]').tab('show');
             }
         });
+        $('.is_lock_sales').click(function(e) {
+            var checkbox = $(this);
+            if (checkbox.not(":checked")) {
+                alert("If you turn on discount, you cannot turn off price lock for sales!")
+                e.preventDefault();
+                return false;
+            }
+        });
         $('.is_discount').click(function() {
             if ($(this).prop("checked") == true) {
                 $('#discount-tab').attr("data-toggle", "tab");
+                $('#is_lock_sales').prop("checked", true);
             } else if ($(this).prop("checked") == false) {
                 $('#discount-tab').removeAttr("data-toggle", "tab");
                 $('#myTab a[href="#tab_content1"]').tab('show');
+                $('#is_lock_sales').prop("checked", false);
             }
+        });
+        $('.is_production_bundle').click(function() {
+            if ($(this).prop("checked") == true) {
+                $('#production-tab').attr("data-toggle", "tab");
+            } else if ($(this).prop("checked") == false) {
+                $('#production-tab').removeAttr("data-toggle", "tab");
+                $('#myTab a[href="#tab_content1"]').tab('show');
+            }
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_a", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_a").val();
+            tr.find(".discount_price_hidden_a").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_b", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_b").val();
+            tr.find(".discount_price_hidden_b").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_c", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_c").val();
+            tr.find(".discount_price_hidden_c").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_d", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_d").val();
+            tr.find(".discount_price_hidden_d").val(hidden_discount_price);
         });
     });
 </script>

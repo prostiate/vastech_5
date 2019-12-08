@@ -15,6 +15,7 @@ use Validator;
 use App\other_transaction;
 use PDF;
 use App\default_account;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,13 +23,13 @@ class CashbankController extends Controller
 {
     public function index()
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
-        $open_po            = expense::whereIn('status', [1, 4])->count();
-        $payment_last       = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
-        $overdue            = expense::where('status', 5)->count();
-        $open_po_total            = expense::whereIn('status', [1, 4])->sum('grandtotal');
-        $payment_last_total       = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
-        $overdue_total            = expense::where('status', 5)->sum('grandtotal');
+        $coa                        = coa::with('coa_category')->where('cashbank', 1)->get();
+        $open_po                    = expense::whereIn('status', [1, 4])->count();
+        $payment_last               = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
+        $overdue                    = expense::where('status', 5)->count();
+        $open_po_total              = expense::whereIn('status', [1, 4])->sum('grandtotal');
+        $payment_last_total         = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
+        $overdue_total              = expense::where('status', 5)->sum('grandtotal');
         if (request()->ajax()) {
             return datatables()->of(coa::with('coa_category')->where('cashbank', 1)->get())
                 ->make(true);
@@ -51,18 +52,22 @@ class CashbankController extends Controller
         $coa                = coa::with('coa_category')->where('cashbank', 1)->get();
         $number             = cashbank::where('bank_transfer', 1)->max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.cashbank.createBankTransfer', compact(['coa', 'trans_no', 'today']));
     }
@@ -75,18 +80,22 @@ class CashbankController extends Controller
         $taxes              = other_tax::get();
         $number             = cashbank::where('bank_deposit', 1)->max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.cashbank.createBankDeposit', compact(['coa', 'trans_no', 'today', 'taxes', 'contact', 'expenses']));
     }
@@ -99,18 +108,22 @@ class CashbankController extends Controller
         $taxes              = other_tax::get();
         $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.cashbank.createBankWithdrawalAccount', compact(['coa', 'trans_no', 'today', 'taxes', 'contact', 'expenses']));
     }
@@ -137,18 +150,22 @@ class CashbankController extends Controller
         $expenses           = expense::find($id);
         $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.cashbank.createBankWithdrawalFromExpense', compact(['coa', 'trans_no', 'today', 'contact', 'expenses']));
     }
@@ -156,18 +173,22 @@ class CashbankController extends Controller
     public function storeBankTransfer(Request $request)
     {
         $number             = cashbank::where('bank_transfer', 1)->max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'amount'                   => 'required',
         );
@@ -180,6 +201,8 @@ class CashbankController extends Controller
         DB::beginTransaction();
         try {
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Bank Transfer #' . $trans_no,
@@ -191,6 +214,7 @@ class CashbankController extends Controller
             ]);
 
             $ex                                 = new cashbank([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'bank_transfer'                 => 1,
                 'date'                          => $request->get('trans_date'),
@@ -207,6 +231,8 @@ class CashbankController extends Controller
             ]);
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->deposit_to,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'banktransfer',
@@ -220,6 +246,8 @@ class CashbankController extends Controller
             ]);
             // CREATE COA DETAIL YANG TRANSFER FROM (CREDIT)
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->transfer_from,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'banktransfer',
@@ -242,18 +270,22 @@ class CashbankController extends Controller
     public function storeBankDeposit(Request $request)
     {
         $number             = cashbank::where('bank_deposit', 1)->max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'                   => 'required',
             'expense_acc'                   => 'required|array|min:1',
@@ -271,6 +303,8 @@ class CashbankController extends Controller
         DB::beginTransaction();
         try {
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Bank Deposit #' . $trans_no,
@@ -283,6 +317,7 @@ class CashbankController extends Controller
             ]);
 
             $ex                                 = new cashbank([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'bank_deposit'                  => 1,
                 'date'                          => $request->get('trans_date'),
@@ -301,6 +336,8 @@ class CashbankController extends Controller
             ]);
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->deposit_to,
                 'type'                          => 'bankdeposit',
                 'date'                          => $request->get('trans_date'),
@@ -317,6 +354,8 @@ class CashbankController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'bankdeposit',
@@ -345,6 +384,8 @@ class CashbankController extends Controller
                 $ex->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankdeposit',
                     'date'                      => $request->get('trans_date'),
@@ -370,18 +411,22 @@ class CashbankController extends Controller
     public function storeBankWithdrawalAccount(Request $request)
     {
         $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'                   => 'required',
             'expense_acc'                   => 'required|array|min:1',
@@ -399,6 +444,8 @@ class CashbankController extends Controller
         DB::beginTransaction();
         try {
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Bank Withdrawal #' . $trans_no,
@@ -411,6 +458,7 @@ class CashbankController extends Controller
             ]);
 
             $ex                                 = new cashbank([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'bank_withdrawal_acc'           => 1,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -441,6 +489,8 @@ class CashbankController extends Controller
                 $ex->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankwithdrawalaccount',
                     'date'                      => $request->get('trans_date'),
@@ -457,6 +507,8 @@ class CashbankController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'bankwithdrawalaccount',
@@ -472,6 +524,8 @@ class CashbankController extends Controller
             }
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->pay_from,
                 'type'                          => 'bankwithdrawalaccount',
                 'date'                          => $request->get('trans_date'),
@@ -495,18 +549,22 @@ class CashbankController extends Controller
     public function storeBankWithdrawalFromExpense(Request $request)
     {
         $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'                       => 'required',
             'amount_acc'                        => 'required',
@@ -544,6 +602,8 @@ class CashbankController extends Controller
                 ]);
             }
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Bank Withdrawal #' . $trans_no,
@@ -556,6 +616,7 @@ class CashbankController extends Controller
             ]);
 
             $ex                                 = new cashbank([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'bank_withdrawal_ex'            => 1,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -580,6 +641,8 @@ class CashbankController extends Controller
             // BIKIN COA DETAIL YANG DARI DEFAULT ACCOUNT
             $expense_account_coa_detail         = $request->expense_pay_from;
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $expense_account_coa_detail,
                 'type'                          => 'bankwithdrawalfromexpense',
                 'date'                          => $request->get('trans_date'),
@@ -594,6 +657,8 @@ class CashbankController extends Controller
             ]);
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->pay_from,
                 'type'                          => 'bankwithdrawalfromexpense',
                 'date'                          => $request->get('trans_date'),
@@ -812,6 +877,7 @@ class CashbankController extends Controller
 
     public function updateBankDeposit(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'vendor_name'                   => 'required',
             'expense_acc'                   => 'required|array|min:1',
@@ -877,6 +943,8 @@ class CashbankController extends Controller
                 'amount'                        => $request->get('balance'),
             ]);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->deposit_to,
                 'type'                          => 'bankdeposit',
                 'date'                          => $request->get('trans_date'),
@@ -893,6 +961,8 @@ class CashbankController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'bankdeposit',
@@ -920,6 +990,8 @@ class CashbankController extends Controller
                 $caba->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankdeposit',
                     'date'                      => $request->get('trans_date'),
@@ -943,6 +1015,7 @@ class CashbankController extends Controller
 
     public function updateBankWithdrawalAccount(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'vendor_name'                   => 'required',
             'expense_acc'                   => 'required|array|min:1',
@@ -1172,6 +1245,8 @@ class CashbankController extends Controller
                     $ambil_amount_coa_detail_sebelumnya->cashbank_item()->save($pp[$i]);
 
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                    => $request->expense_acc[$i],
                         'type'                      => 'bankwithdrawalaccount',
                         'date'                      => $request->get('trans_date'),

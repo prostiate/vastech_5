@@ -121,11 +121,14 @@
                                             <input class="selected_product_unit" hidden>
                                             <input class="selected_product_price" hidden>
                                             <input class="selected_product_tax" hidden>
+                                            <input class="selected_product_tax" hidden>
+                                            <input class="selected_product_is_lock_purchase" hidden>
                                             <input class="tampungan_product_id" name="products2[]" value="{{$item->product_id}}" hidden>
                                             <input class="tampungan_product_desc" value="{{$item->desc}}" hidden>
                                             <input class="tampungan_product_unit" value="{{$item->unit_id}}" hidden>
                                             <input class="tampungan_product_price" value="{{$item->unit_price}}" hidden>
                                             <input class="tampungan_product_tax" value="{{$item->tax_id}}" hidden>
+                                            <input class="tampungan_product_is_lock_purchase" hidden>
                                         </div>
                                     </td>
                                     <td>
@@ -146,7 +149,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" type="text" class="unit_price_display form-control" name="unit_price_display[]" required value="{{$item->unit_price}}">
+                                        <input onClick="this.select();" type="text" class="unit_price_display form-control" name="unit_price_display[]" required value="{{$item->unit_price}}" @if($item->product->is_lock_purchase == 1) readonly @endif>
                                         <input type="text" class="unit_price form-control form-control-sm" name="unit_price[]" hidden value="{{$item->unit_price}}">
                                     </td>
                                     <td>

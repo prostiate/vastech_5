@@ -22,6 +22,7 @@ use Validator;
 use App\other_transaction;
 use App\coa;
 use App\product_bundle_cost;
+use App\product_discount_item;
 use App\sale_invoice_cost;
 use App\sale_payment;
 use App\sale_payment_item;
@@ -33,6 +34,7 @@ use App\sale_order_item;
 use App\sale_return;
 use App\spk;
 use App\spk_item;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
@@ -41,90 +43,158 @@ class SaleInvoiceController extends Controller
 {
     public function select_product()
     {
-        if (request()->ajax()) {
-            $page = Input::get('page');
-            $resultCount = 10;
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
 
-            $offset = ($page - 1) * $resultCount;
+                $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
-                ->where('is_sell', 1)
-                //->where('is_bundle', 0)
-                ->orderBy('name')
-                ->skip($offset)
-                ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax']);
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('is_sell', 1)
+                    ->where('sales_type', $user->getRoleNames()->first())
+                    //->where('is_bundle', 0)
+                    ->orderBy('name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
 
-            $count = product::where('is_sell', 1)->count();
-            $endCount = $offset + $resultCount;
-            $morePages = $endCount > $count;
+                $count = product::where('is_sell', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
 
-            $results = array(
-                "results" => $breeds,
-                "pagination" => array(
-                    "more" => $morePages,
-                ),
-                "total_count" => $count,
-            );
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
 
-            return response()->json($results);
+                return response()->json($results);
+            }
+        } else {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
+
+                $offset = ($page - 1) * $resultCount;
+
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('is_sell', 1)
+                    //->where('is_bundle', 0)
+                    ->orderBy('name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+
+                $count = product::where('is_sell', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
+
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
+
+                return response()->json($results);
+            }
         }
     }
 
     public function select_contact()
     {
-        if (request()->ajax()) {
-            $page = Input::get('page');
-            $resultCount = 10;
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
 
-            $offset = ($page - 1) * $resultCount;
+                $offset = ($page - 1) * $resultCount;
 
-            $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
-                ->where('type_customer', 1)
-                //->where('is_bundle', 0)
-                ->orderBy('display_name')
-                ->skip($offset)
-                ->take($resultCount)
-                ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('type_customer', 1)
+                    ->where('sales_type', $user->getRoleNames()->first())
+                    //->where('is_bundle', 0)
+                    ->orderBy('display_name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
 
-            $count = contact::where('type_customer', 1)->count();
-            $endCount = $offset + $resultCount;
-            $morePages = $endCount > $count;
+                $count = contact::where('type_customer', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
 
-            $results = array(
-                "results" => $breeds,
-                "pagination" => array(
-                    "more" => $morePages,
-                ),
-                "total_count" => $count,
-            );
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
 
-            return response()->json($results);
+                return response()->json($results);
+            }
+        } else {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
+
+                $offset = ($page - 1) * $resultCount;
+
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('type_customer', 1)
+                    //->where('is_bundle', 0)
+                    ->orderBy('display_name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
+
+                $count = contact::where('type_customer', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
+
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
+
+                return response()->json($results);
+            }
         }
     }
 
     public function index()
     {
-        $open_po            = sale_invoice::whereIn('status', [1, 4])->count();
-        $payment_last       = sale_invoice::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
-        $overdue            = sale_invoice::where('status', 5)->count();
-        $open_po_total            = sale_invoice::whereIn('status', [1, 4])->sum('grandtotal');
-        $payment_last_total       = sale_invoice::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
-        $overdue_total            = sale_invoice::where('status', 5)->sum('grandtotal');
-        if (request()->ajax()) {
-            //return datatables()->of(Product::all())
-            return datatables()->of(sale_invoice::with('sale_invoice_item', 'contact', 'status')->get())
-                /*->addColumn('action', function ($data) {
-                    $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<button type="button" name="delete" id="' . $data->id . '" class="fa fa-trash delete btn btn-danger btn-sm"></button>';
-                    return $button;
-                })
-                ->rawColumns(['action'])*/
-                ->make(true);
+        $user                       = User::find(Auth::id());
+        $open_po                    = sale_invoice::whereIn('status', [1, 4])->count();
+        $payment_last               = sale_invoice::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
+        $overdue                    = sale_invoice::where('status', 5)->count();
+        $open_po_total              = sale_invoice::whereIn('status', [1, 4])->sum('grandtotal');
+        $payment_last_total         = sale_invoice::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
+        $overdue_total              = sale_invoice::where('status', 5)->sum('grandtotal');
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(sale_invoice::with('sale_invoice_item', 'contact', 'status')->whereHas('contact', function ($query) use ($user) {
+                    $query->where('sales_type', $user->getRoleNames()->first());
+                })->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(sale_invoice::with('sale_invoice_item', 'contact', 'status')->get())
+                    ->make(true);
+            }
         }
 
-        return view('admin.sales.invoices.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.sales.invoices.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function create()
@@ -138,18 +208,22 @@ class SaleInvoiceController extends Controller
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.invoices.create', compact([
             'vendors',
@@ -175,18 +249,22 @@ class SaleInvoiceController extends Controller
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.request.sukses.sales.invoices.create', compact([
             'vendors',
@@ -209,18 +287,22 @@ class SaleInvoiceController extends Controller
         $today              = Carbon::today()->toDateString();
         $number             = sale_invoice::max('number');
         $terms              = other_term::all();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.invoices.createFromDelivery', compact(['today', 'trans_no', 'terms', 'po', 'po_item']));
     }
@@ -233,18 +315,22 @@ class SaleInvoiceController extends Controller
         $number             = sale_invoice::max('number');
         $terms              = other_term::all();
         $warehouses         = warehouse::all();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
@@ -260,18 +346,22 @@ class SaleInvoiceController extends Controller
         $products           = product::all();
         $units              = other_unit::all();
         $taxes              = other_tax::all();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.invoices.createFromQuote', compact([
             'today',
@@ -300,18 +390,22 @@ class SaleInvoiceController extends Controller
         $costs                      = coa::whereIn('coa_category_id', [15, 16, 17])->get();
         $cost_from_bundle           = product_bundle_cost::get();
         $check_cost_from_bundle     = product_bundle_cost::first();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.request.sukses.sales.invoices.createFromSPK', compact(
             'today',
@@ -337,18 +431,22 @@ class SaleInvoiceController extends Controller
         $number                     = sale_invoice::max('number');
         $terms                      = other_term::all();
         $warehouses                 = warehouse::all();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.request.sukses.sales.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
@@ -356,18 +454,22 @@ class SaleInvoiceController extends Controller
     public function store(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -410,22 +512,13 @@ class SaleInvoiceController extends Controller
                     Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
                 }
             }
-
-            coa_detail::create([
-                'coa_id'                    => $contact_account->account_receivable_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'sales invoice',
-                'number'                    => 'Sales Invoice #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => $request->get('balance'),
-                'credit'                    => 0,
-            ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
+            $subtotal_header_other          = 0;
+            $taxtotal_header_other          = 0;
+            $grandtotal_header_other        = 0;
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Invoice #' . $trans_no,
                 'type'                          => 'sales invoice',
@@ -438,6 +531,7 @@ class SaleInvoiceController extends Controller
                 'total'                         => $request->get('balance'),
             ]);
             $pi = new sale_invoice([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -462,24 +556,58 @@ class SaleInvoiceController extends Controller
                 'ref_id'                        => $pi->id,
             ]);
 
-            if ($request->taxtotal > 0) {
-                $default_tax                = default_account::find(8);
-                coa_detail::create([
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'type'                  => 'sales invoice',
-                    'number'                => 'Sales Invoice #' . $trans_no,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => 0,
-                    'credit'                => $request->get('taxtotal'),
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
-            }
-
             foreach ($request->products as $i => $product) {
+                $check_discount     = product::find($request->products[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 //menyimpan detail per item dari invoicd
                 $pp[$i] = new sale_invoice_item([
                     'product_id'                => $request->products[$i],
@@ -487,12 +615,12 @@ class SaleInvoiceController extends Controller
                     'qty'                       => $request->qty[$i],
                     'qty_remaining_return'      => $request->qty[$i],
                     'unit_id'                   => $request->units[$i],
-                    'unit_price'                => $request->unit_price[$i],
+                    'unit_price'                => $unit_price,
                     'tax_id'                    => $request->tax[$i],
-                    'amountsub'                 => $request->total_price_sub[$i],
-                    'amounttax'                 => $request->total_price_tax[$i],
-                    'amountgrand'               => $request->total_price_grand[$i],
-                    'amount'                    => $request->total_price[$i],
+                    'amountsub'                 => $subtotal,
+                    'amounttax'                 => $taxtotal,
+                    'amountgrand'               => $total,
+                    'amount'                    => $subtotal,
                 ]);
                 $pi->sale_invoice_item()->save($pp[$i]);
 
@@ -502,6 +630,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -516,20 +646,24 @@ class SaleInvoiceController extends Controller
                     ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $trans_no,
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                     ]);
                     $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa2->balance + $subtotal,
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -546,18 +680,20 @@ class SaleInvoiceController extends Controller
                 } else {
                     // DEFAULT SETTING
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $trans_no,
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                         //'from_product_id'   => $request->products[$i],
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -582,6 +718,55 @@ class SaleInvoiceController extends Controller
                     //'avg_price' => abs($curr_avg_price),
                 ]);
             };
+
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                    => $contact_account->account_receivable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'sales invoice',
+                'number'                    => 'Sales Invoice #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => $grandtotal_header_other,
+                'credit'                    => 0,
+            ]);
+            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
+            other_transaction::find($transactions->id)->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            sale_invoice::find($pi->id)->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            $get_sale_invoice       = sale_invoice::find($pi->id);
+            if ($get_sale_invoice->taxtotal > 0) {
+                $default_tax                = default_account::find(8);
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                => $default_tax->account_id,
+                    'date'                  => $request->get('trans_date'),
+                    'type'                  => 'sales invoice',
+                    'number'                => 'Sales Invoice #' . $trans_no,
+                    'contact_id'            => $request->get('vendor_name'),
+                    'debit'                 => 0,
+                    'credit'                => $taxtotal_header_other,
+                ]);
+                $get_current_balance_on_coa = coa::find($default_tax->account_id);
+                coa::find($get_current_balance_on_coa->id)->update([
+                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
+                ]);
+            }
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $pi->id]);
         } catch (\Exception $e) {
@@ -593,18 +778,22 @@ class SaleInvoiceController extends Controller
     public function storeRequestSukses(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -649,6 +838,8 @@ class SaleInvoiceController extends Controller
             }
 
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales invoice',
@@ -676,6 +867,8 @@ class SaleInvoiceController extends Controller
             }
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Invoice #' . $trans_no,
                 'type'                          => 'sales invoice',
@@ -688,6 +881,7 @@ class SaleInvoiceController extends Controller
                 'total'                         => $request->get('balance'),
             ]);
             $pi = new sale_invoice([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -717,6 +911,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'sales invoice',
@@ -754,6 +950,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -768,6 +966,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -782,6 +982,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -798,6 +1000,8 @@ class SaleInvoiceController extends Controller
                 } else {
                     // DEFAULT SETTING
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -845,18 +1049,22 @@ class SaleInvoiceController extends Controller
     public function storeFromDelivery(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'trans_date'    => 'required',
@@ -893,6 +1101,8 @@ class SaleInvoiceController extends Controller
             // DEFAULT SETTING UNBILLED REVENUE
             $default_unbilled_revenue           = default_account::find(6);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $default_unbilled_revenue->account_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -915,6 +1125,8 @@ class SaleInvoiceController extends Controller
                 }
             }
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -930,6 +1142,8 @@ class SaleInvoiceController extends Controller
             // DEFAULT SETTING UNBILLED RECEIVABLE
             $default_unbilled_receivable        = default_account::find(7);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $default_unbilled_receivable->account_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -944,6 +1158,8 @@ class SaleInvoiceController extends Controller
             ]);
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Invoice #' . $trans_no,
                 'type'                          => 'sales invoice',
@@ -957,6 +1173,7 @@ class SaleInvoiceController extends Controller
             ]);
 
             $pd = new sale_invoice([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -987,6 +1204,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -1024,6 +1243,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // YANG DI TRACK SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1052,6 +1273,8 @@ class SaleInvoiceController extends Controller
                 } else {
                     // YANG GA DI TRACK SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1095,18 +1318,22 @@ class SaleInvoiceController extends Controller
     public function storeFromOrder(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'trans_date'    => 'required',
@@ -1165,6 +1392,8 @@ class SaleInvoiceController extends Controller
             }
 
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -1197,6 +1426,8 @@ class SaleInvoiceController extends Controller
             }
             // CREATE OTHER TRANSACTION PUNYA SI INVOICE
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Invoice #' . $trans_no,
                 'type'                          => 'sales invoice',
@@ -1210,6 +1441,7 @@ class SaleInvoiceController extends Controller
             ]);
             // CREATE HEADERNYA SEKALIAN MASUKKIN OTHER_TRANSACTION_ID DIDALEMNYA
             $pd = new sale_invoice([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -1238,6 +1470,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -1281,6 +1515,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1295,6 +1531,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1309,6 +1547,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1323,6 +1563,8 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -1370,18 +1612,22 @@ class SaleInvoiceController extends Controller
     public function storeFromQuote(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'trans_date'    => 'required',
@@ -1428,20 +1674,10 @@ class SaleInvoiceController extends Controller
                     Total Current Limit Balance = ' . number_format($contact_account->current_limit_balance, 2, ',', '.')]);
                 }
             }
+            $subtotal_header_other          = 0;
+            $taxtotal_header_other          = 0;
+            $grandtotal_header_other        = 0;
 
-            coa_detail::create([
-                'coa_id'                    => $contact_account->account_receivable_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'sales invoice',
-                'number'                    => 'Sales Invoice #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => $request->get('balance'),
-                'credit'                    => 0,
-            ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // UPDATE STATUS ON SALES QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus                 = array(
                 'status'                    => 2,
@@ -1450,6 +1686,8 @@ class SaleInvoiceController extends Controller
             other_transaction::where('number', $id_number)->where('type', 'sales quote')->update($updatepdstatus);
             // CREATE LIST OTHER TRANSACTION PUNYA INVOICE
             $transactions                   = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                    => $trans_no,
                 'type'                      => 'sales invoice',
                 'memo'                      => $request->get('memo'),
@@ -1463,7 +1701,8 @@ class SaleInvoiceController extends Controller
             //$transactions->save();
             // CREATE SALES INVOICE HEADER
             $pd                             = new sale_invoice([
-                'user_id'                   => Auth::id(),
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -1488,36 +1727,68 @@ class SaleInvoiceController extends Controller
                 'ref_id'                    => $pd->id,
             ]);
 
-            if ($request->taxtotal > 0) {
-                $default_tax                = default_account::find(8);
-                coa_detail::create([
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'type'                  => 'sales invoice',
-                    'number'                => 'Sales Invoice #' . $trans_no,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => 0,
-                    'credit'                => $request->get('taxtotal'),
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
-            }
-
             // CREATE SALES INVOICE DETAILS
             foreach ($request->products2 as $i => $keys) {
+                $check_discount     = product::find($request->products2[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products2[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 $pp[$i] = new sale_invoice_item([
                     'product_id'            => $request->products2[$i],
                     'desc'                  => $request->desc[$i],
                     'qty'                   => $request->qty[$i],
                     'unit_id'               => $request->units[$i],
-                    'unit_price'            => $request->unit_price[$i],
+                    'unit_price'            => $unit_price,
                     'tax_id'                => $request->tax[$i],
-                    'amountsub'             => $request->total_price_sub[$i],
-                    'amounttax'             => $request->total_price_tax[$i],
-                    'amountgrand'           => $request->total_price_grand[$i],
-                    'amount'                => $request->total_price[$i],
+                    'amountsub'             => $subtotal,
+                    'amounttax'             => $taxtotal,
+                    'amountgrand'           => $total,
+                    'amount'                => $subtotal,
                     'qty_remaining'         => $request->r_qty[$i],
                     'qty_remaining_return'  => $request->qty[$i],
                 ]);
@@ -1529,6 +1800,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->buy_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
@@ -1543,20 +1816,24 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->sell_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
                         'number'            => 'Sales Invoice #' . $trans_no,
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
-                        'credit'            => $request->total_price[$i],
+                        'credit'            => $subtotal,
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'           => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->default_inventory_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
@@ -1571,17 +1848,19 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $trans_no,
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
 
@@ -1591,7 +1870,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $trans_no;
                 $wh->product_id                 = $request->products2[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -1607,6 +1886,55 @@ class SaleInvoiceController extends Controller
                     //'avg_price' => abs($curr_avg_price),
                 ]);
             };
+
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                    => $contact_account->account_receivable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'sales invoice',
+                'number'                    => 'Sales Invoice #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => $grandtotal_header_other,
+                'credit'                    => 0,
+            ]);
+            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
+            other_transaction::find($transactions->id)->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            sale_invoice::find($pd->id)->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            $get_sale_invoice       = sale_invoice::find($pd->id);
+            if ($get_sale_invoice->taxtotal > 0) {
+                $default_tax                = default_account::find(8);
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                => $default_tax->account_id,
+                    'date'                  => $request->get('trans_date'),
+                    'type'                  => 'sales invoice',
+                    'number'                => 'Sales Invoice #' . $trans_no,
+                    'contact_id'            => $request->get('vendor_name'),
+                    'debit'                 => 0,
+                    'credit'                => $taxtotal_header_other,
+                ]);
+                $get_current_balance_on_coa = coa::find($default_tax->account_id);
+                coa::find($get_current_balance_on_coa->id)->update([
+                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
+                ]);
+            }
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $pd->id]);
         } catch (\Exception $e) {
@@ -1618,18 +1946,22 @@ class SaleInvoiceController extends Controller
     public function storeFromSPK(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         DB::beginTransaction();
         try {
             $id_contact                         = $request->vendor_name;
@@ -1657,6 +1989,8 @@ class SaleInvoiceController extends Controller
 
             if ($jasa_only == 0) {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $contact_account->account_receivable_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -1671,6 +2005,8 @@ class SaleInvoiceController extends Controller
                 ]);
             } else {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $contact_account->account_receivable_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -1687,6 +2023,8 @@ class SaleInvoiceController extends Controller
 
             if ($jasa_only == 0) {
                 $transactions                       = other_transaction::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'number'                        => $trans_no,
                     'number_complete'               => 'Sales Invoice #' . $trans_no,
                     'type'                          => 'sales invoice',
@@ -1700,6 +2038,7 @@ class SaleInvoiceController extends Controller
                 ]);
 
                 $pi = new sale_invoice([
+                    'company_id'                    => $user->company_id,
                     'user_id'                       => Auth::id(),
                     'number'                        => $trans_no,
                     'contact_id'                    => $request->get('vendor_name'),
@@ -1724,6 +2063,8 @@ class SaleInvoiceController extends Controller
                 ]);
             } else {
                 $transactions                       = other_transaction::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'number'                        => $trans_no,
                     'number_complete'               => 'Sales Invoice #' . $trans_no,
                     'type'                          => 'sales invoice',
@@ -1737,6 +2078,7 @@ class SaleInvoiceController extends Controller
                 ]);
 
                 $pi = new sale_invoice([
+                    'company_id'                    => $user->company_id,
                     'user_id'                       => Auth::id(),
                     'number'                        => $trans_no,
                     'contact_id'                    => $request->get('vendor_name'),
@@ -1769,6 +2111,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'sales invoice',
@@ -1853,6 +2197,8 @@ class SaleInvoiceController extends Controller
                     if ($default_product_account->is_track == 1) {
                         // DEFAULT BUY ACCOUNT
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->buy_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -1867,6 +2213,8 @@ class SaleInvoiceController extends Controller
                         ]);
                         // DEFAULT SELL ACCOUNT
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -1881,6 +2229,8 @@ class SaleInvoiceController extends Controller
                         ]);
                         // DEFAULT INVENTORY ACCOUNT
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->default_inventory_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -1896,6 +2246,8 @@ class SaleInvoiceController extends Controller
                         ]);
                         // PUNYA COST
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => 69,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -1912,6 +2264,8 @@ class SaleInvoiceController extends Controller
                     } else {
                         // DEFAULT SETTING
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -1927,6 +2281,8 @@ class SaleInvoiceController extends Controller
                         ]);
                         // PUNYA COST
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => 69,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales invoice',
@@ -2018,18 +2374,22 @@ class SaleInvoiceController extends Controller
     public function storeFromOrderRequestSukses(Request $request)
     {
         $number             = sale_invoice::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         DB::beginTransaction();
         try {
             // AMBIL ID DARI SI ORDER PUNYA
@@ -2063,6 +2423,8 @@ class SaleInvoiceController extends Controller
             }
 
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -2095,6 +2457,8 @@ class SaleInvoiceController extends Controller
             }
             // CREATE OTHER TRANSACTION PUNYA SI INVOICE
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Invoice #' . $trans_no,
                 'type'                          => 'sales invoice',
@@ -2122,6 +2486,7 @@ class SaleInvoiceController extends Controller
 
             // CREATE HEADERNYA SEKALIAN MASUKKIN OTHER_TRANSACTION_ID DIDALEMNYA
             $pd = new sale_invoice([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -2152,6 +2517,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -2195,6 +2562,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2209,6 +2578,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2223,6 +2594,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2237,6 +2610,8 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2441,6 +2816,7 @@ class SaleInvoiceController extends Controller
 
     public function update(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -2475,6 +2851,10 @@ class SaleInvoiceController extends Controller
             $id_contact                         = $request->vendor_name2;
             $contact_account                    = contact::find($id_contact);
             $default_tax                        = default_account::find(8);
+            $get_ot                             = other_transaction::where('type', 'sales invoice')->where('number', $pi->number)->first();
+            $subtotal_header_other              = 0;
+            $taxtotal_header_other              = 0;
+            $grandtotal_header_other            = 0;
             if ($contact_id->is_limit == 1) {
                 $contact_id->update([
                     'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
@@ -2576,23 +2956,7 @@ class SaleInvoiceController extends Controller
                 }
             }
 
-            if ($contact_account->account_receivable_id == null) { } else {
-                coa_detail::create([
-                    'coa_id'                    => $contact_account->account_receivable_id,
-                    'date'                      => $request->get('trans_date'),
-                    'type'                      => 'sales invoice',
-                    'number'                    => 'Sales Invoice #' . $pi->number,
-                    'contact_id'                => $request->get('vendor_name2'),
-                    'debit'                     => $request->get('balance'),
-                    'credit'                    => 0,
-                ]);
-                $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-                ]);
-            }
-
-            other_transaction::where('type', 'sales invoice')->where('number', $pi->number)->update([
+            $get_ot->update([
                 'memo'                          => $request->get('memo'),
                 'transaction_date'              => $request->get('trans_date'),
                 'due_date'                      => $request->get('due_date'),
@@ -2600,7 +2964,8 @@ class SaleInvoiceController extends Controller
                 'balance_due'                   => $request->get('balance'),
                 'total'                         => $request->get('balance'),
             ]);
-            sale_invoice::find($id)->update([
+
+            $pi->update([
                 'contact_id'                    => $request->get('vendor_name2'),
                 'email'                         => $request->get('email'),
                 'address'                       => $request->get('vendor_address'),
@@ -2617,24 +2982,56 @@ class SaleInvoiceController extends Controller
                 'memo'                          => $request->get('memo'),
             ]);
 
-            if ($request->taxtotal > 0) {
-                $default_tax                    = default_account::find(8);
-                coa_detail::create([
-                    'coa_id'                    => $default_tax->account_id,
-                    'date'                      => $request->get('trans_date'),
-                    'type'                      => 'sales invoice',
-                    'number'                    => 'Sales Invoice #' . $pi->number,
-                    'contact_id'                => $request->get('vendor_name2'),
-                    'debit'                     => 0,
-                    'credit'                    => $request->get('taxtotal'),
-                ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
-            }
-
             foreach ($request->products2 as $i => $product) {
+                $check_discount     = product::find($request->products2[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products2[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 //menyimpan detail per item dari invoicd
                 $pp[$i] = new sale_invoice_item([
                     'product_id'                => $request->products2[$i],
@@ -2642,12 +3039,12 @@ class SaleInvoiceController extends Controller
                     'qty'                       => $request->qty[$i],
                     'qty_remaining_return'      => $request->qty[$i],
                     'unit_id'                   => $request->units[$i],
-                    'unit_price'                => $request->unit_price[$i],
+                    'unit_price'                => $unit_price,
                     'tax_id'                    => $request->tax[$i],
-                    'amountsub'                 => $request->total_price_sub[$i],
-                    'amounttax'                 => $request->total_price_tax[$i],
-                    'amountgrand'               => $request->total_price_grand[$i],
-                    'amount'                    => $request->total_price[$i],
+                    'amountsub'                 => $subtotal,
+                    'amounttax'                 => $taxtotal,
+                    'amountgrand'               => $total,
+                    'amount'                    => $subtotal,
                 ]);
                 $pi->sale_invoice_item()->save($pp[$i]);
 
@@ -2657,6 +3054,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2671,20 +3070,24 @@ class SaleInvoiceController extends Controller
                     ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $pi->number,
                         'contact_id'            => $request->get('vendor_name2'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                     ]);
                     $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa2->balance + $subtotal,
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -2701,18 +3104,20 @@ class SaleInvoiceController extends Controller
                 } else {
                     // DEFAULT SETTING
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $pi->number,
                         'contact_id'            => $request->get('vendor_name2'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                         //'from_product_id'   => $request->products[$i],
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -2721,7 +3126,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $pi->number;
                 $wh->product_id                 = $request->products2[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -2733,6 +3138,54 @@ class SaleInvoiceController extends Controller
                     'qty'                       => $produk->qty - $qty,
                 ]);
             };
+
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                    => $contact_account->account_receivable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'sales invoice',
+                'number'                    => 'Sales Invoice #' . $pi->number,
+                'contact_id'                => $request->get('vendor_name2'),
+                'debit'                     => $grandtotal_header_other,
+                'credit'                    => 0,
+            ]);
+            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
+            $get_ot->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            $pi->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            if ($pi->taxtotal > 0) {
+                $default_tax                    = default_account::find(8);
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                    => $default_tax->account_id,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'sales invoice',
+                    'number'                    => 'Sales Invoice #' . $pi->number,
+                    'contact_id'                => $request->get('vendor_name2'),
+                    'debit'                     => 0,
+                    'credit'                    => $taxtotal_header_other,
+                ]);
+                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
+                coa::find($get_current_balance_on_coa->id)->update([
+                    'balance'                   => $get_current_balance_on_coa->balance + $taxtotal_header_other,
+                ]);
+            }
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
         } catch (\Exception $e) {
@@ -2779,6 +3232,7 @@ class SaleInvoiceController extends Controller
 
     public function updateFromOrder(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -2919,6 +3373,8 @@ class SaleInvoiceController extends Controller
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account                    = contact::find($id_contact);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $contact_account->account_receivable_id,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'sales invoice',
@@ -2979,6 +3435,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -3022,6 +3480,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3036,6 +3496,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3050,6 +3512,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3064,6 +3528,8 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3106,6 +3572,7 @@ class SaleInvoiceController extends Controller
 
     public function updateFromQuote(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -3141,6 +3608,10 @@ class SaleInvoiceController extends Controller
             $contact_id                         = contact::find($pi->contact_id);
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
+            $subtotal_header_other              = 0;
+            $taxtotal_header_other              = 0;
+            $grandtotal_header_other            = 0;
+            $get_ot                             = other_transaction::where('type', 'sales invoice')->where('number', $pi->number)->first();
             if ($contact_id->is_limit == 1) {
                 $contact_id->update([
                     'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
@@ -3226,21 +3697,7 @@ class SaleInvoiceController extends Controller
             coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('credit', 0)->delete();
             sale_invoice_item::where('sale_invoice_id', $id)->delete();
-            // BIKIN BARUNYA
-            $contact_account                = contact::find($id_contact);
-            coa_detail::create([
-                'coa_id'                => $contact_account->account_receivable_id,
-                'date'                  => $request->get('trans_date'),
-                'type'                  => 'sales invoice',
-                'number'                => 'Sales Invoice #' . $pi->number,
-                'contact_id'            => $request->get('vendor_name'),
-                'debit'                 => $request->get('balance'),
-                'credit'                => 0,
-            ]);
-            $get_current_balance_on_coa = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'               => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
+
             // UPDATE STATUS ON SALES QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus                 = array(
                 'status'                    => 2,
@@ -3248,7 +3705,7 @@ class SaleInvoiceController extends Controller
             sale_quote::where('number', $number_sq)->update($updatepdstatus);
             other_transaction::where('number', $number_sq)->where('type', 'sales quote')->update($updatepdstatus);
             // CREATE LIST OTHER TRANSACTION PUNYA INVOICE
-            other_transaction::where('type', 'sales invoice')->where('number', $pi->number)->update([
+            $get_ot->update([
                 'memo'                      => $request->get('memo'),
                 'transaction_date'          => $request->get('trans_date'),
                 'due_date'                  => $request->get('due_date'),
@@ -3257,7 +3714,7 @@ class SaleInvoiceController extends Controller
                 'total'                     => $request->get('balance'),
             ]);
             // CREATE SALES INVOICE HEADER
-            sale_invoice::find($id)->update([
+            $pi->update([
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
                 'address'                   => $request->get('vendor_address'),
@@ -3275,18 +3732,67 @@ class SaleInvoiceController extends Controller
             ]);
             // CREATE SALES INVOICE DETAILS
             foreach ($request->products2 as $i => $keys) {
+                $check_discount     = product::find($request->products2[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products2[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 $pp[$i] = new sale_invoice_item([
                     'product_id'            => $request->products2[$i],
                     'desc'                  => $request->desc[$i],
                     'qty'                   => $request->qty[$i],
-                    'qty_remaining_return'                   => $request->qty[$i],
+                    'qty_remaining_return'  => $request->qty[$i],
                     'unit_id'               => $request->units[$i],
-                    'unit_price'            => $request->unit_price[$i],
+                    'unit_price'            => $unit_price,
                     'tax_id'                => $request->tax[$i],
-                    'amountsub'             => $request->total_price_sub[$i],
-                    'amounttax'             => $request->total_price_tax[$i],
-                    'amountgrand'           => $request->total_price_grand[$i],
-                    'amount'                => $request->total_price[$i],
+                    'amountsub'             => $subtotal,
+                    'amounttax'             => $taxtotal,
+                    'amountgrand'           => $total,
+                    'amount'                => $subtotal,
                     'qty_remaining'         => $request->r_qty[$i],
                 ]);
                 $pi->sale_invoice_item()->save($pp[$i]);
@@ -3297,6 +3803,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->buy_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
@@ -3311,20 +3819,24 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->sell_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
                         'number'            => 'Sales Invoice #' . $pi->number,
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
-                        'credit'            => $request->total_price[$i],
+                        'credit'            => $subtotal,
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'           => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->default_inventory_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales invoice',
@@ -3339,17 +3851,19 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
                         'number'                => 'Sales Invoice #' . $pi->number,
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
-                        'credit'                => $request->total_price[$i],
+                        'credit'                => $subtotal,
                     ]);
                     $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
                     coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -3358,7 +3872,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $pi->number;
                 $wh->product_id                 = $request->products2[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
                 //merubah harga average produk
@@ -3370,6 +3884,55 @@ class SaleInvoiceController extends Controller
                     //'avg_price' => abs($curr_avg_price),
                 ]);
             };
+            // BIKIN BARUNYA
+            $contact_account                = contact::find($id_contact);
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                => $contact_account->account_receivable_id,
+                'date'                  => $request->get('trans_date'),
+                'type'                  => 'sales invoice',
+                'number'                => 'Sales Invoice #' . $pi->number,
+                'contact_id'            => $request->get('vendor_name'),
+                'debit'                 => $grandtotal_header_other,
+                'credit'                => 0,
+            ]);
+            $get_current_balance_on_coa = coa::find($contact_account->account_receivable_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'               => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
+            $get_ot->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            $pi->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            if ($pi->taxtotal > 0) {
+                $default_tax                = default_account::find(8);
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                => $default_tax->account_id,
+                    'date'                  => $request->get('trans_date'),
+                    'type'                  => 'sales invoice',
+                    'number'                => 'Sales Invoice #' . $pi->number,
+                    'contact_id'            => $request->get('vendor_name'),
+                    'debit'                 => 0,
+                    'credit'                => $taxtotal_header_other,
+                ]);
+                $get_current_balance_on_coa = coa::find($default_tax->account_id);
+                coa::find($get_current_balance_on_coa->id)->update([
+                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
+                ]);
+            }
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
         } catch (\Exception $e) {
@@ -3380,6 +3943,7 @@ class SaleInvoiceController extends Controller
 
     public function updateFromOrderRequestSukses(Request $request)
     {
+        $user               = User::find(Auth::id());
         DB::beginTransaction();
         try {
             $id                                 = $request->hidden_id;
@@ -3508,6 +4072,8 @@ class SaleInvoiceController extends Controller
             }
 
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales invoice',
@@ -3568,6 +4134,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'sales invoice',
@@ -3611,6 +4179,8 @@ class SaleInvoiceController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3625,6 +4195,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3639,6 +4211,8 @@ class SaleInvoiceController extends Controller
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',
@@ -3653,6 +4227,8 @@ class SaleInvoiceController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $default_product_account->sell_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'sales invoice',

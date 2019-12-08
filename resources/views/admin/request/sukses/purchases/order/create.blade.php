@@ -110,7 +110,7 @@
                     <br>
                     <div class="">
                         <label>
-                            <input type="checkbox" class="js-switch" value="1" name="jasa_only" /> Jasa Pabrikasi Only
+                            <input type="checkbox" class="js-switch" value="1" name="jasa_only" /> Fabrication Services Only
                         </label>
                     </div>
                     <br>

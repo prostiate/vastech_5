@@ -16,6 +16,7 @@ use PDF;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class SpkController extends Controller
 {
@@ -100,18 +101,22 @@ class SpkController extends Controller
         $contacts           = contact::get();
         $number             = spk::max('number');
         $today              = Carbon::today()->toDateString();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.request.sukses.spk.create', compact(['products', 'trans_no', 'today', 'warehouses', 'contacts']));
     }
@@ -119,18 +124,22 @@ class SpkController extends Controller
     public function store(Request $request)
     {
         $number             = spk::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'contact'           => 'required',
             'warehouse'         => 'required',

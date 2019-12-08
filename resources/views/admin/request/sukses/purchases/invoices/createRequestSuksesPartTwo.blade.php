@@ -119,7 +119,7 @@
                                         <tr>
                                             <td>
                                                 <a href="/purchases_order/{{$ap->id}}" style="color:white;">
-                                                    <h5><b>Purchase Order #{{$ap->number}}@if($ap->jasa_only == 1) <small style="color:white;"> - Jasa Pabrikasi Only</small> @endif</b></h5>
+                                                    <h5><b>Purchase Order #{{$ap->number}}@if($ap->jasa_only == 1) <small style="color:white;"> - Fabrication Services Only</small> @endif</b></h5>
                                                 </a>
                                                 <input type="text" name="po_id[]" value="{{$ap->id}}" hidden>
                                                 <input type="text" name="po_number[]" value="{{$ap->number}}" hidden>

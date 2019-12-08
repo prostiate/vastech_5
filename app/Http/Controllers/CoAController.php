@@ -56,9 +56,9 @@ class CoAController extends Controller
     
     public function store(Request $request)
     {
-        $rules = array(
-            'code'      => 'required',
-            'name'      => 'required',
+        $rules                  = array(
+            'code'              => 'required',
+            'name'              => 'required',
             'coa_category_id'   => 'required',
         );
 
@@ -81,12 +81,12 @@ class CoAController extends Controller
             }else{
                 $cashbank           = null;
             }
-            $accounts = new coa([
+            $accounts               = new coa([
                 'user_id'           => Auth::id(),
-                'code'      => $request->get('code'),
+                'code'              => $request->get('code'),
                 'is_parent'         => $parent,
                 'parent_id'         => $parent_account,
-                'name'      => $request->get('name'),
+                'name'              => $request->get('name'),
                 'coa_category_id'   => $request->get('coa_category_id'),
                 'cashbank'          => $cashbank,
                 'default_tax'       => $request->get('default_tax'),

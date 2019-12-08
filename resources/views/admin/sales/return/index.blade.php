@@ -29,14 +29,21 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Sales <span class="caret"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            @if($user->company_id == 5)
+                            <li><a href="/sales_invoice/newRS">Sales Invoice</a>
+                            </li>
+                            <li><a href="/sales_order/newRS">Sales Order</a>
+                            </li>
+                            <li><a href="/sales_quote/new">Sales Quote</a>
+                            </li>
+                            @else
                             <li><a href="/sales_invoice/new">Sales Invoice</a>
                             </li>
                             <li><a href="/sales_order/new">Sales Order</a>
                             </li>
-                            <!--<li><a href="/sales_order/newRS">Sales Order Marketting</a>
-                            </!--<li>-->
                             <li><a href="/sales_quote/new">Sales Quote</a>
                             </li>
+                            @endif
                         </ul>
                     </li>
                 </ul>

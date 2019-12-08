@@ -1,102 +1,153 @@
 @extends('layouts.admin')
 
-@section('contentheader')
-<div class="page-title">
-    <div class="title_left">
-        <h3>Edit Product / Service</h3>
-    </div>
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
-</div>
-@endsection
-
 @section('content')
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2><b>{{$products->name}}</b></h2>
+                <h2>Edit Product / Service</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <form method="post" id="formCreate">
-                    <div id="demo-form2" class="form-horizontal form-label-left">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name_product">Product Name <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input value="{{$products->name}}" placeholder="Product Name" type="text" id="name_product" name="name_product" required="required" class="form-control col-md-7 col-xs-12">
+                <form method="post" id="formCreate" class="form-horizontal">
+                    <br>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Product Name *</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input value="{{$products->name}}" class="form-control" type="text" id="name_product" name="name_product">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="code_product">Code / SKU
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input value="{{$products->code}}" placeholder="Code / SKU" type="text" id="code_product" name="code_product" class="form-control col-md-7 col-xs-12">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="category_product">Category
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select id="category_product" name="category_product" class="form-control col-md-12 col-xs-12 selectcategory">
-                                    @foreach($categories as $a)
-                                    <option value="{{$a->id}}" @if($products->other_product_category_id == $a->id) selected @endif>
-                                        {{$a->name}}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="unit_product">Unit
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select id="unit_product" name="unit_product" class="form-control col-md-12 col-xs-12 selectunit">
-                                    @foreach($units as $a)
-                                    <option value="{{$a->id}}" @if($products->other_unit_id == $a->id) selected @endif>
-                                        {{$a->name}}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="desc_product">Description
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input value="{{$products->desc}}" placeholder="Description" type="text" id="desc_product" name="desc_product" class="form-control col-md-7 col-xs-12">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="desc_product">Bundle
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <div class="">
-                                    <label>
-                                        <input type="checkbox" class="js-switch" value="1" name="is_bundle" disabled @if($products->is_bundle == 1) checked @endif/>
-                                    </label>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Category</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="category_product" name="category_product" class="form-control selectcategory">
+                                        @foreach($categories as $a)
+                                        <option value="{{$a->id}}" @if($a->id == $products->other_product_category_id) selected @endif>
+                                            {{$a->name}}
+                                        </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Code / SKU</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input value="{{$products->code}}" class="form-control" type="text" id="code_product" name="code_product">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Unit</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="unit_product" name="unit_product" class="form-control selectunit">
+                                        @foreach($units as $a)
+                                        <option value="{{$a->id}}" @if($a->id == $products->other_unit_id) selected @endif>
+                                            {{$a->name}}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <!--<div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bundle</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input type="checkbox" class="js-switch is_bundle" value="1" name="is_bundle" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Production Bundle</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input @if($products->is_production_bundle == 1) checked @endif type="checkbox" class="js-switch is_production_bundle" value="1" name="is_production_bundle" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Description</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input value="{{$products->desc}}" class="form-control" type="text" id="desc_product" name="desc_product">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Discount</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="">
+                                        <label>
+                                            <input @if($products->is_discount == 1) checked @endif type="checkbox" class="js-switch is_discount" value="1" name="is_discount" id="is_discount"/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Price Lock</label>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input @if($products->is_lock_sales == 1) checked @endif type="checkbox" class="is_lock_sales" name="is_lock_sales" id="is_lock_sales"> Sales
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input @if($products->is_lock_purchase == 1) checked @endif type="checkbox" class="" name="is_lock_purchase"> Purchase
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input @if($products->is_lock_production == 1) checked @endif type="checkbox" class="" name="is_lock_production"> Production
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if($products->sales_type == 'GT' or $products->sales_type == 'MT' or $products->sales_type == 'WS')
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Sales Type</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select id="sales_type" name="sales_type" class="form-control selectunit">
+                                        <option value="GT" @if($products->sales_type == 'GT') selected @endif>General Trade</option>
+                                        <option value="MT" @if($products->sales_type == 'MT') selected @endif>Modern Trade</option>
+                                        <option value="WS" @if($products->sales_type == 'WS') selected @endif>Wholesaler</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <br>
                     <div class="" role="tabpanel" data-example-id="togglable-tabs">
                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Price & Setting</a>
+                            <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Price & Account Setting</a>
                             </li>
-                            @if($products->is_bundle == 1)
-                            <li role="presentation" class=""><a href="#tab_content2" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="discount-tab" @if($products->is_discount == 1) data-toggle="tab" @else data-toggle="" @endif aria-expanded="false">Discount Setting</a>
                             </li>
-                            @endif
+                            <li role="presentation" class=""><a href="#tab_content4" role="tab" id="production-tab" @if($products->is_production_bundle == 1) data-toggle="tab" @else data-toggle="" @endif aria-expanded="false">Production Bundle</a>
+                            </li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
                             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="invoice-tab">
@@ -241,8 +292,118 @@
                                     </div>
                                 </div>
                             </div>
-                            @if($products->is_bundle == 1)
-                            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="product-tab">
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="discount-tab">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped jambo_table bulk_action">
+                                                <thead>
+                                                    <tr class="headings">
+                                                        <th class="column-title">Discount Quantity</th>
+                                                        <th class="column-title">Discount Price</th>
+                                                    </tr>
+                                                </thead>
+                                                @if($products->is_discount == 1)
+                                                <tbody class="neworderbody_discount">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input value="{{$discount[0]->qty}}" onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_a">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input value="{{$discount[0]->price}}" onClick="this.select();" type="text" class="form-control discount_price_display_a" hidden>
+                                                            <input value="{{$discount[0]->price}}" type="text" class="discount_price_hidden_a" name="discount_price_a" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input @if(count($discount)==2 or count($discount)==3 or count($discount)==4) value="{{$discount[1]->qty}}" @endif onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_b">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input @if(count($discount)==2 or count($discount)==3 or count($discount)==4) value="{{$discount[1]->price}}" @endif onClick="this.select();" type="text" class="form-control discount_price_display_b" hidden>
+                                                            <input @if(count($discount)==2 or count($discount)==3 or count($discount)==4) value="{{$discount[1]->price}}" @endif type="text" class="discount_price_hidden_b" name="discount_price_b" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input @if(count($discount)==3 or count($discount)==4) value="{{$discount[2]->qty}}" @endif onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_c">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input @if(count($discount)==3 or count($discount)==4) value="{{$discount[2]->price}}" @endif onClick="this.select();" type="text" class="form-control discount_price_display_c" hidden>
+                                                            <input @if(count($discount)==3 or count($discount)==4) value="{{$discount[2]->price}}" @endif type="text" class="discount_price_hidden_c" name="discount_price_c" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input @if(count($discount)==4) value="{{$discount[3]->qty}}" @endif onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_d">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input @if(count($discount)==4) value="{{$discount[3]->price}}" @endif onClick="this.select();" type="text" class="form-control discount_price_display_d" hidden>
+                                                            <input @if(count($discount)==4) value="{{$discount[3]->price}}" @endif type="text" class="discount_price_hidden_d" name="discount_price_d" hidden>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                @else
+                                                <tbody class="neworderbody_discount">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_a">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_a">
+                                                            <input type="text" class="discount_price_hidden_a" name="discount_price_a" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_b">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_b">
+                                                            <input type="text" class="discount_price_hidden_b" name="discount_price_b" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_c">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_c">
+                                                            <input type="text" class="discount_price_hidden_c" name="discount_price_c" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input onClick="this.select();" type="number" class="form-control discount_qty" name="discount_qty_d">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="form-control discount_price_display_d">
+                                                            <input type="text" class="discount_price_hidden_d" name="discount_price_d" hidden>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                @endif
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="production-tab">
                                 <div class="x_panel">
                                     <div class="x_content">
                                         <div class="table-responsive">
@@ -255,149 +416,46 @@
                                                         <th class="column-title" style="width: 50px"></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="neworderbody1">
-                                                    @foreach($bundle_item as $bi)
+                                                <tbody class="neworderbody_production">
+                                                    @foreach($production as $pr)
                                                     <tr>
                                                         <td>
                                                             <div class="form-group">
-                                                                <select id="mySelect2" class="form-control select_product product_id" name="product_id[]">
-                                                                    <option>{{$bi->bundle_product->name}}</option>
+                                                                <select class="form-control select_product_production product_id_production" name="product_id_production[]">
+                                                                    <option>{{$pr->bundle_product->name}}</option>
                                                                 </select>
-                                                                <?php $id = $bi->bundle_product_id ?>
-                                                                <?php $avg_price = $bi->bundle_product->avg_price ?>
-                                                                <input class="selected_product_id" hidden>
-                                                                <input class="selected_product_avg_price" hidden>
-                                                                <input class="tampungan_product_id" value="{{$id}}" hidden>
-                                                                <input class="tampungan_product_avg_price" value="{{$bi->bundle_product->avg_price}}" hidden>
+                                                                <input class="selected_product_id_production" hidden>
+                                                                <input value="{{$pr->bundle_product_id}}" class="tampungan_product_id_production" name="product_id_production2[]" hidden>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <?php $qty = $bi->qty ?>
-                                                            <input value="{{$qty}}" onClick="this.select();" type="number" class="form-control qty" name="product_qty[]" value="0">
+                                                            <input value="{{$pr->qty}}" onClick="this.select();" type="number" class="form-control qty_production" name="product_qty_production[]" value="0">
                                                         </td>
                                                         <td>
-                                                            <?php $price = $bi->bundle_product->avg_price ?>
-                                                            <?php $total = $qty * $price ?>
-                                                            <input value="{{$total}}" onClick="this.select();" type="text" class="form-control product_price_display" value="0" readonly>
-                                                            <input value="{{$bi->bundle_product_id}}" type="text" class="hidden_product_id" name="product_id2[]" hidden>
-                                                            <input value="{{$total}}" type="text" class="hidden_product_price" name="product_price[]" value="0" hidden>
+                                                            <input value="{{$pr->price}}" onClick="this.select();" type="text" class="form-control product_price_display_production" value="0">
+                                                            <input value="{{$pr->price}}" type="text" class="hidden_product_price_production" name="product_price_production[]" value="0" hidden>
                                                         </td>
                                                         <td>
-                                                            <input type="button" class="btn btn-danger delete" value="x">
+                                                            <input type="button" class="btn btn-danger delete_production" value="x">
                                                         </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="2" class="text-right">
-                                                            <h5><strong>Total</strong></h5>
-                                                            </h5>
-                                                        <td colspan="2">
-                                                            <input type="text" class="form-control total_price_display" readonly>
-                                                            <input type="text" class="form-control total_price_hidden" name="total_price" readonly hidden>
-                                                        </td>
-                                                    </tr>
-                                                </tfoot>
                                             </table>
-                                            <input type="button" class="btn btn-dark add-item" value="+ Add More Item">
-                                        </div><br>
-                                        <div class="table-responsive my-5">
-                                            <table id="example" class="table table-striped jambo_table bulk_action">
-                                                <thead>
-                                                    <tr class="headings">
-                                                        <th class="column-title" style="width: 350px">Cost</th>
-                                                        <th class="column-title"></th>
-                                                        <th class="column-title" style="width: 350px">Amount </th>
-                                                        <th class="column-title" style="width: 50px"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="neworderbody2">
-                                                    @if($check_bundle_cost > 0)
-                                                    @foreach($bundle_cost as $bc)
-                                                    <tr>
-                                                        <td colspan="2">
-                                                            <div class="form-group">
-                                                                <select class="form-control selectaccount cost_id" name="cost_acc[]">
-                                                                    @foreach ($costs as $a)
-                                                                    <option value="{{$a->id}}" @if($a->id == $bc->coa_id) selected @endif>
-                                                                        ({{$a->code}}) - {{$a->name}} ({{$a->coa_category->name}})
-                                                                    </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <input value="{{$bc->amount}}" onClick="this.select();" type="text" class="form-control cost_amount_display" value="0">
-                                                            <input value="{{$bc->amount}}" type="text" class="hidden_cost_amount" name="cost_amount[]" value="0" hidden>
-                                                        </td>
-                                                        <td>
-                                                            <input type="button" class="btn btn-danger delete" value="x">
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                    @else
-                                                    <tr>
-                                                        <td colspan="2">
-                                                            <div class="form-group">
-                                                                <select class="form-control selectaccount cost_id" name="cost_acc[]">
-                                                                    <option></option>
-                                                                    @foreach ($costs as $a)
-                                                                    <option value="{{$a->id}}">
-                                                                        ({{$a->code}}) - {{$a->name}} ({{$a->coa_category->name}})
-                                                                    </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <input onClick="this.select();" type="text" class="form-control cost_amount_display" value="0">
-                                                            <input type="text" class="hidden_cost_amount" name="cost_amount[]" value="0" hidden>
-                                                        </td>
-                                                        <td>
-                                                            <input type="button" class="btn btn-danger delete" value="x">
-                                                        </td>
-                                                    </tr>
-                                                    @endif
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="2" class="text-right">
-                                                            <h5><strong>Total</strong></h5>
-                                                            </h5>
-                                                        <td colspan="2">
-                                                            <input type="text" class="form-control total_cost_display" readonly>
-                                                            <input type="text" class="form-control total_cost_hidden" name="total_cost" readonly hidden>
-                                                        </td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                            <input type="button" class="btn btn-dark add-cost" value="+ Add More Cost">
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="form-horizontal form-label-left">
-                                                <div class="col-md-6">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm">Grand Total</label>
-                                                    <div class="col-md-9 col-sm-9 col-xs-12">
-                                                        <input type="text" class="form-control total_grand_display" readonly>
-                                                        <input type="text" class="form-control total_grand_hidden" name="total_grand" readonly hidden>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <input type="button" class="btn btn-dark add-item_production" value="+ Add More Item">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/products/{{$products->id}}';">Cancel</button>
-                            <button type="button" id="click" class="btn btn-success">Update</button>
-                            <input value="{{$products->id}}" type="hidden" name="hidden_id" id="hidden_id" />
+                            <div class="btn-group">
+                                <button id="click" type="button" class="btn btn-success">Update </button>
+                                <input value="{{$products->id}}" type="hidden" name="hidden_id" id="hidden_id" />
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -408,18 +466,65 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/products/addmoreitem.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/products/products/addmoreitem_product_bundle.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/products/products/addmoreitem_production_bundle.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/products/products/updateForm.js')}}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
-        $('input[type="checkbox"]').click(function() {
+        $('.is_bundle').click(function() {
             if ($(this).prop("checked") == true) {
                 $('#product-tab').attr("data-toggle", "tab");
             } else if ($(this).prop("checked") == false) {
                 $('#product-tab').removeAttr("data-toggle", "tab");
                 $('#myTab a[href="#tab_content1"]').tab('show');
             }
+        });
+        $('.is_lock_sales').click(function(e) {
+            var checkbox = $(this);
+            if (checkbox.not(":checked")) {
+                alert("If you turn on discount, you cannot turn off price lock for sales!")
+                e.preventDefault();
+                return false;
+            }
+        });
+        $('.is_discount').click(function() {
+            if ($(this).prop("checked") == true) {
+                $('#discount-tab').attr("data-toggle", "tab");
+                $('#is_lock_sales').prop("checked", true);
+            } else if ($(this).prop("checked") == false) {
+                $('#discount-tab').removeAttr("data-toggle", "tab");
+                $('#myTab a[href="#tab_content1"]').tab('show');
+                $('#is_lock_sales').prop("checked", false);
+            }
+        });
+        $('.is_production_bundle').click(function() {
+            if ($(this).prop("checked") == true) {
+                $('#production-tab').attr("data-toggle", "tab");
+            } else if ($(this).prop("checked") == false) {
+                $('#production-tab').removeAttr("data-toggle", "tab");
+                $('#myTab a[href="#tab_content1"]').tab('show');
+            }
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_a", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_a").val();
+            tr.find(".discount_price_hidden_a").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_b", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_b").val();
+            tr.find(".discount_price_hidden_b").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_c", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_c").val();
+            tr.find(".discount_price_hidden_c").val(hidden_discount_price);
+        });
+        $(".neworderbody_discount").on("keyup change", ".discount_price_display_d", function() {
+            var tr = $(this).closest("tr");
+            var hidden_discount_price = tr.find(".discount_price_display_d").val();
+            tr.find(".discount_price_hidden_d").val(hidden_discount_price);
         });
     });
 </script>

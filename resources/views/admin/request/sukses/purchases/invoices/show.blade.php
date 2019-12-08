@@ -370,7 +370,7 @@
                                     <thead>
                                         <td>
                                             <a href="{{ url('/purchases_order/'.$pip->purchase_order_id) }}" style="color:white;">
-                                                <b>Purchase Order #{{$pip->purchase_order->number}}@if($pip->purchase_order->jasa_only == 1) <small style="color:white;"> - Jasa Pabrikasi Only</small> @endif</b>
+                                                <b>Purchase Order #{{$pip->purchase_order->number}}@if($pip->purchase_order->jasa_only == 1) <small style="color:white;"> - Fabrication Services Only</small> @endif</b>
                                             </a>
                                         </td>
                                         <td></td>

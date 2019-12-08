@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Proyek</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->warehouse->name}}</h5>
                                 </div>

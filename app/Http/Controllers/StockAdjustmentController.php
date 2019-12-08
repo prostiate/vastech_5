@@ -16,6 +16,7 @@ use App\warehouse_detail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;
+use App\User;
 
 class StockAdjustmentController extends Controller
 {
@@ -135,17 +136,30 @@ class StockAdjustmentController extends Controller
         }
         // GET MAX NUMBER TRANSACTION
         $number                     = stock_adjustment::max('number');
+        $user               = User::find(Auth::id());
         $total_semua                = 0;
-        //dd($default_sale_account->account_id);
-        if ($number == 0)
-            $number = 10000;
-
-        $curr_number = $number + 1;
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
+        }
         // CREATE LIST TRANSACTION OF STOCK ADJUSTMENT
         $transactions = other_transaction::create([
+            'company_id'                    => $user->company_id,
+            'user_id'                       => Auth::id(),
             'transaction_date'  => $request->get('trans_date'),
-            'number'            => $curr_number,
-            'number_complete'   => 'Stock Adjustment #' . $curr_number,
+            'number'            => $trans_no,
+            'number_complete'   => 'Stock Adjustment #' . $trans_no,
             'type'              => 'stock adjustment',
             'memo'              => $request->get('memo'),
             'status'            => 2,
@@ -155,9 +169,10 @@ class StockAdjustmentController extends Controller
         // NGECEK APAKAH STOCK COUNT ATAU STOCK IN / OUT
         if ($request->iCheck == 1) {
             $sa = new stock_adjustment([
-                'user_id'                   => Auth::id(),
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'stock_type'            => 1,
-                'number'                => $curr_number,
+                'number'                => $trans_no,
                 'adjustment_type'       => $request->get('adjustment_category'),
                 'coa_id'                => $request->get('account'),
                 'date'                  => $request->get('trans_date'),
@@ -166,9 +181,10 @@ class StockAdjustmentController extends Controller
             ]);
         } else {
             $sa = new stock_adjustment([
-                'user_id'                   => Auth::id(),
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'stock_type'            => 2,
-                'number'                => $curr_number,
+                'number'                => $trans_no,
                 'adjustment_type'       => $request->get('adjustment_category'),
                 'coa_id'                => $request->get('account'),
                 'date'                  => $request->get('trans_date'),
@@ -199,10 +215,12 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $request->avg_price[$i];
                     // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
-                        'number'        => 'Stock Adjustment #' . $curr_number,
+                        'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => 0,
                         'credit'        => 0,
                     ]);
@@ -215,10 +233,12 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $request->avg_price[$i];
                     // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
-                        'number'        => 'Stock Adjustment #' . $curr_number,
+                        'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => abs($total_avg),
                         'credit'        => 0,
                     ]);
@@ -236,10 +256,12 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $request->avg_price[$i];
                     // COA BERDASARKAN INPUT ACCOUNT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
-                        'number'        => 'Stock Adjustment #' . $curr_number,
+                        'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => 0,
                         'credit'        => abs($total_avg),
                     ]);
@@ -266,7 +288,7 @@ class StockAdjustmentController extends Controller
                 //menambahkan stok barang ke gudang / UPDATE QTY DI WAREHOUSES DETAILS
                 $wh = new warehouse_detail();
                 $wh->type           = 'stock adjustment';
-                $wh->number         = 'Stock Adjustment #' . $curr_number;
+                $wh->number         = 'Stock Adjustment #' . $trans_no;
                 $wh->product_id     = $request->product_id[$i];
                 $wh->warehouse_id   = $request->warehouse;
                 $wh->qty            = $request->actual_qty[$i];
@@ -277,10 +299,12 @@ class StockAdjustmentController extends Controller
         if ($total_semua >= 0) {
             // COA BERDASARKAN INPUT ACCOUNT
             $cd = new coa_detail([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'        => $request->get('account'),
                 'date'          => $request->get('trans_date'),
                 'type'          => 'stock adjustment',
-                'number'        => 'Stock Adjustment #' . $curr_number,
+                'number'        => 'Stock Adjustment #' . $trans_no,
                 'debit'         => abs($total_semua),
                 'credit'        => 0,
             ]);
@@ -288,10 +312,12 @@ class StockAdjustmentController extends Controller
         } else {
             // COA BERDASARKAN INPUT ACCOUNT
             $cd = new coa_detail([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'        => $request->get('account'),
                 'date'          => $request->get('trans_date'),
                 'type'          => 'stock adjustment',
-                'number'        => 'Stock Adjustment #' . $curr_number,
+                'number'        => 'Stock Adjustment #' . $trans_no,
                 'debit'         => 0,
                 'credit'        => abs($total_semua),
             ]);
@@ -304,18 +330,22 @@ class StockAdjustmentController extends Controller
     public function storeStockCount(Request $request)
     {
         $number             = stock_adjustment::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'adjustment_category'   => 'required',
             'trans_date'            => 'required',
@@ -376,6 +406,8 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $default_product_account->avg_price;
                     // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
@@ -392,6 +424,8 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $default_product_account->avg_price;
                     // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
@@ -413,6 +447,8 @@ class StockAdjustmentController extends Controller
                     $total_avg          = $total * $default_product_account->avg_price;
                     // COA BERDASARKAN INPUT ACCOUNT
                     $cd = new coa_detail([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'        => $default_product_account->default_inventory_account,
                         'date'          => $request->get('trans_date'),
                         'type'          => 'stock adjustment',
@@ -453,6 +489,8 @@ class StockAdjustmentController extends Controller
             if ($total_semua >= 0) {
                 // COA BERDASARKAN INPUT ACCOUNT
                 $cd = new coa_detail([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'        => $request->get('account'),
                     'date'          => $request->get('trans_date'),
                     'type'          => 'stock adjustment',
@@ -464,6 +502,8 @@ class StockAdjustmentController extends Controller
             } else {
                 // COA BERDASARKAN INPUT ACCOUNT
                 $cd = new coa_detail([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'        => $request->get('account'),
                     'date'          => $request->get('trans_date'),
                     'type'          => 'stock adjustment',
@@ -553,9 +593,6 @@ class StockAdjustmentController extends Controller
         $curr_coa_detail            = coa_detail::where('other_transaction_id', $curr_other_transaction->id)->get();
 
         //dd($default_sale_account->account_id);
-        if ($number == 0)
-            $number = 10000;
-        $curr_number = $number + 1;
         // CREATE LIST TRANSACTION OF STOCK ADJUSTMENT       
 
         // SAVE YANG DIATAS SEKALIAN MASUKKIN ID OTHER TRANSACTIONNYA

@@ -35,7 +35,7 @@
                                                                     <th class="column-title">Number</th>
                                                                     <th class="column-title">SPK Ref No</th>
                                                                     <th class="column-title">Contact</th>
-                                                                    <th class="column-title">Proyek</th>
+                                                                    <th class="column-title">Warehouse</th>
                                                                     <th class="column-title">Note</th>
                                                                     <th class="column-title">Status</th>
                                                                 </tr>
@@ -232,7 +232,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Proyek</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a></h5>
                                 </div>

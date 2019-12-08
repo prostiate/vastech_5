@@ -14,8 +14,10 @@ use App\other_term;
 use App\other_unit;
 use App\other_tax;
 use App\other_transaction;
+use App\product_discount_item;
 use App\sale_quote_item;
 use App\sale_order;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
@@ -25,82 +27,160 @@ class SaleQuoteController extends Controller
 {
     public function select_product()
     {
-        if (request()->ajax()) {
-            $page = Input::get('page');
-            $resultCount = 10;
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
 
-            $offset = ($page - 1) * $resultCount;
+                $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
-                ->where('is_sell', 1)
-                //->where('is_bundle', 0)
-                ->orderBy('name')
-                ->skip($offset)
-                ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax']);
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('is_sell', 1)
+                    ->where('sales_type', $user->getRoleNames()->first())
+                    //->where('is_bundle', 0)
+                    ->orderBy('name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
 
-            $count = product::where('is_sell', 1)->count();
-            $endCount = $offset + $resultCount;
-            $morePages = $endCount > $count;
+                $count = product::where('is_sell', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
 
-            $results = array(
-                "results" => $breeds,
-                "pagination" => array(
-                    "more" => $morePages,
-                ),
-                "total_count" => $count,
-            );
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
 
-            return response()->json($results);
+                return response()->json($results);
+            }
+        } else {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
+
+                $offset = ($page - 1) * $resultCount;
+
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('is_sell', 1)
+                    //->where('is_bundle', 0)
+                    ->orderBy('name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+
+                $count = product::where('is_sell', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
+
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
+
+                return response()->json($results);
+            }
         }
     }
 
     public function select_contact()
     {
-        if (request()->ajax()) {
-            $page = Input::get('page');
-            $resultCount = 10;
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
 
-            $offset = ($page - 1) * $resultCount;
+                $offset = ($page - 1) * $resultCount;
 
-            $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
-                ->where('type_customer', 1)
-                //->where('is_bundle', 0)
-                ->orderBy('display_name')
-                ->skip($offset)
-                ->take($resultCount)
-                ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('type_customer', 1)
+                    ->where('sales_type', $user->getRoleNames()->first())
+                    //->where('is_bundle', 0)
+                    ->orderBy('display_name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
 
-            $count = contact::where('type_customer', 1)->count();
-            $endCount = $offset + $resultCount;
-            $morePages = $endCount > $count;
+                $count = contact::where('type_customer', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
 
-            $results = array(
-                "results" => $breeds,
-                "pagination" => array(
-                    "more" => $morePages,
-                ),
-                "total_count" => $count,
-            );
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
 
-            return response()->json($results);
+                return response()->json($results);
+            }
+        } else {
+            if (request()->ajax()) {
+                $page = Input::get('page');
+                $resultCount = 10;
+
+                $offset = ($page - 1) * $resultCount;
+
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                    ->where('type_customer', 1)
+                    //->where('is_bundle', 0)
+                    ->orderBy('display_name')
+                    ->skip($offset)
+                    ->take($resultCount)
+                    ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
+
+                $count = contact::where('type_customer', 1)->count();
+                $endCount = $offset + $resultCount;
+                $morePages = $endCount > $count;
+
+                $results = array(
+                    "results" => $breeds,
+                    "pagination" => array(
+                        "more" => $morePages,
+                    ),
+                    "total_count" => $count,
+                );
+
+                return response()->json($results);
+            }
         }
     }
 
     public function index()
     {
-        $open_po            = sale_quote::whereIn('status', [1, 4])->count();
-        $payment_last       = sale_quote::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
-        $overdue            = sale_quote::where('status', 5)->count();
-        $open_po_total            = sale_quote::whereIn('status', [1, 4])->sum('grandtotal');
-        $payment_last_total       = sale_quote::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
-        $overdue_total            = sale_quote::where('status', 5)->sum('grandtotal');
-        if (request()->ajax()) {
-            return datatables()->of(sale_quote::with('sale_quote_item', 'contact', 'status')->get())
-                ->make(true);
+        $user                       = User::find(Auth::id());
+        $open_po                    = sale_quote::whereIn('status', [1, 4])->count();
+        $payment_last               = sale_quote::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
+        $overdue                    = sale_quote::where('status', 5)->count();
+        $open_po_total              = sale_quote::whereIn('status', [1, 4])->sum('grandtotal');
+        $payment_last_total         = sale_quote::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
+        $overdue_total              = sale_quote::where('status', 5)->sum('grandtotal');
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()
+                    ->of(sale_quote::with('sale_quote_item', 'contact', 'status')->whereHas('contact', function ($query) use ($user) {
+                        $query->where('sales_type', $user->getRoleNames()->first());
+                    })->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()
+                    ->of(sale_quote::with('sale_quote_item', 'contact', 'status')->get())
+                    ->make(true);
+            }
         }
 
-        return view('admin.sales.quote.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.sales.quote.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function create()
@@ -114,18 +194,22 @@ class SaleQuoteController extends Controller
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
         $number             = sale_quote::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.quote.create', compact([
             'vendors',
@@ -143,18 +227,22 @@ class SaleQuoteController extends Controller
     public function store(Request $request)
     {
         $number             = sale_quote::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'trans_date'    => 'required',
@@ -188,6 +276,9 @@ class SaleQuoteController extends Controller
                     Total Current Limit Balance = ' . number_format($check_limit_balance->current_limit_balance, 2, ',', '.')]);
                 }
             }
+            $subtotal_header_other      = 0;
+            $taxtotal_header_other      = 0;
+            $grandtotal_header_other    = 0;
 
             $transactions = other_transaction::create([
                 'transaction_date'  => $request->get('trans_date'),
@@ -227,21 +318,86 @@ class SaleQuoteController extends Controller
             ]);
 
             foreach ($request->products as $i => $keys) {
-                $pp[$i] = new sale_quote_item([
+                $check_discount     = product::find($request->products[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
+                $pp[$i]             = new sale_quote_item([
                     'product_id'    => $request->products[$i],
                     'desc'          => $request->desc[$i],
                     'qty'           => $request->qty[$i],
                     'unit_id'       => $request->units[$i],
-                    'unit_price'    => $request->unit_price[$i],
+                    /*'unit_price'    => $request->unit_price[$i],*/
+                    'unit_price'    => $unit_price,
                     'tax_id'        => $request->tax[$i],
-                    'amountsub'     => $request->total_price_sub[$i],
-                    'amounttax'     => $request->total_price_tax[$i],
-                    'amountgrand'   => $request->total_price_grand[$i],
-                    'amount'        => $request->total_price[$i],
+                    'amountsub'     => $subtotal,
+                    'amounttax'     => $taxtotal,
+                    'amountgrand'   => $total,
+                    'amount'        => $subtotal,
                 ]);
 
                 $po->sale_quote_item()->save($pp[$i]);
             };
+
+            other_transaction::find($transactions->id)->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            sale_quote::find($po->id)->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $po->id]);
         } catch (\Exception $e) {
@@ -323,8 +479,12 @@ class SaleQuoteController extends Controller
 
             $id                                 = $request->hidden_id;
             $idd                                = sale_quote::find($id);
+            $get_ot                             = other_transaction::where('type', 'sales quote')->where('number', $idd->number)->first();
+            $subtotal_header_other              = 0;
+            $taxtotal_header_other              = 0;
+            $grandtotal_header_other            = 0;
 
-            other_transaction::where('type', 'sales quote')->where('number', $idd->number)->update([
+            $get_ot->update([
                 'transaction_date'              => $request->get('trans_date'),
                 'contact'                       => $request->get('vendor_name2'),
                 'memo'                          => $request->get('memo'),
@@ -333,7 +493,7 @@ class SaleQuoteController extends Controller
                 'total'                         => $request->get('balance'),
             ]);
 
-            sale_quote::find($id)->update([
+            $idd->update([
                 'contact_id'                    => $request->get('vendor_name2'),
                 'email'                         => $request->get('email'),
                 'address'                       => $request->get('vendor_address'),
@@ -352,8 +512,57 @@ class SaleQuoteController extends Controller
             sale_quote_item::where('sale_quote_id', $id)->delete();
 
             foreach ($request->products2 as $i => $keys) {
+                $check_discount     = product::find($request->products2[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products2[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 $pp[$i] = new sale_quote_item([
-                    'sale_quote_id'             => $idd->id,
+                    'sale_quote_id'             => $id,
                     'product_id'                => $request->products2[$i],
                     'desc'                      => $request->desc[$i],
                     'qty'                       => $request->qty[$i],
@@ -367,6 +576,18 @@ class SaleQuoteController extends Controller
                 ]);
                 $pp[$i]->save();
             };
+
+            $get_ot->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            $idd->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
 
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use App\User;
 
 class PurchaseQuoteController extends Controller
 {
@@ -36,7 +37,7 @@ class PurchaseQuoteController extends Controller
                 ->orderBy('name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'buy_price', 'buy_tax']);
+                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'buy_price', 'buy_tax', 'is_lock_purchase']);
 
             $count = product::where('is_buy', 1)->count();
             $endCount = $offset + $resultCount;
@@ -88,6 +89,7 @@ class PurchaseQuoteController extends Controller
 
     public function index()
     {
+        $user               = User::find(Auth::id());
         $open_po            = purchase_quote::whereIn('status', [1, 4])->count();
         $payment_last       = purchase_quote::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
         $overdue            = purchase_quote::where('status', 5)->count();
@@ -107,7 +109,7 @@ class PurchaseQuoteController extends Controller
                 ->make(true);
         }
 
-        return view('admin.purchases.quote.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.purchases.quote.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function create()
@@ -121,18 +123,22 @@ class PurchaseQuoteController extends Controller
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
         $number             = purchase_quote::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.purchases.quote.create', compact([
             'vendors',
@@ -150,18 +156,22 @@ class PurchaseQuoteController extends Controller
     public function store(Request $request)
     {
         $number             = purchase_quote::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             //'term'          => 'required',

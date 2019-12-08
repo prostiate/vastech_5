@@ -29,7 +29,7 @@
                         </button>
                     </li>
                 </ul>
-                @if($warehouses->id > 1)
+                @if($warehouses->is_first_created != 1)
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" id="click">Delete Warehouse

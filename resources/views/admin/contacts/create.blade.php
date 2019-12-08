@@ -65,6 +65,19 @@
                                                 <input value="0" type="text" name="limit_balance" class="hidden_limit_balance" hidden>
                                             </div>
                                         </div>
+                                        @if($user->roles->first()->name == 'GT' or $user->roles->first()->name == 'MT' or $user->roles->first()->name == 'WS')
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="limit">Sales Type
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select id="sales_type" name="sales_type" class="form-control selectunit">
+                                                    <option value="GT" @if($user->roles->first()->name == 'GT') selected @endif>General Trade</option>
+                                                    <option value="MT" @if($user->roles->first()->name == 'MT') selected @endif>Modern Trade</option>
+                                                    <option value="WS" @if($user->roles->first()->name == 'WS') selected @endif>Wholesaler</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @endif
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_name">Contact Name

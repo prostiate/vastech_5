@@ -26,6 +26,10 @@ function inputMasking() {
     $(".cost_amount_display").inputmask("IDR");
     $(".total_cost_display").inputmask("IDR");
     $(".total_grand_display").inputmask("IDR");
+    $(".discount_price_display_a").inputmask("IDR");
+    $(".discount_price_display_b").inputmask("IDR");
+    $(".discount_price_display_c").inputmask("IDR");
+    $(".discount_price_display_d").inputmask("IDR");
 }
 
 $(document).ready(function() {

@@ -30,17 +30,19 @@ use App\sale_return;
 use App\sale_return_item;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class SaleReturnController extends Controller
 {
     public function index()
     {
+        $user               = User::find(Auth::id());
         if (request()->ajax()) {
             return datatables()->of(sale_return::with('sale_invoice')->get())
                 ->make(true);
         }
 
-        return view('admin.sales.return.index');
+        return view('admin.sales.return.index', compact(['user']));
     }
 
     public function create($id)
@@ -50,18 +52,22 @@ class SaleReturnController extends Controller
         $today              = Carbon::today()->toDateString();
         $number             = sale_return::max('number');
         $warehouses         = warehouse::all();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.return.create', compact(['today', 'trans_no', 'warehouses', 'po', 'po_item']));
     }
@@ -69,18 +75,22 @@ class SaleReturnController extends Controller
     public function store(Request $request)
     {
         $number             = sale_return::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         DB::beginTransaction();
         try {
             // AMBIL ID DAN NUMBER SI PURCHASE INVOICE
@@ -89,6 +99,8 @@ class SaleReturnController extends Controller
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account                = contact::find($request->vendor_name);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales return',
@@ -103,6 +115,8 @@ class SaleReturnController extends Controller
             ]);
             // CREATE OTHER TRANSACTION PUNYA RETURN
             $transactions = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Sales Return #' . $trans_no,
@@ -116,7 +130,8 @@ class SaleReturnController extends Controller
             ]);
             // CREATE PURCHASE RETURN HEADER
             $pd = new sale_return([
-                'user_id'                   => Auth::id(),
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -174,6 +189,8 @@ class SaleReturnController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'sales return',
@@ -224,6 +241,8 @@ class SaleReturnController extends Controller
                     if ($default_product_account->is_track == 1) {
                         // DEFAULT BUY ACCOUNT
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->buy_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -238,6 +257,8 @@ class SaleReturnController extends Controller
                         ]);
                         // DEFAULT SELL ACCOUNT (KARENA RETURN, DIA JADINYA MASUK KE SALES RETURN)
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_sales_return->account_id,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -252,6 +273,8 @@ class SaleReturnController extends Controller
                         ]);
                         // DEFAULT INVENTORY ACCOUNT
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->default_inventory_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -268,6 +291,8 @@ class SaleReturnController extends Controller
                     } else {
                         // DEFAULT SETTING
                         coa_detail::create([
+                            'company_id'                    => $user->company_id,
+                            'user_id'                       => Auth::id(),
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',

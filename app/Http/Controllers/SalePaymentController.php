@@ -15,11 +15,13 @@ use App\contact;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use App\User;
 
 class SalePaymentController extends Controller
 {
     public function index()
     {
+        $user               = User::find(Auth::id());
         $open_po            = sale_invoice::whereIn('status', [1, 4])->count();
         $payment_last       = sale_invoice::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
         $overdue            = sale_invoice::where('status', 5)->count();
@@ -39,7 +41,7 @@ class SalePaymentController extends Controller
                 ->make(true);
         }
 
-        return view('admin.sales.payment.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.sales.payment.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function createFromSale($id)
@@ -52,18 +54,22 @@ class SalePaymentController extends Controller
         $number                 = sale_payment::max('number');
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_methods::get();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.sales.payment.createFromSale', compact(['today', 'trans_no', 'po', 'get_all_invoice', 'coa', 'payment_method']));
     }
@@ -71,24 +77,30 @@ class SalePaymentController extends Controller
     public function store(Request $request)
     {
         $number             = sale_payment::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         DB::beginTransaction();
         try {
             $id_hidden_id_number                = $request->hidden_id_number;
             $contact_id                         = contact::find($request->vendor_name);
 
             $transactions                       = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'number_complete'               => 'Sales Payment #' . $trans_no,
                 'type'                          => 'sales payment',
@@ -102,6 +114,7 @@ class SalePaymentController extends Controller
             ]);
 
             $pd                                 = new sale_payment([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->get('vendor_name'),
@@ -121,6 +134,8 @@ class SalePaymentController extends Controller
             ]);
             // CREATE COA DETAIL YANG DARI PAY FROM
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'sales payment',
@@ -145,6 +160,8 @@ class SalePaymentController extends Controller
                     $pd->sale_payment_item()->save($pp[$i]);
                     // TRADE PAYABLE DEFAULT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $contact_id->account_receivable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'sales payment',
@@ -226,6 +243,7 @@ class SalePaymentController extends Controller
 
     public function update(Request $request)
     {
+        $user               = User::find(Auth::id());
         DB::beginTransaction();
         try {
             $id                                 = $request->hidden_id_payment;
@@ -306,6 +324,8 @@ class SalePaymentController extends Controller
             ]);
             // CREATE COA DETAIL YANG DARI PAY FROM
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'sales payment',
@@ -331,6 +351,8 @@ class SalePaymentController extends Controller
                     $ppp[$i]->save();
                     // TRADE PAYABLE DEFAULT
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'                => $contact_id->account_receivable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'sales payment',

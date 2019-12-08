@@ -67,6 +67,19 @@
                                             </div>
                                         </div>
                                         @endif
+                                        @if($contact->sales_type == 'GT' or $contact->sales_type == 'MT' or $contact->sales_type == 'WS')
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="limit">Sales Type
+                                            </label>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <select id="sales_type" name="sales_type" class="form-control selectunit">
+                                                    <option value="GT" @if($contact->sales_type == 'GT') selected @endif>General Trade</option>
+                                                    <option value="MT" @if($contact->sales_type == 'MT') selected @endif>Modern Trade</option>
+                                                    <option value="WS" @if($contact->sales_type == 'WS') selected @endif>Wholesaler</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @endif
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_name">Contact Name

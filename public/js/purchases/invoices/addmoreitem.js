@@ -104,6 +104,7 @@ function selectProduct() {
         $(".selected_product_unit").val(repo.other_unit_id);
         $(".selected_product_price").val(repo.buy_price);
         $(".selected_product_tax").val(repo.buy_tax);
+        $(".selected_product_is_lock_purchase").val(repo.is_lock_purchase);
         return repo.text || repo.text;
     }
 
@@ -154,6 +155,7 @@ function selectProduct2() {
         $(".selected_product_unit").val(repo.other_unit_id);
         $(".selected_product_price").val(repo.buy_price);
         $(".selected_product_tax").val(repo.buy_tax);
+        $(".selected_product_is_lock_purchase").val(repo.is_lock_purchase);
         return repo.text || repo.text;
     }
 
@@ -238,11 +240,13 @@ $(document).ready(function() {
             '<input class="selected_product_unit" hidden>' +
             '<input class="selected_product_price" hidden>' +
             '<input class="selected_product_tax" hidden>' +
+            '<input class="selected_product_is_lock_purchase" hidden>' +
             '<input class="tampungan_product_id" name="products2[]" hidden>' +
             '<input class="tampungan_product_desc" hidden>' +
             '<input class="tampungan_product_unit" hidden>' +
             '<input class="tampungan_product_price" hidden>' +
             '<input class="tampungan_product_tax" hidden>' +
+            '<input class="tampungan_product_is_lock_purchase" hidden>' +
             "</div>" +
             "</td>" +
             "<td>" +
@@ -342,15 +346,29 @@ $(document).ready(function() {
             var unit = $(".selected_product_unit").val();
             var price = $(".selected_product_price").val();
             var tax = $(".selected_product_tax").val();
+            var is_lock_purchase = $(
+                ".selected_product_is_lock_purchase"
+            ).val();
             tr.find(".tampungan_product_id").val(id);
             tr.find(".tampungan_product_desc").val(desc);
             tr.find(".tampungan_product_unit").val(unit);
             tr.find(".tampungan_product_price").val(price);
             tr.find(".tampungan_product_tax").val(tax);
+            tr.find(".tampungan_product_is_lock_purchase").val(
+                is_lock_purchase
+            );
             var tampungan_desc = tr.find(".tampungan_product_desc").val();
             var tampungan_unit = tr.find(".tampungan_product_unit").val();
             var tampungan_price = tr.find(".tampungan_product_price").val();
             var tampungan_tax = tr.find(".tampungan_product_tax").val();
+            var tampungan_is_lock_purchase = tr
+                .find(".tampungan_product_is_lock_purchase")
+                .val();
+            if (tampungan_is_lock_purchase == 1) {
+                tr.find(".unit_price_display").prop("readonly", true);
+            } else if (tampungan_is_lock_purchase == 0) {
+                tr.find(".unit_price_display").prop("readonly", false);
+            }
             tr.find(".unit_price_display").val(tampungan_price);
             tr.find(".desc").val(tampungan_desc);
             tr.find(".units")

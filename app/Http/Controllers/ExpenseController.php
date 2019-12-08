@@ -15,6 +15,7 @@ use App\other_tax;
 use App\other_transaction;
 use App\expense_item;
 use App\other_term;
+use App\User;
 use PDF;
 use App\default_account;
 use Illuminate\Support\Facades\DB;
@@ -56,18 +57,22 @@ class ExpenseController extends Controller
         $today              = Carbon::today()->toDateString();
         $payment_method     = other_payment_methods::get();
         $terms              = other_term::get();
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
 
         return view('admin.expenses.create', compact(['accounts', 'vendors', 'expenses', 'taxes', 'today', 'trans_no', 'payment_method', 'terms']));
     }
@@ -75,18 +80,22 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $number             = expense::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'                   => 'required',
             'trans_date'                    => 'required',
@@ -108,6 +117,8 @@ class ExpenseController extends Controller
             $default_trade_payable                  = default_account::find(16);
             if ($request->pay_later == 1) {
                 $transactions = other_transaction::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'transaction_date'      => $request->get('trans_date'),
                     'number'                => $trans_no,
                     'number_complete'       => 'Expense #' . $trans_no,
@@ -121,7 +132,8 @@ class ExpenseController extends Controller
                 ]);
 
                 $ex = new expense([
-                    'user_id'               => Auth::id(),
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'number'                => $trans_no,
                     'contact_id'            => $request->get('vendor_name'),
                     'payment_method_id'     => $request->get('payment_method'),
@@ -140,6 +152,8 @@ class ExpenseController extends Controller
                 ]);
             } else {
                 $transactions               = other_transaction::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'transaction_date'      => $request->get('trans_date'),
                     'number'                => $trans_no,
                     'number_complete'       => 'Expense #' . $trans_no,
@@ -152,7 +166,8 @@ class ExpenseController extends Controller
                 ]);
 
                 $ex = new expense([
-                    'user_id'               => Auth::id(),
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'number'                => $trans_no,
                     'contact_id'            => $request->get('vendor_name'),
                     'payment_method_id'     => $request->get('payment_method'),
@@ -176,6 +191,8 @@ class ExpenseController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'expense',
@@ -203,6 +220,8 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                    => $request->expense_acc[$i],
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'expense',
@@ -221,6 +240,8 @@ class ExpenseController extends Controller
             //$get_current_contact_data           = contact::find($request->vendor_name);
             if ($request->pay_later == 1) {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                        => $default_trade_payable->account_id,
                     'date'                          => $request->get('trans_date'),
                     'type'                          => 'expense',
@@ -235,6 +256,8 @@ class ExpenseController extends Controller
                 ]);
             } else {
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                        => $request->pay_from,
                     'date'                          => $request->get('trans_date'),
                     'type'                          => 'expense',
@@ -301,6 +324,7 @@ class ExpenseController extends Controller
 
     public function updateNotNull(Request $request)
     {
+        $user               = User::find(Auth::id());
         DB::beginTransaction();
         try {
             $id                                                 = $request->hidden_id;
@@ -360,6 +384,8 @@ class ExpenseController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                                    => $default_tax->account_id,
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -387,6 +413,8 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                                    => $request->expense_acc[$i],
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -405,6 +433,8 @@ class ExpenseController extends Controller
             //$get_current_contact_data           = contact::find($request->vendor_name);
             $default_trade_payable                              = default_account::find(16);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                                        => $default_trade_payable->account_id,
                 'date'                                          => $request->get('trans_date'),
                 'type'                                          => 'expense',
@@ -427,6 +457,7 @@ class ExpenseController extends Controller
 
     public function updateNull(Request $request)
     {
+        $user               = User::find(Auth::id());
         DB::beginTransaction();
         try {
             $id                                                 = $request->hidden_id;
@@ -486,6 +517,8 @@ class ExpenseController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                                    => $default_tax->account_id,
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -513,6 +546,8 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
                     'coa_id'                                    => $request->expense_acc[$i],
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -530,6 +565,8 @@ class ExpenseController extends Controller
             // CREATE COA DETAIL YANG DARI PAY FROM
             //$get_current_contact_data           = contact::find($request->vendor_name);
             coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'coa_id'                                        => $request->pay_from,
                 'date'                                          => $request->get('trans_date'),
                 'type'                                          => 'expense',

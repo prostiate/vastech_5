@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;
+use App\User;
 
 class WarehouseController extends Controller
 {
@@ -157,7 +158,7 @@ class WarehouseController extends Controller
                 or $product->purchase_delivery()->exists() or $product->purchase_invoice()->exists()
                 or $product->purchase_order()->exists()
                 or $product->spk()->exists() or $product->wip()->exists()
-                or $product->stock_adjustment()->exists() or $product->warehouse_transfer()->exists()
+                or $product->stock_adjustment()->exists()
             ) {
                 DB::rollBack();
                 return response()->json(['errors' => 'Cannot delete warehouse with transactions!']);
@@ -204,18 +205,22 @@ class WarehouseController extends Controller
         $warehouse_detail_to        = warehouse_detail::where('warehouse_id', $to)->groupBy('product_id')->get();
         $products                   = product::where('is_track', 1)->get();
         $number                     = warehouse_transfer::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         return view('admin.products.warehouses_transfer.createPartTwo', compact([
             'today', 'products', 'trans_no',
             'from_warehouse', 'to_warehouse', 'warehouse_detail_from', 'warehouse_detail_to'
@@ -225,18 +230,22 @@ class WarehouseController extends Controller
     public function storeTransfer(Request $request)
     {
         $number             = warehouse_transfer::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'product'       => 'required|array|min:1',
             'product.*'     => 'required',
@@ -252,6 +261,8 @@ class WarehouseController extends Controller
         DB::beginTransaction();
         try {
             $transactions = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'transaction_date'          => $request->get('transfer_date'),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Warehouse Transfer #' . $trans_no,
@@ -263,6 +274,7 @@ class WarehouseController extends Controller
             ]);
 
             $header = new warehouse_transfer([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'number'                        => $trans_no,
                 'transaction_date'              => $request->transfer_date,

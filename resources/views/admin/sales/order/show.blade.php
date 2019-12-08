@@ -336,7 +336,7 @@
                                         <h4><b>Grand Total</b></h4>
                                     </div>
                                     <div class="col-md-4 float-right">
-                                        <h5 class="subtotal text-right">Rp @number($pi->grandtotal)</h5>
+                                        <h5 class="subtotal text-right">Rp @number($pi->subtotal)</h5>
                                         <h5 class="taxtotal text-right">Rp @number($pi->taxtotal)</h5>
                                         <br>
                                         @if($pi->balance_due != $pi->grandtotal)

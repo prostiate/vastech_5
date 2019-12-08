@@ -29,20 +29,32 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Purchase <span class="caret"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                           <li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            @if($user->company_id == 5)
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
                             </li>
                             <li><a href="/purchases_order/new">Purchase Order</a>
                             </li>
-                            <!--<li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            <li><a href="/purchases_quote/new">Purchase Quote</a>
+                            </li>
+                            @elseif($user->company_id == 2)
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
                             </li>
                             <li><a href="/purchases_invoice/newRS">Purchase Invoice Bundling</a>
                             </li>
                             <li><a href="/purchases_order/new">Purchase Order</a>
                             </li>
                             <li><a href="/purchases_order/newRS">Purchase Order Bundling</a>
-                            </li>-->
+                            </li>
                             <li><a href="/purchases_quote/new">Purchase Quote</a>
                             </li>
+                            @else
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            </li>
+                            <li><a href="/purchases_order/new">Purchase Order</a>
+                            </li>
+                            <li><a href="/purchases_quote/new">Purchase Quote</a>
+                            </li>
+                            @endif
                         </ul>
                     </li>
                 </ul>

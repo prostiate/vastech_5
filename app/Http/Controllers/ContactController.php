@@ -23,6 +23,7 @@ use App\sale_payment;
 use App\sale_quote;
 use App\sale_return;
 use App\spk;
+use App\User;
 use App\wip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +34,17 @@ class ContactController extends Controller
 {
     public function indexCustomer()
     {
-        if (request()->ajax()) {
-            return datatables()->of(contact::where('type_customer', true)->get())
-                ->make(true);
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_customer', true)->where('sales_type', $user->getRoleNames()->first())->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_customer', true)->get())
+                    ->make(true);
+            }
         }
 
         return view('admin.contacts.customer.index');
@@ -43,9 +52,17 @@ class ContactController extends Controller
 
     public function indexVendor()
     {
-        if (request()->ajax()) {
-            return datatables()->of(contact::where('type_vendor', true)->get())
-                ->make(true);
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_vendor', true)->where('sales_type', $user->getRoleNames()->first())->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_vendor', true)->get())
+                    ->make(true);
+            }
         }
 
         return view('admin.contacts.vendor.index');
@@ -53,9 +70,17 @@ class ContactController extends Controller
 
     public function indexEmployee()
     {
-        if (request()->ajax()) {
-            return datatables()->of(contact::where('type_employee', true)->get())
-                ->make(true);
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_employee', true)->where('sales_type', $user->getRoleNames()->first())->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_employee', true)->get())
+                    ->make(true);
+            }
         }
 
         return view('admin.contacts.employee.index');
@@ -63,9 +88,17 @@ class ContactController extends Controller
 
     public function indexOther()
     {
-        if (request()->ajax()) {
-            return datatables()->of(contact::where('type_other', true)->get())
-                ->make(true);
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_other', true)->where('sales_type', $user->getRoleNames()->first())->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('type_other', true)->get())
+                    ->make(true);
+            }
         }
 
         return view('admin.contacts.other.index');
@@ -73,9 +106,17 @@ class ContactController extends Controller
 
     public function indexAll()
     {
-        if (request()->ajax()) {
-            return datatables()->of(contact::all())
-                ->make(true);
+        $user               = User::find(Auth::id());
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(contact::where('sales_type', $user->getRoleNames()->first())->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(contact::get())
+                    ->make(true);
+            }
         }
 
         return view('admin.contacts.all.index');
@@ -83,10 +124,11 @@ class ContactController extends Controller
 
     public function create()
     {
+        $user               = User::find(Auth::id());
         $coa_receive        = coa::where('coa_category_id', '1')->get();
         $coa_payable        = coa::where('coa_category_id', '8')->get();
         $term               = other_term::get();
-        return view('admin.contacts.create', compact(['coa_receive', 'coa_payable', 'term']));
+        return view('admin.contacts.create', compact(['user', 'coa_receive', 'coa_payable', 'term']));
     }
 
     public function store(Request $request)
@@ -154,7 +196,7 @@ class ContactController extends Controller
                 $is_limit                   = 1;
             }
 
-            $share = new contact([
+            $share                          = new contact([
                 'user_id'                   => Auth::id(),
                 'account_receivable_id'     => $account_receivable,
                 'account_payable_id'        => $account_payable,
@@ -164,6 +206,7 @@ class ContactController extends Controller
                 'type_vendor'               => $contact_type2,
                 'type_employee'             => $contact_type3,
                 'type_other'                => $contact_type4,
+                'sales_type'                => $request->sales_type,
                 'is_limit'                  => $is_limit,
                 'limit_balance'             => $request->limit_balance,
                 'current_limit_balance'     => $request->limit_balance,
@@ -355,6 +398,7 @@ class ContactController extends Controller
                 'type_vendor'               => $contact_type2,
                 'type_employee'             => $contact_type3,
                 'type_other'                => $contact_type4,
+                'sales_type'                => $request->sales_type,
                 'is_limit'                  => $is_limit,
                 'limit_balance'             => $request->limit_balance,
                 'current_limit_balance'     => $request->limit_balance,

@@ -13,9 +13,12 @@ use App\default_account;
 use App\other_transaction;
 use App\coa_detail;
 use App\coa;
+use App\other_tax;
 use App\product;
+use App\product_discount_item;
 use PDF;
 use App\sale_invoice;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,18 +26,28 @@ class SaleDeliveryController extends Controller
 {
     public function index()
     {
-        $open_po            = sale_delivery::whereIn('status', [1, 4])->count();
-        $payment_last       = sale_delivery::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
-        $overdue            = sale_delivery::where('status', 5)->count();
-        $open_po_total            = sale_delivery::whereIn('status', [1, 4])->sum('grandtotal');
-        $payment_last_total       = sale_delivery::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
-        $overdue_total            = sale_delivery::where('status', 5)->sum('grandtotal');
-        if (request()->ajax()) {
-            return datatables()->of(sale_delivery::with('contact', 'status')->get())
-                ->make(true);
+        $user                       = User::find(Auth::id());
+        $open_po                    = sale_delivery::whereIn('status', [1, 4])->count();
+        $payment_last               = sale_delivery::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
+        $overdue                    = sale_delivery::where('status', 5)->count();
+        $open_po_total              = sale_delivery::whereIn('status', [1, 4])->sum('grandtotal');
+        $payment_last_total         = sale_delivery::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
+        $overdue_total              = sale_delivery::where('status', 5)->sum('grandtotal');
+        if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
+            if (request()->ajax()) {
+                return datatables()->of(sale_delivery::with('contact', 'status')->whereHas('contact', function ($query) use ($user) {
+                    $query->where('sales_type', $user->getRoleNames()->first());
+                })->get())
+                    ->make(true);
+            }
+        } else {
+            if (request()->ajax()) {
+                return datatables()->of(sale_delivery::with('contact', 'status')->get())
+                    ->make(true);
+            }
         }
 
-        return view('admin.sales.delivery.index', compact(['open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.sales.delivery.index', compact(['user', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
     }
 
     public function createFromPO($id)
@@ -45,18 +58,22 @@ class SaleDeliveryController extends Controller
             $po_item            = sale_order_item::where('sale_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
             $number             = sale_delivery::max('number');
-            /*if ($number != null) {
-                $misahm             = explode("/", $number);
-                $misahy             = explode(".", $misahm[1]);
+            $user               = User::find(Auth::id());
+            if ($user->company_id == 5) {
+                if ($number != null) {
+                    $misahm             = explode("/", $number);
+                    $misahy             = explode(".", $misahm[1]);
+                }
+                if (isset($misahy[1]) == 0) {
+                    $misahy[1]      = 10000;
+                }
+                $number1                    = $misahy[1] + 1;
+                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            } else {
+                if ($number == 0)
+                    $number = 10000;
+                $trans_no = $number + 1;
             }
-            if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
-            }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-            if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
 
             return view('admin.sales.delivery.po.create_baru', compact(['today', 'trans_no', 'po', 'po_item']));
         } else {
@@ -64,18 +81,22 @@ class SaleDeliveryController extends Controller
             $po_item            = sale_delivery_item::where('sale_delivery_id', $check->id)->get();
             $today              = Carbon::today()->toDateString();
             $number             = sale_delivery::max('number');
-            /*if ($number != null) {
-                $misahm             = explode("/", $number);
-                $misahy             = explode(".", $misahm[1]);
+            $user               = User::find(Auth::id());
+            if ($user->company_id == 5) {
+                if ($number != null) {
+                    $misahm             = explode("/", $number);
+                    $misahy             = explode(".", $misahm[1]);
+                }
+                if (isset($misahy[1]) == 0) {
+                    $misahy[1]      = 10000;
+                }
+                $number1                    = $misahy[1] + 1;
+                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            } else {
+                if ($number == 0)
+                    $number = 10000;
+                $trans_no = $number + 1;
             }
-            if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
-            }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-            if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
 
             return view('admin.sales.delivery.po.create_lama', compact(['today', 'trans_no', 'po', 'po_item']));
         }
@@ -84,18 +105,22 @@ class SaleDeliveryController extends Controller
     public function storeFromPO(Request $request)
     {
         $number             = sale_delivery::max('number');
-        /*if ($number != null) {
-            $misahm             = explode("/", $number);
-            $misahy             = explode(".", $misahm[1]);
+        $user               = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            if ($number != null) {
+                $misahm             = explode("/", $number);
+                $misahy             = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1                    = $misahy[1] + 1;
+            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
         }
-        if (isset($misahy[1]) == 0) {
-            $misahy[1]      = 10000;
-        }
-        $number1                    = $misahy[1] + 1;
-        $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;*/
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
         $rules = array(
             'vendor_name'   => 'required',
             'shipping_date' => 'required',
@@ -130,6 +155,9 @@ class SaleDeliveryController extends Controller
         try {
             $id                             = $request->hidden_id;
             $id_number                      = $request->hidden_id_number;
+            $subtotal_header_other          = 0;
+            $taxtotal_header_other          = 0;
+            $grandtotal_header_other        = 0;
             // MENGUBAH STATUS SI SALES ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                 = sale_order::find($id);
             $check_total_po->update([
@@ -149,39 +177,9 @@ class SaleDeliveryController extends Controller
                 other_transaction::where('number', $id_number)->where('type', 'sales order')->update($updatepdstatus);
             }
 
-            // DEFAULT DARI SETTING
-            $default_unbilled_receivable    = default_account::find(7);
-            $default_unbilled_revenue       = default_account::find(6);
-            // DEFAULT SETTING UNBILLED ACCOUNT RECEIVABLE
-            coa_detail::create([
-                'coa_id'                    => $default_unbilled_receivable->account_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'sales delivery',
-                'number'                    => 'Sales Delivery #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => $request->get('balance'),
-                'credit'                    => 0,
-            ]);
-            $get_current_balance_on_coa = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
-            // DEFAULT SETTING UNBILLED REVENUE
-            coa_detail::create([
-                'coa_id'                    => $default_unbilled_revenue->account_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'sales delivery',
-                'number'                    => 'Sales Delivery #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => 0,
-                'credit'                    => $request->get('balance'),
-            ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
-
             $transactions = other_transaction::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Sales Delivery #' . $trans_no,
                 'type'                      => 'sales delivery',
@@ -195,7 +193,8 @@ class SaleDeliveryController extends Controller
             //$transactions->save();
 
             $pd = new sale_delivery([
-                'user_id'                   => Auth::id(),
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -219,18 +218,69 @@ class SaleDeliveryController extends Controller
             ]);
 
             foreach ($request->products as $i => $keys) {
+                $check_discount     = product::find($request->products[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 $pp[$i] = new sale_delivery_item([
                     'sale_order_item_id'    => $request->poi_id[$i],
                     'product_id'            => $request->products[$i],
                     'desc'                  => $request->desc[$i],
                     'qty'                   => $request->qty[$i],
                     'unit_id'               => $request->units[$i],
-                    'unit_price'            => $request->unit_price[$i],
+                    'unit_price'            => $unit_price,
                     'tax_id'                => $request->tax[$i],
-                    'amountsub'             => $request->total_price_sub[$i],
-                    'amounttax'             => $request->total_price_tax[$i],
-                    'amountgrand'           => $request->total_price_grand[$i],
-                    'amount'                => $request->total_price[$i],
+                    'amountsub'             => $subtotal,
+                    'amounttax'             => $taxtotal,
+                    'amountgrand'           => $total,
+                    'amount'                => $subtotal,
                     'qty_remaining'         => $request->r_qty[$i],
                 ]);
                 $pd->sale_delivery_item()->save($pp[$i]);
@@ -244,6 +294,8 @@ class SaleDeliveryController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // BUY ACCOUNT BARANG
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->buy_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales delivery',
@@ -258,6 +310,8 @@ class SaleDeliveryController extends Controller
                     ]);
                     // DEFAULT INVENTORY BARANG
                     coa_detail::create([
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
                         'coa_id'            => $default_product_account->default_inventory_account,
                         'date'              => $request->get('trans_date'),
                         'type'              => 'sales delivery',
@@ -272,6 +326,55 @@ class SaleDeliveryController extends Controller
                     ]);
                 }
             };
+
+            other_transaction::find($transactions->id)->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            sale_delivery::find($pd->id)->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            // DEFAULT DARI SETTING
+            $default_unbilled_receivable    = default_account::find(7);
+            $default_unbilled_revenue       = default_account::find(6);
+            // DEFAULT SETTING UNBILLED ACCOUNT RECEIVABLE
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                    => $default_unbilled_receivable->account_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'sales delivery',
+                'number'                    => 'Sales Delivery #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => $grandtotal_header_other,
+                'credit'                    => 0,
+            ]);
+            $get_current_balance_on_coa = coa::find($default_unbilled_receivable->account_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+            // DEFAULT SETTING UNBILLED REVENUE
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                    => $default_unbilled_revenue->account_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'sales delivery',
+                'number'                    => 'Sales Delivery #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => 0,
+                'credit'                    => $grandtotal_header_other,
+            ]);
+            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $pd->id]);
         } catch (\Exception $e) {
@@ -341,6 +444,10 @@ class SaleDeliveryController extends Controller
             $id_number                      = $request->hidden_id_number;
             $pp                             = sale_delivery_item::where('sale_delivery_id', $id)->get();
             $checknumberpd                  = sale_delivery::find($id);
+            $get_ot                         = other_transaction::where('number', $checknumberpd->number)->where('type', 'sales delivery')->first();
+            $subtotal_header_other          = 0;
+            $taxtotal_header_other          = 0;
+            $grandtotal_header_other        = 0;
             // MENGUBAH STATUS SI SALES ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             if ($status_closed == 1) {
                 $updatepdstatus = array(
@@ -363,48 +470,20 @@ class SaleDeliveryController extends Controller
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'                   => $get_current_balance_on_coa->balance - $checknumberpd->grandtotal,
             ]);
-            coa_detail::where('type', 'sales delivery')
-                ->where('number', 'Sales Delivery #' . $checknumberpd->number)
-                ->where('coa_id', $default_unbilled_receivable->account_id)
-                ->where('credit', 0)
-                ->update([
-                    'coa_id'                => $default_unbilled_receivable->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => $request->get('balance'),
-                ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // DEFAULT SETTING UNBILLED REVENUE
             $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
             coa::find($get_current_balance_on_coa->id)->update([
                 'balance'                   => $get_current_balance_on_coa->balance - $checknumberpd->grandtotal,
             ]);
-            coa_detail::where('type', 'sales delivery')
-                ->where('number', 'Sales Delivery #' . $checknumberpd->number)
-                ->where('coa_id', $default_unbilled_revenue->account_id)
-                ->where('debit', 0)
-                ->update([
-                    'coa_id'                => $default_unbilled_revenue->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'contact_id'            => $request->get('vendor_name'),
-                    'credit'                => $request->get('balance'),
-                ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
 
-            other_transaction::where('number', $checknumberpd->number)->where('type', 'sales delivery')->update([
+            $get_ot->update([
                 'memo'                      => $request->get('memo'),
                 'transaction_date'          => $request->get('shipping_date'),
                 'balance_due'               => $request->get('balance'),
                 'total'                     => $request->get('balance'),
             ]);
 
-            sale_delivery::find($id)->update([
+            $checknumberpd->update([
                 'email'                     => $request->get('email'),
                 'transaction_date'          => $request->get('shipping_date'),
                 'vendor_ref_no'             => $request->get('vendor_no'),
@@ -417,6 +496,57 @@ class SaleDeliveryController extends Controller
             ]);
 
             foreach ($request->products as $i => $keys) {
+                $check_discount     = product::find($request->products[$i]);
+                $get_discount_item  = product_discount_item::where('product_id', $request->products[$i])->get();
+                if ($check_discount->is_discount == 1) {
+                    if ($get_discount_item->count() == 4) {
+                        if ($get_discount_item[3]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[3]->price;
+                        } else if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 3) {
+                        if ($get_discount_item[2]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[2]->price;
+                        } else if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[2]->price;
+                        }
+                    } else if ($get_discount_item->count() == 2) {
+                        if ($get_discount_item[1]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[1]->price;
+                        } else if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    } else if ($get_discount_item->count() == 1) {
+                        if ($get_discount_item[0]->qty < $request->qty[$i]) {
+                            $unit_price     = $get_discount_item[0]->price;
+                        } else {
+                            $unit_price     = $get_discount_item[0]->price;
+                        }
+                    }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
+                }
+                $get_tax                    = other_tax::find($request->tax[$i]);
+                $subtotal                   = $request->qty[$i] * $unit_price;
+                $taxtotal                   = ($request->qty[$i] * $unit_price * $get_tax->rate) / 100;
+                $total                      = $subtotal + $taxtotal;
+                $subtotal_header_other      += $subtotal;
+                $taxtotal_header_other      += $taxtotal;
+                $grandtotal_header_other    += $total;
+
                 $avg_price                      = product::find($request->products[$i]);
                 $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
                 $default_product_account        = product::find($request->products[$i]);
@@ -431,6 +561,7 @@ class SaleDeliveryController extends Controller
                     coa::find($get_current_balance_on_coa->id)->update([
                         'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
                     ]);
+                    $ambil_avg_price_dari_coadetial->delete();
                     coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $checknumberpd->number)
                         ->where('credit', 0)
@@ -455,6 +586,7 @@ class SaleDeliveryController extends Controller
                     coa::find($get_current_balance_on_coa->id)->update([
                         'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
                     ]);
+                    $ambil_avg_price_dari_coadetial->delete();
                     coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $checknumberpd->number)
                         ->where('debit', 0)
@@ -469,24 +601,67 @@ class SaleDeliveryController extends Controller
                     coa::find($get_current_balance_on_coa->id)->update([
                         'balance'       => $get_current_balance_on_coa->balance - $total_avg,
                     ]);
-                } else { }
+                }
                 // FINALLY UPDATE THE ITEM
                 $pp[$i]->update([
                     'product_id'            => $request->products[$i],
                     'desc'                  => $request->desc[$i],
                     'qty'                   => $request->qty[$i],
                     'unit_id'               => $request->units[$i],
-                    'unit_price'            => $request->unit_price[$i],
+                    'unit_price'            => $unit_price,
                     'tax_id'                => $request->tax[$i],
-                    'amountsub'             => $request->total_price_sub[$i],
-                    'amounttax'             => $request->total_price_tax[$i],
-                    'amountgrand'           => $request->total_price_grand[$i],
-                    'amount'                => $request->total_price[$i],
+                    'amountsub'             => $subtotal,
+                    'amounttax'             => $taxtotal,
+                    'amountgrand'           => $total,
+                    'amount'                => $subtotal,
                     'qty_remaining'         => $request->r_qty[$i],
                 ]);
                 $updatejugapoinya           = sale_order_item::find($request->poi_id[$i]);
                 $updatejugapoinya->update(['qty_remaining' => $request->r_qty[$i]]);
             };
+
+            $get_ot->update([
+                'balance_due'       => $grandtotal_header_other,
+                'total'             => $grandtotal_header_other,
+            ]);
+
+            $checknumberpd->update([
+                'subtotal'          => $subtotal_header_other,
+                'taxtotal'          => $taxtotal_header_other,
+                'balance_due'       => $grandtotal_header_other,
+                'grandtotal'        => $grandtotal_header_other,
+            ]);
+
+            // UPDATE PAKE YANG BARU
+            coa_detail::where('type', 'sales delivery')
+                ->where('number', 'Sales Delivery #' . $checknumberpd->number)
+                ->where('coa_id', $default_unbilled_receivable->account_id)
+                ->where('credit', 0)
+                ->update([
+                    'coa_id'                => $default_unbilled_receivable->account_id,
+                    'date'                  => $request->get('trans_date'),
+                    'contact_id'            => $request->get('vendor_name'),
+                    'debit'                 => $grandtotal_header_other,
+                ]);
+            $get_current_balance_on_coa     = coa::find($default_unbilled_receivable->account_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
+
+            coa_detail::where('type', 'sales delivery')
+                ->where('number', 'Sales Delivery #' . $checknumberpd->number)
+                ->where('coa_id', $default_unbilled_revenue->account_id)
+                ->where('debit', 0)
+                ->update([
+                    'coa_id'                => $default_unbilled_revenue->account_id,
+                    'date'                  => $request->get('trans_date'),
+                    'contact_id'            => $request->get('vendor_name'),
+                    'credit'                => $grandtotal_header_other,
+                ]);
+            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
+            coa::find($get_current_balance_on_coa->id)->update([
+                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
+            ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
         } catch (\Exception $e) {
@@ -515,7 +690,7 @@ class SaleDeliveryController extends Controller
             // BALIKIN STATUS ORDER
             $ambilpo                            = sale_order::find($pi->selected_so_id);
             $ambilpo->update([
-                'balance_due'                   => $pi->grandtotal + $ambilpo->balance_due,
+                'balance_due'                   => $ambilpo->balance_due + $pi->subtotal,
             ]);
             if ($ambilpo->balance_due == $ambilpo->grandtotal) {
                 $ambilpo->update([
