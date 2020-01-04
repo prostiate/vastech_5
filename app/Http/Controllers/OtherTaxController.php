@@ -2,21 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\cashbank_item;
 use App\other_tax;
 use Illuminate\Http\Request;
 use Validator;
 use App\coa;
-use App\purchase_delivery_item;
-use App\purchase_invoice_item;
-use App\purchase_order_item;
-use App\purchase_quote_item;
-use App\sale_delivery_item;
-use App\sale_invoice_item;
-use App\sale_order_item;
-use App\sale_quote_item;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 
 class OtherTaxController extends Controller
 {
@@ -46,6 +38,7 @@ class OtherTaxController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'name'                       => 'required',
             'effective_rate'             => 'required',
@@ -65,7 +58,8 @@ class OtherTaxController extends Controller
             };
 
             $share = new other_tax([
-                'user_id'                   => Auth::id(),
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
                 'name'                  => $request->get('name'),
                 'rate'                  => $request->get('effective_rate'),
                 'sell_tax_account'      => $request->get('sell_tax_account'),
@@ -89,9 +83,11 @@ class OtherTaxController extends Controller
 
     public function edit($id)
     {
-        $tax = other_tax::find($id);
+        $coa             = coa::where('coa_category_id', [10, 13, 16, 14, 17])->get();
+        $coa2            = coa::where('coa_category_id', [2, 13, 16, 14, 17])->get();
+        $tax             = other_tax::find($id);
 
-        return view('admin.other.taxes.edit', compact(['tax']));
+        return view('admin.other.taxes.edit', compact(['tax', 'coa', 'coa2']));
     }
 
     public function update(Request $request)
@@ -109,16 +105,11 @@ class OtherTaxController extends Controller
         DB::beginTransaction();
         try {
             $id = $request->hidden_id;
-            if ($request->has('witholding')) {
-                $witholding = 1;
-            } else {
-                $witholding = 0;
-            };
 
             $form_data = array(
+                'user_id'               => Auth::id(),
                 'name'                  => $request->get('name'),
                 'rate'                  => $request->get('effective_rate'),
-                'witholding'            => $witholding,
                 'sell_tax_account'      => $request->get('sell_tax_account'),
                 'buy_tax_account'       => $request->get('buy_tax_account'),
             );
@@ -137,11 +128,11 @@ class OtherTaxController extends Controller
         try {
             $data = other_tax::findOrFail($id);
             if (
-                sale_delivery_item::find($id) or sale_invoice_item::find($id)
-                or sale_order_item::find($id) or sale_quote_item::find($id)
-                or purchase_delivery_item::find($id) or purchase_invoice_item::find($id)
-                or purchase_order_item::find($id) or purchase_quote_item::find($id)
-                or cashbank_item::find($id) or coa::find($id)
+                $data->sale_delivery_item()->exists() or $data->sale_invoice_item()->exists()
+                or $data->sale_order_item()->exists() or $data->sale_quote_item()->exists()
+                or $data->purchase_delivery_item()->exists() or $data->purchase_invoice_item()->exists()
+                or $data->purchase_order_item()->exists() or $data->purchase_quote_item()->exists()
+                or $data->cashbank_item()->exists()
             ) {
                 DB::rollBack();
                 return response()->json(['errors' => 'Cannot delete product with transactions!']);

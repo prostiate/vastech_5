@@ -1,92 +1,308 @@
 @extends('layouts.admin')
-​
-@section('title')
-<title>Set Role</title>
-@endsection
-​
+
 @section('content')
-<div class="x-panel">
-    <div class="x-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Set Role</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('user.index') }}">User</a></li>
-                        <li class="breadcrumb-item active">Set Role</li>
-                    </ol>
-                </div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h3>Update User Privilege</h3>
+                <!--{{--<a>roles {{$user->roles}}</a>
+                <a>permissions {{$user->permissions}}</a>
+                <a>get permission {{$user->getPermissionNames()}}</a>
+                <a>get role {{$user->getRoleNames()}}</a>--}}-->
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <form method="post" id="formCreate" class="form-horizontal">
+                    <br>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label col-md-4" style="text-align: left;">Name</label>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>: {{$user->name}}</h5>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label col-md-4" style="text-align: left;">Email</label>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>: {{$user->email}}</h5>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label col-md-4" style="text-align: left;">Roles</label>
+                            </div>
+                            <div class="col-md-6">
+                                @if($user->roles->first()->id == 1)
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="1"> Owner
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="2"> Ultimate
+                                    </label>
+                                </div>
+                                @endif
+                                @if($user->roles->first()->id == 2)
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="2"> Ultimate
+                                    </label>
+                                </div>
+                                @endif
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" class="sales" id="all_sales"> Sales
+                                    </label><a> <i onclick="sales_collapse()" class="fa_sales fa fa-chevron-down down" id="sales_collapse"></i></a>
+                                </div>
+                                <div class="col-md-12 hidden_sales_div" hidden>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="4"> Quote
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="5"> Order
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="6"> Delivery
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="7"> Invoice
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="8"> Payment
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="sales" name="role[]" value="9"> Return
+                                        </label>
+                                    </div>
+                                    <br>
+                                </div>
+                                @if($user->company_id == 4)
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="28"> Sales GT
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="29"> Sales MT
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="30"> Sales WS
+                                    </label>
+                                </div>
+                                @endif
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" class="purchase" id="all_purchase"> Purchase
+                                    </label><a> <i onclick="purchase_collapse()" class="fa_purchase fa fa-chevron-down down" id="purchase_collapse"></i></a>
+                                </div>
+                                <div class="col-md-12 hidden_purchase_div" hidden>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="10"> Quote
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="11"> Order
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="12"> Delivery
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="13"> Invoice
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="14"> Payment
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="purchase" name="role[]" value="15"> Return
+                                        </label>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="16"> Expense
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="17"> Production
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="18"> Contact
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="19"> Goods & Services
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="20"> Stock Adjustment
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="21"> Warehouses
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="22"> Warehouse Transfer
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="23"> Cash & Bank
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="24"> Chart of Account
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="25"> Other List
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="26"> Report Reader
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="27"> Settings
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label col-md-4" style="text-align: left;">Higher Roles</label>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="permission[]" value="1"> Create
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="permission[]" value="2"> Edit
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="permission[]" value="3"> Delete
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-3 center-margin">
+                        <div class="form-group">
+                            <a href="{{ url('/settings/user') }}" class="btn btn-danger">Cancel</a>
+                            <div class="btn-group">
+                                <button id="click" type="button" class="btn btn-success">Update</button>
+                                <input type="text" value="{{$user->id}}" id="hidden_id" hidden>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    ​
-    <section class="x-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
-                    <form action="{{ route('user.roles', $user->id) }}" method="post">
-                        @csrf
-                        <div class="x-content">
-                            @slot('title')
-                            @endslot
-
-                            @if (session('success'))
-                            @alert(['type' => 'success'])
-                            {{ session('success') }}
-                            @endalert
-                            @endif
-
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama</th>
-                                            <td>:</td>
-                                            <td>{{ $user->name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email</th>
-                                            <td>:</td>
-                                            <td><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Role</th>
-                                            <td>:</td>
-                                            <td>
-                                                <div class="tab-content">
-                                                    <div class="tab-pane active" id="tab_1">
-                                                        @php $no = 1; @endphp
-                                                        @foreach ($roles as $key => $row)
-                                                        <input type="checkbox" name="role[]" value="{{ $row }}"
-                                                            {{ $user->hasRole($row) ? 'checked':'' }}
-                                                            {{--  CHECK, JIKA PERMISSION TERSEBUT SUDAH DI SET, MAKA CHECKED --}}>
-                                                        {{ $row }} <br>
-                                                        @if ($no++%4 == 0)
-                                                        <br>
-                                                        @endif
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <div class="x-footer">
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary btn-sm float-right">
-                                    Set Role
-                                </button>
-                            </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
 @endsection
+
+@push('scripts')
+<script src="{{asset('js/setting/updateForm.js')}}" charset="utf-8"></script>
+<script>
+    $(document).ready(function() {
+        $('#all_sales').change(function() {
+            if ($(this).prop('checked')) {
+                $('.hidden_sales_div').prop('hidden', false);
+                $(".fa_sales").addClass("fa-chevron-up").removeClass("fa-chevron-down");
+                $('.sales').prop('checked', true);
+            } else {
+                $('.hidden_sales_div').prop('hidden', true);
+                $(".fa_sales").addClass("fa-chevron-down").removeClass("fa-chevron-up");
+                $('.sales').prop('checked', false);
+            }
+        });
+        $('#all_sales').trigger('change');
+        $('#all_purchase').change(function() {
+            if ($(this).prop('checked')) {
+                $('.hidden_purchase_div').prop('hidden', false);
+                $(".fa_purchase").addClass("fa-chevron-up").removeClass("fa-chevron-down");
+                $('.purchase').prop('checked', true);
+            } else {
+                $('.hidden_purchase_div').prop('hidden', true);
+                $(".fa_purchase").addClass("fa-chevron-down").removeClass("fa-chevron-up");
+                $('.purchase').prop('checked', false);
+            }
+        });
+        $('#all_purchase').trigger('change');
+    });
+
+    function sales_collapse() {
+        if ($('#sales_collapse').prop('down')) {
+            $('.hidden_sales_div').prop('hidden', false);
+            $(".fa_sales").addClass("fa-chevron-up").removeClass("fa-chevron-down");
+            $('#sales_collapse').prop('down', false);
+        } else {
+            $('.hidden_sales_div').prop('hidden', true);
+            $(".fa_sales").addClass("fa-chevron-down").removeClass("fa-chevron-up");
+            $('#sales_collapse').prop('down', true);
+        }
+    }
+
+    function purchase_collapse() {
+        if ($('#purchase_collapse').prop('down')) {
+            $('.hidden_purchase_div').prop('hidden', false);
+            $(".fa_purchase").addClass("fa-chevron-up").removeClass("fa-chevron-down");
+            $('#purchase_collapse').prop('down', false);
+        } else {
+            $('.hidden_purchase_div').prop('hidden', true);
+            $(".fa_purchase").addClass("fa-chevron-down").removeClass("fa-chevron-up");
+            $('#purchase_collapse').prop('down', true);
+        }
+    }
+</script>
+@endpush

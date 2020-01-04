@@ -5,20 +5,11 @@
     <div class="title_left">
         <h3>Cash & Bank</h3>
     </div>
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
 </div>
 @endsection
 
 @section('content')
+@hasrole('Owner|Ultimate')
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
@@ -73,6 +64,7 @@
         </div>
     </div>
 </div>
+@endrole
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
@@ -86,23 +78,101 @@
                     </ul>
                     <div id="myTabContent" class="tab-content">
                         <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="invoice-tab">
-                            <div class="table-responsive">
-                                <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
-                                    <thead>
-                                        <tr class="headings">
-                                            <th class="column-title">Account Code</th>
-                                            <th class="column-title">Account Name </th>
-                                            <!--<th class="column-title">Statement Balance </th>-->
-                                            <th class="column-title">Balance </th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                            <div class="x_panel">
+                                @role('Cash & Bank')
+                                @can('Create')
+                                <div class="x_title">
+                                    <ul class="nav navbar-right panel_toolbox">
+                                        <li>
+                                            <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Transaction <span class="caret"></span>
+                                            </button>
+                                            <ul role="menu" class="dropdown-menu">
+                                                <li><a href="/cashbank/bank_transfer/new">Transfer Funds</a>
+                                                </li>
+                                                <li><a href="/cashbank/bank_deposit/new">Receive Money</a>
+                                                </li>
+                                                <li><a href="/cashbank/bank_withdrawal/account/new">Pay Money</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <div class="clearfix"></div>
+                                </div>
+                                @endcan
+                                @endrole
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th class="column-title">Account Code</th>
+                                                    <th class="column-title">Account Name </th>
+                                                    <!--<th class="column-title">Statement Balance </th>-->
+                                                    <th class="column-title">Balance </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $total = 0 ?>
+                                                <?php $debit = 0 ?>
+                                                <?php $credit = 0 ?>
+                                                @foreach ($coa as $a)
+                                                @foreach($coa_detail as $cd)
+                                                @if($cd->coa_id == $a->id)
+                                                <?php $debit += $cd->debit ?>
+                                                <?php $credit += $cd->credit ?>
+                                                @endif
+                                                @endforeach
+                                                <tr>
+                                                    <td>
+                                                        <a>{{$a->code}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/chart_of_accounts/{{$a->id}}">{{$a->name}}</a>
+                                                    </td>
+                                                    <td style="text-align: right">
+                                                        @if($a->coa_category_id == 8 or $a->coa_category_id == 10 or $a->coa_category_id == 11 or $a->coa_category_id == 12 or $a->coa_category_id == 13 or $a->coa_category_id == 14)
+                                                        <?php $total = $credit - $debit ?>
+                                                        @else
+                                                        <?php $total = $debit - $credit ?>
+                                                        @endif
+                                                        @if($total < 0) <a>Rp (@number(abs($total)))</a>
+                                                            @else
+                                                            <a>Rp @number($total)</a>
+                                                            @endif
+                                                    </td>
+                                                </tr>
+                                                <?php $total = 0 ?>
+                                                <?php $debit = 0 ?>
+                                                <?php $credit = 0 ?>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="delivery-tab">
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>View Transaction Report</h2>
+                                    @role('Cash & Bank')
+                                    @can('Create')
+                                    <ul class="nav navbar-right panel_toolbox">
+                                        <li>
+                                            <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Transaction <span class="caret"></span>
+                                            </button>
+                                            <ul role="menu" class="dropdown-menu">
+                                                <li><a href="/cashbank/bank_transfer/new">Transfer Funds</a>
+                                                </li>
+                                                <li><a href="/cashbank/bank_deposit/new">Receive Money</a>
+                                                </li>
+                                                <li><a href="/cashbank/bank_withdrawal/account/new">Pay Money</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    @endcan
+                                    @endrole
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
                                             <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">Transactions List
@@ -138,6 +208,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/cashbank/dataTable.js') }}" charset="utf-8"></script>
 <script src="{{ asset('js/cashbank/chartdiindex.js') }}" charset="utf-8"></script>
 @endpush

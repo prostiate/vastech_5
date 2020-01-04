@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
 
 class OtherProductCategoryController extends Controller
 {
@@ -35,6 +36,7 @@ class OtherProductCategoryController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'name'               => 'required',
         );
@@ -47,7 +49,8 @@ class OtherProductCategoryController extends Controller
         DB::beginTransaction();
         try {
             $share = new other_product_category([
-                'user_id'                   => Auth::id(),
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
                 'name'                  => $request->get('name'),
             ]);
             $share->save();

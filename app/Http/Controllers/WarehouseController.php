@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;
 use App\User;
+use App\wip;
 
 class WarehouseController extends Controller
 {
@@ -44,6 +45,7 @@ class WarehouseController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'warehouse_name'    => 'required',
         );
@@ -56,7 +58,8 @@ class WarehouseController extends Controller
         DB::beginTransaction();
         try {
             $share = new warehouse([
-                'user_id'                   => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'name'      => $request->get('warehouse_name'),
                 'code'      => $request->get('warehouse_code'),
                 'address'   => $request->get('warehouse_address'),
@@ -97,8 +100,8 @@ class WarehouseController extends Controller
 
     public function show($id)
     {
-        $warehouses     = warehouse::find($id);
-        $product_list   = warehouse_detail::where('warehouse_id', $id)->selectRaw('SUM(qty_in - qty_out) as qty_total, product_id')->groupBy('product_id')->get();
+        $warehouses         = warehouse::find($id);
+        $product_list       = warehouse_detail::where('warehouse_id', $id)->selectRaw('SUM(qty_in - qty_out) as qty_total, product_id')->groupBy('product_id')->get();
         $po                 = purchase_order::where('warehouse_id', $id)->get();
         $pd                 = purchase_delivery::where('warehouse_id', $id)->get();
         $pi                 = purchase_invoice::where('warehouse_id', $id)->get();
@@ -106,10 +109,13 @@ class WarehouseController extends Controller
         $sd                 = sale_delivery::where('warehouse_id', $id)->get();
         $si                 = sale_invoice::where('warehouse_id', $id)->get();
         $sa                 = stock_adjustment::where('warehouse_id', $id)->get();
+        $wip                = wip::where('warehouse_id', $id)->get();
+        $fwt                = warehouse_transfer::where('from_warehouse_id', $id)->get();
+        $twt                = warehouse_transfer::where('to_warehouse_id', $id)->get();
 
         return view('admin.products.warehouses.show', compact([
             'warehouses',
-            'product_list', 'po', 'pd', 'pi', 'so', 'sd', 'si', 'sa'
+            'product_list', 'po', 'pd', 'pi', 'so', 'sd', 'si', 'sa', 'wip', 'fwt', 'twt'
         ]));
     }
 

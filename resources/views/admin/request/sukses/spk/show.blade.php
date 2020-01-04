@@ -7,16 +7,134 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">History
+                        </button>
+                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <h5 class="modal-title" id="myModalLabel">History</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>Surat Perintah Kerja #{{$spk->number}}</strong></h3>
+                                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Work In Progress History</a>
+                                            </li>
+                                            <li role="presentation" class=""><a href="#tab_content2" id="sales-tab" role="tab" data-toggle="tab" aria-expanded="true">Sales Invoice History</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                                            <div id="myTabContent" class="tab-content">
+                                                <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                                                    <div class="table-responsive my-5">
+                                                        <table id="example" class="table table-striped jambo_table bulk_action">
+                                                            <thead>
+                                                                <tr class="headings">
+                                                                    <th class="column-title">Production Date</th>
+                                                                    <th class="column-title">Transaction Number</th>
+                                                                    <th class="column-title">Production Name</th>
+                                                                    <th class="column-title">Total</th>
+                                                                    <th class="column-title">Created Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($wip_item as $wi)
+                                                                @if($wi->wip->selected_spk_id == $spk->id)
+                                                                <tr>
+                                                                    <td>
+                                                                        {{$wi->wip->transaction_date}}
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="/wip/{{$wi->wip->id}}">Work In Progress #{{$wi->wip->number}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="/products/{{$wi->wip->result_product}}">{{$wi->wip->product->name}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        {{$wi->wip->result_qty}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{$wi->wip->updated_at}} ({{$wi->wip->user->name}})
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="sales-tab">
+                                                    <div class="table-responsive my-5">
+                                                        <table id="example" class="table table-striped jambo_table bulk_action">
+                                                            <thead>
+                                                                <tr class="headings">
+                                                                    <th class="column-title">Transaction Date</th>
+                                                                    <th class="column-title">Transaction Number</th>
+                                                                    <th class="column-title">Due Date</th>
+                                                                    <th class="column-title">Fabrication Only</th>
+                                                                    <th class="column-title">Grand Total</th>
+                                                                    <th class="column-title">Status</th>
+                                                                    <th class="column-title">Created Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($sii as $sii)
+                                                                @if($sii->sale_invoice->selected_spk_id == $spk->id)
+                                                                <tr>
+                                                                    <td>
+                                                                        {{$sii->sale_invoice->transaction_date}}
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="/sales_invoice/{{$sii->sale_invoice->id}}">Sales Invoice #{{$sii->sale_invoice->number}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        {{$sii->sale_invoice->due_date}}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if($sii->sale_invoice->jasa_only == 1) Yes @else No @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        Rp {{number_format($sii->sale_invoice->grandtotal, 2, ',','.')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{$sii->sale_invoice->status_sales->name}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{$sii->sale_invoice->updated_at}} ({{$sii->sale_invoice->user->name}})
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            @foreach($spk_item as $sii)
-                            @if($sii->qty_remaining_sent != 0)
+                            @hasrole('Owner|Ultimate|Production')
+                            @can('Create')
+                            @if($can == 1)
+                            @hasrole('Owner|Ultimate|Sales Invoice')
                             <li><a href="/sales_invoice/new/fromSPK/{{$spk->id}}">Create Invoice</a></li>
+                            @endrole
                             <li class="divider"></li>
-                            @break
                             @endif
-                            @endforeach
+                            @endcan
+                            @endrole
                             <li><a target="_blank" href="/spk/print/PDF/{{$spk->id}}">Print & Preview</a></li>
                         </ul>
                     </li>
@@ -114,7 +232,7 @@
                                     <td>
                                         @foreach($quantity_in_stock as $qis)
                                         @if($qis->product_id == $si->product_id)
-                                        <?php $qty += $qis->qty_in ?>
+                                        <?php $qty += $qis->qty_in - $qis->qty_out ?>
                                         @endif
                                         @endforeach
                                         <a>{{$qty}}</a>
@@ -129,9 +247,15 @@
                                     <td>
                                         <a>{{$si->spk_item_status->name}}</a>
                                     </td>
+                                    @hasrole('Owner|Ultimate|Production')
+                                    @can('Create')
                                     <td class="text-center">
                                         <a href="/wip/new/fromSPK/{{$spk->id}}_{{$si->id}}" class="btn btn-dark">Create WIP</a>
                                     </td>
+                                    @endcan
+                                    @else
+                                    <td></td>
+                                    @endrole
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -141,25 +265,22 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/spk') }}" class="btn btn-dark">Cancel</a>
-                            <?php $statusajah = 0 ?>
-                            @foreach($spk_item as $a)
-                                @if($a->status == 1)
-                                    <!-- item open-->
-                                    <?php $statusajah += 0 ?>
-                                @else
-                                    <?php $statusajah += 1 ?>
-                                @endif
-                            @endforeach
+                            @hasrole('Owner|Ultimate|Production')
                             @if($statusajah == 0)
-                                @if($spk->status == 2)
-                                    <!-- header close-->
-                                    <button type="button" class="btn btn-danger" id="click">Delete</button>
-                                    <div class="btn-group">
-                                        <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">Edit</button>
-                                    </div>
-                                    <input type="text" value="{{$spk->id}}" id="form_id" hidden>
-                                @endif
+                            @if($spk->status == 2)
+                            <!-- header close-->
+                            @can('Delete')
+                            <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
+                            <div class="btn-group">
+                                <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">Edit</button>
+                            </div>
+                            @endcan
+                            <input type="text" value="{{$spk->id}}" id="form_id" hidden>
                             @endif
+                            @endif
+                            @endrole
                         </div>
                     </div>
                 </form>

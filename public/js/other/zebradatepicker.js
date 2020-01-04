@@ -8,4 +8,10 @@ $(document).ready(function() {
     $('#datepicker3').Zebra_DatePicker({
         icon_position: 'left'
     });
+    $('#datepicker4').Zebra_DatePicker({
+        icon_position: 'left'
+    });
+    $('#datepicker5').Zebra_DatePicker({
+        icon_position: 'left'
+    });
 });

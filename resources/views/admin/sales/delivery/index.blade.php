@@ -19,6 +19,7 @@
 @endsection
 
 @section('content')
+@hasrole('Owner|Ultimate')
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
@@ -63,7 +64,6 @@
                 </ul>
                 <div class="clearfix"></div>
             </div>
-            @hasrole('Owner|Ultimate')
             <div class="x_content">
                 <div class="row tile_count">
                     <div class="col-md-12 col-sm-6 col-xs-6 tile_stats_count">
@@ -80,15 +80,42 @@
                     </div>
                 </div>
             </div>
-            @endrole
         </div>
     </div>
 </div>
+@endrole
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
                 <h2>List of Transactions</h2>
+                @role('Sales Delivery')
+                @can('Create')
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Sales <span class="caret"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            @if($user->company_id == 5)
+                            <li><a href="/sales_invoice/newRS">Sales Invoice</a>
+                            </li>
+                            <li><a href="/sales_order/newRS">Sales Order</a>
+                            </li>
+                            <li><a href="/sales_quote/new">Sales Quote</a>
+                            </li>
+                            @else
+                            <li><a href="/sales_invoice/new">Sales Invoice</a>
+                            </li>
+                            <li><a href="/sales_order/new">Sales Order</a>
+                            </li>
+                            <li><a href="/sales_quote/new">Sales Quote</a>
+                            </li>
+                            @endif
+                        </ul>
+                    </li>
+                </ul>
+                @endcan
+                @endrole
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

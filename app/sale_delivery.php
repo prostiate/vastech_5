@@ -10,6 +10,11 @@ class sale_delivery extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function sale_delivery_item()
     {
         return $this->hasMany('App\sale_delivery_item');

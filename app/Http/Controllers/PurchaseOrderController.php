@@ -308,6 +308,8 @@ class PurchaseOrderController extends Controller
         DB::beginTransaction();
         try {
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
                 'number_complete'   => 'Purchase Order #' . $trans_no,
@@ -321,6 +323,7 @@ class PurchaseOrderController extends Controller
             ]);
 
             $po = new purchase_order([
+                'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
@@ -434,6 +437,8 @@ class PurchaseOrderController extends Controller
             other_transaction::where('number', $id_number)->where('type', 'purchase order')->update($updatepdstatus);
             // CREATE OTHER TRANSACTION ORDER
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
                 'number_complete'   => 'Purchase Order #' . $trans_no,
@@ -447,6 +452,7 @@ class PurchaseOrderController extends Controller
             ]);
             // CREATE PURCHASE ORDER HEADER
             $po = new purchase_order([
+                'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
@@ -556,6 +562,8 @@ class PurchaseOrderController extends Controller
             };
 
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
                 'number_complete'   => 'Purchase Order #' . $trans_no,
@@ -569,6 +577,7 @@ class PurchaseOrderController extends Controller
             ]);
             if ($jasa_only == 0) {
                 $po = new purchase_order([
+                    'company_id'        => $user->company_id,
                     'user_id'           => Auth::id(),
                     'number'            => $trans_no,
                     'contact_id'        => $request->get('vendor_name'),
@@ -590,6 +599,7 @@ class PurchaseOrderController extends Controller
                 ]);
             } else {
                 $po = new purchase_order([
+                    'company_id'        => $user->company_id,
                     'user_id'           => Auth::id(),
                     'number'            => $trans_no,
                     'contact_id'        => $request->get('vendor_name'),
@@ -1069,35 +1079,73 @@ class PurchaseOrderController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
-        /*$pi             = purchase_order::with(['contact', 'term', 'warehouse', 'product'])->find($id);
-        $terms          = other_term::all();
-        $products       = purchase_order_item::where('purchase_order_id', $id)->get();
-        $units          = other_unit::all();
-        $today          = Carbon::today();
-        $pegawai        = purchase_order::all();
-
-        $pdf = PDF::loadview('admin.purchases.order.PrintPDF', compact([
-            'pi', 'terms', 'products', 'units', 'today',
-        ]))->setPaper('a4', 'potrait');
-        //return $pdf->download('laporan-pegawai-pdf');
-        // TANDA DOWNLOAD
-        return $pdf->stream();*/
-
+        $user                       = User::find(Auth::id());
         $pp                         = purchase_order::find($id);
         $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
         $checknumberpd              = purchase_order::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
+        $numbercoadetail            = 'Purchase Order #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
-        $company                    = company_setting::where('company_id', 1)->first();
-        //$get_all_detail             = coa_detail::where('number', $numbercoadetail)->where('type', 'purchase order')->with('coa')->get();
-        //$total_debit                = $get_all_detail->sum('debit');
-        //$total_credit               = $get_all_detail->sum('credit');
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.purchases.order.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
-        //return $pdf->download('laporan-pegawai-pdf');
-        // TANDA DOWNLOAD
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_order::find($id);
+        $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
+        $checknumberpd              = purchase_order::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_order::find($id);
+        $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
+        $checknumberpd              = purchase_order::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_order::find($id);
+        $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
+        $checknumberpd              = purchase_order::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_order::find($id);
+        $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
+        $checknumberpd              = purchase_order::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

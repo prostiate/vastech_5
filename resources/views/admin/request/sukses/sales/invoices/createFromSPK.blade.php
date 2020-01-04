@@ -129,6 +129,7 @@
                             </thead>
                             <tbody class="neworderbody">
                                 @foreach ($po_item as $a)
+                                @if($a->qty_remaining_sent != 0)
                                 <tr>
                                     <td>
                                         <div class="form-group">
@@ -149,7 +150,7 @@
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <input onClick="this.select();" type="number" class="form-control qty" name="qty[]" value="{{$a->qty_remaining_sent}}">
+                                            <input onClick="this.select();" type="number" class="form-control qty" name="qty[]">
                                         </div>
                                         <!--{{--<input readonly r_val="0" value="{{$a->qty}}" type="number" class="qty form-control" name='qty[]'>
                                         <small>Remaining : <span class="remaining rqty">0</span></small>
@@ -179,25 +180,28 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <?php $total_amount_display = $a->product->avg_price * $a->qty ?>
+                                        <!--{{--<?php $total_amount_display = $a->product->avg_price * $a->qty ?>
                                         <?php $total_amount = $a->product->avg_price * $a->qty ?>
                                         <?php $total_amount_tax = (($a->product->avg_price * $a->qty * $a->product->taxSell->rate) / 100) ?>
                                         <?php $total_amount_sub = $a->product->avg_price * $a->qty ?>
                                         <?php $total_amount_grand = $total_amount_sub + $total_amount_tax ?>
                                         <input value="{{$total_amount_display}}" type="text" class="amount_display form-control" name="total_price_display[]" readonly>
-                                        <input value="{{$total_amount}}" type="text" class="amount" name="total_price[]" hidden>
-                                        <!--<input value="{{$total_amount_tax}}" type="text" class="amounttax" name="total_price_tax[]" >
+                                        <input value="{{$total_amount}}" type="text" class="amount" name="total_price[]" hidden>--}}-->
+                                        <input type="text" class="amount_display form-control" name="total_price_display[]" readonly>
+                                        <input type="text" class="amount" name="total_price[]" hidden>
+                                        <!--{{--<input value="{{$total_amount_tax}}" type="text" class="amounttax" name="total_price_tax[]" >
                                         <input value="{{$total_amount_sub}}" type="text" class="amountsub" name="total_price_sub[]" >
-                                        <input value="{{$total_amount_grand}}" type="text" class="amountgrand" name="total_price_grand[]" >-->
+                                        <input value="{{$total_amount_grand}}" type="text" class="amountgrand" name="total_price_grand[]" >--}}-->
                                         <!-- INI BUAT AMOUNT YANG COST -->
                                         <br>
                                         <input type="text" class="cost_amount_display form-control" name="cost_total_price_display[]" readonly>
                                         <input type="text" class="cost_amount" name="cost_total_price[]" hidden>
-                                        <!--<input type="text" class="cost_amounttax" name="cost_total_price_tax[]" >
+                                        <!--{{--<input type="text" class="cost_amounttax" name="cost_total_price_tax[]" >
                                         <input type="text" class="cost_amountsub" name="cost_total_price_sub[]" >
-                                        <input type="text" class="cost_amountgrand" name="cost_total_price_grand[]" >-->
+                                        <input type="text" class="cost_amountgrand" name="cost_total_price_grand[]" >--}}-->
                                     </td>
                                 </tr>
+                                @endif
                                 @endforeach
                             </tbody>
                         </table>

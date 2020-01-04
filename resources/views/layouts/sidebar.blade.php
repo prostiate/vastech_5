@@ -27,8 +27,6 @@
                 <h3>General</h3>
                 <ul class="nav side-menu">
                     <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
-                    <!-- <li><a href="/sales"><i class="fa fa-tag"></i> Sales </a></li> -->
-                    @hasrole('Owner|Ultimate|Sales|GT|MT|WS|Production')
                     <li><a><i class="fa fa-tag"></i> Sales <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/sales_quote">Sales Quote</a></li>
@@ -39,8 +37,6 @@
                             <li><a href="/sales_return">Sales Return</a></li>
                         </ul>
                     </li>
-                    @endrole
-                    @hasrole('Owner|Ultimate|Purchase')
                     <li><a><i class="fa fa-credit-card"></i> Purchases <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/purchases_quote">Purchases Quote</a></li>
@@ -51,15 +47,9 @@
                             <li><a href="/purchases_return">Purchases Return</a></li>
                         </ul>
                     </li>
-                    @endrole
-                    <!-- <li><a href="/purchases"><i class="fa fa-credit-card"></i> Purchases </a></li> -->
-                    @hasrole('Owner|Ultimate|Accountant|Finance|Production')
                     <li><a href="/expenses"><i class="fa fa-outdent"></i> Expenses </a></li>
-                    @endrole
-                    @hasrole('Owner|Ultimate|Production')
                     <li><a href="/spk"><i class="fa fa-times"></i> Surat Perintah Kerja </a></li>
                     <li><a href="/wip"><i class="fa fa-times"></i> Work In Progress </a></li>
-                    @endrole
                 </ul>
             </div>
             <div class="menu_section">
@@ -77,41 +67,32 @@
                     <li><a><i class="fa fa-dropbox"></i> Products <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="/products">Goods & Services</a></li>
-                            <li><a href="/warehouses">Warehouses</a></li>
-                            @hasrole('Owner|Ultimate|Warehouse')
                             <li><a href="/stock_adjustment">Stock Adjustment</a></li>
+                            <li><a href="/warehouses">Warehouses</a></li>
                             <li><a href="/warehouses_transfer">Warehouse Transfer List</a></li>
-                            <!--<li><a>Production<span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu">
-                                    <li><a href="/production_one">Station 1</a></li>
-                                    <li><a href="/production_two">Station 2</a></li>
-                                    <li><a href="/production_three">Station 3</a></li>
-                                    <li><a href="/production_four">Station 4</a></li>
-                                </ul>
-                            </li>-->
-                            @endrole
                         </ul>
                     </li>
-                    <!--<li><a href="/products"><i class="fa fa-dropbox"></i> Products </a></li>-->
-                    @hasrole('Owner|Ultimate|Accountant|Finance|Production')
                     <li><a href="/cashbank"><i class="fa fa-bank"></i> Cash & Bank </a></li>
                     <!--<li><a href="#"><i class="fa fa-desktop"></i> Assets Management </a></li>-->
                     <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> Chart of Accounts </a></li>
-                    @endrole
                 </ul>
             </div>
             <div class="menu_section">
-                
+
                 <h3>Setting</h3>
                 <ul class="nav side-menu">
                     <!--<li><a href="#"><i class="fa fa-money"></i> Payroll </a></li>-->
+                    @role('Owner|Ultimate|Other List')
                     <li><a href="/other"><i class="fa fa-tasks"></i> Other Lists </a></li>
-                    @hasrole('Owner|Ultimate|Accountant')
+                    @endrole
                     <!--<li><a href="#"><i class="fa fa-qrcode"></i> Add-Ons </a></li>-->
+                    @role('Owner|Ultimate|Reports')
                     <li><a href="/reports"><i class="fa fa-area-chart"></i> Reports </a></li>
+                    @endrole
+                    @role('Owner|Ultimate|Setting')
                     <li><a href="/settings/company"><i class="fa fa-cog"></i> Settings </a></li>
                     @endrole
-                </ul>                
+                </ul>
             </div>
         </div>
         <!-- /sidebar menu -->

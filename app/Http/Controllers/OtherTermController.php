@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
 
 class OtherTermController extends Controller
 {
@@ -44,6 +45,7 @@ class OtherTermController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'name'               => 'required',
             'length'             => 'required',
@@ -57,9 +59,10 @@ class OtherTermController extends Controller
         DB::beginTransaction();
         try {
             $share = new other_term([
-                'user_id'                   => Auth::id(),
-                'name'                  => $request->get('name'),
-                'length'                  => $request->get('length'),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
+                'name'              => $request->get('name'),
+                'length'            => $request->get('length'),
             ]);
             $share->save();
             DB::commit();
@@ -118,11 +121,11 @@ class OtherTermController extends Controller
         try {
             $data = other_term::findOrFail($id);
             if (
-                sale_delivery::find($id) or sale_invoice::find($id)
-                or sale_order::find($id) or sale_quote::find($id)
-                or purchase_delivery::find($id) or purchase_invoice::find($id)
-                or purchase_order::find($id) or purchase_quote::find($id)
-                or cashbank::find($id) or contact::find($id) or expense::find($id)
+                $data->sale_invoice()->exists()
+                or $data->sale_order()->exists() or $data->sale_quote()->exists()
+                or $data->purchase_invoice()->exists()
+                or $data->purchase_order()->exists() or $data->purchase_quote()->exists()
+                or $data->contact()->exists() or $data->expense()->exists()
             ) {
                 DB::rollBack();
                 return response()->json(['errors' => 'Cannot delete product with transactions!']);

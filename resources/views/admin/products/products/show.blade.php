@@ -5,16 +5,6 @@
     <div class="title_left">
         <h3>Product Detail</h3>
     </div>
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
 </div>
 @endsection
 
@@ -24,18 +14,26 @@
         <div class="x_panel">
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
+                    @hasrole('Owner|Ultimate|Good & Services')
+                    @can('Edit')
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/edit/{{$products->id}}';">Edit Profile
                         </button>
                     </li>
+                    @endcan
+                    @endrole
                     <li>
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             <!--<li><a href="#">Archive</a>-->
+                            @hasrole('Owner|Ultimate|Good & Services')
+                            @can('Delete')
                             <li><a href="#" id="click">Delete</a>
                                 <input type="text" value="{{$products->id}}" id="form_id" hidden>
                             </li>
+                            @endcan
+                            @endrole
                         </ul>
                     </li>
                 </ul>
@@ -58,6 +56,8 @@
                         <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Info Product / Service</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">List Transactions</a>
+                        </li>
+                        <li role="presentation" class=""><a href="#tab_content6" role="tab" id="warehouses-tab" data-toggle="tab" aria-expanded="false">List Warehouses</a>
                         </li>
                         @if($products->is_bundle == 1)
                         <li role="presentation" class=""><a href="#tab_content3" role="tab" id="bundle-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
@@ -198,10 +198,14 @@
                                                 <tr class="headings">
                                                     <th class="column-title">Transaction Number </th>
                                                     <th class="column-title">Transaction Date </th>
+                                                    <th class="column-title">Warehouse</th>
                                                     <th class="column-title">Qty ({{$products->other_unit->name}})</th>
+                                                    <th class="column-title">Qty Movement</th>
+                                                    <th class="column-title">Created Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php $qty_move = 0 ?>
                                                 @foreach($pq as $pq)
                                                 <tr>
                                                     <td>
@@ -211,7 +215,17 @@
                                                         {{$pq->purchase_quote->transaction_date}}
                                                     </td>
                                                     <td>
+                                                        -
+                                                    </td>
+                                                    <td>
                                                         {{$pq->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += 0 ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$pq->purchase_quote->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -224,7 +238,17 @@
                                                         {{$po->purchase_order->transaction_date}}
                                                     </td>
                                                     <td>
+                                                        <a href="/warehouses/{{$po->purchase_order->warehouse_id}}">{{$po->purchase_order->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
                                                         {{$po->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += 0 ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$po->purchase_order->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -237,7 +261,17 @@
                                                         {{$pd->purchase_delivery->transaction_date}}
                                                     </td>
                                                     <td>
+                                                        <a href="/warehouses/{{$pd->purchase_delivery->warehouse_id}}">{{$pd->purchase_delivery->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
                                                         {{$pd->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += $pd->qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$pd->purchase_delivery->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -250,7 +284,17 @@
                                                         {{$pi->purchase_invoice->transaction_date}}
                                                     </td>
                                                     <td>
+                                                        <a href="/warehouses/{{$pi->purchase_invoice->warehouse_id}}">{{$pi->purchase_invoice->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
                                                         {{$pi->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += $pi->qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$pi->purchase_invoice->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -263,7 +307,17 @@
                                                         {{$sq->sale_quote->transaction_date}}
                                                     </td>
                                                     <td>
+                                                        -
+                                                    </td>
+                                                    <td>
                                                         {{$sq->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= 0 ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$sq->sale_quote->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -276,7 +330,17 @@
                                                         {{$so->sale_order->transaction_date}}
                                                     </td>
                                                     <td>
+                                                    <a href="/warehouses/{{$so->sale_order->warehouse_id}}">{{$so->sale_order->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
                                                         {{$so->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= 0 ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$so->sale_order->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -288,8 +352,18 @@
                                                     <td>
                                                         {{$sd->sale_delivery->transaction_date}}
                                                     </td>
+                                                    <a>
+                                                    <a href="/warehouses/{{$sd->sale_delivery->warehouse_id}}">{{$sd->sale_delivery->warehouse->name}}</a>
+                                                    </a>
                                                     <td>
                                                         {{$sd->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= $sd->qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$sd->sale_delivery->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -302,7 +376,17 @@
                                                         {{$si->sale_invoice->transaction_date}}
                                                     </td>
                                                     <td>
+                                                    <a href="/warehouses/{{$si->sale_invoice->warehouse_id}}">{{$si->sale_invoice->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
                                                         {{$si->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= $si->qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$si->sale_invoice->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -315,9 +399,156 @@
                                                         {{$sa->stock_adjustment->date}}
                                                     </td>
                                                     <td>
-                                                        {{$sa->actual}}
+                                                    <a href="/warehouses/{{$sa->stock_adjustment->warehouse_id}}">{{$sa->stock_adjustment->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$sa->difference}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= $sa->difference ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$sa->stock_adjustment->updated_at}}
                                                     </td>
                                                 </tr>
+                                                @endforeach
+                                                @foreach($wip as $wip)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/wip/{{$wip->id}}">Work In Progress #{{$wip->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wip->transaction_date}}
+                                                    </td>
+                                                    <td>
+                                                    <a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wip->result_qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += $wip->result_qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$wip->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                @foreach($wipi as $wipi)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/wip/{{$wipi->wip->id}}">Work In Progress #{{$wipi->wip->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wipi->wip->transaction_date}}
+                                                    </td>
+                                                    <td>
+                                                    <a href="/warehouses/{{$wipi->wip->warehouse_id}}">{{$wipi->wip->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        -{{$wipi->qty_total}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= $wipi->qty_total ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$wipi->wip->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                @foreach($wt as $wt)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/warehouses_transfer/{{$wt->warehouse_transfer->id}}">Warehouse Transfer #{{$wt->warehouse_transfer->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wt->warehouse_transfer->transaction_date}}
+                                                    </td>
+                                                    <td>
+                                                        From : <a href="/warehouses/{{$wt->warehouse_transfer->from_warehouse_id}}">{{$wt->warehouse_transfer->from_warehouse->name}}</a><br>
+                                                        To : <a href="/warehouses/{{$wt->warehouse_transfer->to_warehouse_id}}">{{$wt->warehouse_transfer->to_warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wt->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move -= 0 ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$wt->warehouse_transfer->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                @foreach($pirs as $pirs)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/purchases_invoice/{{$pirs->purchase_invoice->id}}">Purchase Invoice #{{$pirs->purchase_invoice->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$pirs->purchase_invoice->transaction_date}}
+                                                    </td>
+                                                    <td>
+                                                    <a href="/warehouses/{{$pirs->purchase_invoice->warehouse_id}}">{{$pirs->purchase_invoice->warehouse->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$pirs->qty}}
+                                                    </td>
+                                                    <td>
+                                                        <?php $qty_move += $pirs->qty ?>
+                                                        {{$qty_move}}
+                                                    </td>
+                                                    <td>
+                                                        {{$pirs->purchase_invoice->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="warehouses-tab">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>View Warehouse Report</h2>
+                                    <ul class="nav navbar-right panel_toolbox">
+                                        <li>
+                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses';">Warehouses List
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped jambo_table bulk_action">
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th class="column-title">Warehouse</th>
+                                                    <th class="column-title">Warehouse Qty</th>
+                                                    <!--<th class="column-title">Last Updated</th>-->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $qty_move = 0 ?>
+                                                @foreach($warehouse as $wh)
+                                                @foreach($warehouse_detail as $wd)
+                                                @if($wh->id == $wd->warehouse_id)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/warehouses/{{$wh->id}}">{{$wh->name}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wd->qty_total}}
+                                                    </td>
+                                                </tr>
+                                                @endif
+                                                @endforeach
                                                 @endforeach
                                             </tbody>
                                         </table>

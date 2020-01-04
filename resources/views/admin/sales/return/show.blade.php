@@ -354,7 +354,11 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/sales_return') }}" class="btn btn-dark">Cancel</a>
+                            @hasrole('Owner|Ultimate|Sales Return')
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @endrole
                             <!--<div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_return/edit/' + {{$pi->id}};">Edit
                                 </button>

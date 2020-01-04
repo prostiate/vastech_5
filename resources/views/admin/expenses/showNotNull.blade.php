@@ -156,12 +156,18 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            @hasrole('Owner|Ultimate|Expense')
+                            @can('Delete')
                             @if($pi->status == 1 or $pi->status == 4)
+                            @hasrole('Owner|Ultimate|Cash & Bank')
                             <li><a href="/cashbank/bank_withdrawal/expense/new/{{$pi->id}}">Pay Bill</a></li>
+                            @endrole
                             @endif
                             <li><a href="#">Clone Transaction</a></li>
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
+                            @endcan
+                            @endrole
                             <li><a target="_blank" href="/expenses/print/PDF1/{{$pi->id}}">Print & Preview</a></li>
                         </ul>
                     </li>
@@ -326,13 +332,19 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/expenses') }}" class="btn btn-dark">Cancel</a>
+                            @hasrole('Owner|Ultimate|Expense')
                             @if(!$pi->amount_paid > 0)
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/expenses/edit/' + {{$pi->id}};">Edit
                                 </button>
                             </div>
+                            @endcan
                             @endif
+                            @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
                     </div>

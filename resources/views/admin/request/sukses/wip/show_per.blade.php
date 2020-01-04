@@ -330,7 +330,11 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/wip') }}" class="btn btn-dark">Cancel</a>
+                            @hasrole('Owner|Ultimate|Production')
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @endrole
                             <!--{{--<div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/wip/edit/{{$wip->id}}';">Update</button>
                             </div>--}}-->

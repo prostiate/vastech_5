@@ -81,8 +81,13 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            @role('Cash & Bank')
+                            @can('Create')
                             <li><a href="#">Clone Transaction</a></li>
                             <li><a href="#">Set as Recurring</a></li>
+                            <li class="divider"></li>
+                            @endcan
+                            @endrole
                         </ul>
                     </li>
                 </ul>
@@ -163,11 +168,17 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/cashbank') }}" class="btn btn-dark">Cancel</a>
+                            @role('Cash & Bank')
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/cashbank/bank_transfer/edit/' + {{$caba->id}};">Edit
                                 </button>
                             </div>
+                            @endcan
+                            @endrole
                             <input type="text" value="{{$caba->id}}" name="hidden_id" id="form_id" hidden>
                             <input type="text" value="{{$caba->number}}" name="number" hidden>
                             <input type="text" value="{{$caba->transfer_from}}" name="transfer_from" hidden>

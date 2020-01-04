@@ -37,6 +37,18 @@ $(document).ready(function() {
                 }
             },
             {
+                data: "warehouse.name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/warehouses/' +
+                        row.warehouse.id +
+                        '">' +
+                        row.warehouse.name +
+                        "</a>"
+                    );
+                }
+            },
+            {
                 data: "due_date",
                 searchable: false,
                 render: $.fn.dataTable.render.text(),

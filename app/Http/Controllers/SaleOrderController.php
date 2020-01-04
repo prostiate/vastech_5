@@ -419,6 +419,8 @@ class SaleOrderController extends Controller
             $grandtotal_header_other    = 0;
 
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Sales Order #' . $trans_no,
@@ -432,7 +434,8 @@ class SaleOrderController extends Controller
             ]);
 
             $po = new sale_order([
-                'user_id'                   => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -617,6 +620,8 @@ class SaleOrderController extends Controller
             other_transaction::where('number', $id_number)->where('type', 'sales quote')->update($updatepdstatus);
             // CREATE OTHER TRANSACTION ORDER
             $transactions           = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
                 'number_complete'   => 'Sales Order #' . $trans_no,
@@ -630,6 +635,7 @@ class SaleOrderController extends Controller
             ]);
             // CREATE SALES ORDER HEADER
             $po                     = new sale_order([
+                'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
@@ -697,6 +703,8 @@ class SaleOrderController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -802,6 +810,8 @@ class SaleOrderController extends Controller
             }
 
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Sales Order #' . $trans_no,
@@ -828,7 +838,8 @@ class SaleOrderController extends Controller
             }
 
             $po = new sale_order([
-                'user_id'                   => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -1072,6 +1083,8 @@ class SaleOrderController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -1333,18 +1346,73 @@ class SaleOrderController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
+        $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
         $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Payment #' . $checknumberpd->number;
+        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.sales.order.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
-        //return $pdf->download('laporan-pegawai-pdf');
-        // TANDA DOWNLOAD
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_order::find($id);
+        $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
+        $checknumberpd              = sale_order::whereId($id)->first();
+        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_order::find($id);
+        $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
+        $checknumberpd              = sale_order::whereId($id)->first();
+        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_order::find($id);
+        $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
+        $checknumberpd              = sale_order::whereId($id)->first();
+        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_order::find($id);
+        $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
+        $checknumberpd              = sale_order::whereId($id)->first();
+        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

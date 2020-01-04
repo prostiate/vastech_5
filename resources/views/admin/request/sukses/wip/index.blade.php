@@ -33,7 +33,7 @@
                             <tr class="headings">
                                 <th class="column-title">Transaction Date</th>
                                 <th class="column-title">Number</th>
-                                <th class="column-title">SPK Ref No</th>
+                                <th class="column-title">SPK Number</th>
                                 <th class="column-title">Contact</th>
                                 <th class="column-title">Warehouse</th>
                                 <th class="column-title">Status</th>

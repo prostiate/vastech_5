@@ -138,11 +138,7 @@
                                                 <select class="form-control selectproduct_normal product_id_per" disabled>
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                    @foreach($products as $pro)
-                                                    @if($pro->id == $qis->product_id)
-                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}" @if($pro->id == $pb->bundle_product_id) selected @endif>{{$pro->name}}</option>
-                                                    @endif
-                                                    @endforeach
+                                                    <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}" @if($qis->product_id == $pb->bundle_product_id) selected @endif>{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                                 <input type="text" name="wip_product_id_per[]" value="{{$pb->bundle_product_id}}" hidden>
@@ -240,11 +236,7 @@
                                                 <select class="form-control selectproduct_normal product_id_all" disabled>
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                    @foreach($products as $pro)
-                                                    @if($pro->id == $qis->product_id)
-                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}" @if($pro->id == $pb->bundle_product_id) selected @endif>{{$pro->name}}</option>
-                                                    @endif
-                                                    @endforeach
+                                                    <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}" @if($qis->product_id == $pb->bundle_product_id) selected @endif>{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                                 <input type="text" name="wip_product_id_all[]" value="{{$pb->bundle_product_id}}" hidden>

@@ -10,6 +10,11 @@ class purchase_invoice extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function contact()
     {
         return $this->belongsTo('App\contact');

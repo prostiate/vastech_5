@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\coa;
 use App\default_account;
+use App\Exports\ProductExport;
 use App\other_tax;
 use App\product;
 use App\other_product_category;
@@ -33,7 +34,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\product_discount_item;
 use App\product_production_item;
+use App\purchase_invoice_po_item;
 use App\User;
+use App\warehouse_transfer_item;
+use App\wip;
+use App\wip_item;
 use Spatie\Permission\Models\Role;
 
 class ProductController extends Controller
@@ -106,10 +111,10 @@ class ProductController extends Controller
     public function index()
     {
         $user               = User::find(Auth::id());
-        $avail_stock        = product::where('is_track', 1)->sum('qty');
+        $avail_stock        = product::where('is_track', 1)->where('qty', '>', 0)->where('qty', '>=', 'min_qty')->count();
         $get_track_stock    = product::where('is_track', 1)->get();
-        $low_stock          = product::where('is_track', 1)->where('qty', '<', 'min_qty')->sum('qty');
-        $out_stock          = product::where('is_track', 1)->where('qty', '<', 0)->sum('qty');
+        $low_stock          = product::where('is_track', 1)->where('qty', '>', 0)->where('qty', '<', 'min_qty')->count();
+        $out_stock          = product::where('is_track', 1)->where('qty', '<', 0)->count();
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
                 return datatables()->of(product::where('id', '>', 0)->where('sales_type', $user->getRoleNames()->first())->with('other_product_category', 'other_unit'))
@@ -211,6 +216,7 @@ class ProductController extends Controller
             $product_bundle                            = $request->product_id;
             $production_bundle                         = $request->product_id_production;
             $cost_bundle                               = $request->cost_acc;
+            $user                                       = User::find(Auth::id());
             if ($request->has('is_sell')) {
                 $is_sell = 1;
             } else {
@@ -261,6 +267,7 @@ class ProductController extends Controller
             };
 
             $product = new product([
+                'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
                 'name'                          => $request->get('name_product'),
                 'code'                          => $request->get('code_product'),
@@ -295,7 +302,7 @@ class ProductController extends Controller
                     'product_id'                => $product->id,
                     'qty_in'                    => 0,
                     'qty_out'                   => 0,
-                    'type'                      => 'initial qty',
+                    'type'                      => 'initial qty import',
                 ]);
             }
 
@@ -488,15 +495,50 @@ class ProductController extends Controller
         $taxes = other_tax::all();
 
         $other_transaction  = other_transaction::with('status')->get();
-        $pq                 = purchase_quote_item::where('product_id', $id)->get();
-        $po                 = purchase_order_item::where('product_id', $id)->get();
-        $pd                 = purchase_delivery_item::where('product_id', $id)->get();
-        $pi                 = purchase_invoice_item::where('product_id', $id)->get();
-        $sq                 = sale_quote_item::where('product_id', $id)->get();
-        $so                 = sale_order_item::where('product_id', $id)->get();
-        $sd                 = sale_delivery_item::where('product_id', $id)->get();
-        $si                 = sale_invoice_item::where('product_id', $id)->get();
-        $sa                 = stock_adjustment_detail::where('product_id', $id)->get();
+        $pq                 = purchase_quote_item::with(['purchase_quote' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $po                 = purchase_order_item::with(['purchase_order' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $pd                 = purchase_delivery_item::with(['purchase_delivery' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $pi                 = purchase_invoice_item::with(['purchase_invoice' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $sq                 = sale_quote_item::with(['sale_quote' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $so                 = sale_order_item::with(['sale_order' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $sd                 = sale_delivery_item::with(['sale_delivery' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $si                 = sale_invoice_item::with(['sale_invoice' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $sa                 = stock_adjustment_detail::with(['stock_adjustment' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $wip                = wip::orderByDesc('transaction_date')->where('result_product', $id)->get();
+        $wipi               = wip_item::with(['wip' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $wt                 = warehouse_transfer_item::with(['warehouse_transfer' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+        $pirs               = purchase_invoice_po_item::with(['purchase_invoice' => function ($query) {
+            $query->orderByDesc('transaction_date');
+        }])->where('product_id', $id)->get();
+
+        $warehouse_detail   = warehouse_detail::whereNotIn('type', ['initial qty import', 'initial qty', 'initial warehouse'])
+            ->where('product_id', $id)
+            ->selectRaw('SUM(qty_in - qty_out) as qty_total, warehouse_id, MAX(created_at) as created_at')
+            ->groupBy('warehouse_id')
+            ->get();
+        $warehouse          = warehouse::get();
 
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             return view('admin.request.joyday.products.show', compact([
@@ -514,7 +556,7 @@ class ProductController extends Controller
                 'default_sell_account',
                 'default_buy_account',
                 'default_inventory_account',
-                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa'
+                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse'
             ]));
         } else {
             return view('admin.products.products.show', compact([
@@ -532,7 +574,7 @@ class ProductController extends Controller
                 'default_sell_account',
                 'default_buy_account',
                 'default_inventory_account',
-                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa'
+                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse'
             ]));
         }
     }
@@ -838,27 +880,82 @@ class ProductController extends Controller
 
     public function import_excel(Request $request)
     {
-        // validasi
-        $this->validate($request, [
+        $rules = array(
             'file' => 'required|mimes:csv,xls,xlsx'
-        ]);
+        );
 
-        // menangkap file excel
-        $file = $request->file('file');
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            \Session::flash('error', $error->errors());
+            return redirect('/products');
+        }
+        try {
+            /*// validasi
+            $this->validate($request, [
+                'file' => 'required|mimes:csv,xls,xlsx'
+            ]);*/
 
-        // membuat nama file unik
-        $nama_file = rand() . $file->getClientOriginalName();
+            // menangkap file excel
+            $file = $request->file('file');
 
-        // upload ke folder file_siswa di dalam folder public
-        $file->move('file_product', $nama_file);
+            // membuat nama file unik
+            $nama_file = rand() . $file->getClientOriginalName();
 
-        // import data
-        Excel::import(new ProductImport, public_path('/file_product/' . $nama_file));
+            // upload ke folder file_siswa di dalam folder public
+            $file->move('file_product', $nama_file);
 
-        // notifikasi dengan session
-        \Session::flash('sukses', 'Data Product Berhasil Diimport!');
+            try {
+                // import data
+                Excel::import(new ProductImport, public_path('/file_product/' . $nama_file));
+            } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                $failures = $e->failures();
 
-        // alihkan halaman kembali
-        return redirect('/products');
+                foreach ($failures as $failure) {
+                    $failure->row(); // row that went wrong
+                    $failure->attribute(); // either heading key (if using heading row concern) or column index
+                    $failure->errors(); // Actual error messages from Laravel validator
+                    $failure->values(); // The values of the row that has failed.
+                }
+                // notifikasi dengan session
+                \Session::flash('error', $e->failures());
+                // alihkan halaman kembali
+                return redirect('/products');
+            }
+            // notifikasi dengan session
+            \Session::flash('sukses', 'Data Product Berhasil Diimport!');
+
+            // alihkan halaman kembali
+            return redirect('/products');
+        } catch (\Exception $e) {
+            \Session::flash('error', $e->getMessage());
+            return redirect('/products');
+        }
+    }
+
+    public function export_excel()
+    {
+        return Excel::download(new ProductExport, 'product.xlsx');
+    }
+
+    public function export_csv()
+    {
+        return Excel::download(new ProductExport, 'product.csv');
+    }
+
+    public function export_pdf()
+    {
+        $products                             = product::get();
+        $no                                   = count($products);
+
+        if ($no <= 1000) {
+            $view = view('admin.products.products.printPDF')->with(compact(['products']));
+            $html = $view->render();
+            $pdf = PDF::loadHTML($html);
+            return $pdf->download('product.pdf');
+        } else {
+            \Session::flash('error', 'Failed, data product is more than 1000!');
+            return redirect('/products');
+        }
     }
 }

@@ -10,6 +10,11 @@ class sale_return extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function sale_return_item()
     {
         return $this->hasMany('App\sale_return_item');

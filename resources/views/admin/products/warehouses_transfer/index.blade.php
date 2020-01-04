@@ -24,12 +24,16 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>List of Warehouse Transfer</h2>
+                @hasrole('Owner|Ultimate|Warehouse Transfer')
+                @can('Create')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses_transfer/new';">New Transfer
                         </button>
                     </li>
                 </ul>
+                @endcan
+                @endrole
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

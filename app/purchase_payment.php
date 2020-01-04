@@ -10,6 +10,11 @@ class purchase_payment extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function purchase_payment_item()
     {
         return $this->hasMany('App\purchase_payment_item');
@@ -32,7 +37,7 @@ class purchase_payment extends Model
 
     public function payment_method()
     {
-        return $this->belongsTo('App\other_payment_methods', 'other_payment_method_id');
+        return $this->belongsTo('App\other_payment_method', 'other_payment_method_id');
     }
 
     public function transaction()

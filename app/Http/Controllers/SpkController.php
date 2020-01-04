@@ -11,12 +11,15 @@ use Illuminate\Support\Carbon;
 use App\spk;
 use App\spk_item;
 use App\other_transaction;
+use App\sale_invoice;
+use App\sale_invoice_item;
 use App\warehouse_detail;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use App\wip_item;
 
 class SpkController extends Controller
 {
@@ -159,6 +162,8 @@ class SpkController extends Controller
         try {
             $product                            = $request->product;
             $transactions                       = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'              => $request->get('trans_date'),
                 'number'                        => $trans_no,
                 'number_complete'               => 'SPK #' . $trans_no,
@@ -172,7 +177,8 @@ class SpkController extends Controller
             $transactions->save();
 
             $header                             = spk::create([
-                'user_id'                       => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'                        => $trans_no,
                 'contact_id'                    => $request->contact,
                 'desc'                          => $request->desc,
@@ -233,7 +239,22 @@ class SpkController extends Controller
         $spk                            = spk::find($id);
         $spk_item                       = spk_item::where('spk_id', $id)->get();
         $quantity_in_stock              = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->get();
-        return view('admin.request.sukses.spk.show', compact(['spk', 'spk_item', 'quantity_in_stock']));
+        $statusajah                     = 0;
+        foreach ($spk_item as $sii) {
+            if ($sii->qty_remaining_sent != 0) {
+                $can                    = 1;
+            } else {
+                $can                    = 0;
+            }
+            if ($sii->status == 1) {
+                $statusajah             += 0;
+            } else {
+                $statusajah             += 1;
+            }
+        }
+        $wip_item                       = wip_item::groupBy('wip_id')->get();
+        $sii                            = sale_invoice_item::groupBy('sale_invoice_id')->get();
+        return view('admin.request.sukses.spk.show', compact(['spk', 'spk_item', 'quantity_in_stock', 'wip_item', 'sii', 'can', 'statusajah']));
     }
 
     public function edit($id)

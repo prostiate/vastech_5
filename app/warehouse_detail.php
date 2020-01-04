@@ -19,5 +19,4 @@ class warehouse_detail extends Model
     {
         return $this->belongsTo('App\warehouse');
     }
-
 }

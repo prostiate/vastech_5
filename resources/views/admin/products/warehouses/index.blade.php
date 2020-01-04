@@ -36,12 +36,16 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>Total Warehouses</h2>
+                @hasrole('Owner|Ultimate|Warehouses')
+                @can('Create')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses/new';">New Warehouse
                         </button>
                     </li>
                 </ul>
+                @endcan
+                @endrole
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

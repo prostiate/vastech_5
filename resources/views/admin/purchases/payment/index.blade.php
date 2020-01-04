@@ -19,6 +19,7 @@
 @endsection
 
 @section('content')
+@hasrole('Owner|Ultimate')
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
@@ -93,11 +94,50 @@
         </div>
     </div>
 </div>
+@endrole
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
                 <h2>List of Transactions</h2>
+                @role('Purchase Payment')
+                @can('Create')
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Purchase <span class="caret"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            @if($user->company_id == 5)
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            </li>
+                            <li><a href="/purchases_order/new">Purchase Order</a>
+                            </li>
+                            <li><a href="/purchases_quote/new">Purchase Quote</a>
+                            </li>
+                            @elseif($user->company_id == 2)
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            </li>
+                            <li><a href="/purchases_invoice/newRS">Purchase Invoice Bundling</a>
+                            </li>
+                            <li><a href="/purchases_order/new">Purchase Order</a>
+                            </li>
+                            <li><a href="/purchases_order/newRS">Purchase Order Bundling</a>
+                            </li>
+                            <li><a href="/purchases_quote/new">Purchase Quote</a>
+                            </li>
+                            @else
+                            <li><a href="/purchases_invoice/new">Purchase Invoice</a>
+                            </li>
+                            <li><a href="/purchases_order/new">Purchase Order</a>
+                            </li>
+                            <li><a href="/purchases_quote/new">Purchase Quote</a>
+                            </li>
+                            @endif
+                        </ul>
+                    </li>
+                </ul>
+                @endcan
+                @endrole
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

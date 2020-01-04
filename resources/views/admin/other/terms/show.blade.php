@@ -27,11 +27,9 @@
                         </div>
                         <div class="ln_solid"></div>
                     </div>
-                    <div class="ln_solid"></div>
                     <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                             <a href="{{ url('/other/terms') }}" class="btn btn-dark">Cancel</a>
-                            <a href="#" class="btn btn-danger">Delete</a>
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/other/terms/edit/' + {{$term->id}};">Edit
                                 </button>

@@ -10,6 +10,11 @@ class purchase_return extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function purchase_return_item()
     {
         return $this->hasMany('App\purchase_return_item');

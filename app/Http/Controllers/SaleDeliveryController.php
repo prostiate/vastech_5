@@ -13,6 +13,7 @@ use App\default_account;
 use App\other_transaction;
 use App\coa_detail;
 use App\coa;
+use App\company_setting;
 use App\other_tax;
 use App\product;
 use App\product_discount_item;
@@ -784,15 +785,73 @@ class SaleDeliveryController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
+        $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
         $checknumberpd              = sale_delivery::whereId($id)->first();
         $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_delivery::find($id);
+        $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
+        $checknumberpd              = sale_delivery::whereId($id)->first();
+        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_delivery::find($id);
+        $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
+        $checknumberpd              = sale_delivery::whereId($id)->first();
+        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_delivery::find($id);
+        $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
+        $checknumberpd              = sale_delivery::whereId($id)->first();
+        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_delivery::find($id);
+        $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
+        $checknumberpd              = sale_delivery::whereId($id)->first();
+        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

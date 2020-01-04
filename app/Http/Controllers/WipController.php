@@ -60,7 +60,7 @@ class WipController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return datatables()->of(wip::with('contact', 'status', 'warehouse')->get())
+            return datatables()->of(wip::with('contact', 'status', 'warehouse', 'spk')->get())
                 ->make(true);
         }
 
@@ -596,7 +596,12 @@ class WipController extends Controller
 
     public function edit($id)
     {
-        //
+        $wip                            = wip::find($id);
+        if ($wip->production_method == 0) {
+            return view('admin.request.sukses.wip.edit_per', compact(['wip', 'wip_item', 'quantity_in_stock', 'get_all_detail', 'total_debit', 'total_credit']));
+        } else {
+            return view('admin.request.sukses.wip.edit_all', compact(['wip', 'wip_item', 'quantity_in_stock', 'get_all_detail', 'total_debit', 'total_credit']));
+        }
     }
 
     public function update(Request $request)
@@ -647,6 +652,7 @@ class WipController extends Controller
                     'balance'                   => $get_current_balance_on_coa->balance + ($wi->total_price * $wip->result_qty),
                 ]);
             }
+            wip_item::where('wip_id', $id)->delete();
             // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
             warehouse_detail::where('type', 'wip')
                 ->where('number', 'WIP #' . $wip->number)
@@ -737,6 +743,7 @@ class WipController extends Controller
                     'balance'                   => $get_current_balance_on_coa->balance + $wi->total_price,
                 ]);
             }
+            wip_item::where('wip_id', $id)->delete();
             // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
             warehouse_detail::where('type', 'wip')
                 ->where('number', 'WIP #' . $wip->number)

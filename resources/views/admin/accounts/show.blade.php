@@ -6,12 +6,18 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>{{$coa->name}}</h2>
+                @role('Chart of Account')
+                @can('Edit')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/chart_of_accounts/edit/' + {{$coa->id}};">Edit Account
                         </button>
                     </li>
                 </ul>
+                @endcan
+                @endrole
+                @role('Chart of Account')
+                @can('Delete')
                 @if($coa->id > 143)
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
@@ -21,6 +27,8 @@
                     </li>
                 </ul>
                 @endif
+                @endcan
+                @endrole
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

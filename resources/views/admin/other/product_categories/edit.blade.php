@@ -20,7 +20,6 @@
                         </div>
                         <div class="ln_solid"></div>
                     </div>
-                    <div class="ln_solid"></div>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <button class="btn btn-dark" type="button" onclick="window.location.href = '/other/product_categories/' + {{$unit->id}};">Cancel

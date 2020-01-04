@@ -21,8 +21,7 @@
         th,
         td {
             border-collapse: collapse;
-            border: solid 1px;
-            padding: 10px 5px;
+            border: 1px dotted black;
         }
 
         /* Float four columns side by side */
@@ -112,25 +111,9 @@
             border-bottom-left-radius: 3px;
         }
 
-        .align-mid {
-            margin-bottom: 0;
+        .table-head {
+            ;
             text-align: center;
-        }
-
-        .table-foot {
-            padding: 50px 100px;
-            border-top: 3px solid #000;
-            border-spacing: 8px 10px
-        }
-
-        .table-data {
-            width: 100%;
-            border: solid 1px;
-        }
-
-        .table-none tr td {
-            padding: 2px;
-            border: none;
         }
 
         .table-body>tr>td,
@@ -154,45 +137,71 @@
     <div class="container">
         <br>
         <div class="row">
-            <div class="column-50">
-                <div class="card card-costumer align-mid">
-                    <h2><strong> SURAT JALAN No.{{$pp->number}} </strong></h2>
+            <div class="column-33">
+                <div class="card card-costumer">
+                    <a>Kepada Yth.</a><br><br>
+                    <a><strong> {{$pp->contact->display_name}} </strong></a>
                 </div>
             </div>
-            <div class="column-50">
-                <div class="card card-costumer align-mid">
-                    <p>{{$today}}</p>
-                    <p>{{$pp->warehouse->name}}</p>
-                    <p>{{$pp->contact->display_name}}</p>
-                    <p>{{$pp->address}}</p>
+            <div class="column-33">
+                <div class="card    ">
+                    <strong>
+                        <a>TANDA TERIMA BARANG</a><br><br>
+                        <a>No : {{$pp->number}} </a>
+                    </strong>
+                </div>
+            </div>
+            <div class="column-33">
+                <div class="card" style="text-align: right;">
+                    <a>Jakarta, {{$today}}</a><br>
+                    <a>SO @if($pp->selected_so_id){{$pp->sale_order->number}}@endif</a><br>
+                    <a>PO <span style="visibility: hidden;">@if($pp->selected_so_id){{$pp->sale_order->number}}@endif</a><br>
+                    <a>POCust <span style="visibility: hidden;">@if($pp->selected_so_id){{$pp->sale_order->number}}@endif</a><br>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <p> Kami kirimkan barang-barang tersebut di bawah ini dengan kendaraan _______________ No _________ </p>
-        </div>
-        <table class="table-data">
+        <table style="width: 100%;  border: 1px solid #ddd">
             <thead class="table-head">
                 <tr>
-                    <th>No</th>
-                    <th colspan="2">Quantity ( Unit ) </th>
-                    <th>Nama Barang</th>
+                    <th>NO</th>
+                    <th>KODE BARANG</th>
+                    <th>NAMA BARANG</th>
+                    <th>QTY</th>
+                    <th>UNIT</th>
+                    <th>KET</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                $number = 1;
-                ?>
+            <tbody class="table-body">
+                <?php 
+                    $number = 1;
+                    $total = 0;
+                    $qty = 0;
+                    ?>
                 @foreach($pp_item as $a)
                 <tr>
                     <td>{{$number}}</td>
-                    <td style="text-align: right; border-right: 0px;">{{$a->qty}}</td>
-                    <td style="border-left: 0px">{{$a->unit->name}}</td>
+                    <td style="text-align: left;">{{$a->product->code}}</td>
                     <td style="text-align: left;">{{$a->product->name}}</td>
+                    <td style="text-align: right;">{{$a->qty}}</td>
+                    <td>{{$a->unit->name}}</td>
+                    <td>{{$a->desc}}</td>
+                    <?php $number++;$total += $a->amount; $qty += $a->qty?>
                 </tr>
-                <?php $number++ ?>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align: right;">
+                        Total
+                    </td>
+                    <td style="text-align: right;">
+                        {{$qty}}
+                    </td>
+                    <td colspan="2">
+
+                    </td>
+                </tr>
+            </tfoot>
         </table>
         <br>
         <br>
@@ -253,7 +262,6 @@
                 </div>
             </div>
         </div>
-        <br>
     </div>
     </div>
 </body>

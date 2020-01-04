@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\coa;
 use App\coa_detail;
+use App\company_setting;
 use App\contact;
 use App\expense;
 use App\expense_item;
+use App\Exports\balance_sheet;
+use App\Exports\cashflow;
+use App\Exports\general_ledger;
+use App\Exports\journal_report;
+use App\Exports\profit_loss;
+use App\Exports\trial_balance;
 use App\other_transaction;
 use App\product;
 use App\purchase_delivery;
@@ -26,15 +33,24 @@ use App\sale_order;
 use App\sale_payment;
 use App\sale_payment_item;
 use App\sale_return_item;
+use App\User;
 use App\warehouse;
 use App\warehouse_detail;
+use PDF;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
     // OVERVIEW
     public function balanceSheet()
     {
+        $last_periode                               = new Carbon('first day of last year');
+        $startyear_last_periode                     = $last_periode->startOfYear()->toDateString();
+        $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
+        $current_periode                            = new Carbon('first day of January ' . date('Y'));
+        //dd($last_periode);
         $today                                      = Carbon::today()->toDateString();
         /*
          INI CONTOH UNTUK JOIN COA DETAIL DENGAN COA YANG BENAR
@@ -42,17 +58,21 @@ class ReportController extends Controller
                                                         ->join('coas', 'coa_details.id', '=', 'coas.id')
                                                         ->select('coa_details.*', 'coas.coa_category_id')
                                                         ->get();*/
-        $coa_detail                                 = coa_detail::whereBetween('date', [$today, $today])->orderBy('date')->selectRaw('SUM(debit - credit) as total, coa_id')->groupBy('coa_id')->get();
+        $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
-                $total_current_assets                   += $cd->total;
+                $total_current_assets               += $cd->total;
             }
         }
         $total_fixed_assets                         = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 5 or $cd->coa->coa_category_id == 6) {
-                $total_fixed_assets                   += $cd->total;
+                $total_fixed_assets                 += $cd->total;
             }
         }
         $total_depreciation                         = 0;
@@ -65,20 +85,52 @@ class ReportController extends Controller
         $total_liability                            = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $total_liability                   += $cd->total;
+                $total_liability                    += $cd->total;
             }
         }
-        $total_equity                               = 0;
+        /*$total_equity                               = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 12) {
-                $total_equity                   += $cd->total;
+                $total_equity                       += $cd->total;
+            }
+        }*/
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$startyear_last_periode, $endyear_last_periode])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        $last_periode_total_current_assets                       = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
+                $last_periode_total_current_assets               += $cd->total;
             }
         }
-        $total_equity2                              = $total_assets - $total_liability;
+        $last_periode_total_fixed_assets                         = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 5 or $cd->coa->coa_category_id == 6) {
+                $last_periode_total_fixed_assets                 += $cd->total;
+            }
+        }
+        $last_periode_total_depreciation                         = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 7) {
+                $last_periode_total_depreciation                   += $cd->total;
+            }
+        }
+        $last_periode_total_assets                  = $last_periode_total_current_assets + $last_periode_total_fixed_assets - $last_periode_total_depreciation;
+        $last_periode_total_liability                            = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
+                $last_periode_total_liability                    += $cd->total;
+            }
+        }
+        $last_periode_earning                       = $last_periode_total_assets - $last_periode_total_liability;
         $current_period_earning                     = $total_assets - $total_liability;
+        $total_equity2                              = $current_period_earning + $last_periode_earning;
         $total_lia_eq                               = $total_liability + $total_equity2;
-
         return view('admin.reports.overview.balance_sheet', compact([
+            'startyear_last_periode',
+            'endyear_last_periode',
             'today',
             'coa_detail',
             'total_current_assets',
@@ -87,6 +139,7 @@ class ReportController extends Controller
             'total_assets',
             'total_liability',
             'total_equity2',
+            'last_periode_earning',
             'current_period_earning',
             'total_lia_eq',
         ]));
@@ -94,16 +147,20 @@ class ReportController extends Controller
 
     public function balanceSheetInput($mulaidari)
     {
+        $last_periode                               = new Carbon('first day of last year');
+        $startyear_last_periode                     = $last_periode->startOfYear()->toDateString();
+        $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
+        $current_periode                            = new Carbon('first day of January ' . date('Y'));
         $today                                      = Carbon::today()->toDateString();
         $today2                                     = $mulaidari;
         if (Carbon::parse($today)->gt(Carbon::now())) {
-            $coa_detail                                 = coa_detail::whereBetween('date', [$today, $today2])
+            $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today2])
                 ->orderBy('coa_id')
                 ->selectRaw('SUM(debit - credit) as total, coa_id')
                 ->groupBy('coa_id')
                 ->get();
         } else {
-            $coa_detail                                 = coa_detail::whereBetween('date', [$today2, $today])
+            $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today2])
                 ->orderBy('coa_id')
                 ->selectRaw('SUM(debit - credit) as total, coa_id')
                 ->groupBy('coa_id')
@@ -134,17 +191,50 @@ class ReportController extends Controller
                 $total_liability                   += $cd->total;
             }
         }
-        $total_equity                               = 0;
+        /*$total_equity                               = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 12) {
                 $total_depreciation                   += $cd->total;
             }
+        }*/
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$last_periode->startOfYear(), $last_periode->endOfYear()])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        $last_periode_total_current_assets                       = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
+                $last_periode_total_current_assets               += $cd->total;
+            }
         }
-        $total_equity2                              = $total_assets - $total_liability;
+        $last_periode_total_fixed_assets                         = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 5 or $cd->coa->coa_category_id == 6) {
+                $last_periode_total_fixed_assets                 += $cd->total;
+            }
+        }
+        $last_periode_total_depreciation                         = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 7) {
+                $last_periode_total_depreciation                   += $cd->total;
+            }
+        }
+        $last_periode_total_assets                  = $last_periode_total_current_assets + $last_periode_total_fixed_assets - $last_periode_total_depreciation;
+        $last_periode_total_liability                            = 0;
+        foreach ($last_periode_coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
+                $last_periode_total_liability                    += $cd->total;
+            }
+        }
+        $last_periode_earning                       = $last_periode_total_assets - $last_periode_total_liability;
         $current_period_earning                     = $total_assets - $total_liability;
+        $total_equity2                              = $current_period_earning + $last_periode_earning;
         $total_lia_eq                               = $total_liability + $total_equity2;
 
         return view('admin.reports.overview.balance_sheetInput', compact([
+            'startyear_last_periode',
+            'endyear_last_periode',
             'today',
             'today2',
             'coa_detail',
@@ -154,34 +244,117 @@ class ReportController extends Controller
             'total_assets',
             'total_liability',
             'total_equity2',
+            'last_periode_earning',
             'current_period_earning',
             'total_lia_eq',
         ]));
     }
 
+    public function balanceSheet_excel($today, $startyear, $endyear)
+    {
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        return Excel::download(new balance_sheet($today, $startyear, $endyear), 'balance_sheet_' . $current_periode->toDateString() . '_' . $today . '.xlsx');
+    }
+
+    public function balanceSheet_csv($today, $startyear, $endyear)
+    {
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        return Excel::download(new balance_sheet($today, $startyear, $endyear), 'balance_sheet_' . $current_periode->toDateString() . '_' . $today . '.csv');
+    }
+
+    public function balanceSheet_pdf($today, $startyear, $endyear)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$startyear, $endyear])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        $view = view('admin.reports.overview_export.balance_sheet_pdf')->with(compact(['coa_detail', 'last_periode_coa_detail', 'company', 'today']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('balance_sheet_' . $current_periode->toDateString() . '_' . $today . '.pdf');
+    }
+
     public function generalLedger()
     {
         $today                                      = Carbon::today()->toDateString();
+        $coa                                        = coa::get();
         $coa_detail                                 = coa_detail::whereBetween('date', [$today, $today])
             ->orderBy('coa_id', 'asc')
             ->get()
             ->groupBy('coa_id');
-        //dd($coa_detail);
-        $coa                        = coa::get();
-        $coa_detail_baru            = coa_detail::orderBy('coa_id', 'asc')->get()->groupBy('coa_id');
-        return view('admin.reports.overview.general_ledger', compact(['today', 'coa', 'coa_detail', 'coa_detail_baru']));
+        return view('admin.reports.overview.general_ledger', compact(['today', 'coa', 'coa_detail']));
     }
 
-    public function generalLedgerInput($start, $end)
+    public function generalLedgerInput($start, $end, $id)
     {
-        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
-            ->orderBy('coa_id', 'asc')
-            ->get()
-            ->groupBy('coa_id');
-        //dd($coa_detail);
-        $coa                        = coa::get();
-        $coa_detail_baru            = coa_detail::orderBy('coa_id', 'asc')->get()->groupBy('coa_id');
-        return view('admin.reports.overview.general_ledgerInput', compact(['start', 'end', 'coa', 'coa_detail', 'coa_detail_baru']));
+        $ids                                        = explode(',', $id);
+        //dd(array($explode_id));
+        if ($id == 'null') {
+            //dd('if');
+            $coa                                    = coa::get();
+            $coa2                                   = coa::get();
+            $coa_detail                             = coa_detail::whereBetween('date', [$start, $end])
+                ->orderBy('coa_id', 'asc')
+                ->get()
+                ->groupBy('coa_id');
+        } else {
+            //dd('else');
+            $coa                                    = coa::whereIn('id', $ids)->get();
+            $coa2                                   = coa::get();
+            $coa_detail                             = coa_detail::whereIn('coa_id', $ids)->whereBetween('date', [$start, $end])
+                ->orderBy('coa_id', 'asc')
+                ->get()
+                ->groupBy('coa_id');
+        }
+        return view('admin.reports.overview.general_ledgerInput', compact(['start', 'end', 'id', 'ids', 'coa', 'coa2', 'coa_detail']));
+    }
+
+    public function generalLedger_excel($start, $end, $id)
+    {
+        return Excel::download(new general_ledger($start, $end, $id), 'general_ledger_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function generalLedger_csv($start, $end, $id)
+    {
+        return Excel::download(new general_ledger($start, $end, $id), 'general_ledger_' . $start . '_' . $end . '.csv');
+    }
+
+    public function generalLedger_pdf($start, $end, $id)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $ids                                        = explode(',', $id);
+        //dd(array($explode_id));
+        if ($id == 'null') {
+            //dd('if');
+            $coa                                    = coa::get();
+            $coa2                                   = coa::get();
+            $coa_detail                             = coa_detail::whereBetween('date', [$start, $end])
+                ->orderBy('coa_id', 'asc')
+                ->get()
+                ->groupBy('coa_id');
+        } else {
+            //dd('else');
+            $coa                                    = coa::whereIn('id', $ids)->get();
+            $coa2                                   = coa::get();
+            $coa_detail                             = coa_detail::whereIn('coa_id', $ids)->whereBetween('date', [$start, $end])
+                ->orderBy('coa_id', 'asc')
+                ->get()
+                ->groupBy('coa_id');
+        }
+        $view = view('admin.reports.overview_export.general_ledger_pdf')->with(compact(['company', 'start', 'end', 'id', 'ids', 'coa', 'coa2', 'coa_detail']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('general_ledger_' . $start . '_' . $end . '.pdf');
     }
 
     public function profitLoss()
@@ -304,6 +477,80 @@ class ReportController extends Controller
         ]));
     }
 
+    public function profitLoss_excel($start, $end)
+    {
+        return Excel::download(new profit_loss($start, $end), 'profit_loss_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function profitLoss_csv($start, $end)
+    {
+        return Excel::download(new profit_loss($start, $end), 'profit_loss_' . $start . '_' . $end . '.csv');
+    }
+
+    public function profitLoss_pdf($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
+            ->orderBy('date')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+
+        $total_primary_income       = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 13) {
+                $total_primary_income                   += abs($cd->total);
+            }
+        }
+        $total_cost_of_sales        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 15) {
+                $total_cost_of_sales                   += $cd->total;
+            }
+        }
+        $gross_profit               = $total_primary_income - $total_cost_of_sales;
+
+        $total_operational_expense  = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 16) {
+                $total_operational_expense                   += $cd->total;
+            }
+        }
+        $net_operating_income       = $gross_profit - $total_operational_expense;
+
+        $total_other_income         = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 14) {
+                $total_other_income                   += $cd->total;
+            }
+        }
+
+        $total_other_expense        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 17) {
+                $total_other_expense                   += $cd->total;
+            }
+        }
+        $net_income                 = $net_operating_income + $total_other_income - $total_other_expense;
+        $view = view('admin.reports.overview_export.profit_loss_pdf')->with(compact([
+            'company', 'start',
+            'end',
+            'coa_detail',
+            'total_primary_income',
+            'total_cost_of_sales',
+            'gross_profit',
+            'total_operational_expense',
+            'net_operating_income',
+            'total_other_income',
+            'total_other_expense',
+            'net_income',
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('profit_loss_' . $start . '_' . $end . '.pdf');
+    }
+
     public function journal_report()
     {
         $today                      = Carbon::today()->toDateString();
@@ -329,6 +576,41 @@ class ReportController extends Controller
             ->groupBy('number');
         //dd($coa_detail);
         return view('admin.reports.overview.journal_reportInput', compact(['start', 'end', 'coa_detail']));
+    }
+
+    public function journal_report_excel($start, $end)
+    {
+        return Excel::download(new journal_report($start, $end), 'journal_report_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function journal_report_csv($start, $end)
+    {
+        return Excel::download(new journal_report($start, $end), 'journal_report_' . $start . '_' . $end . '.csv');
+    }
+
+    public function journal_report_pdf($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail                 = coa_detail::whereBetween('date', [$start, $end])
+            ->select('coa_details.*')->groupBy('number')->groupBy('coa_id')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(debit)');
+            }, 'debit')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(credit)');
+            }, 'credit')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('number');
+        $view = view('admin.reports.overview_export.journal_report_pdf')->with(compact([
+            'company', 'start',
+            'end',
+            'coa_detail',
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('profit_loss_' . $start . '_' . $end . '.pdf');
     }
 
     public function trial_balance()
@@ -399,6 +681,56 @@ class ReportController extends Controller
             'coa_detail',
             'coa_detail2'
         ]));
+    }
+
+    public function trial_balance_excel($start, $end)
+    {
+        return Excel::download(new trial_balance($start, $end), 'trial_balance_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function trial_balance_csv($start, $end)
+    {
+        return Excel::download(new trial_balance($start, $end), 'trial_balance_' . $start . '_' . $end . '.csv');
+    }
+
+    public function trial_balance_pdf($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail2                 = coa_detail::whereBetween('date', [$start, $end])
+            ->select('coa_details.*')->groupBy('coa_id')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(debit)');
+            }, 'debit')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(credit)');
+            }, 'credit')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('coa_id');
+        //dd($coa_detail2);
+        $asset                          = coa::whereIn('coa_category_id', [3, 1, 4, 2, 5, 6, 7])->get();
+        $liability                      = coa::whereIn('coa_category_id', [8, 9, 10, 11])->get();
+        $equity                         = coa::whereIn('coa_category_id', [12])->get();
+        $income                         = coa::whereIn('coa_category_id', [13, 14])->get();
+        $expense                        = coa::whereIn('coa_category_id', [15, 16, 17])->get();
+        $coa_detail                     = coa_detail::orderBy('coa_id', 'asc')->get()->groupBy('coa_id');
+        $coa                            = coa::get();
+        $view = view('admin.reports.overview_export.trial_balance_pdf')->with(compact([
+            'company', 'start',
+            'end',
+            'asset',
+            'liability',
+            'equity',
+            'income',
+            'expense',
+            'coa',
+            'coa_detail',
+            'coa_detail2'
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('trial_balance_' . $start . '_' . $end . '.pdf');
     }
 
     public function cashflowLAMA()
@@ -674,6 +1006,121 @@ class ReportController extends Controller
             'beginning_cash',
             'ending_cash',
         ]));
+    }
+
+    public function cashflow_excel($start, $end)
+    {
+        return Excel::download(new cashflow($start, $end), 'cashflow_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function cashflow_csv($start, $end)
+    {
+        return Excel::download(new cashflow($start, $end), 'cashflow_' . $start . '_' . $end . '.csv');
+    }
+
+    public function cashflow_pdf($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
+            ->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id, type')->groupBy('number')->groupBy('coa_id')
+            ->get();
+        $cash_received_from_cust                    = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'sales payment') {
+                if ($cd->coa->coa_category_id == 3) {
+                    $cash_received_from_cust        += ($cd->debit - $cd->credit);
+                }
+            }
+        }
+        $other_current_asset                        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 2) {
+                $other_current_asset                += $cd->debit - $cd->credit;
+            }
+        }
+        $cash_paid_to_supplier                      = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'purchase payment') {
+                if ($cd->coa->coa_category_id == 3) {
+                    $cash_paid_to_supplier          += $cd->credit - $cd->debit;
+                }
+            }
+        }
+        $cc_and_current_liability                   = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 9 or $cd->coa->coa_category_id == 10 && $cd->coa_id != 50 && $cd->coa_id != 51 && $cd->coa_id != 52 && $cd->coa_id != 53 && $cd->coa_id != 54 && $cd->coa_id != 55) {
+                $cc_and_current_liability        += $cd->debit - $cd->credit;
+            }
+        }
+        $other_income                               = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 14) {
+                $other_income                       += $cd->debit - $cd->credit;
+            }
+        }
+        $operating_expense                          = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'expense') {
+                $operating_expense                  += $cd->debit;
+            }
+        }
+        $net_cash_operating_acti    = $cash_received_from_cust + $other_current_asset - $cash_paid_to_supplier - $cc_and_current_liability + $other_income - $operating_expense;
+
+        $purchase_sale_asset        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 5) {
+                $purchase_sale_asset                += $cd->debit - $cd->credit;
+            }
+        }
+        $other_investing_asset      = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 6) {
+                $other_investing_asset              += $cd->debit - $cd->credit;
+            }
+        }
+        $net_cash_by_investing      = $purchase_sale_asset + $other_investing_asset;
+
+        $repayment_proceed_loan     = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 49 or $cd->coa->coa_category_id == 56) {
+                $repayment_proceed_loan             += $cd->debit - $cd->credit;
+            }
+        }
+        $equity_capital             = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 12) {
+                $equity_capital             += $cd->debit - $cd->credit;
+            }
+        }
+        $net_cash_finan             = $repayment_proceed_loan + $equity_capital;
+
+        $increase_dec_in_cash       = $net_cash_operating_acti + $net_cash_by_investing + $net_cash_finan;
+        $beginning_cash             = 0;
+        $ending_cash                = $beginning_cash + $increase_dec_in_cash;
+        $view = view('admin.reports.overview_export.cashflow_pdf')->with(compact([
+            'company', 'start',
+            'end',
+            'cash_received_from_cust',
+            'other_current_asset',
+            'cash_paid_to_supplier',
+            'cc_and_current_liability',
+            'other_income',
+            'operating_expense',
+            'net_cash_operating_acti',
+            'purchase_sale_asset',
+            'other_investing_asset',
+            'net_cash_by_investing',
+            'repayment_proceed_loan',
+            'equity_capital',
+            'net_cash_finan',
+            'increase_dec_in_cash',
+            'beginning_cash',
+            'ending_cash',
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('cashflow_' . $start . '_' . $end . '.pdf');
     }
 
     public function executive_summaryLAMA()

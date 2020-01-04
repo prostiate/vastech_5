@@ -5,16 +5,6 @@
     <div class="title_left">
         <h3>Contact Information</h3>
     </div>
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
 </div>
 @endsection
 
@@ -25,10 +15,14 @@
             <div class="x_title">
                 <div class="col-md-12">
                     <ul class="nav navbar-right panel_toolbox">
+                        @hasrole('Owner|Ultimate|Contact')
+                        @can('Edit')
                         <li>
                             <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/edit/{{$contact->id}}';">Edit Profile
                             </button>
                         </li>
+                        @endcan
+                        @endrole
                         <!--<li>
                             <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Create Transaction <span class="caret"></span>
                             </button>
@@ -61,6 +55,8 @@
                             </ul>
                         </li>-->
                         @if($check_transaction == 1)
+                        @hasrole('Owner|Ultimate|Contact')
+                        @can('Edit')
                         <li>
                             <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">Adjust Limit Balance
                             </button>
@@ -141,16 +137,21 @@
                             </div>
                         </li>
                         @endif
+                        @endcan
+                        @endrole
                         <li>
                             <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                             </button>
                             <ul role="menu" class="dropdown-menu">
                                 <!--<li><a href="#">View Statement Report</a>
                                 <li><a href="#">Merge Contacts</a>-->
-
+                                @hasrole('Owner|Ultimate|Contact')
+                                @can('Delete')
                                 <li><a href="#" id="click">Delete</a>
                                     <input type="text" value="{{$contact->id}}" id="form_id" hidden>
                                 </li>
+                                @endcan
+                                @endrole
                             </ul>
                         </li>
                     </ul>

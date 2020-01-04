@@ -5,16 +5,6 @@
     <div class="title_left">
         <h3>Werehouse Information</h3>
     </div>
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
 </div>
 @endsection
 
@@ -23,13 +13,19 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
+                @hasrole('Owner|Ultimate|Warehouses')
+                @can('Edit')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses/edit/{{$warehouses->id}}';">Edit Warehouse
                         </button>
                     </li>
                 </ul>
+                @endcan
+                @endrole
                 @if($warehouses->is_first_created != 1)
+                @hasrole('Owner|Ultimate|Warehouses')
+                @can('Delete')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" id="click">Delete Warehouse
@@ -37,6 +33,8 @@
                         <input type="text" value="{{$warehouses->id}}" id="form_id" hidden>
                     </li>
                 </ul>
+                @endcan
+                @endrole
                 @endif
                 <h2><b>{{$warehouses->name}}</b></h2>
                 <div class="clearfix"></div>
@@ -100,8 +98,7 @@
                                             </thead>
                                             <tbody>
                                                 @foreach($product_list as $a)
-                                                @if($a->qty_total > 0 or $a->qty_total < 0)
-                                                <tr>
+                                                @if($a->qty_total > 0 or $a->qty_total < 0) <tr>
                                                     <td>
                                                         <a href="/products/{{$a->product->id}}">{{$a->product->name}}</a>
                                                     </td>
@@ -111,9 +108,9 @@
                                                     <td>
                                                         <a>{{$a->qty_total}}</a>
                                                     </td>
-                                                </tr>
-                                                @endif
-                                                @endforeach
+                                                    </tr>
+                                                    @endif
+                                                    @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -139,7 +136,8 @@
                                                 <tr class="headings">
                                                     <th class="column-title">Transaction Number </th>
                                                     <th class="column-title">Transaction Date </th>
-                                                    <th class="column-title">Number of Product</th>
+                                                    <th class="column-title">Number of Products</th>
+                                                    <th class="column-title">Created Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -158,6 +156,9 @@
                                                         @endforeach
                                                         <a>{{$value}}</a>
                                                     </td>
+                                                    <td>
+                                                        {{$po->updated_at}}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                                 <?php $value = 0 ?>
@@ -174,6 +175,9 @@
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$pd->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -192,6 +196,9 @@
                                                         @endforeach
                                                         <a>{{$value}}</a>
                                                     </td>
+                                                    <td>
+                                                        {{$pi->updated_at}}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                                 <?php $value = 0 ?>
@@ -208,6 +215,9 @@
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$so->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -226,6 +236,9 @@
                                                         @endforeach
                                                         <a>{{$value}}</a>
                                                     </td>
+                                                    <td>
+                                                        {{$sd->updated_at}}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                                 <?php $value = 0 ?>
@@ -243,6 +256,9 @@
                                                         @endforeach
                                                         <a>{{$value}}</a>
                                                     </td>
+                                                    <td>
+                                                        {{$si->updated_at}}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                                 <?php $value = 0 ?>
@@ -259,6 +275,69 @@
                                                         <?php $value += 1 ?>
                                                         @endforeach
                                                         <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$sa->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                <?php $value = 0 ?>
+                                                @foreach($wip as $wip)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/wip/{{$wip->id}}">Work In Progress #{{$wip->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>{{$wip->transaction_date}}</a>
+                                                    </td>
+                                                    <td>
+                                                        @foreach($wip->wip_item as $wipi)
+                                                        <?php $value += 1 ?>
+                                                        @endforeach
+                                                        <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$wip->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                <?php $value = 0 ?>
+                                                @foreach($fwt as $fwt)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/warehouses_transfer/{{$fwt->id}}">Warehouse Transfer #{{$fwt->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>{{$fwt->transaction_date}}</a>
+                                                    </td>
+                                                    <td>
+                                                        @foreach($fwt->warehouse_transfer_item as $fwti)
+                                                        <?php $value += 1 ?>
+                                                        @endforeach
+                                                        <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$fwt->updated_at}}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                                <?php $value = 0 ?>
+                                                @foreach($twt as $twt)
+                                                <tr>
+                                                    <td>
+                                                        <a href="/warehouses_transfer/{{$twt->id}}">Warehouse Transfer #{{$twt->number}}</a>
+                                                    </td>
+                                                    <td>
+                                                        <a>{{$twt->transaction_date}}</a>
+                                                    </td>
+                                                    <td>
+                                                        @foreach($twt->warehouse_transfer_item as $twti)
+                                                        <?php $value += 1 ?>
+                                                        @endforeach
+                                                        <a>{{$value}}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{$twt->updated_at}}
                                                     </td>
                                                 </tr>
                                                 @endforeach

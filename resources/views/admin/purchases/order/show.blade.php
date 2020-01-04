@@ -25,7 +25,6 @@
                                         </ul>
                                     </div>
                                     <div class="modal-body">
-                                        <!---->
                                         <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                             <div id="myTabContent" class="tab-content">
                                                 <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
@@ -130,31 +129,82 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            @hasrole('Owner|Ultimate|Purchase Order')
+                            @can('Create')
                             @if($pi->status == 1)
                             <li><a href="#">Clone Transaction</a></li>
+                            @hasrole('Owner|Ultimate|Purchase Delivery')
                             <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
+                            @endrole
+                            @hasrole('Owner|Ultimate|Purchase Invoice')
                             <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                            @endrole
                             <li><a href="#">Add Deposit</a></li>
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
-                            <li><a target="_blank" href="/purchases_order/print/PDF/{{$pi->id}}">Print & Preview</a></li>
                             <li><a href="#" id="clickClose">Close Order</a></li>
                             @elseif($pi->status == 2)
                             <li><a href="#">Clone Transaction</a></li>
                             <li><a href="#">Add Deposit</a></li>
                             <li class="divider"></li>
-                            <li><a target="_blank" href="/purchases_order/print/PDF/{{$pi->id}}">Print & Preview</a></li>
                             @else
                             <li><a href="#">Clone Transaction</a></li>
+                            @hasrole('Owner|Ultimate|Purchase Delivery')
                             <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
+                            @endrole
+                            @hasrole('Owner|Ultimate|Purchase Invoice')
                             <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                            @endrole
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
-                            <li><a target="_blank" href="/purchases_order/print/PDF/{{$pi->id}}">Print & Preview</a></li>
                             <li><a href="#" id="clickClose">Close Order</a>
                             </li>
                             @endif
+                            @endcan
+                            @endrole
+                            <li><a data-toggle="modal" data-target=".print_preview">Print & Preview</a></li>
                         </ul>
+                        <div class="modal fade print_preview" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <h5 class="modal-title" id="myModalLabel">Print & Preview</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>Select Template</strong></h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label col-md-4 col-sm-4 col-xs-12" style="text-align: left;">Template Type</label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <select id="template_type" class="form-control">
+                                                                <option value="1">Template 1</option>
+                                                                <option value="2">Template 2</option>
+                                                                <option value="3">Template 3</option>
+                                                                @if($pi->user->company_id == 5)
+                                                                <option value="51" selected>Template Sukses Surabaya</option>
+                                                                @elseif($pi->user->company_id == 2)
+                                                                <option value="21">Template Sukses</option>
+                                                                <option value="22" selected>Template Gelora</option>
+                                                                <option value="23">Template Workshop FAS</option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" id="click_print">Print</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
                 <h3><b>Purchase Order #{{$pi->number}}</b></h3>
@@ -363,13 +413,19 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/purchases_order') }}" class="btn btn-dark">Cancel</a>
+                            @hasrole('Owner|Ultimate|Purchase Order')
                             @if($pi->status == 1)
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/purchases_order/edit/' + {{$pi->id}};">Edit
                                 </button>
                             </div>
+                            @endcan
                             @endif
+                            @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
                     </div>
@@ -383,4 +439,25 @@
 @push('scripts')
 <script src="{{ asset('js/purchases/order/deleteForm.js') }}" charset="utf-8"></script>
 <script src="{{ asset('js/purchases/order/closeOrderForm.js') }}" charset="utf-8"></script>
+<script>
+    $('#click_print').click(function() {
+        var get_type = $('#template_type').find(":selected").val();
+        var get_id = document.getElementById("form_id").value;
+        if (get_type == '1') {
+            window.open('/purchases_order/print/PDF/1/' + get_id, '_blank');
+        } else if (get_type == '2') {
+            window.open('/purchases_order/print/PDF/2/' + get_id, '_blank');
+        } else if (get_type == '3') {
+            window.open('/purchases_order/print/PDF/3/' + get_id, '_blank');
+        } else if (get_type == '51') {
+            window.open('/purchases_order/print/PDF/sukses_surabaya/' + get_id, '_blank');
+        } else if (get_type == '21') {
+            window.open('/purchases_order/print/PDF/sukses/' + get_id, '_blank');
+        } else if (get_type == '22') {
+            window.open('/purchases_order/print/PDF/gelora/' + get_id, '_blank');
+        } else if (get_type == '23') {
+            window.open('/purchases_order/print/PDF/fas/' + get_id, '_blank');
+        }
+    });
+</script>
 @endpush

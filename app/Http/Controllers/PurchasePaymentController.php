@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use App\purchase_invoice;
 use App\purchase_payment_item;
 use Carbon\Carbon;
-use App\other_payment_methods;
+use App\other_payment_method;
 use App\other_transaction;
 use App\coa;
 use App\coa_detail;
+use App\company_setting;
 use PDF;
 use App\contact;
 use App\User;
@@ -46,7 +47,7 @@ class PurchasePaymentController extends Controller
         $today                  = Carbon::today()->toDateString();
         $number                 = purchase_payment::max('number');
         $coa                    = coa::where('coa_category_id', 3)->get();
-        $payment_method         = other_payment_methods::get();
+        $payment_method         = other_payment_method::get();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
             if ($number != null) {
@@ -228,7 +229,7 @@ class PurchasePaymentController extends Controller
         $po                     = purchase_payment::find($id);
         $get_all_invoice        = purchase_payment_item::where('purchase_payment_id', $id)->with('purchase_invoice', 'purchase_payment')->get();
         $coa                    = coa::where('coa_category_id', 3)->get();
-        $payment_method         = other_payment_methods::get();
+        $payment_method         = other_payment_method::get();
         return view('admin.purchases.payment.edit', compact(['po', 'get_all_invoice', 'coa', 'payment_method']));
     }
 
@@ -456,20 +457,73 @@ class PurchasePaymentController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
-        $pp                         = purchase_payment::with('status', 'payment_method', 'coa')->find($id);
-        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->with('purchase_invoice')->get();
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_payment::find($id);
+        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
         $checknumberpd              = purchase_payment::whereId($id)->first();
         $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
-        $get_all_detail             = coa_detail::where('number', $numbercoadetail)->where('type', 'purchase payment')->with('coa')->get();
-        $total_debit                = $get_all_detail->sum('debit');
-        $total_credit               = $get_all_detail->sum('credit');
-        $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact(['pp', 'pp_item', 'get_all_detail', 'total_debit', 'total_credit', 'today']))->setPaper('a4', 'portrait');
-        //return $pdf->download('laporan-pegawai-pdf');
-        // TANDA DOWNLOAD
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_payment::find($id);
+        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
+        $checknumberpd              = purchase_payment::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_payment::find($id);
+        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
+        $checknumberpd              = purchase_payment::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_payment::find($id);
+        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
+        $checknumberpd              = purchase_payment::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_payment::find($id);
+        $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
+        $checknumberpd              = purchase_payment::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

@@ -102,11 +102,17 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="/warehouses_transfer" class="btn btn-dark">Back</a>
+                            @hasrole('Owner|Ultimate|Warehouse Transfer')
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/warehouses_transfer/edit/' + {{$wt->id}};">Edit
                                 </button>
                             </div>
+                            @endcan
+                            @endrole
                             <input type="text" value="{{$wt->id}}" id="form_id" hidden>
                         </div>
                     </div>

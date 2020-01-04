@@ -7,7 +7,7 @@ use App\expense;
 use App\coa;
 use App\coa_detail;
 use App\contact;
-use App\other_payment_methods;
+use App\other_payment_method;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
@@ -55,7 +55,7 @@ class ExpenseController extends Controller
         $taxes              = other_tax::all();
         $number             = expense::max('number');
         $today              = Carbon::today()->toDateString();
-        $payment_method     = other_payment_methods::get();
+        $payment_method     = other_payment_method::get();
         $terms              = other_term::get();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
@@ -313,7 +313,7 @@ class ExpenseController extends Controller
             ->orWhere('coa_category_id', 15)
             ->get();
         $taxes  = other_tax::all();
-        $payment_method     = other_payment_methods::get();
+        $payment_method     = other_payment_method::get();
         $terms  = other_term::get();
         if ($ex->due_date == null) {
             return view('admin.expenses.editNull', compact(['ex', 'ex_item', 'accounts', 'vendors', 'expenses', 'taxes', 'payment_method', 'terms']));
@@ -380,6 +380,7 @@ class ExpenseController extends Controller
                 'taxtotal'                                      => $request->get('taxtotal'),
                 'balance_due'                                   => $request->get('balance'),
                 'grandtotal'                                    => $request->get('balance'),
+                'amount_paid'           => $request->get('balance'),
             ]);
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
@@ -402,6 +403,7 @@ class ExpenseController extends Controller
 
             foreach ($request->expense_acc as $i => $keys) {
                 $pp[$i] = new expense_item([
+                    'expense_id'                                => $id,
                     'coa_id'                                    => $request->expense_acc[$i],
                     'desc'                                      => $request->desc_acc[$i],
                     'tax_id'                                    => $request->tax_acc[$i],
@@ -513,6 +515,7 @@ class ExpenseController extends Controller
                 'taxtotal'                                      => $request->get('taxtotal'),
                 'balance_due'                                   => 0,
                 'grandtotal'                                    => $request->get('balance'),
+                'amount_paid'           => $request->get('balance'),
             ]);
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
@@ -535,6 +538,7 @@ class ExpenseController extends Controller
 
             foreach ($request->expense_acc as $i => $keys) {
                 $pp[$i] = new expense_item([
+                    'expense_id'                                => $id,
                     'coa_id'                                    => $request->expense_acc[$i],
                     'desc'                                      => $request->desc_acc[$i],
                     'tax_id'                                    => $request->tax_acc[$i],

@@ -4,26 +4,29 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
-        $roles = Role::pluck('name', 'name')->all();
+        $users              = User::all();
+        $roles              = Role::pluck('name', 'name')->all();
+        $permissions        = Permission::all()->pluck('name', 'name');
 
-        return view('admin.settings.user_management.index', compact(['users', 'roles']));
+        return view('admin.settings.user_management.index', compact(['users', 'roles', 'permissions']));
     }
 
     public function store(Request $request)
     {
         $rules = array(
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'name'          => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'      => ['required', 'string', 'min:6', 'confirmed'],
         );
 
         $error = Validator::make($request->all(), $rules);
@@ -34,11 +37,12 @@ class UserController extends Controller
             }
 
             $user = User::create([
-                'name' =>  $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make($request->get('password')),
+                'name'      => $request->get('name'),
+                'email'     => $request->get('email'),
+                'password'  => Hash::make($request->get('password')),
             ]);
             $user->assignRole($request->role);
+            $user->givePermissionTo($request->permission);
 
             return response()->json(['success' => 'User is successfully added']);
         } catch (\Exception $e) {
@@ -55,18 +59,18 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|exists:users,email',
-            'password' => 'nullable|min:6',
+            'name'          => 'required|string|max:100',
+            'email'         => 'required|email|exists:users,email',
+            'password'      => 'nullable|min:6',
         ]);
 
         $user = User::findOrFail($id);
         $password = !empty($request->password) ? bcrypt($request->password) : $user->password;
         $user->update([
-            'name' => $request->name,
-            'password' => $password
+            'name'          => $request->name,
+            'password'      => $password
         ]);
-        return redirect(route('user.index'))->with(['success' => 'User: <strong>' . $user->name . '</strong> Diperbaharui']);
+        return redirect('/settings/user')->with(['success' => 'User: <strong>' . $user->name . '</strong> Diperbaharui']);
     }
 
     public function destroy($id)
@@ -79,23 +83,31 @@ class UserController extends Controller
 
     public function roles(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $roles = Role::all()->pluck('name');
+        $user               = User::findOrFail($id);
+        $roles              = Role::get()->pluck('name');
+        $permissions        = Permission::get()->pluck('name', 'name');
 
-        return view('admin.settings.user_management.role', compact(['user', 'roles']));
+        return view('admin.settings.user_management.role', compact(['user', 'roles', 'permissions']));
     }
 
     public function setRole(Request $request, $id)
     {
-        $this->validate($request, [
-            'role' => 'required'
-        ]);
-
-        $user = User::findOrFail($id);
-        //menggunakan syncRoles agar terlebih dahulu menghapus semua role yang dimiliki
-        //kemudian di-set kembali agar tidak terjadi duplicate
-        $user->syncRoles($request->role);
-        
-        return redirect(route('user.index'))->with(['success' => 'Role has set']);
+        DB::beginTransaction();
+        try {
+            $user           = User::findOrFail($id);
+            //menggunakan syncRoles agar terlebih dahulu menghapus semua role yang dimiliki
+            //kemudian di-set kembali agar tidak terjadi duplicate
+            if (!$request->role) {
+                DB::rollback();
+                return response()->json(['errors' => 'Roles must be filled at least one!']);
+            }
+            $user->syncRoles($request->role);
+            $user->syncPermissions($request->permission);
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully added']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 }

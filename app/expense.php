@@ -38,7 +38,7 @@ class expense extends Model
 
     public function payment_method()
     {
-        return $this->belongsTo('App\other_payment_methods', 'payment_method_id');
+        return $this->belongsTo('App\other_payment_method', 'payment_method_id');
     }
 
     public function term()

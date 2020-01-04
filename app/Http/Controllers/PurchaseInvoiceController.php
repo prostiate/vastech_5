@@ -113,7 +113,7 @@ class PurchaseInvoiceController extends Controller
         $overdue_total            = purchase_invoice::where('status', 5)->sum('grandtotal');
         if (request()->ajax()) {
             //return datatables()->of(Product::all())
-            return datatables()->of(purchase_invoice::with('purchase_invoice_item', 'contact', 'status')->get())
+            return datatables()->of(purchase_invoice::with('purchase_invoice_item', 'contact', 'status', 'warehouse')->get())
                 /*->addColumn('action', function ($data) {
                     $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
                     $button .= '&nbsp;&nbsp;';
@@ -177,7 +177,7 @@ class PurchaseInvoiceController extends Controller
 
     public function createRequestSuksesPartTwo($contact, $warehouse)
     {
-        $all_po             = purchase_order::where('contact_id', $contact)->where('warehouse_id', $warehouse)->where('status', 1)->orWhere('status', 4)->get();
+        $all_po             = purchase_order::where('contact_id', $contact)->where('warehouse_id', $warehouse)->get();
         $all_po_item        = purchase_order_item::get();
         $vendors            = contact::find($contact);
         $warehouses         = warehouse::find($warehouse);
@@ -1253,8 +1253,8 @@ class PurchaseInvoiceController extends Controller
             ]);
             // CREATE HEADERNYA SEKALIAN MASUKKIN OTHER_TRANSACTION_ID DIDALEMNYA
             $pd = new purchase_invoice([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
                 'email'             => $request->get('email'),
@@ -1404,7 +1404,7 @@ class PurchaseInvoiceController extends Controller
                             //merubah harga average produk
                             $produk                     = product::find($gpi->product_id);
                             $qty                        = $request->po_qty_dateng[$x];
-                            $price                      = $request->po_amount[$x];
+                            $price                      = $request->po_unit_price[$x];
                             $dibagi                     = $produk->qty + $qty;
                             if ($dibagi == 0) {
                                 $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
@@ -1594,15 +1594,16 @@ class PurchaseInvoiceController extends Controller
 
     public function edit($id)
     {
-        $pi             = purchase_invoice::find($id);
-        $pi_item        = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $vendors        = contact::where('type_vendor', true)->get();
-        $warehouses     = warehouse::all();
-        $terms          = other_term::all();
-        $products       = product::where('is_buy', 1)->get();
-        $units          = other_unit::all();
-        $today          = Carbon::today();
-        $taxes          = other_tax::all();
+        $pi                                     = purchase_invoice::find($id);
+        $pi_item                                = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $vendors                                = contact::where('type_vendor', true)->get();
+        $warehouses                             = warehouse::all();
+        $terms                                  = other_term::all();
+        $products                               = product::where('is_buy', 1)->get();
+        $units                                  = other_unit::all();
+        $today                                  = Carbon::today();
+        $taxes                                  = other_tax::all();
+        $check_bundling_po                      = purchase_invoice_po::where('purchase_invoice_id', $id)->first();
         if ($pi->selected_pq_id) {
             return view('admin.purchases.invoices.editFromQuote', compact([
                 'pi',
@@ -1638,6 +1639,22 @@ class PurchaseInvoiceController extends Controller
                 'units',
                 'taxes',
                 'today',
+            ]));
+        } else if ($check_bundling_po) {
+            $pipo                               = purchase_invoice_po::where('purchase_invoice_id', $id)->get();
+            $pipoi                              = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+            return view('admin.request.sukses.purchases.invoices.edit', compact([
+                'pi',
+                'pi_item',
+                'vendors',
+                'warehouses',
+                'terms',
+                'products',
+                'units',
+                'taxes',
+                'today',
+                'pipo',
+                'pipoi',
             ]));
         } else {
             return view('admin.purchases.invoices.edit', compact([
@@ -2584,7 +2601,7 @@ class PurchaseInvoiceController extends Controller
                                 // DELETE QTY PRODUCT DAN KURANGIN AVG PRICE PRODUCT
                                 $produk                     = product::find($api->product_id);
                                 $qty                        = $api->qty;
-                                $price                      = $api->amount;
+                                $price                      = $api->unit_price;
                                 $dibagi                     = $produk->qty - $qty;
                                 if ($dibagi == 0) {
                                     $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
@@ -2599,7 +2616,7 @@ class PurchaseInvoiceController extends Controller
                             }
                         }
                     }
-                    purchase_invoice_po_item::where('purchase_invoice_id', $id)->where('purchase_order_id', $ap->id)->delete();
+                    purchase_invoice_po_item::where('purchase_invoice_id', $id)->delete();
                     purchase_invoice_po::where('purchase_invoice_id', $id)->delete();
                     // DELETE ROOT OTHER TRANSACTION
                     other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->delete();
@@ -2660,7 +2677,7 @@ class PurchaseInvoiceController extends Controller
                             }
                         }
                     }
-                    purchase_invoice_po_item::where('purchase_invoice_id', $id)->where('purchase_order_id', $ap->id)->delete();
+                    purchase_invoice_po_item::where('purchase_invoice_id', $id)->delete();
                     purchase_invoice_po::where('purchase_invoice_id', $id)->delete();
                     // DELETE ROOT OTHER TRANSACTION
                     other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->delete();
@@ -2944,10 +2961,11 @@ class PurchaseInvoiceController extends Controller
                             $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                         }
                         //menyimpan jumlah perubahan pada produk
-                        product::where('id', $a->product_id)->update([
+                        product::find($a->product_id)->update([
                             'qty'                   => $produk->qty - $qty,
                             'avg_price'             => abs($curr_avg_price),
                         ]);
+                        //dd(product::find($a->product_id));
                     }
                     purchase_invoice_item::where('purchase_invoice_id', $id)->delete();
                     // DELETE ROOT OTHER TRANSACTION
@@ -2964,16 +2982,134 @@ class PurchaseInvoiceController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_2($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_3($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_3', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']));
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_4($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_4', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_5($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_5', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $checknumberpd              = purchase_invoice::whereId($id)->first();
         $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_invoice::find($id);
+        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
+        $checknumberpd              = purchase_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

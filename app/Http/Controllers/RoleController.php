@@ -10,7 +10,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $role = Role::orderBy('created_at', 'DESC')->paginate(10);
-        return view('admin.settings.role', compact(['role']));
+        return view('admin.settings.role', compact('role'));
 
         $role = Role::firstOrCreate(['name' => $request->name]);
         return redirect()->back()->with(['success' => 'Role: <strong>' . $role->name . '</strong> Ditambahkan']);

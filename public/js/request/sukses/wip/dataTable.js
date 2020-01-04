@@ -25,13 +25,13 @@ $(document).ready(function() {
                 }
             },
             {
-                data: "vendor_ref_no",
+                data: "spk.id",
                 render: function(data, type, row) {
                     return (
                         '<a href="/wip/' +
                         row.id +
-                        '">' +
-                        row.vendor_ref_no +
+                        '">SPK #' +
+                        row.number +
                         "</a>"
                     );
                 }

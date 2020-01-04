@@ -49,4 +49,9 @@ class wip extends Model
     {
         return $this->belongsTo('App\other_status', 'status');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

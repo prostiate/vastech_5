@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\other_payment_methods;
+use App\other_payment_method;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
 
 class OtherPaymentMethodController extends Controller
 {
@@ -14,7 +15,7 @@ class OtherPaymentMethodController extends Controller
     {
         if (request()->ajax()) {
             //return datatables()->of(Product::all())
-            return datatables()->of(other_payment_methods::get())
+            return datatables()->of(other_payment_method::get())
                 ->addColumn('action', function ($data) {
                     $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
                     $button .= '&nbsp;&nbsp;';
@@ -35,6 +36,7 @@ class OtherPaymentMethodController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'name'       => 'required',
         );
@@ -46,7 +48,8 @@ class OtherPaymentMethodController extends Controller
         }
         DB::beginTransaction();
         try {
-            $share = new other_payment_methods([
+            $share = new other_payment_method([
+                'company_id'        => $user->company_id,
                 'user_id'                   => Auth::id(),
                 'name'   => $request->get('name'),
             ]);
@@ -61,14 +64,14 @@ class OtherPaymentMethodController extends Controller
 
     public function show($id)
     {
-        $unit = other_payment_methods::find($id);
+        $unit = other_payment_method::find($id);
 
         return view('admin.other.payment_methods.show', compact(['unit']));
     }
 
     public function edit($id)
     {
-        $unit = other_payment_methods::find($id);
+        $unit = other_payment_method::find($id);
 
         return view('admin.other.payment_methods.edit', compact(['unit']));
     }
@@ -90,7 +93,7 @@ class OtherPaymentMethodController extends Controller
             $form_data = array(
                 'name'                  => $request->get('name'),
             );
-            other_payment_methods::whereId($id)->update($form_data);
+            other_payment_method::whereId($id)->update($form_data);
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
         } catch (\Exception $e) {
@@ -103,7 +106,7 @@ class OtherPaymentMethodController extends Controller
     {
         DB::beginTransaction();
         try {
-            $data = other_payment_methods::findOrFail($id);
+            $data = other_payment_method::findOrFail($id);
             if (
                 $data->sale_payment()->exists()
                 or $data->purchase_payment()->exists()

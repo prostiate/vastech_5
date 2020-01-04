@@ -3,20 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\other_unit;
-use App\product;
-use App\purchase_delivery_item;
-use App\purchase_invoice_item;
-use App\purchase_order_item;
-use App\purchase_quote_item;
-use App\sale_delivery_item;
-use App\sale_invoice_item;
-use App\sale_order_item;
-use App\sale_quote_item;
-use App\wip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
 
 class OtherUnitController extends Controller
 {
@@ -44,6 +35,7 @@ class OtherUnitController extends Controller
 
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules = array(
             'name'               => 'required',
         );
@@ -56,6 +48,7 @@ class OtherUnitController extends Controller
         DB::beginTransaction();
         try {
             $share = new other_unit([
+                'company_id'                => $user->company_id,
                 'user_id'                   => Auth::id(),
                 'name'                      => $request->get('name'),
             ]);
@@ -114,11 +107,11 @@ class OtherUnitController extends Controller
         try {
             $data = other_unit::findOrFail($id);
             if (
-                sale_delivery_item::find($id) or sale_invoice_item::find($id)
-                or sale_order_item::find($id) or sale_quote_item::find($id)
-                or purchase_delivery_item::find($id) or purchase_invoice_item::find($id)
-                or purchase_order_item::find($id) or purchase_quote_item::find($id)
-                or cashbank_item::find($id) or product::find($id) or wip::find($id)
+                $data->sale_delivery_item()->exists() or $data->sale_invoice_item()->exists()
+                or $data->sale_order_item()->exists() or $data->sale_quote_item()->exists()
+                or $data->purchase_delivery_item()->exists() or $data->purchase_invoice_item()->exists()
+                or $data->purchase_order_item()->exists() or $data->purchase_quote_item()->exists()
+                or $data->product()->exists()
             ) {
                 DB::rollBack();
                 return response()->json(['errors' => 'Cannot delete product with transactions!']);

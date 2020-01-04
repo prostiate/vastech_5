@@ -23,19 +23,24 @@ class CashbankController extends Controller
 {
     public function index()
     {
-        $coa                        = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa                        = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $open_po                    = expense::whereIn('status', [1, 4])->count();
         $payment_last               = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->count();
         $overdue                    = expense::where('status', 5)->count();
         $open_po_total              = expense::whereIn('status', [1, 4])->sum('grandtotal');
         $payment_last_total         = expense::where('status', 3)->whereDate('transaction_date', '>', Carbon::now()->subDays(30))->sum('grandtotal');
         $overdue_total              = expense::where('status', 5)->sum('grandtotal');
+        $coa_detail                 = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();
+        $coa_all                    = count(coa::all());;
         if (request()->ajax()) {
-            return datatables()->of(coa::with('coa_category')->where('cashbank', 1)->get())
+            return datatables()->of(coa::with('coa_category')->where('coa_category_id', 3)->get())
                 ->make(true);
         }
 
-        return view('admin.cashbank.index', compact(['coa', 'open_po', 'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total']));
+        return view('admin.cashbank.index', compact([
+            'coa', 'open_po', 'coa_detail', 'coa_all',
+            'payment_last', 'overdue', 'open_po_total', 'payment_last_total', 'overdue_total'
+        ]));
     }
 
     public function indexListTransaction()
@@ -49,7 +54,7 @@ class CashbankController extends Controller
 
     public function createBankTransfer()
     {
-        $coa                = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $number             = cashbank::where('bank_transfer', 1)->max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
@@ -74,7 +79,7 @@ class CashbankController extends Controller
 
     public function createBankDeposit()
     {
-        $coa                = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $contact            = contact::get();
         $expenses           = coa::get();
         $taxes              = other_tax::get();
@@ -102,7 +107,7 @@ class CashbankController extends Controller
 
     public function createBankWithdrawalAccount()
     {
-        $coa                = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $contact            = contact::get();
         $expenses           = coa::get();
         $taxes              = other_tax::get();
@@ -130,7 +135,7 @@ class CashbankController extends Controller
 
     /*public function createBankWithdrawalExpense()
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa            = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $contact        = contact::get();
         $expenses       = expense::where('status', 1)->get();
         $taxes          = other_tax::get();
@@ -145,7 +150,7 @@ class CashbankController extends Controller
 
     public function createBankWithdrawalFromExpense($id)
     {
-        $coa                = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $contact            = contact::get();
         $expenses           = expense::find($id);
         $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
@@ -734,7 +739,7 @@ class CashbankController extends Controller
 
     public function editBankTransfer($id)
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa            = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $caba           = cashbank::find($id);
 
         return view('admin.cashbank.editBankTransfer', compact(['caba', 'coa']));
@@ -742,7 +747,7 @@ class CashbankController extends Controller
 
     public function editBankDeposit($id)
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa            = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $caba           = cashbank::find($id);
         $caba_details   = cashbank_item::where('cashbank_id', $id)->get();
         $contact        = contact::get();
@@ -754,7 +759,7 @@ class CashbankController extends Controller
 
     public function editBankWithdrawalAccount($id)
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa            = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $caba           = cashbank::find($id);
         $caba_details   = cashbank_item::where('cashbank_id', $id)->get();
         $contact        = contact::get();
@@ -766,7 +771,7 @@ class CashbankController extends Controller
 
     public function editBankWithdrawalExpense($id)
     {
-        $coa            = coa::with('coa_category')->where('cashbank', 1)->get();
+        $coa            = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $caba           = cashbank::find($id);
         $caba_details   = cashbank_item::where('cashbank_id', $id)->get();
         $contact        = contact::get();

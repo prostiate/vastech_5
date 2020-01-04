@@ -10,11 +10,16 @@ class sale_invoice extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function sale_invoice_item()
     {
         return $this->hasMany('App\sale_invoice_item');
     }
-    
+
     public function sale_order()
     {
         return $this->belongsTo('App\sale_order', 'selected_so_id');
@@ -61,6 +66,11 @@ class sale_invoice extends Model
     }
 
     public function status()
+    {
+        return $this->belongsTo('App\other_status', 'status');
+    }
+
+    public function status_sales()
     {
         return $this->belongsTo('App\other_status', 'status');
     }

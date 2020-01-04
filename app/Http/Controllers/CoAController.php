@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use App\coa_category;
 use App\tax;
 use App\coa_detail;
-use App\sale_product;
-use App\product;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -19,17 +18,17 @@ class CoAController extends Controller
     public function index()
     {
         $coa            = coa::orderBy('code', 'asc')->get();
+        $coa_detail     = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();
         $coa_all        = count(coa::all());;
         /*$coa_detail     = coa_detail::where('coa_id', $id)->get();
         $debit          = coa_detail::where('coa_id', $id)->sum('debit');
         $credit         = coa_detail::where('coa_id', $id)->sum('credit');
-        $total          = $debit + $credit;*/
+        $total          = $debit + $credit;
         for ($i = 1; $i <= $coa_all; $i++) {
             $coa_credit[$i]     = coa_detail::where('coa_id', $i)->sum('credit');
             $coa_debit[$i]      = coa_detail::where('coa_id', $i)->sum('debit');
             $coa_balance[$i]    = $coa_debit[$i] - $coa_credit[$i];
         };
-        //dd($coa_balance);
         if (request()->ajax()) {
             return datatables()->of(coa::with('coa_category')->get())
                 ->addColumn('action', function ($data) {
@@ -40,9 +39,9 @@ class CoAController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
-        }
+        }*/
 
-        return view('admin.accounts.index', compact(['coa', 'coa_balance']));
+        return view('admin.accounts.index', compact(['coa', 'coa_detail']));
     }
 
     public function create()
@@ -56,6 +55,7 @@ class CoAController extends Controller
     
     public function store(Request $request)
     {
+        $user               = User::find(Auth::id());
         $rules                  = array(
             'code'              => 'required',
             'name'              => 'required',
@@ -82,6 +82,7 @@ class CoAController extends Controller
                 $cashbank           = null;
             }
             $accounts               = new coa([
+                'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'code'              => $request->get('code'),
                 'is_parent'         => $parent,
@@ -186,11 +187,10 @@ class CoAController extends Controller
                 $cashbank           = null;
             }
             $form_data = array(
-                'user_id'           => Auth::id(),
-                'code'      => $request->get('code'),
+                'code'              => $request->get('code'),
                 'is_parent'         => $parent,
                 'parent_id'         => $parent_account,
-                'name'      => $request->get('name'),
+                'name'              => $request->get('name'),
                 'coa_category_id'   => $request->get('coa_category_id'),
                 'cashbank'          => $cashbank,
                 'default_tax'       => $request->get('default_tax'),

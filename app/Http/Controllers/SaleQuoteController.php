@@ -281,6 +281,8 @@ class SaleQuoteController extends Controller
             $grandtotal_header_other    = 0;
 
             $transactions = other_transaction::create([
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'transaction_date'  => $request->get('trans_date'),
                 'number'            => $trans_no,
                 'number_complete'   => 'Sales Quote #' . $trans_no,
@@ -294,6 +296,7 @@ class SaleQuoteController extends Controller
             ]);
 
             $po = new sale_quote([
+                'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
@@ -552,6 +555,8 @@ class SaleQuoteController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -613,16 +618,73 @@ class SaleQuoteController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
+        $user                       = User::find(Auth::id());
         $pp                         = sale_quote::find($id);
         $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
         $checknumberpd              = sale_quote::whereId($id)->first();
         $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
         $numberothertransaction     = $checknumberpd->number;
-        $today                      = Carbon::today()->toDateString();
-        $company                    = company_setting::where('company_id', 1)->first();
-        $pdf = PDF::loadview('admin.sales.quote.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_quote::find($id);
+        $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
+        $checknumberpd              = sale_quote::whereId($id)->first();
+        $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_quote::find($id);
+        $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
+        $checknumberpd              = sale_quote::whereId($id)->first();
+        $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_quote::find($id);
+        $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
+        $checknumberpd              = sale_quote::whereId($id)->first();
+        $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_quote::find($id);
+        $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
+        $checknumberpd              = sale_quote::whereId($id)->first();
+        $numbercoadetail            = 'Sales Quote #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

@@ -4,28 +4,17 @@ namespace App\Http\Controllers;
 
 use App\sale_invoice;
 use App\sale_invoice_item;
-use App\sale_invoice_po;
-use App\sale_order;
-use App\sale_order_item;
 use App\contact;
 use App\warehouse;
 use App\product;
-use App\other_term;
-use App\other_unit;
-use App\other_tax;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\coa_detail;
 use App\default_account;
 use App\warehouse_detail;
-use Validator;
 use App\other_transaction;
-use App\sale_payment;
 use PDF;
 use App\coa;
-use App\sale_quote;
-use App\sale_quote_item;
-use App\sale_invoice_po_item;
 use App\sale_return;
 use App\sale_return_item;
 use Illuminate\Support\Facades\Auth;
@@ -99,8 +88,8 @@ class SaleReturnController extends Controller
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account                = contact::find($request->vendor_name);
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
                 'coa_id'                    => $contact_account->account_receivable_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales return',
@@ -115,8 +104,8 @@ class SaleReturnController extends Controller
             ]);
             // CREATE OTHER TRANSACTION PUNYA RETURN
             $transactions = other_transaction::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
                 'transaction_date'          => $request->get('trans_date'),
                 'number'                    => $trans_no,
                 'number_complete'           => 'Sales Return #' . $trans_no,
@@ -130,8 +119,8 @@ class SaleReturnController extends Controller
             ]);
             // CREATE PURCHASE RETURN HEADER
             $pd = new sale_return([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
                 'number'                    => $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
                 'email'                     => $request->get('email'),
@@ -189,8 +178,8 @@ class SaleReturnController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'sales return',
@@ -241,8 +230,8 @@ class SaleReturnController extends Controller
                     if ($default_product_account->is_track == 1) {
                         // DEFAULT BUY ACCOUNT
                         coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
+                            'company_id'            => $user->company_id,
+                            'user_id'               => Auth::id(),
                             'coa_id'                => $default_product_account->buy_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -257,8 +246,8 @@ class SaleReturnController extends Controller
                         ]);
                         // DEFAULT SELL ACCOUNT (KARENA RETURN, DIA JADINYA MASUK KE SALES RETURN)
                         coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
+                            'company_id'            => $user->company_id,
+                            'user_id'               => Auth::id(),
                             'coa_id'                => $default_sales_return->account_id,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -273,8 +262,8 @@ class SaleReturnController extends Controller
                         ]);
                         // DEFAULT INVENTORY ACCOUNT
                         coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
+                            'company_id'            => $user->company_id,
+                            'user_id'               => Auth::id(),
                             'coa_id'                => $default_product_account->default_inventory_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',
@@ -291,8 +280,8 @@ class SaleReturnController extends Controller
                     } else {
                         // DEFAULT SETTING
                         coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
+                            'company_id'            => $user->company_id,
+                            'user_id'               => Auth::id(),
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('trans_date'),
                             'type'                  => 'sales return',

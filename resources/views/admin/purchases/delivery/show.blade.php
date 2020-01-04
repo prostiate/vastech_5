@@ -6,10 +6,14 @@
         <div class="x_panel">
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
+                    @hasrole('Owner|Ultimate|Purchase Invoice')
+                    @can('Create')
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/purchases_invoice/new/fromDelivery/' + {{$pd->id}};">Create Invoice
                         </button>
                     </li>
+                    @endcan
+                    @endrole
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">View Journal Entry
                         </button>
@@ -251,13 +255,19 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/purchases_delivery') }}" class="btn btn-dark">Cancel</a>
+                            @hasrole('Owner|Ultimate|Purchase Delivery')
                             @if(!$check_invoice)
+                            @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            @endcan
+                            @can('Edit')
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/purchases_delivery/edit/from/' + {{$pd->id}};">Edit
                                 </button>
                             </div>
+                            @endcan
                             @endif
+                            @endrole
                             <input type="text" value="{{$pd->id}}" id="form_id" hidden>
                         </div>
                     </div>

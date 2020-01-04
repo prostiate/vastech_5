@@ -189,7 +189,7 @@ class SaleInvoiceController extends Controller
             }
         } else {
             if (request()->ajax()) {
-                return datatables()->of(sale_invoice::with('sale_invoice_item', 'contact', 'status')->get())
+                return datatables()->of(sale_invoice::with('sale_invoice_item', 'contact', 'status', 'warehouse')->get())
                     ->make(true);
             }
         }
@@ -1769,6 +1769,8 @@ class SaleInvoiceController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -2019,6 +2021,22 @@ class SaleInvoiceController extends Controller
                 coa::find($get_current_balance_on_coa->id)->update([
                     'balance'                   => $get_current_balance_on_coa->balance + $request->get('costtotal'),
                 ]);
+                // REVENUE BUAT TEMENNYA AR SI JASA ONLY
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                    => 65,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'sales invoice',
+                    'number'                    => 'Sales Invoice #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => 0,
+                    'credit'                    => $request->get('costtotal'),
+                ]);
+                $get_current_balance_on_coa     = coa::find(65);
+                coa::find($get_current_balance_on_coa->id)->update([
+                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('costtotal'),
+                ]);
             }
 
             if ($jasa_only == 0) {
@@ -2154,213 +2172,236 @@ class SaleInvoiceController extends Controller
             }*/
             if ($jasa_only == 0) {
                 foreach ($request->products as $i => $product) {
-                    //menyimpan detail per item dari invoicd
-                    $kurangin                       = $request->qty_remaining[$i] - $request->qty[$i];
-                    $pp[$i] = new sale_invoice_item([
-                        'product_id'                => $request->products[$i],
-                        'desc'                      => $request->desc[$i],
-                        'qty'                       => $request->qty[$i],
-                        'unit_id'                   => $request->units[$i],
-                        'unit_price'                => $request->unit_price[$i],
-                        'tax_id'                    => $request->tax[$i],
-                        /*'amountsub'                 => $request->total_price_sub[$i],
+                    if ($request->qty[$i] != null) {
+                        //menyimpan detail per item dari invoicd
+                        $kurangin                       = $request->qty_remaining[$i] - $request->qty[$i];
+                        $pp[$i] = new sale_invoice_item([
+                            'product_id'                => $request->products[$i],
+                            'desc'                      => $request->desc[$i],
+                            'qty'                       => $request->qty[$i],
+                            'unit_id'                   => $request->units[$i],
+                            'unit_price'                => $request->unit_price[$i],
+                            'tax_id'                    => $request->tax[$i],
+                            /*'amountsub'                 => $request->total_price_sub[$i],
                         'amounttax'                 => $request->total_price_tax[$i],
                         'amountgrand'               => $request->total_price_grand[$i],*/
-                        'amount'                    => $request->total_price[$i],
-                        'qty_remaining'             => $kurangin,
-                        'qty_remaining_return'      => $request->qty[$i],
-                        // PUNYA COST
-                        'cost_unit_price'           => $request->cost_unit_price[$i],
-                        'cost_amount'               => $request->cost_total_price[$i],
-                    ]);
-                    $pi->sale_invoice_item()->save($pp[$i]);
-                    if ($request->qty[$i] == $request->qty_remaining[$i]) {
-                        spk_item::where('product_id', $request->products[$i])
-                            ->update([
-                                'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                            'amount'                    => $request->total_price[$i],
+                            'qty_remaining'             => $kurangin,
+                            'qty_remaining_return'      => $request->qty[$i],
+                            // PUNYA COST
+                            'cost_unit_price'           => $request->cost_unit_price[$i],
+                            'cost_amount'               => $request->cost_total_price[$i],
+                        ]);
+                        $pi->sale_invoice_item()->save($pp[$i]);
+                        if ($request->qty[$i] == $request->qty_remaining[$i]) {
+                            spk_item::where('product_id', $request->products[$i])
+                                ->update([
+                                    'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                                ]);
+                        } else if ($request->qty[$i] < $request->qty_remaining[$i] && $request->qty[$i] != 0) {
+                            spk_item::where('product_id', $request->products[$i])
+                                ->update([
+                                    'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                                ]);
+                        } else if ($request->qty[$i] > $request->qty_remaining[$i]) {
+                            DB::rollback();
+                            return response()->json(['errors' => 'Quantity cannot be more than requirement!']);
+                        } else if ($request->qty[$i] == 0) {
+                            DB::rollback();
+                            return response()->json(['errors' => 'Quantity must be more than zero!']);
+                        }
+                        $avg_price                      = product::find($request->products[$i]);
+                        $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                        $default_product_account        = product::find($request->products[$i]);
+                        if ($default_product_account->is_track == 1) {
+                            // DEFAULT BUY ACCOUNT
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => $default_product_account->buy_account,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => $total_avg,
+                                'credit'                => 0,
                             ]);
-                    } else if ($request->qty[$i] < $request->qty_remaining[$i] && $request->qty[$i] != 0) {
-                        spk_item::where('product_id', $request->products[$i])
-                            ->update([
-                                'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                            $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
+                            coa::find($get_current_balance_on_coa1->id)->update([
+                                'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
                             ]);
-                    } else if ($request->qty[$i] > $request->qty_remaining[$i]) {
-                        DB::rollback();
-                        return response()->json(['errors' => 'Quantity cannot be more than requirement!']);
-                    } else if ($request->qty[$i] == 0) {
-                        DB::rollback();
-                        return response()->json(['errors' => 'Quantity must be more than zero!']);
-                    }
-                    $avg_price                      = product::find($request->products[$i]);
-                    $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
-                    $default_product_account        = product::find($request->products[$i]);
-                    if ($default_product_account->is_track == 1) {
-                        // DEFAULT BUY ACCOUNT
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => $default_product_account->buy_account,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => $total_avg,
-                            'credit'                => 0,
-                        ]);
-                        $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa1->id)->update([
-                            'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
-                        ]);
-                        // DEFAULT SELL ACCOUNT
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => $default_product_account->sell_account,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => 0,
-                            'credit'                => $request->total_price[$i],
-                        ]);
-                        $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa2->id)->update([
-                            'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
-                        ]);
-                        // DEFAULT INVENTORY ACCOUNT
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => $default_product_account->default_inventory_account,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => 0,
-                            'credit'                => $total_avg,
-                            //'from_product_id'   => 0,
-                        ]);
-                        $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa3->id)->update([
-                            'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
-                        ]);
-                        // PUNYA COST
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => 69,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => 0,
-                            'credit'                => $request->cost_total_price[$i],
-                            //'from_product_id'   => $request->products[$i],
-                        ]);
-                        $get_current_balance_on_coa = coa::find(69);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
-                        ]);
-                    } else {
-                        // DEFAULT SETTING
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => $default_product_account->sell_account,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => 0,
-                            'credit'                => $request->total_price[$i],
-                            //'from_product_id'   => $request->products[$i],
-                        ]);
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                        ]);
-                        // PUNYA COST
-                        coa_detail::create([
-                            'company_id'                    => $user->company_id,
-                            'user_id'                       => Auth::id(),
-                            'coa_id'                => 69,
-                            'date'                  => $request->get('trans_date'),
-                            'type'                  => 'sales invoice',
-                            'number'                => 'Sales Invoice #' . $trans_no,
-                            'contact_id'            => $request->get('vendor_name'),
-                            'debit'                 => 0,
-                            'credit'                => $request->cost_total_price[$i],
-                            //'from_product_id'   => $request->products[$i],
-                        ]);
-                        $get_current_balance_on_coa = coa::find(69);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
-                        ]);
-                    }
-                    //menambahkan stok barang ke gudang
-                    $wh                             = new warehouse_detail();
-                    $wh->type                       = 'sales invoice';
-                    $wh->number                     = 'Sales Invoice #' . $trans_no;
-                    $wh->product_id                 = $request->products[$i];
-                    $wh->warehouse_id               = $request->warehouse;
-                    $wh->date                   = $request->trans_date;
-                    $wh->qty_out                    = $request->qty[$i];
-                    $wh->save();
+                            // DEFAULT SELL ACCOUNT
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => $default_product_account->sell_account,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => 0,
+                                'credit'                => $request->total_price[$i],
+                            ]);
+                            $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
+                            coa::find($get_current_balance_on_coa2->id)->update([
+                                'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
+                            ]);
+                            // DEFAULT INVENTORY ACCOUNT
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => $default_product_account->default_inventory_account,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => 0,
+                                'credit'                => $total_avg,
+                                //'from_product_id'   => 0,
+                            ]);
+                            $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
+                            coa::find($get_current_balance_on_coa3->id)->update([
+                                'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
+                            ]);
+                            // PUNYA COST
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => 69,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => 0,
+                                'credit'                => $request->cost_total_price[$i],
+                                //'from_product_id'   => $request->products[$i],
+                            ]);
+                            $get_current_balance_on_coa = coa::find(69);
+                            coa::find($get_current_balance_on_coa->id)->update([
+                                'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
+                            ]);
+                        } else {
+                            // DEFAULT SETTING
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => $default_product_account->sell_account,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => 0,
+                                'credit'                => $request->total_price[$i],
+                                //'from_product_id'   => $request->products[$i],
+                            ]);
+                            $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
+                            coa::find($get_current_balance_on_coa->id)->update([
+                                'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
+                            ]);
+                            // PUNYA COST
+                            coa_detail::create([
+                                'company_id'                    => $user->company_id,
+                                'user_id'                       => Auth::id(),
+                                'coa_id'                => 69,
+                                'date'                  => $request->get('trans_date'),
+                                'type'                  => 'sales invoice',
+                                'number'                => 'Sales Invoice #' . $trans_no,
+                                'contact_id'            => $request->get('vendor_name'),
+                                'debit'                 => 0,
+                                'credit'                => $request->cost_total_price[$i],
+                                //'from_product_id'   => $request->products[$i],
+                            ]);
+                            $get_current_balance_on_coa = coa::find(69);
+                            coa::find($get_current_balance_on_coa->id)->update([
+                                'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
+                            ]);
+                        }
+                        //menambahkan stok barang ke gudang
+                        $wh                             = new warehouse_detail();
+                        $wh->type                       = 'sales invoice';
+                        $wh->number                     = 'Sales Invoice #' . $trans_no;
+                        $wh->product_id                 = $request->products[$i];
+                        $wh->warehouse_id               = $request->warehouse;
+                        $wh->date                   = $request->trans_date;
+                        $wh->qty_out                    = $request->qty[$i];
+                        $wh->save();
 
-                    //merubah harga average produk
-                    $produk                         = product::find($request->products[$i]);
-                    $qty                            = $request->qty[$i];
-                    //$price = $request->unit_price[$i];
-                    //$curr_avg_price = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($produk->qty + $qty);
-                    //dd(abs($curr_avg_price));
-                    //menyimpan jumlah perubahan pada produk
-                    product::where('id', $request->products[$i])->update([
-                        'qty'                       => $produk->qty - $qty,
-                        //'avg_price' => abs($curr_avg_price),
-                    ]);
+                        //merubah harga average produk
+                        $produk                         = product::find($request->products[$i]);
+                        $qty                            = $request->qty[$i];
+                        //$price = $request->unit_price[$i];
+                        //$curr_avg_price = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($produk->qty + $qty);
+                        //dd(abs($curr_avg_price));
+                        //menyimpan jumlah perubahan pada produk
+                        product::where('id', $request->products[$i])->update([
+                            'qty'                       => $produk->qty - $qty,
+                            //'avg_price' => abs($curr_avg_price),
+                        ]);
+                    }
                 };
             } else {
                 foreach ($request->products as $i => $product) {
-                    //menyimpan detail per item dari invoicd
-                    $pp[$i] = new sale_invoice_item([
-                        'product_id'                => $request->products[$i],
-                        'desc'                      => $request->desc[$i],
-                        'qty'                       => $request->qty[$i],
-                        'qty_remaining_return'      => $request->qty[$i],
-                        'unit_id'                   => $request->units[$i],
-                        'unit_price'                => $request->unit_price[$i],
-                        'tax_id'                    => $request->tax[$i],
-                        /*'amountsub'                 => $request->total_price_sub[$i],
+                    if ($request->qty[$i] != null) {
+                        //menyimpan detail per item dari invoicd
+                        $kurangin                       = $request->qty_remaining[$i] - $request->qty[$i];
+                        $pp[$i] = new sale_invoice_item([
+                            'product_id'                => $request->products[$i],
+                            'desc'                      => $request->desc[$i],
+                            'qty'                       => $request->qty[$i],
+                            'unit_id'                   => $request->units[$i],
+                            'unit_price'                => $request->unit_price[$i],
+                            'tax_id'                    => $request->tax[$i],
+                            /*'amountsub'                 => $request->total_price_sub[$i],
                         'amounttax'                 => $request->total_price_tax[$i],
                         'amountgrand'               => $request->total_price_grand[$i],*/
-                        'amount'                    => $request->total_price[$i],
-                        // PUNYA COST
-                        'cost_unit_price'           => $request->cost_unit_price[$i],
-                        'cost_amount'               => $request->cost_total_price[$i],
-                    ]);
-                    $pi->sale_invoice_item()->save($pp[$i]);
+                            'amount'                    => $request->total_price[$i],
+                            'qty_remaining'             => $kurangin,
+                            'qty_remaining_return'      => $request->qty[$i],
+                            // PUNYA COST
+                            'cost_unit_price'           => $request->cost_unit_price[$i],
+                            'cost_amount'               => $request->cost_total_price[$i],
+                        ]);
+                        $pi->sale_invoice_item()->save($pp[$i]);
+                        if ($request->qty[$i] == $request->qty_remaining[$i]) {
+                            spk_item::where('product_id', $request->products[$i])
+                                ->update([
+                                    'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                                ]);
+                        } else if ($request->qty[$i] < $request->qty_remaining[$i] && $request->qty[$i] != 0) {
+                            spk_item::where('product_id', $request->products[$i])
+                                ->update([
+                                    'qty_remaining_sent' => $request->qty_remaining[$i] - $request->qty[$i]
+                                ]);
+                        } else if ($request->qty[$i] > $request->qty_remaining[$i]) {
+                            DB::rollback();
+                            return response()->json(['errors' => 'Quantity cannot be more than requirement!']);
+                        } else if ($request->qty[$i] == 0) {
+                            DB::rollback();
+                            return response()->json(['errors' => 'Quantity must be more than zero!']);
+                        }
 
-                    //menambahkan stok barang ke gudang
-                    $wh                             = new warehouse_detail();
-                    $wh->type                       = 'sales invoice';
-                    $wh->number                     = 'Sales Invoice #' . $trans_no;
-                    $wh->product_id                 = $request->products[$i];
-                    $wh->warehouse_id               = $request->warehouse;
-                    $wh->date                   = $request->trans_date;
-                    $wh->qty_out                    = $request->qty[$i];
-                    $wh->save();
+                        //menambahkan stok barang ke gudang
+                        $wh                             = new warehouse_detail();
+                        $wh->type                       = 'sales invoice';
+                        $wh->number                     = 'Sales Invoice #' . $trans_no;
+                        $wh->product_id                 = $request->products[$i];
+                        $wh->warehouse_id               = $request->warehouse;
+                        $wh->date                   = $request->trans_date;
+                        $wh->qty_out                    = $request->qty[$i];
+                        $wh->save();
 
-                    //merubah harga average produk
-                    $produk                         = product::find($request->products[$i]);
-                    $qty                            = $request->qty[$i];
-                    //$price = $request->unit_price[$i];
-                    //$curr_avg_price = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($produk->qty + $qty);
-                    //dd(abs($curr_avg_price));
-                    //menyimpan jumlah perubahan pada produk
-                    product::where('id', $request->products[$i])->update([
-                        'qty'                       => $produk->qty - $qty,
-                        //'avg_price' => abs($curr_avg_price),
-                    ]);
+                        //merubah harga average produk
+                        $produk                         = product::find($request->products[$i]);
+                        $qty                            = $request->qty[$i];
+                        //$price = $request->unit_price[$i];
+                        //$curr_avg_price = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($produk->qty + $qty);
+                        //dd(abs($curr_avg_price));
+                        //menyimpan jumlah perubahan pada produk
+                        product::where('id', $request->products[$i])->update([
+                            'qty'                       => $produk->qty - $qty,
+                            //'avg_price' => abs($curr_avg_price),
+                        ]);
+                    }
                 };
             }
             DB::commit();
@@ -2517,8 +2558,8 @@ class SaleInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'sales invoice',
@@ -2632,20 +2673,15 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $trans_no;
                 $wh->product_id                 = $request->products[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
                 //merubah harga average produk
                 $produk                         = product::find($request->products[$i]);
                 $qty                            = $request->qty[$i];
-                //$price = $request->unit_price[$i];
-                //$curr_avg_price = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($produk->qty + $qty);
-                //dd(abs($curr_avg_price));
-                //menyimpan jumlah perubahan pada produk
                 product::where('id', $request->products[$i])->update([
                     'qty'                       => $produk->qty - $qty,
-                    //'avg_price' => abs($curr_avg_price),
                 ]);
             };
             DB::commit();
@@ -3023,6 +3059,8 @@ class SaleInvoiceController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -3772,6 +3810,8 @@ class SaleInvoiceController extends Controller
                             $unit_price     = $get_discount_item[0]->price;
                         }
                     }
+                } else {
+                    $unit_price             = $request->unit_price[$i];
                 }
                 $get_tax                    = other_tax::find($request->tax[$i]);
                 $subtotal                   = $request->qty[$i] * $unit_price;
@@ -4665,7 +4705,11 @@ class SaleInvoiceController extends Controller
                     coa::find($get_current_balance_on_coa->id)->update([
                         'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
                     ]);
-                    $cost_bundle                        = sale_invoice_cost::where('sale_invoice_id', $pi->id)->get();
+                    $get_current_balance_on_coa         = coa::find(65);
+                    coa::find($get_current_balance_on_coa->id)->update([
+                        'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
+                    ]);
+                    /*$cost_bundle                        = sale_invoice_cost::where('sale_invoice_id', $pi->id)->get();
                     if ($cost_bundle != null) {
                         foreach ($cost_bundle as $i => $p) {
                             if ($cost_bundle[$i] != null) {
@@ -4675,7 +4719,7 @@ class SaleInvoiceController extends Controller
                                 ]);
                             }
                         }
-                    }
+                    }*/
                     // HAPUS BALANCE PER ITEM INVOICE
                     $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                     foreach ($pi_details as $a) {
@@ -4913,13 +4957,117 @@ class SaleInvoiceController extends Controller
         return $pdf->stream();
     }
 
-    public function cetak_pdf2($id)
+    public function cetak_pdf_sukses_surabaya_sj($id)
     {
+        $user                       = User::find(Auth::id());
         $pp                         = sale_invoice::find($id);
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', 1)->first();
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_1($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $checknumberpd              = sale_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $checknumberpd              = sale_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas_sj($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $checknumberpd              = sale_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg_sj($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $checknumberpd              = sale_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_sj($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_invoice::find($id);
+        $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
+        $checknumberpd              = sale_invoice::whereId($id)->first();
+        $numbercoadetail            = 'Sales Invoice #' . $checknumberpd->number;
+        $numberothertransaction     = $checknumberpd->number;
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

@@ -10,6 +10,11 @@ class sale_order extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function sale_order_item()
     {
         return $this->hasMany('App\sale_order_item');

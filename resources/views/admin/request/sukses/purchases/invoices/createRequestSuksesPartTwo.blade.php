@@ -113,65 +113,97 @@
                             </thead>-->
                             <tbody>
                                 @foreach($all_po as $ap)
-                                @if($ap->balance_due > 0)
-                                <tr>
-                                    <thead>
-                                        <tr>
-                                            <td>
-                                                <a href="/purchases_order/{{$ap->id}}" style="color:white;">
-                                                    <h5><b>Purchase Order #{{$ap->number}}@if($ap->jasa_only == 1) <small style="color:white;"> - Fabrication Services Only</small> @endif</b></h5>
-                                                </a>
-                                                <input type="text" name="po_id[]" value="{{$ap->id}}" hidden>
-                                                <input type="text" name="po_number[]" value="{{$ap->number}}" hidden>
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </thead>
-                                <tr class="headings">
-                                    <th class="column-title" style="width: 250px">Product</th>
-                                    <th class="column-title" style="width: 100px">Qty Order</th>
-                                    <th class="column-title" style="width: 100px">Qty Remaining</th>
-                                    <th class="column-title" style="width: 100px">Qty Dateng</th>
-                                    <th class="column-title" style="width: 200px">Unit Price</th>
-                                    <th class="column-title" style="width: 200px">Amount</th>
-                                </tr>
-                                @foreach($all_po_item as $api)
-                                @if($api->purchase_order_id == $ap->id)
-                                <tr class="neworderbody">
-                                    <td>
-                                        <a href="/products/{{$api->product_id}}">
-                                            <h5>{{$api->product->name}}</h5>
-                                        </a>
-                                        <input type="text" value="{{$api->product_id}}" name="po_item_product_id[]" hidden>
-                                        <input type="text" value="{{$api->id}}" name="po_item_id[]" hidden>
-                                    </td>
-                                    <td>
-                                        <h5>{{$api->qty}}</h5>
-                                    </td>
-                                    <td>
-                                        <h5>{{$api->qty_remaining}}</h5>
-                                        <input type="text" value="{{$api->qty_remaining}}" name="po_qty_remaining[]" hidden>
-                                    </td>
-                                    <td>
-                                        <input onClick="this.select();" type="text" class="qtydateng_display form-control" name="po_qty_dateng[]">
-                                    </td>
-                                    <td>
-                                        <h5>Rp @number($api->unit_price)</h5>
-                                        <input type="text" class="unit_price" value="{{$api->unit_price}}" name="po_unit_price[]" hidden>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="order_amount_display form-control" readonly>
-                                        <input type="text" class="order_amount" name="po_amount[]" hidden>
-                                    </td>
-                                </tr>
-                                @endif
-                                @endforeach
-                                </tr>
-                                @endif
+                                    @if($ap->status == 4 or $ap->status == 1)
+                                        @if($ap->balance_due > 0)
+                                            <tr>
+                                                <thead>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/purchases_order/{{$ap->id}}" style="color:white;">
+                                                                <h5><b>Purchase Order #{{$ap->number}}@if($ap->jasa_only == 1) <small style="color:white;"> - Fabrication Services Only</small> @endif</b></h5>
+                                                            </a>
+                                                            <input type="text" name="po_id[]" value="{{$ap->id}}" hidden>
+                                                            <input type="text" name="po_number[]" value="{{$ap->number}}" hidden>
+                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </thead>
+                                            <tr class="headings">
+                                                <th class="column-title" style="width: 250px">Product</th>
+                                                <th class="column-title" style="width: 100px">Qty Order</th>
+                                                <th class="column-title" style="width: 100px">Qty Remaining</th>
+                                                <th class="column-title" style="width: 100px">Qty Dateng</th>
+                                                <th class="column-title" style="width: 200px">Unit Price</th>
+                                                <th class="column-title" style="width: 200px">Amount</th>
+                                            </tr>
+                                            @foreach($all_po_item as $api)
+                                                @if($api->purchase_order_id == $ap->id)
+                                                    @if($api->qty_remaining == 0)
+                                                    <tr class="neworderbody" hidden>
+                                                        <td>
+                                                            <a href="/products/{{$api->product_id}}">
+                                                                <h5>{{$api->product->name}}</h5>
+                                                            </a>
+                                                            <input type="text" value="{{$api->product_id}}" name="po_item_product_id[]" hidden>
+                                                            <input type="text" value="{{$api->id}}" name="po_item_id[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <h5>{{$api->qty}}</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h5>{{$api->qty_remaining}}</h5>
+                                                            <input type="text" value="{{$api->qty_remaining}}" name="po_qty_remaining[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="qtydateng_display form-control" name="po_qty_dateng[]">
+                                                        </td>
+                                                        <td>
+                                                            <h5>Rp @number($api->unit_price)</h5>
+                                                            <input type="text" class="unit_price" value="{{$api->unit_price}}" name="po_unit_price[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="order_amount_display form-control" readonly>
+                                                            <input type="text" class="order_amount" name="po_amount[]" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    @else
+                                                    <tr class="neworderbody">
+                                                        <td>
+                                                            <a href="/products/{{$api->product_id}}">
+                                                                <h5>{{$api->product->name}}</h5>
+                                                            </a>
+                                                            <input type="text" value="{{$api->product_id}}" name="po_item_product_id[]" hidden>
+                                                            <input type="text" value="{{$api->id}}" name="po_item_id[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <h5>{{$api->qty}}</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h5>{{$api->qty_remaining}}</h5>
+                                                            <input type="text" value="{{$api->qty_remaining}}" name="po_qty_remaining[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <input onClick="this.select();" type="text" class="qtydateng_display form-control" name="po_qty_dateng[]">
+                                                        </td>
+                                                        <td>
+                                                            <h5>Rp @number($api->unit_price)</h5>
+                                                            <input type="text" class="unit_price" value="{{$api->unit_price}}" name="po_unit_price[]" hidden>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="order_amount_display form-control" readonly>
+                                                            <input type="text" class="order_amount" name="po_amount[]" hidden>
+                                                        </td>
+                                                    </tr>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                            </tr>
+                                        @endif
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

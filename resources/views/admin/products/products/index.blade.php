@@ -11,6 +11,13 @@
         <strong>{{ $errors->first('file') }}</strong>
     </span>
     @endif
+    {{-- notifikasi form error --}}
+    @if ($error = Session::get('error'))
+    <div class="alert alert-error alert-block">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>{{ $error }}</strong>
+    </div>
+    @endif
     {{-- notifikasi sukses --}}
     @if ($sukses = Session::get('sukses'))
     <div class="alert alert-success alert-block">
@@ -50,13 +57,32 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Total Stock</h2>
+                <h2>Summary Stock</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button type="button" class="btn btn-primary mr-5" data-toggle="modal" data-target="#importExcel">
-                            IMPORT EXCEL
+                        @hasrole('Owner|Ultimate|Good & Services')
+                        @can('Create')
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/new';">New Product
                         </button>
-                        <!-- Import Excel -->
+                        @endcan
+                        @endrole
+                        <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a href="/products/export_excel">Export as Excel</a>
+                            </li>
+                            <li><a href="/products/export_csv">Export as CSV</a>
+                            </li>
+                            <li><a target="_blank" href="/products/export_pdf">Export as PDF</a>
+                            </li>
+                            <li class="divider"></li>
+                            @hasrole('Owner|Ultimate|Good & Services')
+                            @can('Create')
+                            <li><a data-toggle="modal" data-target="#importExcel">Import from Excel</a>
+                            </li>
+                            @endcan
+                            @endrole
+                        </ul>
                         <div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <form method="post" action="/products/import_excel" enctype="multipart/form-data">
@@ -65,16 +91,12 @@
                                             <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
                                         </div>
                                         <div class="modal-body">
-
                                             {{ csrf_field() }}
-
                                             <label>Pilih file excel</label>
                                             <div class="form-group">
                                                 <input type="file" name="file" required="required">
                                             </div>
-
                                             <a href="{{ url('/file_product/SampleProduct.xlsx') }}">Download Sample</a>
-
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -84,10 +106,6 @@
                                 </form>
                             </div>
                         </div>
-                    </li>
-                    <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/new';">New Product
-                        </button>
                     </li>
                 </ul>
                 <div class="clearfix"></div>

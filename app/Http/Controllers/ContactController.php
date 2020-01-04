@@ -8,7 +8,9 @@ use App\other_term;
 use App\coa;
 use App\default_account;
 use App\expense;
+use App\Exports\ContactExport;
 use App\history_limit_balance;
+use App\Imports\ContactImport;
 use App\other_transaction;
 use App\purchase_delivery;
 use App\purchase_invoice;
@@ -29,6 +31,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use PDF;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContactController extends Controller
 {
@@ -133,6 +137,7 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
+        $user                       = User::find(Auth::id());
         $rules = array(
             'display_name'       => 'required',
         );
@@ -148,29 +153,51 @@ class ContactController extends Controller
         }
         DB::beginTransaction();
         try {
-            if ($request->has('contact_type1')) {
-                $contact_type1 = 1;
+            $type                       = 0;
+            if (isset($request->contact_type1)) {
+                if ($request->has('contact_type1')) {
+                    $contact_type1 = 1;
+                } else {
+                    $contact_type1 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type1 = 0;
-            };
-
-            if ($request->has('contact_type2')) {
-                $contact_type2 = 1;
+            }
+            if (isset($request->contact_type2)) {
+                if ($request->has('contact_type2')) {
+                    $contact_type2 = 1;
+                } else {
+                    $contact_type2 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type2 = 0;
-            };
-
-            if ($request->has('contact_type3')) {
-                $contact_type3 = 1;
+            }
+            if (isset($request->contact_type3)) {
+                if ($request->has('contact_type3')) {
+                    $contact_type3 = 1;
+                } else {
+                    $contact_type3 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type3 = 0;
-            };
-
-            if ($request->has('contact_type4')) {
-                $contact_type4 = 1;
+            }
+            if (isset($request->contact_type4)) {
+                if ($request->has('contact_type4')) {
+                    $contact_type4 = 1;
+                } else {
+                    $contact_type4 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type4 = 0;
-            };
+            }
+
+            if ($type == 4) {
+                return response()->json(['errors' => 'Contact type must be filled with at least one type!']);
+            }
 
             if ($request->get('account_receivable')) {
                 $account_receivable = $request->get('account_receivable');
@@ -190,13 +217,20 @@ class ContactController extends Controller
                 $account_term = $default_term->id;
             };
 
-            if ($request->limit_balance == 0) {
+            if ($request->limit_balance != null) {
+                $limit_b                    = $request->limit_balance;
+            } else {
+                $limit_b                    = 0;
+            }
+
+            if ($limit_b == 0) {
                 $is_limit                   = 0;
             } else {
                 $is_limit                   = 1;
             }
 
             $share                          = new contact([
+                'company_id'                => $user->company_id,
                 'user_id'                   => Auth::id(),
                 'account_receivable_id'     => $account_receivable,
                 'account_payable_id'        => $account_payable,
@@ -208,8 +242,8 @@ class ContactController extends Controller
                 'type_other'                => $contact_type4,
                 'sales_type'                => $request->sales_type,
                 'is_limit'                  => $is_limit,
-                'limit_balance'             => $request->limit_balance,
-                'current_limit_balance'     => $request->limit_balance,
+                'limit_balance'             => $limit_b,
+                'current_limit_balance'     => $limit_b,
                 'last_limit_balance'        => 0,
                 'first_name'                => $request->get('first_name'),
                 'middle_name'               => $request->get('middle_name'),
@@ -449,6 +483,87 @@ class ContactController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function import_excel(Request $request)
+    {
+        $rules = array(
+            'file' => 'required|mimes:csv,xls,xlsx'
+        );
+
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            \Session::flash('error', $error->errors());
+            return redirect('/contacts_all');
+        }
+        try {
+            /*// validasi
+            $this->validate($request, [
+                'file' => 'required|mimes:csv,xls,xlsx'
+            ]);*/
+
+            // menangkap file excel
+            $file = $request->file('file');
+
+            // membuat nama file unik
+            $nama_file = rand() . $file->getClientOriginalName();
+
+            // upload ke folder file_siswa di dalam folder public
+            $file->move('file_contact', $nama_file);
+
+            try {
+                // import data
+                Excel::import(new ContactImport, public_path('/file_contact/' . $nama_file));
+            } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                $failures = $e->failures();
+
+                foreach ($failures as $failure) {
+                    $failure->row(); // row that went wrong
+                    $failure->attribute(); // either heading key (if using heading row concern) or column index
+                    $failure->errors(); // Actual error messages from Laravel validator
+                    $failure->values(); // The values of the row that has failed.
+                }
+                // notifikasi dengan session
+                \Session::flash('error', $e->failures());
+                // alihkan halaman kembali
+                return redirect('/contacts_all');
+            }
+            // notifikasi dengan session
+            \Session::flash('sukses', 'Data Contact Berhasil Diimport!');
+
+            // alihkan halaman kembali
+            return redirect('/contacts_all');
+        } catch (\Exception $e) {
+            \Session::flash('error', $e->getMessage());
+            return redirect('/contacts_all');
+        }
+    }
+
+    public function export_excel()
+    {
+        return Excel::download(new ContactExport, 'contact.xlsx');
+    }
+
+    public function export_csv()
+    {
+        return Excel::download(new ContactExport, 'contact.csv');
+    }
+
+    public function export_pdf()
+    {
+        $contacts                             = contact::get();
+        $no                                   = count($contacts);
+
+        if ($no <= 1000) {
+            $view = view('admin.contacts.printPDF')->with(compact(['contacts']));
+            $html = $view->render();
+            $pdf = PDF::loadHTML($html);
+            return $pdf->download('contact.pdf');
+        } else {
+            \Session::flash('error', 'Failed, data coptact is more than 1000!');
+            return redirect('/contacts_all');
         }
     }
 }

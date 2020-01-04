@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
 use Image;
 use File;
+use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
 {
@@ -24,10 +25,10 @@ class SettingController extends Controller
 
     public function company_index()
     {
-        $users = User::all();
+        $users = User::find(Auth::id());
         $roles = Role::pluck('name', 'name')->all();
 
-        $cs = company_setting::where('company_id', 1)->first();
+        $cs = company_setting::where('company_id', $users->company_id)->first();
         //$logo = logo_uploaded::where('company_id', 1)->first();
 
         return view('admin.settings.company', compact(['cs', 'users', 'roles']));

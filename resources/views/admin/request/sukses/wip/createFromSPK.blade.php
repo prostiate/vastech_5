@@ -138,11 +138,7 @@
                                                 <select class="form-control selectproduct_normal product_id_per" name="wip_product_id_per[]">
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                    @foreach($products as $pro)
-                                                    @if($pro->id == $qis->product_id)
-                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}">{{$pro->name}}</option>
-                                                    @endif
-                                                    @endforeach
+                                                        <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}">{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -241,11 +237,7 @@
                                                 <select class="form-control selectproduct_normal product_id_all" name="wip_product_id_all[]">
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                    @foreach($products as $pro)
-                                                    @if($pro->id == $qis->product_id)
-                                                    <option value="{{$pro->id}}" unitprice="{{$pro->avg_price}}">{{$pro->name}}</option>
-                                                    @endif
-                                                    @endforeach
+                                                        <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}">{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
