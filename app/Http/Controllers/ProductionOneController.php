@@ -47,7 +47,7 @@ class ProductionOneController extends Controller
         $products           = product::where('is_track', 1)->get();
         $warehouses         = warehouse::get();
         $contacts           = contact::get();
-        $number             = production_one::max('number');
+        $number             = production_one::latest()->first();
         $today              = Carbon::today()->toDateString();
         $units              = other_unit::get();
         $costs              = coa::whereIn('coa_category_id', [15, 16, 17])->get();

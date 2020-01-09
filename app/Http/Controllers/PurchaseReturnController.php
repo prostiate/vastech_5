@@ -15,6 +15,7 @@ use App\warehouse_detail;
 use App\other_transaction;
 use PDF;
 use App\coa;
+use App\company_setting;
 use App\purchase_return;
 use App\purchase_return_item;
 use Illuminate\Support\Facades\Auth;
@@ -39,12 +40,12 @@ class PurchaseReturnController extends Controller
         $po                 = purchase_invoice::find($id);
         $po_item            = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $today              = Carbon::today()->toDateString();
-        $number             = purchase_return::max('number');
         $warehouses         = warehouse::all();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_return::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -53,6 +54,7 @@ class PurchaseReturnController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_return::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -62,11 +64,11 @@ class PurchaseReturnController extends Controller
 
     public function store(Request $request)
     {
-        $number             = purchase_return::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_return::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -75,6 +77,7 @@ class PurchaseReturnController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_return::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -147,7 +150,7 @@ class PurchaseReturnController extends Controller
                 'total_return'              => $ambilpi->total_return + $request->balance,
                 'balance_due'               => $ambilpi->balance_due - $request->balance
             ]);
-            if($ambilpi->balance_due <= 0){
+            if ($ambilpi->balance_due <= 0) {
                 $ambilpi->update([
                     'debit_memo'           => $ambilpi->debit_memo + abs($ambilpi->balance_due),
                 ]);
@@ -419,15 +422,69 @@ class PurchaseReturnController extends Controller
         }
     }
 
-    public function cetak_pdf($id)
+    public function cetak_pdf_1($id)
     {
-        $pp                         = purchase_invoice::find($id);
-        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
-        $today                      = Carbon::today()->toDateString();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF', compact(['pp', 'pp_item', 'today']))->setPaper('a4', 'portrait');
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_2($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_fas($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_gg($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_sukses_surabaya($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = purchase_return::find($id);
+        $pp_item                    = purchase_return_item::where('purchase_return_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.return.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 }

@@ -44,7 +44,7 @@ class ProductionThreeController extends Controller
         $products           = product::get();
         $warehouses         = warehouse::get();
         $contacts           = contact::get();
-        $number             = production_three::max('number');
+        $number             = production_three::latest()->first();
         $today              = Carbon::today()->toDateString();
         $units              = other_unit::get();
         if ($number == 0)

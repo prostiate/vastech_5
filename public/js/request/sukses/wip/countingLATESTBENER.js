@@ -152,12 +152,28 @@ function selectProduct() {
     function formatRepoSelection(repo) {
         $(".selected_product_id").val(repo.id);
         $(".selected_product_price").val(repo.avg_price);
-        return repo.text || repo.text;
+        if (repo.code) {
+            return (
+                repo.code + " - " + repo.text || repo.code + " - " + repo.text
+            );
+        } else {
+            return (
+                repo.text || repo.text
+            );
+        }
     }
 
     function formatResult(result) {
+        //console.log('%o', result);
         if (result.loading) return result.text;
-        var html = "<a>" + result.text + "</a>";
+        if(result.code){
+            var html = "<a>" + result.code + " - " + result.text + "</a>";
+
+        }else{
+            var html = "<a>" + result.text + "</a>";
+
+        }
+        //return html;
         return $(html);
     }
 }

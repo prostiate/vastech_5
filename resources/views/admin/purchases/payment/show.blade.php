@@ -7,8 +7,13 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
+                        @if($pp->user->company_id == 5 or $pp->user->company_id == 2)
                         <button class="btn btn-dark" type="button" data-toggle="modal" data-target=".print_preview">Print & Preview
                         </button>
+                        @else
+                        <button class="btn btn-dark" type="button" onclick="window.open('/purchases_payment/print/PDF/1/{{$pp->id}}')">Print & Preview
+                        </button>
+                        @endif
                         <div class="modal fade print_preview" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-md">
                                 <div class="modal-content">
@@ -27,8 +32,6 @@
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <select id="template_type" class="form-control">
                                                                 <option value="1">Template 1</option>
-                                                                <option value="2">Template 2</option>
-                                                                <option value="3">Template 3</option>
                                                                 @if($pp->user->company_id == 5)
                                                                 <option value="51" selected>Template Sukses Surabaya (Invoice)</option>
                                                                 <option value="52" selected>Template Sukses Surabaya (Surat Jalan)</option>

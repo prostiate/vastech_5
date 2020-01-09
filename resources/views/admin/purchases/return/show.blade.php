@@ -142,8 +142,48 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a target="_blank" href="/purchases_invoice/print/PDF/{{$pi->id}}">Print & Preview</a></li>
+                            <li><a data-toggle="modal" data-target=".print_preview">Print & Preview</a></li>
                         </ul>
+                        <div class="modal fade print_preview" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <h5 class="modal-title" id="myModalLabel">Print & Preview</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>Select Template</strong></h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label col-md-4 col-sm-4 col-xs-12" style="text-align: left;">Template Type</label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <select id="template_type" class="form-control">
+                                                                <option value="1">Template 1</option>
+                                                                <option value="2">Template 2</option>
+                                                                @if($pi->user->company_id == 5)
+                                                                <option value="51" selected>Template Sukses Surabaya</option>
+                                                                @elseif($pi->user->company_id == 2)
+                                                                <option value="21">Template Sukses</option>
+                                                                <option value="22" selected>Template Gelora</option>
+                                                                <option value="23">Template Workshop FAS</option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" id="click_print">Print</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
                 <h3><b>Purchase Return #{{$pi->number}}</b></h3>
@@ -375,4 +415,25 @@
 
 @push('scripts')
 <script src="{{ asset('js/purchases/return/deleteForm.js') }}" charset="utf-8"></script>
+<script>
+    $('#click_print').click(function() {
+        var get_type = $('#template_type').find(":selected").val();
+        var get_id = document.getElementById("form_id").value;
+        if (get_type == '1') {
+            window.open('/purchases_return/print/PDF/1/' + get_id, '_blank');
+        } else if (get_type == '2') {
+            window.open('/purchases_return/print/PDF/2/' + get_id, '_blank');
+        } else if (get_type == '3') {
+            window.open('/purchases_return/print/PDF/3/' + get_id, '_blank');
+        } else if (get_type == '51') {
+            window.open('/purchases_return/print/PDF/sukses_surabaya/' + get_id, '_blank');
+        } else if (get_type == '21') {
+            window.open('/purchases_return/print/PDF/sukses/' + get_id, '_blank');
+        } else if (get_type == '22') {
+            window.open('/purchases_return/print/PDF/gelora/' + get_id, '_blank');
+        } else if (get_type == '23') {
+            window.open('/purchases_return/print/PDF/fas/' + get_id, '_blank');
+        }
+    });
+</script>
 @endpush

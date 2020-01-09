@@ -1,50 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Purchases Payment {{$pp->number}}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
-        body{
-            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            color:#333;
-            text-align:left;
-            font-size:14px;
-            margin:0;
+        body {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color: #333;
+            text-align: left;
+            font-size: 14px;
+            margin: 0;
         }
-        .container{
-            margin:0 auto;
-            margin-top:35px;
-            height:auto;
-            background-color:#fff;
+
+        .container {
+            margin: 0 auto;
+            margin-top: 35px;
+            height: auto;
+            background-color: #fff;
         }
-        caption{
-            font-size:28px;
-            margin-bottom:15px;
+
+        caption {
+            font-size: 28px;
+            margin-bottom: 15px;
         }
-        table{
-            border:1px solid #333;
-            border-collapse:collapse;
-            margin:0 auto;
-			border-left: 0px solid;
-    		border-right: 0px solid;
+
+        table {
+            border: 1px solid #333;
+            border-collapse: collapse;
+            margin: 0 auto;
+            border-left: 0px solid;
+            border-right: 0px solid;
         }
-        td, tr, th{
-            padding:12px;
-            width:170px;
-			border-left: 0px solid;
-    		border-right: 0px solid;
+
+        td,
+        tr,
+        th {
+            padding: 12px;
+            width: 170px;
+            border-left: 0px solid;
+            border-right: 0px solid;
         }
-        th{
+
+        th {
             background-color: #f0f0f0;
         }
-        h4, p{
-            margin:0px;
+
+        h4,
+        p {
+            margin: 0px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <table>
@@ -54,6 +65,7 @@
             <thead>
                 <tr>
                     <td colspan="6" style="text-align: center">Payment No. <strong>{{$pp->number}}</strong></td>
+                    <?php $date = date('d F Y', strtotime($pp->transaction_date)) ?>
                 </tr>
                 <!--<tr>
                     <td>
@@ -89,7 +101,7 @@
                     <td>Payment For</td>
                     <td>Rp </td>
 				</tr>-->
-				@foreach ($pp_item as $po)
+                @foreach ($pp_item as $po)
                 <tr>
                     <td>Paid To</td>
                     <td colspan="5">: {{$pp->contact->display_name}}</td>
@@ -102,19 +114,21 @@
                     <td>Payment For</td>
                     <td colspan="5">: Purchase Invoice #{{$po->purchase_invoice->number}}</td>
                 </tr>
+                @if($pp->memo)
                 <tr>
                     <td>Information</td>
                     <td colspan="5">: {{$pp->memo}}</td>
                 </tr>
+                @endif
                 <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td style="text-align: center">{{$today}}<br>(NAMA COMPANY)<br><br><br><br><br><br><br><br>(NAME & POSITION)</td>
-				</tr>
-				@endforeach
+                    <td style="text-align: center">{{$date}}<br><br>{{$company->name}}</td>
+                </tr>
+                @endforeach
             </tbody>
             <tfoot>
                 <tr>
@@ -125,4 +139,5 @@
         </table>
     </div>
 </body>
+
 </html>

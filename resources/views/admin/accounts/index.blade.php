@@ -28,6 +28,10 @@
                     @role('Owner|Ultimate|Chart of Account')
                     @can('Create')
                     <li>
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/chart_of_accounts/journal_entry/new';">New Journal Entry
+                        </button>
+                    </li>
+                    <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/chart_of_accounts/new';">New Account
                         </button>
                     </li>

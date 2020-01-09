@@ -45,13 +45,13 @@ class PurchasePaymentController extends Controller
         $get_all_invoice        = purchase_invoice::where('contact_id', $po->contact_id)->where('balance_due', '>', 0)->get();
         //$po_item                = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $today                  = Carbon::today()->toDateString();
-        $number                 = purchase_payment::max('number');
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_method::get();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number                 = purchase_payment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -60,6 +60,7 @@ class PurchasePaymentController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number                 = purchase_payment::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -69,11 +70,11 @@ class PurchasePaymentController extends Controller
 
     public function store(Request $request)
     {
-        $number             = purchase_payment::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_payment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -82,6 +83,7 @@ class PurchasePaymentController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_payment::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -462,12 +464,9 @@ class PurchasePaymentController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_payment::find($id);
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
-        $checknumberpd              = purchase_payment::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -476,9 +475,6 @@ class PurchasePaymentController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_payment::find($id);
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
-        $checknumberpd              = purchase_payment::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -490,9 +486,6 @@ class PurchasePaymentController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_payment::find($id);
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
-        $checknumberpd              = purchase_payment::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -504,9 +497,6 @@ class PurchasePaymentController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_payment::find($id);
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
-        $checknumberpd              = purchase_payment::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -518,9 +508,6 @@ class PurchasePaymentController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_payment::find($id);
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
-        $checknumberpd              = purchase_payment::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Payment #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.payment.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');

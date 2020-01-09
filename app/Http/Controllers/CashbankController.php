@@ -55,12 +55,12 @@ class CashbankController extends Controller
     public function createBankTransfer()
     {
         $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
-        $number             = cashbank::where('bank_transfer', 1)->max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_transfer', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -69,6 +69,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_transfer', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -83,12 +84,12 @@ class CashbankController extends Controller
         $contact            = contact::get();
         $expenses           = coa::get();
         $taxes              = other_tax::get();
-        $number             = cashbank::where('bank_deposit', 1)->max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_deposit', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -97,6 +98,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_deposit', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -111,12 +113,12 @@ class CashbankController extends Controller
         $contact            = contact::get();
         $expenses           = coa::get();
         $taxes              = other_tax::get();
-        $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -125,6 +127,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -139,7 +142,7 @@ class CashbankController extends Controller
         $contact        = contact::get();
         $expenses       = expense::where('status', 1)->get();
         $taxes          = other_tax::get();
-        $number         = cashbank::where('bank_withdrawal', 1)->max('number');
+        $number         = cashbank::where('bank_withdrawal', 1)->latest()->first()->number;
         $today          = Carbon::today()->toDateString();
         if ($number == 0)
             $number = 10000;
@@ -153,12 +156,12 @@ class CashbankController extends Controller
         $coa                = coa::with('coa_category')->where('coa_category_id', 3)->get();
         $contact            = contact::get();
         $expenses           = expense::find($id);
-        $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -167,6 +170,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -177,11 +181,11 @@ class CashbankController extends Controller
 
     public function storeBankTransfer(Request $request)
     {
-        $number             = cashbank::where('bank_transfer', 1)->max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_transfer', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -190,6 +194,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_transfer', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -274,11 +279,11 @@ class CashbankController extends Controller
 
     public function storeBankDeposit(Request $request)
     {
-        $number             = cashbank::where('bank_deposit', 1)->max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_deposit', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -287,6 +292,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_deposit', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -415,11 +421,11 @@ class CashbankController extends Controller
 
     public function storeBankWithdrawalAccount(Request $request)
     {
-        $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -428,6 +434,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -553,11 +560,11 @@ class CashbankController extends Controller
 
     public function storeBankWithdrawalFromExpense(Request $request)
     {
-        $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first()->number;
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -566,6 +573,7 @@ class CashbankController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;

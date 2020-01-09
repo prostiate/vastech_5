@@ -31,13 +31,13 @@ class SpkController extends Controller
 
             $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                 ->where('is_track', 1)
                 //->where('is_bundle', 1)
                 ->orderBy('name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('name as text')]);
+                ->get(['id', DB::raw('name as text', 'code')]);
 
             $count = product::where('is_track', 1)->count();
             $endCount = $offset + $resultCount;
@@ -102,12 +102,12 @@ class SpkController extends Controller
         $products           = product::where('is_track', 1)->where('is_bundle', 1)->get();
         $warehouses         = warehouse::get();
         $contacts           = contact::get();
-        $number             = spk::max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = spk::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -116,6 +116,7 @@ class SpkController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = spk::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -126,11 +127,11 @@ class SpkController extends Controller
 
     public function store(Request $request)
     {
-        $number             = spk::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = spk::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -139,6 +140,7 @@ class SpkController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = spk::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -240,11 +242,12 @@ class SpkController extends Controller
         $spk_item                       = spk_item::where('spk_id', $id)->get();
         $quantity_in_stock              = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->get();
         $statusajah                     = 0;
+        $can                            = 0;
         foreach ($spk_item as $sii) {
             if ($sii->qty_remaining_sent != 0) {
-                $can                    = 1;
+                $can                    += 1;
             } else {
-                $can                    = 0;
+                $can                    += 0;
             }
             if ($sii->status == 1) {
                 $statusajah             += 0;

@@ -97,8 +97,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/expenses_list/{start}&{end}',                      'ReportController@expenses_listInput');
     // EXPENSES
     // PRODUCTS             
-    Route::get('/reports/inventory_summary',                                'ReportController@inventory_summary');
-    Route::get('/reports/inventory_summary/{mulaidari}',                    'ReportController@inventory_summaryInput');
+    Route::get('/reports/inventory_summary',                                                                        'ReportController@inventory_summary');
+    Route::get('/reports/inventory_summary/excel/as_of={today}/start_year={startyear}&end_year={endyear}',          'ReportController@inventory_summary_excel');
+    Route::get('/reports/inventory_summary/csv/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_csv');
+    Route::get('/reports/inventory_summary/pdf/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_pdf');
+    Route::get('/reports/inventory_summary/as_of={mulaidari}',                                                      'ReportController@inventory_summaryInput');
+   // Route::get('/reports/inventory_summary/{mulaidari}',                    'ReportController@inventory_summaryInput');
     Route::get('/reports/warehouse_stock_quantity',                         'ReportController@warehouse_stock_quantity');
     Route::get('/reports/warehouse_stock_quantity/{mulaidari}',             'ReportController@warehouse_stock_quantityInput');
     Route::get('/reports/inventory_valuation',                              'ReportController@inventory_valuation');
@@ -165,6 +169,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_invoice/updateSInvoiceFromOrderRequestSukses',      'SaleInvoiceController@updateFromOrderRequestSukses');
     Route::get('/sales_invoice/{id}',                                       'SaleInvoiceController@show');
     Route::get('/sales_invoice/print/PDF/1/{id}',                           'SaleInvoiceController@cetak_pdf_1');
+    Route::get('/sales_invoice/print/PDF/1_sj/{id}',                        'SaleInvoiceController@cetak_pdf_1_sj');
+    Route::get('/sales_invoice/print/PDF/2/{id}',                           'SaleInvoiceController@cetak_pdf_2');
+    Route::get('/sales_invoice/print/PDF/2_sj/{id}',                        'SaleInvoiceController@cetak_pdf_2_sj');
     Route::get('/sales_invoice/print/PDF/fas/{id}',                         'SaleInvoiceController@cetak_pdf_fas');
     Route::get('/sales_invoice/print/PDF/fas_sj/{id}',                      'SaleInvoiceController@cetak_pdf_fas_sj');
     Route::get('/sales_invoice/print/PDF/gelora/{id}',                      'SaleInvoiceController@cetak_pdf_gg');
@@ -182,6 +189,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sales_return/edit/{id}',                                   'SaleReturnController@edit');
     Route::post('/sales_return/updateReturn',                               'SaleReturnController@update');
     Route::get('/sales_return/delete/{id}',                                 'SaleReturnController@destroy');
+    Route::get('/sales_return/print/PDF/1/{id}',                            'SaleReturnController@cetak_pdf_1');
+    Route::get('/sales_return/print/PDF/2/{id}',                            'SaleReturnController@cetak_pdf_2');
+    Route::get('/sales_return/print/PDF/fas/{id}',                          'SaleReturnController@cetak_pdf_fas');
+    Route::get('/sales_return/print/PDF/gelora/{id}',                       'SaleReturnController@cetak_pdf_gg');
+    Route::get('/sales_return/print/PDF/sukses/{id}',                       'SaleReturnController@cetak_pdf_sukses');
+    Route::get('/sales_return/print/PDF/sukses_surabaya/{id}',              'SaleReturnController@cetak_pdf_sukses_surabaya');
 
     Route::get('/sales_order/select_product',                               'SaleOrderController@select_product');
     Route::get('/sales_order/select_contact',                               'SaleOrderController@select_contact');
@@ -199,6 +212,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_order/updateOrderRequestSukses',                    'SaleOrderController@updateRequestSukses');
     Route::get('/sales_order/{id}',                                         'SaleOrderController@show');
     Route::get('/sales_order/print/PDF/1/{id}',                             'SaleOrderController@cetak_pdf_1');
+    Route::get('/sales_order/print/PDF/2/{id}',                             'SaleOrderController@cetak_pdf_2');
     Route::get('/sales_order/print/PDF/fas/{id}',                           'SaleOrderController@cetak_pdf_fas');
     Route::get('/sales_order/print/PDF/gelora/{id}',                        'SaleOrderController@cetak_pdf_gg');
     Route::get('/sales_order/print/PDF/sukses/{id}',                        'SaleOrderController@cetak_pdf_sukses');
@@ -214,6 +228,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_quote/updateSQuote',                                'SaleQuoteController@update');
     Route::get('/sales_quote/{id}',                                         'SaleQuoteController@show');
     Route::get('/sales_quote/print/PDF/1/{id}',                             'SaleQuoteController@cetak_pdf_1');
+    Route::get('/sales_quote/print/PDF/2/{id}',                             'SaleQuoteController@cetak_pdf_2');
     Route::get('/sales_quote/print/PDF/fas/{id}',                           'SaleQuoteController@cetak_pdf_fas');
     Route::get('/sales_quote/print/PDF/gelora/{id}',                        'SaleQuoteController@cetak_pdf_gg');
     Route::get('/sales_quote/print/PDF/sukses/{id}',                        'SaleQuoteController@cetak_pdf_sukses');
@@ -227,6 +242,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_delivery/updateDelivery',                           'SaleDeliveryController@updateFromPO');
     Route::get('/sales_delivery/{id}',                                      'SaleDeliveryController@show');
     Route::get('/sales_delivery/print/PDF/1/{id}',                          'SaleDeliveryController@cetak_pdf_1');
+    Route::get('/sales_delivery/print/PDF/2/{id}',                          'SaleDeliveryController@cetak_pdf_2');
     Route::get('/sales_delivery/print/PDF/fas/{id}',                        'SaleDeliveryController@cetak_pdf_fas');
     Route::get('/sales_delivery/print/PDF/gelora/{id}',                     'SaleDeliveryController@cetak_pdf_gg');
     Route::get('/sales_delivery/print/PDF/sukses/{id}',                     'SaleDeliveryController@cetak_pdf_sukses');
@@ -287,6 +303,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/purchases_return/edit/{id}',                               'PurchaseReturnController@edit');
     Route::post('/purchases_return/updateReturn',                           'PurchaseReturnController@update');
     Route::get('/purchases_return/delete/{id}',                             'PurchaseReturnController@destroy');
+    Route::get('/purchases_return/print/PDF/1/{id}',                        'PurchaseReturnController@cetak_pdf_1');
+    Route::get('/purchases_return/print/PDF/2/{id}',                        'PurchaseReturnController@cetak_pdf_2');
+    Route::get('/purchases_return/print/PDF/fas/{id}',                      'PurchaseReturnController@cetak_pdf_fas');
+    Route::get('/purchases_return/print/PDF/gelora/{id}',                   'PurchaseReturnController@cetak_pdf_gg');
+    Route::get('/purchases_return/print/PDF/sukses/{id}',                   'PurchaseReturnController@cetak_pdf_sukses');
+    Route::get('/purchases_return/print/PDF/sukses_surabaya/{id}',          'PurchaseReturnController@cetak_pdf_sukses_surabaya');
 
     Route::get('/purchases_order/select_product',                           'PurchaseOrderController@select_product');
     Route::get('/purchases_order/select_contact',                           'PurchaseOrderController@select_contact');
@@ -303,6 +325,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/purchases_order/updatePOrderRequestSukses',               'PurchaseOrderController@updateRequestSukses');
     Route::get('/purchases_order/{id}',                                     'PurchaseOrderController@show');
     Route::get('/purchases_order/print/PDF/1/{id}',                         'PurchaseOrderController@cetak_pdf_1');
+    Route::get('/purchases_order/print/PDF/2/{id}',                         'PurchaseOrderController@cetak_pdf_2');
     Route::get('/purchases_order/print/PDF/fas/{id}',                       'PurchaseOrderController@cetak_pdf_fas');
     Route::get('/purchases_order/print/PDF/gelora/{id}',                    'PurchaseOrderController@cetak_pdf_gg');
     Route::get('/purchases_order/print/PDF/sukses/{id}',                    'PurchaseOrderController@cetak_pdf_sukses');
@@ -318,6 +341,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/purchases_quote/updatePQuote',                            'PurchaseQuoteController@update');
     Route::get('/purchases_quote/{id}',                                     'PurchaseQuoteController@show');
     Route::get('/purchases_quote/print/PDF/1/{id}',                         'PurchaseQuoteController@cetak_pdf_1');
+    Route::get('/purchases_quote/print/PDF/2/{id}',                         'PurchaseQuoteController@cetak_pdf_2');
     Route::get('/purchases_quote/print/PDF/fas/{id}',                       'PurchaseQuoteController@cetak_pdf_fas');
     Route::get('/purchases_quote/print/PDF/gelora/{id}',                    'PurchaseQuoteController@cetak_pdf_gg');
     Route::get('/purchases_quote/print/PDF/sukses/{id}',                    'PurchaseQuoteController@cetak_pdf_sukses');
@@ -466,13 +490,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/chart_of_accounts/updateAccount',                         'CoAController@update');
     Route::get('/chart_of_accounts/delete/{id}',                            'CoAController@destroy');
 
-    Route::get('/journal_entry',                                            'JournalEntryController@index');
-    Route::get('/journal_entry/new',                                        'JournalEntryController@create');
-    Route::post('/journal_entry/newJournalEntry',                           'JournalEntryController@store');
-    Route::get('/journal_entry/show',                                       'JournalEntryController@show');
-    Route::get('/journal_entry/edit',                                       'JournalEntryController@edit');
-    Route::post('/journal_entry/updateAccount',                             'JournalEntryController@update');
-    Route::get('/journal_entry/delete/{id}',                                'JournalEntryController@destroy');
+    Route::get('/chart_of_accounts/journal_entry',                          'JournalEntryController@index');
+    Route::get('/chart_of_accounts/journal_entry/new',                      'JournalEntryController@create');
+    Route::post('/chart_of_accounts/journal_entry/newJournalEntry',         'JournalEntryController@store');
+    Route::get('/chart_of_accounts/journal_entry/{id}',                     'JournalEntryController@show');
+    Route::get('/chart_of_accounts/journal_entry/edit',                     'JournalEntryController@edit');
+    Route::post('/chart_of_accounts/journal_entry/updateAccount',           'JournalEntryController@update');
+    Route::get('/chart_of_accounts/journal_entry/delete/{id}',              'JournalEntryController@destroy');
 
     /*---------Other List--------------*/
     Route::get('/other', function () {
@@ -576,6 +600,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/company', 'SettingController@company_index')->name('company.index');
         Route::post('/company', 'SettingController@company_store')->name('company.store');
     });
+    Route::get('/coa/select_account',                                       'SettingController@select_account');
 
     /*---------Setting--------------*/
     Route::get('/setting', function () {

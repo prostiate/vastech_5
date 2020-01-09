@@ -127,7 +127,7 @@
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Production')
                             @can('Create')
-                            @if($can == 1)
+                            @if($can >= 1)
                             @hasrole('Owner|Ultimate|Sales Invoice')
                             <li><a href="/sales_invoice/new/fromSPK/{{$spk->id}}">Create Invoice</a></li>
                             @endrole

@@ -5,6 +5,7 @@ function totalDebit() {
         t += amt;
     });
     $(".total_debit").html(t);
+    $(".total_debit_display").val(t);
     $(".total_debit_input").val(t);
 }
 function totalCredit() {
@@ -14,6 +15,7 @@ function totalCredit() {
         t += amt;
     });
     $(".total_credit").html(t);
+    $(".total_credit_display").val(t);
     $(".total_credit_input").val(t);
 }
 
@@ -48,6 +50,8 @@ function inputMasking() {
 
     $(".debita_display").inputmask("IDR");
     $(".credita_display").inputmask("IDR");
+    $(".total_debit_display").inputmask("IDR");
+    $(".total_credit_display").inputmask("IDR");
 }
 
 $(function() {
@@ -66,14 +70,14 @@ $(function() {
             '<textarea class="form-control" rows="1" name="desc[]"></textarea>' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="debita_display form-control">' +
-            '<input type="text" class="debita form-control" name="debit[]" hidden>' +
-            '<input type="text" class="deb" hidden>' +
+            '<input onClick="this.select();" value="0" type="text" class="debita_display form-control">' +
+            '<input value="0" type="text" class="debita" name="debit[]" hidden>' +
+            '<input value="0" type="text" class="deb" hidden>' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="credita_display form-control">' +
-            '<input type="text" class="credita form-control" name="credit[]" hidden>' +
-            '<input type="text" class="cre" hidden>' +
+            '<input onClick="this.select();" value="0" type="text" class="credita_display form-control">' +
+            '<input value="0" type="text" class="credita" name="credit[]" hidden>' +
+            '<input value="0" type="text" class="cre" hidden>' +
             "</td>" +
             "<td>" +
             '<input type="button" class="btn btn-danger delete" value="x">' +

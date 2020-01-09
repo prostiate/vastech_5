@@ -53,14 +53,14 @@ class ProductController extends Controller
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_track', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'avg_price']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'avg_price']);
 
                 $count = product::where('is_track', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -83,13 +83,13 @@ class ProductController extends Controller
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_track', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'avg_price']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'avg_price']);
 
                 $count = product::where('is_track', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -520,7 +520,7 @@ class ProductController extends Controller
             $query->orderByDesc('transaction_date');
         }])->where('product_id', $id)->get();
         $sa                 = stock_adjustment_detail::with(['stock_adjustment' => function ($query) {
-            $query->orderByDesc('transaction_date');
+            $query->orderByDesc('date');
         }])->where('product_id', $id)->get();
         $wip                = wip::orderByDesc('transaction_date')->where('result_product', $id)->get();
         $wipi               = wip_item::with(['wip' => function ($query) {
@@ -880,7 +880,7 @@ class ProductController extends Controller
 
     public function import_excel(Request $request)
     {
-        $rules = array(
+        /*$rules = array(
             'file' => 'required|mimes:csv,xls,xlsx'
         );
 
@@ -889,7 +889,7 @@ class ProductController extends Controller
         if ($error->fails()) {
             \Session::flash('error', $error->errors());
             return redirect('/products');
-        }
+        }*/
         try {
             /*// validasi
             $this->validate($request, [
@@ -903,7 +903,7 @@ class ProductController extends Controller
             $nama_file = rand() . $file->getClientOriginalName();
 
             // upload ke folder file_siswa di dalam folder public
-            $file->move('file_product', $nama_file);
+            $file->move(public_path('/file_product/'), $nama_file);
 
             try {
                 // import data

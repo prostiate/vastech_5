@@ -49,7 +49,7 @@ class FixedAssetController extends Controller
         $depreciation_accounts                      = coa::where('coa_category_id', 7)->get();
         $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16, 17, 15])->get();
         $today                                      = Carbon::today()->toDateString();
-        $number                                     = asset::max('number');
+        $number                                     = asset::latest()->first();//BENERIN DULU FIXED ASSETNYA ABIS TUH BENERIN NUMBERINGNYA
         if ($number == 0)
             $number = 10000;
         $trans_no                       = $number + 1;
@@ -232,7 +232,7 @@ class FixedAssetController extends Controller
         $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16, 17, 15])->get();
         $today                                      = Carbon::today();
 
-        $number                                      = asset::max('number');
+        $number                                      = asset::latest()->first();
 
         if ($number == 0)
             $number = 10000;

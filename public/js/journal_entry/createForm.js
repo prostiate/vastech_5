@@ -5,52 +5,12 @@ $.ajaxSetup({
 });
 $(document).ready(function() {
     $("#click").click(function() {
-        //$("click").on("submit", function(event) {
         event.preventDefault();
+        $("#click").prop("disabled", true);
+        $("#click").html("Processing");
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/journal_entry/newJournalEntry",
-            method: "POST",
-            data: new FormData(form),
-            contentType: false,
-            cache: false,
-            processData: false,
-            dataType: "json",
-            success: function(data) {
-                var html = "";
-                var typeswal = "";
-                var titleswal = "";
-                if (data.errors) {
-                    typeswal = "error";
-                    titleswal = "Oops...";
-                    //for (var count = 0; count < data.errors.length; count++) {
-                     //   html += "<br>" + data.errors[count] + "</br>";
-                    //}
-                    html = data.errors
-                }
-                if (data.success) {
-                    typeswal = "success";
-                    titleswal = "Success...";
-                    html = data.success;
-                    window.location.href = "/journal_entry/" + data.id;
-                }
-                Swal.fire({
-                    type: typeswal,
-                    title: titleswal,
-                    html: html
-                });
-            }
-        });
-    });
-});
-
-$(document).ready(function() {
-    $("#clicknew").click(function() {
-        //$("click").on("submit", function(event) {
-        event.preventDefault();
-        var form = document.getElementById("formCreate");
-        $.ajax({
-            url: "/expenses/newExpense",
+            url: "/chart_of_accounts/journal_entry/newJournalEntry",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -65,14 +25,16 @@ $(document).ready(function() {
                     typeswal = "error";
                     titleswal = "Oops...";
                     for (var count = 0; count < data.errors.length; count++) {
-                        html += "<br>" + data.errors[count] + "</br>";
+                        html += data.errors[count];
                     }
+                    $("#click").prop("disabled", false);
+                    $("#click").html("Create");
                 }
                 if (data.success) {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/expenses/new";
+                    window.location.href = "/chart_of_accounts/journal_entry/" + data.id;
                 }
                 Swal.fire({
                     type: typeswal,

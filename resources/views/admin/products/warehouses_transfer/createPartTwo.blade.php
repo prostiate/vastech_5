@@ -70,7 +70,7 @@
                                             <option></option>
                                             @foreach($warehouse_detail_from as $a)
                                             <option value="{{$a->product_id}}">
-                                                {{$a->product->name}}
+                                                {{$a->product->code}} - {{$a->product->name}}
                                             </option>
                                             @endforeach
                                         </select>

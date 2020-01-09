@@ -11,9 +11,12 @@ $(document).ready(function() {
                 "</select>" +
                 " </div>" +
                 "</td>" +
-                '<td>' +
-                    '<input type="text" class="form-control recorded_qty" name="recorded_qty[]" readonly>' +
-                '</td>' +
+                "<td>" +
+                '<h5 class="product_code"></h5>' +
+                "</td>" +
+                "<td>" +
+                '<input type="text" class="form-control recorded_qty" name="recorded_qty[]" readonly>' +
+                "</td>" +
                 "<td>" +
                 '<input onClick="this.select();" type="number" class="form-control qty" name="actual_qty[]" value="0">' +
                 "</td>" +

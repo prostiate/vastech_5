@@ -104,13 +104,27 @@ function selectProduct() {
         $(".selected_product_unit").val(repo.other_unit_id);
         $(".selected_product_price").val(repo.sell_price);
         $(".selected_product_tax").val(repo.sell_tax);
-        return repo.text || repo.text;
+        if (repo.code) {
+            return (
+                repo.code + " - " + repo.text || repo.code + " - " + repo.text
+            );
+        } else {
+            return (
+                repo.text || repo.text
+            );
+        }
     }
 
     function formatResult(result) {
         //console.log('%o', result);
         if (result.loading) return result.text;
-        var html = "<a>" + result.text + "</a>";
+        if(result.code){
+            var html = "<a>" + result.code + " - " + result.text + "</a>";
+
+        }else{
+            var html = "<a>" + result.text + "</a>";
+
+        }
         //return html;
         return $(html);
     }
@@ -154,13 +168,27 @@ function selectProduct2() {
         $(".selected_product_unit").val(repo.other_unit_id);
         $(".selected_product_price").val(repo.sell_price);
         $(".selected_product_tax").val(repo.sell_tax);
-        return repo.text || repo.text;
+        if (repo.code) {
+            return (
+                repo.code + " - " + repo.text || repo.code + " - " + repo.text
+            );
+        } else {
+            return (
+                repo.text || repo.text
+            );
+        }
     }
 
     function formatResult(result) {
         //console.log('%o', result);
         if (result.loading) return result.text;
-        var html = "<a>" + result.text + "</a>";
+        if(result.code){
+            var html = "<a>" + result.code + " - " + result.text + "</a>";
+
+        }else{
+            var html = "<a>" + result.text + "</a>";
+
+        }
         //return html;
         return $(html);
     }

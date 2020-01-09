@@ -10,6 +10,6 @@ class default_account extends Model
 
     public function coa()
     {
-        return $this->belongsTo('App\coa');
-    } 
+        return $this->belongsTo('App\coa', 'account_id');
+    }
 }

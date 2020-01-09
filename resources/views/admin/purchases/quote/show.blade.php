@@ -44,7 +44,6 @@
                                                             <select id="template_type" class="form-control">
                                                                 <option value="1">Template 1</option>
                                                                 <option value="2">Template 2</option>
-                                                                <option value="3">Template 3</option>
                                                                 @if($pi->user->company_id == 5)
                                                                 <option value="51" selected>Template Sukses Surabaya</option>
                                                                 @elseif($pi->user->company_id == 2)

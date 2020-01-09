@@ -33,13 +33,13 @@ class WipController extends Controller
 
             $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                 ->where('is_track', 1)
                 //->where('is_bundle', 1)
                 ->orderBy('name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'avg_price']);
+                ->get(['id', DB::raw('name as text'), 'code', 'avg_price']);
 
             $count = product::where('is_track', 1)->count();
             $endCount = $offset + $resultCount;
@@ -72,12 +72,12 @@ class WipController extends Controller
         $products           = product::where('is_track', 1)->where('is_bundle', 1)->get();
         $warehouses         = warehouse::get();
         $contacts           = contact::get();
-        $number             = wip::max('number');
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = wip::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -86,6 +86,7 @@ class WipController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = wip::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -101,12 +102,12 @@ class WipController extends Controller
         $production_bundle              = product_production_item::where('product_id', $spk_item->product_id)->get();
         $current_product_bundle_item    = product_bundle_item::where('product_id', $spk_item->product_id)->get();
         $quantity_in_stock              = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->get();
-        $number                         = wip::max('number');
         $today                          = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number                         = wip::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -115,6 +116,7 @@ class WipController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number                         = wip::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -150,11 +152,11 @@ class WipController extends Controller
 
     public function store_per(Request $request)
     {
-        $number             = wip::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = wip::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -163,6 +165,7 @@ class WipController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = wip::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -365,11 +368,11 @@ class WipController extends Controller
 
     public function store_all(Request $request)
     {
-        $number             = wip::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = wip::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -378,6 +381,7 @@ class WipController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = wip::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;

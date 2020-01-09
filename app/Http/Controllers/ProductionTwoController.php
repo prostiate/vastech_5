@@ -44,7 +44,7 @@ class ProductionTwoController extends Controller
         $products           = product::get();
         $warehouses         = warehouse::get();
         $contacts           = contact::get();
-        $number             = production_two::max('number');
+        $number             = production_two::latest()->first();
         $today              = Carbon::today()->toDateString();
         $units              = other_unit::get();
         if ($number == 0)

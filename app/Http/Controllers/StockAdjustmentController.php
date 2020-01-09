@@ -135,12 +135,12 @@ class StockAdjustmentController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
         // GET MAX NUMBER TRANSACTION
-        $number                     = stock_adjustment::max('number');
         $user               = User::find(Auth::id());
         $total_semua                = 0;
         if ($user->company_id == 5) {
+            $number                     = stock_adjustment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -149,6 +149,7 @@ class StockAdjustmentController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number                     = stock_adjustment::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -329,11 +330,11 @@ class StockAdjustmentController extends Controller
 
     public function storeStockCount(Request $request)
     {
-        $number             = stock_adjustment::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = stock_adjustment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -342,6 +343,7 @@ class StockAdjustmentController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = stock_adjustment::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -584,8 +586,6 @@ class StockAdjustmentController extends Controller
         }
 
         $id                         = $request->hidden_id;
-        // GET MAX NUMBER TRANSACTION
-        $number                     = stock_adjustment::max('number');
         $total_semua                = 0;
         $curr_stock_adjustment      = stock_adjustment::find($id);
         $curr_stock_adjustment_d    = stock_adjustment_detail::where('stock_adjustment_id', $curr_stock_adjustment->id)->get();

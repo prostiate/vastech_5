@@ -11,6 +11,7 @@ use App\expense_item;
 use App\Exports\balance_sheet;
 use App\Exports\cashflow;
 use App\Exports\general_ledger;
+use App\Exports\inventory_summary;
 use App\Exports\journal_report;
 use App\Exports\profit_loss;
 use App\Exports\trial_balance;
@@ -2144,22 +2145,64 @@ class ReportController extends Controller
     // PRODUCTS
     public function inventory_summary()
     {
-        $today                      = Carbon::today()->toDateString();
-        $products                   = product::where('is_track', 1)->get();
-        return view('admin.reports.products.inventory_summary', compact(['today', 'products']));
+        $last_periode                               = new Carbon('first day of last year');
+        $startyear_last_periode                     = $last_periode->startOfYear()->toDateString();
+        $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
+        $current_periode                            = new Carbon('first day of January ' . date('Y'));
+        $today                                      = Carbon::today()->toDateString();
+        $products                                   = product::where('is_track', 1)->get();
+        return view('admin.reports.products.inventory_summary', compact([
+            'today', 'startyear_last_periode',
+            'endyear_last_periode', 'products'
+        ]));
     }
 
     public function inventory_summaryInput($mulaidari)
     {
-        $today                      = Carbon::today()->toDateString();
-        $today2                     = $mulaidari;
+        $last_periode                               = new Carbon('first day of last year');
+        $startyear_last_periode                     = $last_periode->startOfYear()->toDateString();
+        $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
+        $current_periode                            = new Carbon('first day of January ' . date('Y'));
+        $today                                      = Carbon::today()->toDateString();
+        $today2                                     = $mulaidari;
         if (Carbon::parse($today)->gt(Carbon::now())) {
-            $products               = product::where('is_track', 1)->get();
+            $products                               = product::where('is_track', 1)->get();
         } else {
-            $products               = product::where('is_track', 1)->get();
+            $products                               = product::where('is_track', 1)->get();
         }
-        $products                   = product::where('is_track', 1)->get();
-        return view('admin.reports.products.inventory_summaryInput', compact(['today', 'today2', 'products']));
+        $products                                   = product::where('is_track', 1)->get();
+        return view('admin.reports.products.inventory_summaryInput', compact([
+            'today', 'startyear_last_periode',
+            'endyear_last_periode', 'products', 'today2'
+        ]));
+    }
+
+    public function inventory_summary_excel($today, $startyear, $endyear)
+    {
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        return Excel::download(new inventory_summary($today, $startyear, $endyear), 'inventory_summary_' . $current_periode->toDateString() . '_' . $today . '.xlsx');
+    }
+
+    public function inventory_summary_csv($today, $startyear, $endyear)
+    {
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        return Excel::download(new inventory_summary($today, $startyear, $endyear), 'inventory_summary_' . $current_periode->toDateString() . '_' . $today . '.csv');
+    }
+
+    public function inventory_summary_pdf($today, $startyear, $endyear)
+    {
+        $today                                      = Carbon::today()->toDateString();
+        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        if (Carbon::parse($today)->gt(Carbon::now())) {
+            $products                               = product::where('is_track', 1)->get();
+        } else {
+            $products                               = product::where('is_track', 1)->get();
+        }
+        $products                                   = product::where('is_track', 1)->get();
+        $view = view('admin.reports.products_export.inventory_summary_pdf')->with(compact(['products']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('inventory_summary_' . $current_periode->toDateString() . '_' . $today . '.pdf');
     }
 
     public function warehouse_stock_quantity()

@@ -38,14 +38,14 @@ class SaleOrderController extends Controller
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_sell', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -68,13 +68,13 @@ class SaleOrderController extends Controller
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_sell', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -246,11 +246,11 @@ class SaleOrderController extends Controller
         $today              = Carbon::today()->toDateString();
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
-        $number             = sale_order::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -259,6 +259,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -282,7 +283,6 @@ class SaleOrderController extends Controller
         $po                 = sale_quote::find($id);
         $po_item            = sale_quote_item::where('sale_quote_id', $id)->get();
         $today              = Carbon::today()->toDateString();
-        $number             = sale_order::max('number');
         $terms              = other_term::all();
         $warehouses         = warehouse::all();
         $products           = product::all();
@@ -290,8 +290,9 @@ class SaleOrderController extends Controller
         $taxes              = other_tax::all();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -300,6 +301,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -328,11 +330,11 @@ class SaleOrderController extends Controller
         $today              = Carbon::today()->toDateString();
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
-        $number             = sale_order::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -341,6 +343,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -361,11 +364,11 @@ class SaleOrderController extends Controller
 
     public function store(Request $request)
     {
-        $number             = sale_order::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -374,6 +377,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -551,11 +555,11 @@ class SaleOrderController extends Controller
 
     public function storeFromQuote(Request $request)
     {
-        $number             = sale_order::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -564,6 +568,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -755,11 +760,11 @@ class SaleOrderController extends Controller
 
     public function storeRequestSukses(Request $request)
     {
-        $number             = sale_order::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_order::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -768,6 +773,7 @@ class SaleOrderController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_order::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -1351,12 +1357,20 @@ class SaleOrderController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
-        $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.order.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_2($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_order::find($id);
+        $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.order.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -1365,9 +1379,6 @@ class SaleOrderController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
-        $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.order.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -1379,9 +1390,6 @@ class SaleOrderController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
-        $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.order.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -1393,9 +1401,6 @@ class SaleOrderController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
-        $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.order.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -1407,9 +1412,6 @@ class SaleOrderController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_order::find($id);
         $pp_item                    = sale_order_item::where('sale_order_id', $id)->get();
-        $checknumberpd              = sale_order::whereId($id)->first();
-        $numbercoadetail            = 'Sales Order #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.order.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');

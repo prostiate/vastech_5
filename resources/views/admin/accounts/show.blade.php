@@ -6,7 +6,7 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>{{$coa->name}}</h2>
-                @role('Chart of Account')
+                @role('Owner|Ultimate|Chart of Account')
                 @can('Edit')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
@@ -16,7 +16,7 @@
                 </ul>
                 @endcan
                 @endrole
-                @role('Chart of Account')
+                @role('Owner|Ultimate|Chart of Account')
                 @can('Delete')
                 @if($coa->id > 143)
                 <ul class="nav navbar-right panel_toolbox">

@@ -1,188 +1,242 @@
-<html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Montserrat');
-        @page { margin: 0px; }
-        body {font-family: 'Montserrat', sans-serif; color: #444444;}
-        table {width: 100%; margin: 0px; border: 0px;}
-        .header-bar {background-color: #6dd0ee; color: #fff; font-size: 14px; text-align: right; padding: 5px 10px; box-sizing: border-box;}
-        .header-bar tr td:first-child { text-align: left; }
-        .header h1 {color: #6dd0ee; font-size: 50px; text-align: center;}
-        .header .trading-as { width: 100%; padding: 5px 20px; text-align: right;}
-        .client-info {padding: 10px 20px; height: 180px;}
-        footer h2 {color: #6dd0ee; text-align: center;}
-        h3 {color: #6dd0ee;}
-        .summary .total {width: 40%;}
-        .summary .total h2 {text-align: right; font-size: 60px; color: #d4d4d4; margin-top: 0px;}
-        .items-list .billentries .header {background-color: #6dd0ee; color: #fff; text-align: center;}
-        .items-list .billentries .header td { font-weight: 700;}
-        .items-list .billentries .entry .total {text-align: right; padding-right: 32px;}
-        .items-list .billentries .entry .details {padding-left: 12px;}
-        .items-list .summary .total {text-align: right; padding-right: 32px;}
-        .footer .payment-method .left {width: 55%;}
-        .fine-print {font-size: 10px;}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Purchase Order #{{$pp->number}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        a {
+            color: #5D6975;
+            text-decoration: underline;
+        }
+
+        body {
+            position: relative;
+            margin: 0 auto;
+            color: #001028;
+            background: #FFFFFF;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-family: Arial;
+        }
+
+        header {
+            padding: 10px 0;
+            margin-bottom: 30px;
+        }
+
+        #logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #logo img {
+            width: 90px;
+        }
+
+        h1 {
+            border-top: 1px solid #5D6975;
+            border-bottom: 1px solid #5D6975;
+            color: #5D6975;
+            font-size: 2.4em;
+            line-height: 1.4em;
+            font-weight: normal;
+            text-align: center;
+            margin: 0 0 20px 0;
+            background: url(dimension.png);
+        }
+
+        #project {
+            float: left;
+        }
+
+        #project span {
+            color: #5D6975;
+            text-align: right;
+            width: 52px;
+            margin-right: 10px;
+            display: inline-block;
+            font-size: 0.8em;
+        }
+
+        #company {
+            float: right;
+        }
+
+        #project div,
+        #company div {
+            white-space: nowrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 20px;
+        }
+
+        table tr:nth-child(2n-1) td {
+            background: #F5F5F5;
+        }
+
+        table th,
+        table td {
+            text-align: center;
+        }
+
+        table th {
+            padding: 5px 20px;
+            color: #5D6975;
+            border-bottom: 1px solid #C1CED9;
+            white-space: nowrap;
+            font-weight: normal;
+        }
+
+        table .service,
+        table .desc {
+            text-align: left;
+        }
+
+        table td {
+            padding: 20px;
+            text-align: right;
+        }
+
+        table td.service,
+        table td.desc {
+            vertical-align: top;
+        }
+
+        table td.unit,
+        table td.total {
+            font-size: 1.2em;
+        }
+        
+        table td.qty {
+            font-size: 1.2em;
+            padding: 0px;
+        }
+
+        table td.grand {
+            border-top: 1px solid #5D6975;
+            ;
+        }
+
+        #notices .notice {
+            color: #5D6975;
+            font-size: 1.2em;
+        }
+
+        footer {
+            color: #5D6975;
+            width: 100%;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            border-top: 1px solid #C1CED9;
+            padding: 8px 0;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
-<table class="header">
-    <tr>
-        <td colspan="2">
-            <table class="header-bar">
-                <tr>
-                    <td>
-                        <strong style="text-transform: uppercase">{{ config('invoice-node.trading_as') }}</strong>
-                    </td>
-                    <td><strong><i class="glyphicon glyphicon-asterisk"></i> PHONE:</strong> {{ config('invoice-node.phone') }}</td>
-                    <td><strong>EMAIL:</strong> {{ config('invoice-node.email') }}</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-<table class="header" style="border-bottom: 1px dashed #ddd;">
-    <tr>
-        <td>
-            <div style="margin: 40px 10px;">
-                <div class="trading-as">
-                    <span style="width: 100%; text-transform: uppercase; color: #6dd0ee; font-weight: 700; font-size: 25px;  ">{{ config('invoice-node.trading_as') }}</span><br />
-                    A.B.N <span style="width: 100%;">{{ config('invoice-node.abn') }}</span><br />
-                    Ph: <span style="width: 100%;">{{ config('invoice-node.phone') }}</span><br />
-                    Email: <span style="width: 100%;">{{ config('invoice-node.email') }}</span>
-                </div>
-            </div>
-        </td>
-        <td>
-            <h1>INVOICE</h1>
-        </td>
-    </tr>
-</table>
-
-<table class="summary">
-    <tr>
-        <td>
-            <div class="client-info">
-                <h3>INVOICE TO</h3>
-                {{ $invoice->client_name }}<br />
-                {{ $invoice->address}}
-            </div>
-        </td>
-        <td class="total">
-            <div class="client-info">
-                <h3>TOTAL PAYABLE</h3>
-                <h2>${{ number_format($invoice->total_amount,2) }}</h2>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<table class="items-list">
-    <tr class="billentries" style="width: 100%;padding-top: 40px; padding-bottom: 15px;">
-        <td>
-            <table class="box"  style="width: 100%;">
-                <tr class="header details">
-                    <td>Details</td>
-                    <td>Total</td>
-                </tr>
-                @foreach ($invoice->bill_entries as $index => $billentry)
-                    <tr class="entry"
-                        @if ($index%2 === 0)
-                        style="background-color: #f8f8f8;"
-                            @endif
-                    >
-                        <td class="details">{{ $billentry->description }}</td>
-                        <td class="total">
-                            <?= ($billentry->charge === null)? '' : '$' . '<span class="amount">'.number_format($billentry->charge, 2).'</span>' ?>
-                        </td>
-                    </tr>
-                @endforeach
-            </table>
-        </td>
-    </tr>
-</table>
-<table class="items-list">
-    <tr class="summary">
-        <td>
-            <div style=" border-top: 1px solid #ddd;">
-                <table style="width: 200px; float: right;">
-                    <tr class="details sub m-top">
-                        <td style="font-weight: 700;">Subtotal:</td>
-                        <td class="total">${{ number_format($invoice->subtotal,2)  }}</td>
-                    </tr>
-                    <tr class="details sub">
-                        <td style="font-weight: 700;">GST:</td>
-                        <td class="total">${{ number_format($invoice->tax,2) }}</td>
-                    </tr>
-                    <tr class="details sub">
-                        <td style="font-weight: 700;">Total:</td>
-                        <td class="total">${{ number_format($invoice->total_amount,2) }}</td>
-                    </tr>
-                </table>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<div class="footer" >
-    <div class="payment-method">
-        <div>
-            <table style="width: 100%; margin-top: 120px; padding: 15px; border-top: 1px dashed #ddd;">
-                <tr>
-                    <td class="left">
-                        <table>
-                            <tr>
-                                <td style="width:250px;">
-                                    <div>
-                                        <h3>How to Pay</h3>
-                                        <h4>Via EFT or<br> Scan the QR Code</h4>
-                                        <div><strong>Bank: </strong> {{ config('invoice-node.bank_name') }}</div>
-                                        <div><strong>BSB:</strong> {{ config('invoice-node.bsb') }}</div>
-                                        <div><strong>A/C:</strong> {{ config('invoice-node.bank_account_number') }}</div>
-                                        <p class="fine-print">* IMPORTANT: Direct bank transfer might take a few day to confirm the payment.</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <img src="data:image/png;base64, {{ base64_encode($qrImage) }} ">
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td style="text-align: right;">
-                        <table class="invoice-conclusion">
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">Ph:</label></td>
-                                <td style="text-align: right;"><span>{{ config('invoice-node.phone') }}</span></td>
-                            </tr>
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">Email:</label></td>
-                                <td style="text-align: right;"><span>{{ config('invoice-node.email') }}</span></td>
-                            </tr>
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">INV #:</label></td>
-                                <td style="text-align: right;"><span>{{ config('invoice-node.invoice_prefix').$invoice->id }}</span></td>
-                            </tr>
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">Terms:</label></td>
-                                <td style="text-align: right;"><span>7 Days PLEASE</span></td>
-                            </tr>
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">DATE:</label></td>
-                                <td style="text-align: right;"><span>{{ Carbon\Carbon::parse($invoice->issued_at)->format('d,M Y') }}</span></td>
-                            </tr>
-                            <tr>
-                                <td><label style="display: inline-block; font-weight: 700;">Amount Due:</label></td>
-                                <td style="text-align: right;"><span>${{ number_format($invoice->total_amount,2) }}</span></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+    <header class="clearfix">
+        <div id="logo">
+            <img src="">
         </div>
-    </div>
-</div>
-
-<footer style="width: 100%">
-    <h2>Thank you for your business</h2>
-</footer>
+        <h1>ORDER #{{$pp->number}}</h1>
+        <div id="company" class="clearfix">
+            <div>{{$company->name}}</div>
+            <?php $company_address = wordwrap($company->address, 25, "<br>\n", true) ?>
+            <div><?php echo $company_address ?></div>
+            <div>{{$company->phone}}</div>
+            <div><a href="mailto:{{$company->email}}">{{$company->email}}</a></div>
+        </div>
+        <div id="project">
+            @if(!$pp->warehouse_id == 1)
+            <div><span>PROJECT</span> {{$pp->warehouse->name}}</div>
+            @endif
+            <div><span>VENDOR</span> {{$pp->contact->display_name}}</div>
+            @if(!$pp->address)
+            <?php $address = $pp->contact->billing_address ?>
+            @else
+            <?php $address = $pp->address ?>
+            @endif
+            <div><span>ADDRESS</span> @if($address) {{$address}} @else - @endif </div>
+            @if(!$pp->email)
+            <?php $email = $pp->contact->email ?>
+            @else
+            <?php $email = $pp->email ?>
+            @endif
+            <div><span>EMAIL</span> <a href="mailto:{{$email}}">{{$email}} </a></div>
+            <?php $date = date('d F Y', strtotime($pp->transaction_date)) ?>
+            <div><span>DATE</span> {{$date}}</div>
+            <?php $date = date('d F Y', strtotime($pp->due_date)) ?>
+            <div><span>DUE DATE</span> {{$date}}</div>
+        </div>
+    </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th class="service">PRODUCT NAME</th>
+                    <th class="desc">DESCRIPTION</th>
+                    <th>PRICE</th>
+                    <th>QTY</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $number = 1;
+                $total = 0;
+                $qty = 0;
+                ?>
+                @foreach($pp_item as $pi)
+                <tr>
+                    <td class="service">{{$pi->product->name}}</td>
+                    <td class="desc">@if($pi->desc) {{$pi->desc}} @else - @endif</td>
+                    <td class="unit"><?php echo 'Rp ' . number_format($pi->unit_price, 2, ',', '.') ?></td>
+                    <td class="qty">{{$pi->qty}} - {{$pi->unit->name}}</td>
+                    <td class="total"><?php echo 'Rp ' . number_format($pi->amount, 2, ',', '.') ?></td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="4">SUBTOTAL</td>
+                    <td class="total"><?php echo 'Rp ' . number_format($pp->subtotal, 2, ',', '.') ?></td>
+                </tr>
+                @if($pp->taxtotal > 0)
+                <tr>
+                    <td colspan="4">TAXTOTAL</td>
+                    <td class="total"><?php echo 'Rp ' . number_format($pp->taxtotal, 2, ',', '.') ?></td>
+                </tr>
+                @endif
+                <tr>
+                    <td colspan="4" class="grand total">GRAND TOTAL</td>
+                    <td class="grand total"><?php echo 'Rp ' . number_format($pp->grandtotal, 2, ',', '.') ?></td>
+                </tr>
+            </tbody>
+        </table>
+        @if($pp->memo)
+        <div id="notices">
+            <div>NOTICE:</div>
+            <div class="notice">{{$pp->memo}}</div>
+        </div>
+        @endif
+    </main>
+    <footer>
+        Order #{{$pp->number}}
+    </footer>
 </body>
+
 </html>

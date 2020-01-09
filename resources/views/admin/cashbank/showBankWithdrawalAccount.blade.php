@@ -81,7 +81,7 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            @role('Cash & Bank')
+                            @role('Owner|Ultimate|Cash & Bank')
                             @can('Create')
                             <li><a href="#">Clone Transaction</a></li>
                             <li><a href="#">Set as Recurring</a></li>
@@ -215,7 +215,7 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/cashbank') }}" class="btn btn-dark">Cancel</a>
-                            @role('Cash & Bank')
+                            @role('Owner|Ultimate|Cash & Bank')
                             @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan

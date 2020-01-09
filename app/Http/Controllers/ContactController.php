@@ -488,7 +488,7 @@ class ContactController extends Controller
 
     public function import_excel(Request $request)
     {
-        $rules = array(
+        /*$rules = array(
             'file' => 'required|mimes:csv,xls,xlsx'
         );
 
@@ -497,7 +497,7 @@ class ContactController extends Controller
         if ($error->fails()) {
             \Session::flash('error', $error->errors());
             return redirect('/contacts_all');
-        }
+        }*/
         try {
             /*// validasi
             $this->validate($request, [
@@ -511,7 +511,7 @@ class ContactController extends Controller
             $nama_file = rand() . $file->getClientOriginalName();
 
             // upload ke folder file_siswa di dalam folder public
-            $file->move('file_contact', $nama_file);
+            $file->move(public_path('/file_contact/'), $nama_file);
 
             try {
                 // import data

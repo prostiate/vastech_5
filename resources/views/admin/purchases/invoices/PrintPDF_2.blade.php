@@ -145,9 +145,13 @@
         }
 
         table td.unit,
-        table td.qty,
         table td.total {
             font-size: 1.2em;
+        }
+
+        table td.qty {
+            font-size: 1.1em;
+            padding: 10px;
         }
 
         table tbody tr:last-child td {
@@ -270,7 +274,7 @@
                         <h3>{{$ppo->product->name}}</h3>{{$ppo->desc}}
                     </td>
                     <td class="unit"><?php echo 'Rp ' . number_format($ppo->unit_price, 2, ',', '.') ?></td>
-                    <td class="qty">{{$ppo->qty}}</td>
+                    <td class="qty">{{$ppo->qty}} - {{$ppo->purchase_order_item->unit->name}}</td>
                     <td class="total"><?php echo 'Rp ' . number_format($ppo->amount, 2, ',', '.') ?></td>
                 </tr>
                 @endforeach
@@ -288,7 +292,7 @@
                         <h3>{{$pi->product->name}}</h3>{{$pi->desc}}
                     </td>
                     <td class="unit"><?php echo 'Rp ' . number_format($pi->unit_price, 2, ',', '.') ?></td>
-                    <td class="qty">{{$pi->qty}}</td>
+                    <td class="qty">{{$pi->qty}} - {{$pi->unit->name}}</td>
                     <td class="total"><?php echo 'Rp ' . number_format($pi->amount, 2, ',', '.') ?></td>
                 </tr>
                 @endforeach
@@ -323,7 +327,7 @@
         @endif
     </main>
     <footer>
-        Invoice was created on a computer and is valid without the signature and seal.
+        Invoice #{{$pp->number}}
     </footer>
 </body>
 

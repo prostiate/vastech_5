@@ -210,11 +210,11 @@ class WarehouseController extends Controller
         $warehouse_detail_from      = warehouse_detail::where('warehouse_id', $from)->groupBy('product_id')->get();
         $warehouse_detail_to        = warehouse_detail::where('warehouse_id', $to)->groupBy('product_id')->get();
         $products                   = product::where('is_track', 1)->get();
-        $number                     = warehouse_transfer::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number                     = warehouse_transfer::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -223,6 +223,7 @@ class WarehouseController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number                     = warehouse_transfer::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -235,11 +236,11 @@ class WarehouseController extends Controller
 
     public function storeTransfer(Request $request)
     {
-        $number             = warehouse_transfer::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = warehouse_transfer::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -248,6 +249,7 @@ class WarehouseController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = warehouse_transfer::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;

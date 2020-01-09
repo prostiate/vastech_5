@@ -117,9 +117,13 @@
         }
 
         table td.unit,
-        table td.qty,
         table td.total {
             font-size: 1.2em;
+        }
+        
+        table td.qty {
+            font-size: 1.2em;
+            padding: 0px;
         }
 
         table td.grand {
@@ -160,19 +164,19 @@
         </div>
         <div id="project">
             <div><span>PROJECT</span> {{$pp->warehouse->name}}</div>
-            <div><span>CLIENT</span> {{$pp->contact->display_name}}</div>
+            <div><span>VENDOR</span> {{$pp->contact->display_name}}</div>
             @if(!$pp->address)
             <?php $address = $pp->contact->billing_address ?>
             @else
             <?php $address = $pp->address ?>
             @endif
-            <div><span>ADDRESS</span> {{$address}}</div>
+            <div><span>ADDRESS</span> @if($address) {{$address}} @else - @endif</div>
             @if(!$pp->email)
             <?php $email = $pp->contact->email ?>
             @else
             <?php $email = $pp->email ?>
             @endif
-            <div><span>EMAIL</span> <a href="mailto:{{$email}}">{{$email}}</a></div>
+            <div><span>EMAIL</span> <a href="mailto:{{$email}}">{{$email}} </a></div>
             <?php $date = date('d F Y', strtotime($pp->transaction_date)) ?>
             <div><span>DATE</span> {{$date}}</div>
             <?php $date = date('d F Y', strtotime($pp->due_date)) ?>
@@ -202,7 +206,7 @@
                     <td class="service">{{$ppo->product->name}}</td>
                     <td class="desc">@if($ppo->desc) {{$ppo->desc}} @else - @endif</td>
                     <td class="unit"><?php echo 'Rp ' . number_format($ppo->unit_price, 2, ',', '.') ?></td>
-                    <td class="qty">{{$ppo->qty}}</td>
+                    <td class="qty">{{$ppo->qty}} - {{$ppo->purchase_order_item->unit->name}}</td>
                     <td class="total"><?php echo 'Rp ' . number_format($ppo->amount, 2, ',', '.') ?></td>
                 </tr>
                 @endforeach
@@ -212,7 +216,7 @@
                     <td class="service">{{$pi->product->name}}</td>
                     <td class="desc">@if($pi->desc) {{$pi->desc}} @else - @endif</td>
                     <td class="unit"><?php echo 'Rp ' . number_format($pi->unit_price, 2, ',', '.') ?></td>
-                    <td class="qty">{{$pi->qty}}</td>
+                    <td class="qty">{{$pi->qty}} - {{$pi->unit->name}}</td>
                     <td class="total"><?php echo 'Rp ' . number_format($pi->amount, 2, ',', '.') ?></td>
                 </tr>
                 @endforeach
@@ -241,7 +245,7 @@
         @endif
     </main>
     <footer>
-        Invoice was created on a computer and is valid without the signature and seal.
+        Invoice #{{$pp->number}}
     </footer>
 </body>
 

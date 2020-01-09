@@ -54,6 +54,7 @@
             <thead>
                 <tr>
                     <td colspan="6" style="text-align: center">Payment No. <strong>{{$pp->number}}</strong></td>
+                    <?php $date = date('d F Y', strtotime($pp->transaction_date)) ?>
                 </tr>
                 <!--<tr>
                     <td>
@@ -112,8 +113,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td style="text-align: center">{{$today}}<br>(NAMA COMPANY)<br><br><br><br><br><br><br><br>(NAME & POSITION)</td>
-				</tr>-->
+                    <td style="text-align: center">{{$date}}<br><br>{{$company->name}}</td>
+				</tr>
 				@endforeach
             </tbody>
             <tfoot>

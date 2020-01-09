@@ -32,13 +32,13 @@ class PurchaseQuoteController extends Controller
 
             $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                 ->where('is_buy', 1)
                 //->where('is_bundle', 0)
                 ->orderBy('name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'buy_price', 'buy_tax', 'is_lock_purchase']);
+                ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'buy_price', 'buy_tax', 'is_lock_purchase']);
 
             $count = product::where('is_buy', 1)->count();
             $endCount = $offset + $resultCount;
@@ -123,11 +123,11 @@ class PurchaseQuoteController extends Controller
         $today              = Carbon::today()->toDateString();
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
-        $number             = purchase_quote::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_quote::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -136,6 +136,7 @@ class PurchaseQuoteController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_quote::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -156,11 +157,11 @@ class PurchaseQuoteController extends Controller
 
     public function store(Request $request)
     {
-        $number             = purchase_quote::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_quote::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -169,6 +170,7 @@ class PurchaseQuoteController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_quote::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -411,14 +413,22 @@ class PurchaseQuoteController extends Controller
     public function cetak_pdf_1($id)
     {
         $user                       = User::find(Auth::id());
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pp                         = purchase_quote::find($id);
         $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $checknumberpd              = purchase_quote::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_2($id)
+    {
+        $user                       = User::find(Auth::id());
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pp                         = purchase_quote::find($id);
+        $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -427,9 +437,6 @@ class PurchaseQuoteController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_quote::find($id);
         $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $checknumberpd              = purchase_quote::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -441,9 +448,6 @@ class PurchaseQuoteController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_quote::find($id);
         $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $checknumberpd              = purchase_quote::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -455,9 +459,6 @@ class PurchaseQuoteController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_quote::find($id);
         $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $checknumberpd              = purchase_quote::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -469,9 +470,6 @@ class PurchaseQuoteController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_quote::find($id);
         $pp_item                    = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $checknumberpd              = purchase_quote::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Quote #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.quote.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');

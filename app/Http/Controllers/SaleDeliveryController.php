@@ -58,11 +58,11 @@ class SaleDeliveryController extends Controller
             $po                 = sale_order::find($id);
             $po_item            = sale_order_item::where('sale_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
-            $number             = sale_delivery::max('number');
             $user               = User::find(Auth::id());
             if ($user->company_id == 5) {
+                $number             = sale_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number);
+                    $misahm             = explode("/", $number->number);
                     $misahy             = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
@@ -71,6 +71,7 @@ class SaleDeliveryController extends Controller
                 $number1                    = $misahy[1] + 1;
                 $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
             } else {
+                $number             = sale_delivery::max('number');
                 if ($number == 0)
                     $number = 10000;
                 $trans_no = $number + 1;
@@ -81,11 +82,11 @@ class SaleDeliveryController extends Controller
             $po                 = sale_delivery::where('selected_so_id', $id)->first();
             $po_item            = sale_delivery_item::where('sale_delivery_id', $check->id)->get();
             $today              = Carbon::today()->toDateString();
-            $number             = sale_delivery::max('number');
             $user               = User::find(Auth::id());
             if ($user->company_id == 5) {
+                $number             = sale_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number);
+                    $misahm             = explode("/", $number->number);
                     $misahy             = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
@@ -94,6 +95,7 @@ class SaleDeliveryController extends Controller
                 $number1                    = $misahy[1] + 1;
                 $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
             } else {
+                $number             = sale_delivery::max('number');
                 if ($number == 0)
                     $number = 10000;
                 $trans_no = $number + 1;
@@ -105,11 +107,11 @@ class SaleDeliveryController extends Controller
 
     public function storeFromPO(Request $request)
     {
-        $number             = sale_delivery::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = sale_delivery::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -118,6 +120,7 @@ class SaleDeliveryController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = sale_delivery::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -790,12 +793,20 @@ class SaleDeliveryController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
-        $checknumberpd              = sale_delivery::whereId($id)->first();
-        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        return $pdf->stream();
+    }
+
+    public function cetak_pdf_2($id)
+    {
+        $user                       = User::find(Auth::id());
+        $pp                         = sale_delivery::find($id);
+        $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
+        $today                      = Carbon::today()->format('d F Y');
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -804,9 +815,6 @@ class SaleDeliveryController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
-        $checknumberpd              = sale_delivery::whereId($id)->first();
-        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -818,9 +826,6 @@ class SaleDeliveryController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
-        $checknumberpd              = sale_delivery::whereId($id)->first();
-        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -832,9 +837,6 @@ class SaleDeliveryController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
-        $checknumberpd              = sale_delivery::whereId($id)->first();
-        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -846,9 +848,6 @@ class SaleDeliveryController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = sale_delivery::find($id);
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
-        $checknumberpd              = sale_delivery::whereId($id)->first();
-        $numbercoadetail            = 'Sales Delivery #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');

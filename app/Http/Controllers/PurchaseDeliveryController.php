@@ -46,11 +46,11 @@ class PurchaseDeliveryController extends Controller
             $po                 = purchase_order::find($id);
             $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
-            $number             = purchase_delivery::max('number');
             $user               = User::find(Auth::id());
             if ($user->company_id == 5) {
+                $number             = purchase_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number);
+                    $misahm             = explode("/", $number->number);
                     $misahy             = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
@@ -59,6 +59,7 @@ class PurchaseDeliveryController extends Controller
                 $number1                    = $misahy[1] + 1;
                 $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
             } else {
+                $number             = purchase_delivery::max('number');
                 if ($number == 0)
                     $number = 10000;
                 $trans_no = $number + 1;
@@ -69,11 +70,11 @@ class PurchaseDeliveryController extends Controller
             $po                 = purchase_order::find($id);
             $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
             $today              = Carbon::today()->toDateString();
-            $number             = purchase_delivery::max('number');
             $user               = User::find(Auth::id());
             if ($user->company_id == 5) {
+                $number             = purchase_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number);
+                    $misahm             = explode("/", $number->number);
                     $misahy             = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
@@ -82,6 +83,7 @@ class PurchaseDeliveryController extends Controller
                 $number1                    = $misahy[1] + 1;
                 $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
             } else {
+                $number             = purchase_delivery::max('number');
                 if ($number == 0)
                     $number = 10000;
                 $trans_no = $number + 1;
@@ -93,11 +95,11 @@ class PurchaseDeliveryController extends Controller
 
     public function storeFromPO(Request $request)
     {
-        $number             = purchase_delivery::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_delivery::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -106,6 +108,7 @@ class PurchaseDeliveryController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_delivery::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;

@@ -93,7 +93,7 @@
                                     <th class="column-title" style="width:200px">Product Code</th>
                                     <th class="column-title" style="width:200px">Recorded Quantity</th>
                                     <th class="column-title" style="width:200px">Actual Quantity</th>
-                                    <th class="column-title" style="width:200px">Average Price</th>
+                                    <!--<th class="column-title" style="width:200px">Average Price</th>-->
                                     <th class="column-title" style="width:50px"></th>
                                 </tr>
                             </thead>
@@ -104,7 +104,7 @@
                                             <option></option>
                                             @foreach($warehouse_detail_from as $a)
                                             <option value="{{$a->product_id}}" code="{{$a->product->code}}" qty="{{$a->qty}}" avgprice="{{$a->product->avg_price}}">
-                                                {{$a->product->name}}
+                                                {{$a->product->code}} - {{$a->product->name}}
                                             </option>
                                             @endforeach
                                         </select>
@@ -117,9 +117,6 @@
                                     </td>
                                     <td>
                                         <input onClick="this.select();" value="0" type="number" class="form-control" name="actual_qty[]">
-                                    </td>
-                                    <td>
-                                        <h5 class="avg_price"></h5>
                                     </td>
                                     <td>
                                         <input type="button" class="btn btn-danger delete" value="x">

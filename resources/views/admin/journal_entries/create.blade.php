@@ -59,14 +59,14 @@
                                         <textarea class="form-control" rows="1" name="desc[]"></textarea>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" type="text" class="debita_display form-control">
-                                        <input type="text" class="debita form-control" name="debit[]" hidden>
-                                        <input type="text" class="deb" hidden>
+                                        <input onClick="this.select();" value="0" type="text" class="debita_display form-control">
+                                        <input value="0" type="text" class="debita" name="debit[]" hidden>
+                                        <input value="0" type="text" class="deb" hidden>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" type="text" class="credita_display form-control">
-                                        <input type="text" class="credita form-control" name="credit[]" hidden>
-                                        <input type="text" class="cre" hidden>
+                                        <input onClick="this.select();" value="0" type="text" class="credita_display form-control">
+                                        <input value="0" type="text" class="credita" name="credit[]" hidden>
+                                        <input value="0" type="text" class="cre" hidden>
                                     </td>
                                     <td>
                                         <input type="button" class="btn btn-danger delete" value="x">
@@ -91,12 +91,14 @@
                                     </div>
                                     <div class="col-md-4">
                                         <h5 class="text-center">Total Debit</h5>
-                                        <h5 class="total_debit text-center">0.00</h5>
+                                        <!--<h5 class="total_debit text-center">0.00</h5>-->
+                                        <input type="text" class="total_debit_display" disabled>
                                         <input type="text" class="total_debit_input" name="total_debit" hidden>
                                     </div>
                                     <div class="col-md-4 float-right">
                                         <h5 class="text-center">Total Credit</h5>
-                                        <h5 class="total_credit text-center">0.00</h5>
+                                        <!--<h5 class="total_credit text-center">0.00</h5>-->
+                                        <input type="text" class="total_credit_display" disabled>
                                         <input type="text" class="total_credit_input" name="total_credit" hidden>
                                         <div class="form-group tile"></div>
                                     </div>

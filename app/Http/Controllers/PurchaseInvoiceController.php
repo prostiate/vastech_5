@@ -46,13 +46,13 @@ class PurchaseInvoiceController extends Controller
 
             $offset = ($page - 1) * $resultCount;
 
-            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')
+            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                 ->where('is_buy', 1)
                 //->where('is_bundle', 0)
                 ->orderBy('name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('name as text'), 'other_unit_id', 'desc', 'buy_price', 'buy_tax', 'is_lock_purchase']);
+                ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'buy_price', 'buy_tax', 'is_lock_purchase']);
 
             $count = product::where('is_buy', 1)->count();
             $endCount = $offset + $resultCount;
@@ -137,11 +137,11 @@ class PurchaseInvoiceController extends Controller
         $today              = Carbon::today()->toDateString();
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
         $taxes              = other_tax::all();
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -150,6 +150,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -184,11 +185,11 @@ class PurchaseInvoiceController extends Controller
         $terms              = other_term::all();
         $today              = Carbon::today()->toDateString();
         $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -197,6 +198,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -219,13 +221,12 @@ class PurchaseInvoiceController extends Controller
         $po                 = purchase_delivery::find($id);
         $po_item            = purchase_delivery_item::where('purchase_delivery_id', $id)->get();
         $today              = Carbon::today()->toDateString();
-        $number             = purchase_invoice::max('number');
         $terms              = other_term::all();
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -234,6 +235,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -247,14 +249,13 @@ class PurchaseInvoiceController extends Controller
         $po                 = purchase_order::find($id);
         $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
         $today              = Carbon::today()->toDateString();
-        $number             = purchase_invoice::max('number');
         $terms              = other_term::all();
         $warehouses         = warehouse::all();
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -263,6 +264,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -276,17 +278,16 @@ class PurchaseInvoiceController extends Controller
         $po                 = purchase_quote::find($id);
         $po_item            = purchase_quote_item::where('purchase_quote_id', $id)->get();
         $today              = Carbon::today()->toDateString();
-        $number             = purchase_invoice::max('number');
         $terms              = other_term::all();
         $warehouses         = warehouse::all();
         $products           = product::all();
         $units              = other_unit::all();
         $taxes              = other_tax::all();
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -295,6 +296,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -315,11 +317,11 @@ class PurchaseInvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -328,6 +330,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -532,11 +535,11 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromDelivery(Request $request)
     {
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -545,6 +548,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -735,11 +739,11 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromOrder(Request $request)
     {
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -748,6 +752,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -989,11 +994,11 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromQuote(Request $request)
     {
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -1002,6 +1007,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -1216,11 +1222,11 @@ class PurchaseInvoiceController extends Controller
 
     public function storeRequestSukses(Request $request)
     {
-        $number             = purchase_invoice::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -1229,6 +1235,7 @@ class PurchaseInvoiceController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = purchase_invoice::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -2988,10 +2995,12 @@ class PurchaseInvoiceController extends Controller
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
+        if ($pp_po->isNotEmpty()) {
+            $pp_po                  = $pp_po;
+        } else {
+            $pp_po                  = null;
+        }
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
@@ -3003,57 +3012,14 @@ class PurchaseInvoiceController extends Controller
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
+        if ($pp_po->isNotEmpty()) {
+            $pp_po                  = $pp_po;
+        } else {
+            $pp_po                  = null;
+        }
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
-        return $pdf->stream();
-    }
-
-    public function cetak_pdf_3($id)
-    {
-        $user                       = User::find(Auth::id());
-        $pp                         = purchase_invoice::find($id);
-        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
-        $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_3', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']));
-        return $pdf->stream();
-    }
-
-    public function cetak_pdf_4($id)
-    {
-        $user                       = User::find(Auth::id());
-        $pp                         = purchase_invoice::find($id);
-        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
-        $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_4', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
-        return $pdf->stream();
-    }
-
-    public function cetak_pdf_5($id)
-    {
-        $user                       = User::find(Auth::id());
-        $pp                         = purchase_invoice::find($id);
-        $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $pp_po                      = purchase_invoice_po_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
-        $today                      = Carbon::today()->format('d F Y');
-        $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_5', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -3062,9 +3028,6 @@ class PurchaseInvoiceController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_FAS', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -3076,9 +3039,6 @@ class PurchaseInvoiceController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_GG', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -3090,9 +3050,6 @@ class PurchaseInvoiceController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_Sukses', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
@@ -3104,9 +3061,6 @@ class PurchaseInvoiceController extends Controller
         $user                       = User::find(Auth::id());
         $pp                         = purchase_invoice::find($id);
         $pp_item                    = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
-        $checknumberpd              = purchase_invoice::whereId($id)->first();
-        $numbercoadetail            = 'Purchase Invoice #' . $checknumberpd->number;
-        $numberothertransaction     = $checknumberpd->number;
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_Sukses_Surabaya', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');

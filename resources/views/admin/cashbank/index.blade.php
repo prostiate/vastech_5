@@ -79,7 +79,7 @@
                     <div id="myTabContent" class="tab-content">
                         <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="invoice-tab">
                             <div class="x_panel">
-                                @role('Cash & Bank')
+                                @role('Owner|Ultimate|Cash & Bank')
                                 @can('Create')
                                 <div class="x_title">
                                     <ul class="nav navbar-right panel_toolbox">
@@ -155,7 +155,7 @@
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>View Transaction Report</h2>
-                                    @role('Cash & Bank')
+                                    @role('Owner|Ultimate|Cash & Bank')
                                     @can('Create')
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>

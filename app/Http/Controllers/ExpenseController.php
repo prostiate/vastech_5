@@ -47,20 +47,22 @@ class ExpenseController extends Controller
         $vendors            = contact::where('type_customer', '1')
             ->orWhere('type_other', '1')
             ->orWhere('type_employee', '1')
+            ->orWhere('type_customer', '1')
+            ->orWhere('type_vendor', '1')
             ->get();
         $expenses           = coa::where('coa_category_id', 16)
             ->orWhere('coa_category_id', 17)
             ->orWhere('coa_category_id', 15)
             ->get();
         $taxes              = other_tax::all();
-        $number             = expense::max('number');
         $today              = Carbon::today()->toDateString();
         $payment_method     = other_payment_method::get();
         $terms              = other_term::get();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = expense::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -69,6 +71,7 @@ class ExpenseController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = expense::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;
@@ -79,11 +82,11 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-        $number             = expense::max('number');
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
+            $number             = expense::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number);
+                $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
@@ -92,6 +95,7 @@ class ExpenseController extends Controller
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
+            $number             = expense::max('number');
             if ($number == 0)
                 $number = 10000;
             $trans_no = $number + 1;

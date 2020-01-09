@@ -301,8 +301,9 @@
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <select id="template_type" class="form-control">
                                                                 <option value="1">Template 1</option>
+                                                                <option value="1d">Template 1 (Delivery Order)</option>
                                                                 <option value="2">Template 2</option>
-                                                                <option value="3">Template 3</option>
+                                                                <option value="2d">Template 2 (Delivery Order)</option>
                                                                 @if($pi->user->company_id == 5)
                                                                 <option value="51" selected>Template Sukses Surabaya (Invoice)</option>
                                                                 <option value="52" selected>Template Sukses Surabaya (Surat Jalan)</option>
@@ -620,8 +621,12 @@
         var get_id = document.getElementById("form_id").value;
         if (get_type == '1') {
             window.open('/sales_invoice/print/PDF/1/' + get_id , '_blank');
+        } else if (get_type == '1d') {
+            window.open('/sales_invoice/print/PDF/1_sj/' + get_id , '_blank');
         } else if (get_type == '2') {
             window.open('/sales_invoice/print/PDF/2/' + get_id , '_blank');
+        } else if (get_type == '2d') {
+            window.open('/sales_invoice/print/PDF/2_sj/' + get_id , '_blank');
         } else if (get_type == '3') {
             window.open('/sales_invoice/print/PDF/3/' + get_id , '_blank');
         } else if (get_type == '51') {

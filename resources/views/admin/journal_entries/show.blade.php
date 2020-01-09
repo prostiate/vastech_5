@@ -5,10 +5,21 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h3><b>Journal Entry #</b></h3>
+                <h3><b>Journal Entry #{{$je->number}}</b></h3>
                 <a>Status: </a>
+                @if($je->status == 1)
+                <span class="label label-warning" style="color:white;">Open</span>
+                @elseif($je->status == 2)
                 <span class="label label-success" style="color:white;">Closed</span>
-                <div class="clearfix"></div>
+                @elseif($je->status == 3)
+                <span class="label label-success" style="color:white;">Paid</span>
+                @elseif($je->status == 4)
+                <span class="label label-warning" style="color:white;">Partial</span>
+                @elseif($je->status == 5)
+                <span class="label label-danger" style="color:white;">Overdue</span>
+                @else
+                <span class="label label-success" style="color:white;">Sent</span>
+                @endif
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -19,13 +30,13 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5></h5>
+                                    <h5>{{$je->transaction_date}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5></h5>
+                                    <h5>{{$je->number}}</h5>
                                 </div>
                             </div>
                         </div>
@@ -38,40 +49,28 @@
                             <thead>
                                 <tr class="headings">
                                     <th class="column-title" style="width: 400px">Account Number</th>
-                                    <th class="column-title">Account</th>
                                     <th class="column-title">Description</th>
-                                    <th class="column-title text-right">Debit</th>
-                                    <th class="column-title text-right">Credit</th>
+                                    <th class="column-title">Debit</th>
+                                    <th class="column-title">Credit</th>
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
+                                @foreach($je_item as $item)
                                 <tr>
                                     <td>
-                                        <div class="form-group">
-                                            <h5></h5>
-                                        </div>
+                                        {{$item->coa->code}} - {{$item->coa->name}} ({{$item->coa->coa_category->name}})
                                     </td>
                                     <td>
-                                        <div class="form-group">
-                                            <h5></h5>
-                                        </div>
+                                        {{$item->desc}}
                                     </td>
                                     <td>
-                                        <div class="form-group">
-                                            <h5></h5>
-                                        </div>
+                                        <?php echo 'Rp ' . number_format($item->debit, 2, ',', '.') ?>
                                     </td>
                                     <td>
-                                        <div class="form-group">
-                                            <h5></h5>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <h5></h5>
-                                        </div>
+                                        <?php echo 'Rp ' . number_format($item->credit, 2, ',', '.') ?>
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -81,7 +80,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Memo</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5></h5>
+                                    <h5>{{$je->memo}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -90,13 +89,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <h5 class="text-center">Total Debit</h5>
-                                        <h5 class="text-center">0.00</h5>
+                                        <h5 class="text-center"><?php echo 'Rp ' . number_format($je->total_debit, 2, ',', '.') ?></h5>
                                     </div>
                                     <div class="col-md-4 float-right">
-                                        <h5 class="subtotal text-center">Total Credit</h5>
-                                        <input type="text" class="subtotal_input" name="subtotal" hidden>
-                                        <h5 class="subtotal text-center">0.00</h5>
-                                        <input type="text" class="subtotal_input" name="subtotal" hidden>
+                                        <h5 class="text-center">Total Credit</h5>
+                                        <h5 class="text-center"><?php echo 'Rp ' . number_format($je->total_credit, 2, ',', '.') ?></h5>
                                         <div class="form-group tile"></div>
                                     </div>
                                 </div>
