@@ -151,9 +151,11 @@
 
 <body>
     <header class="clearfix">
+        @if($company->is_logo == 1)
         <div id="logo">
-            <img src="">
+            <img src="{{ public_path('file_logo/'.$logo->filename) }}">
         </div>
+        @endif
         <h1>RETURN #{{$pp->number}}</h1>
         <div id="company" class="clearfix">
             <div>{{$company->name}}</div>

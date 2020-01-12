@@ -11,6 +11,7 @@ use App\other_payment_method;
 use App\other_transaction;
 use App\coa;
 use App\coa_detail;
+use App\company_logo;
 use App\company_setting;
 use PDF;
 use App\contact;
@@ -466,7 +467,8 @@ class PurchasePaymentController extends Controller
         $pp_item                    = purchase_payment_item::where('purchase_payment_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.payment.PrintPDF', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

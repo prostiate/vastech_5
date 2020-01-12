@@ -11,6 +11,7 @@ use App\other_payment_method;
 use App\other_transaction;
 use App\coa;
 use App\coa_detail;
+use App\company_logo;
 use App\company_setting;
 use App\contact;
 use Illuminate\Support\Facades\DB;
@@ -518,7 +519,8 @@ class SalePaymentController extends Controller
         $pp_item                    = sale_payment_item::where('sale_payment_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.payment.PrintPDF', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.payment.PrintPDF', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

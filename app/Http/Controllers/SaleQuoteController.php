@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\company_logo;
 use App\sale_quote;
 use App\contact;
 use App\company_setting;
@@ -627,7 +628,8 @@ class SaleQuoteController extends Controller
         $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -638,7 +640,8 @@ class SaleQuoteController extends Controller
         $pp_item                    = sale_quote_item::where('sale_quote_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.quote.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

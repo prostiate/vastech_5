@@ -21,10 +21,10 @@ use App\warehouse_detail;
 use Validator;
 use App\other_transaction;
 use App\coa;
+use App\company_logo;
 use App\product_bundle_cost;
 use App\product_discount_item;
 use App\sale_invoice_cost;
-use App\sale_payment;
 use App\sale_payment_item;
 use PDF;
 use App\sale_quote;
@@ -4989,7 +4989,8 @@ class SaleInvoiceController extends Controller
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -5000,7 +5001,8 @@ class SaleInvoiceController extends Controller
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -5011,7 +5013,8 @@ class SaleInvoiceController extends Controller
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -5022,7 +5025,8 @@ class SaleInvoiceController extends Controller
         $pp_item                    = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

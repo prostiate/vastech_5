@@ -120,7 +120,7 @@
         table td.total {
             font-size: 1.2em;
         }
-        
+
         table td.qty {
             font-size: 1.2em;
             padding: 0px;
@@ -151,9 +151,11 @@
 
 <body>
     <header class="clearfix">
+        @if($company->is_logo == 1)
         <div id="logo">
-            <img src="logo.png">
+            <img src="{{ public_path('file_logo/'.$logo->filename) }}">
         </div>
+        @endif
         <h1>INVOICE #{{$pp->number}}</h1>
         <div id="company" class="clearfix">
             <div>{{$company->name}}</div>

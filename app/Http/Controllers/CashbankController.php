@@ -58,7 +58,7 @@ class CashbankController extends Controller
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_transfer', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_transfer', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -87,7 +87,7 @@ class CashbankController extends Controller
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_deposit', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_deposit', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -116,7 +116,7 @@ class CashbankController extends Controller
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -142,7 +142,7 @@ class CashbankController extends Controller
         $contact        = contact::get();
         $expenses       = expense::where('status', 1)->get();
         $taxes          = other_tax::get();
-        $number         = cashbank::where('bank_withdrawal', 1)->latest()->first()->number;
+        $number         = cashbank::where('bank_withdrawal', 1)->latest()->first();
         $today          = Carbon::today()->toDateString();
         if ($number == 0)
             $number = 10000;
@@ -159,7 +159,7 @@ class CashbankController extends Controller
         $today              = Carbon::today()->toDateString();
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -183,7 +183,7 @@ class CashbankController extends Controller
     {
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_transfer', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_transfer', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -281,7 +281,7 @@ class CashbankController extends Controller
     {
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_deposit', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_deposit', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -423,7 +423,7 @@ class CashbankController extends Controller
     {
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_withdrawal_acc', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);
@@ -562,7 +562,7 @@ class CashbankController extends Controller
     {
         $user               = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first()->number;
+            $number             = cashbank::where('bank_withdrawal_ex', 1)->latest()->first();
             if ($number != null) {
                 $misahm             = explode("/", $number->number);
                 $misahy             = explode(".", $misahm[1]);

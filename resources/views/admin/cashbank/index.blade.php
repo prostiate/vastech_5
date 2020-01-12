@@ -155,7 +155,7 @@
                             <div class="x_panel">
                                 <div class="x_title">
                                     <h2>View Transaction Report</h2>
-                                    @role('Owner|Ultimate|Cash & Bank')
+                                    @role('Cash & Bank')
                                     @can('Create')
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
@@ -209,4 +209,5 @@
 
 @push('scripts')
 <script src="{{ asset('js/cashbank/chartdiindex.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/cashbank/dataTable.js') }}" charset="utf-8"></script>
 @endpush

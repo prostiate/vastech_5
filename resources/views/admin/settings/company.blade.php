@@ -62,7 +62,7 @@
                     @endif
                     <br>
                     <br>
-                    <input type="file" class="form-control" name="logo">
+                    <input type="file" name="logo">
                 </div>
             </div>
 

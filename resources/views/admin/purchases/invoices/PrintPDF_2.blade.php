@@ -211,9 +211,11 @@
 
 <body>
     <header class="clearfix">
+        @if($company->is_logo == 1)
         <div id="logo">
-            <img src="logo.png">
+            <img src="{{ public_path('file_logo/'.$logo->filename) }}">
         </div>
+        @endif
         <div id="company">
             <h2 class="name">{{$company->name}}</h2>
             <?php $company_address = wordwrap($company->address, 30, "<br>\n", true) ?>

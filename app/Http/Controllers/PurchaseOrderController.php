@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\company_logo;
 use App\company_setting;
 use App\purchase_order;
 use App\purchase_order_item;
@@ -1092,7 +1093,8 @@ class PurchaseOrderController extends Controller
         $pp                         = purchase_order::find($id);
         $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -1103,7 +1105,8 @@ class PurchaseOrderController extends Controller
         $pp                         = purchase_order::find($id);
         $pp_item                    = purchase_order_item::where('purchase_order_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
-        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.order.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

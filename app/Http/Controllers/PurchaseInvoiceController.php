@@ -26,6 +26,7 @@ use App\other_transaction;
 use App\purchase_payment;
 use PDF;
 use App\coa;
+use App\company_logo;
 use App\purchase_quote;
 use App\purchase_quote_item;
 use App\purchase_invoice_po_item;
@@ -3002,7 +3003,8 @@ class PurchaseInvoiceController extends Controller
             $pp_po                  = null;
         }
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'pp_po', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 
@@ -3019,7 +3021,8 @@ class PurchaseInvoiceController extends Controller
         }
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'pp_po', 'today', 'company']))->setPaper('a4', 'portrait');
+        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'pp_po', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
 

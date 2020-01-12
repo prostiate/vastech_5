@@ -601,6 +601,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/company', 'SettingController@company_store')->name('company.store');
     });
     Route::get('/coa/select_account',                                       'SettingController@select_account');
+    Route::post('/settings/account/store',                                  'SettingController@account_store');
 
     /*---------Setting--------------*/
     Route::get('/setting', function () {

@@ -41,8 +41,7 @@
 @section('contentTab')
 
 <div class="row">
-    <form method="POST" action="{{ route('acc_map.store') }}" enctype="multipart/form-data">
-        @csrf
+    <form method="post" id="formCreate" class="form-horizontal">
         <div class="accordion testing" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel">
                 <a class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -51,56 +50,88 @@
                 <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
                     <div class="panel-body">
                         <div class="col-md-6 form-group">
-                            @foreach($def_acc as $da)
-                            @if($da->id < 5)
                             <div class="col-md-12 form-group">
-                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">
-                                    @if($da->id==1)Sales Revenue
-                                    @elseif($da->id==2)Sales Discount
-                                    @elseif($da->id==3)Sales Return
-                                    @elseif($da->id==4)Sales Shipping
-                                    @endif
-                                </label>
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Sales Revenue</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="sales[]">
-                                        <option>
-                                            {{$da->coa->code}}
-                                            -
-                                            {{$da->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="sales_revenue">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($sales_revenue->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
-                                    <input value="{{$da->account_id}}" class="selected_sales[]">
-                                    <input class="tampungan_sales[]">
                                 </div>
                             </div>
-                            @endif
-                            @endforeach
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Sales Discount</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="sales_discount">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($sales_discount->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Sales Return</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="sales_return">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($sales_return->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Sales Shipping</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="sales_shipping">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($sales_shipping->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6 form-group">
-                            @foreach($def_acc as $da)
-                            @if($da->id > 4 & $da->id < 9)
                             <div class="col-md-12 form-group">
-                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">
-                                    @if($da->id==5)Unearned Revenue
-                                    @elseif($da->id==6)Unbilled Sales
-                                    @elseif($da->id==7)Unbilled Receivable
-                                    @elseif($da->id==8)Sales Tax Receivable
-                                    @endif
-                                </label>
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Unearned Revenue</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="sales[]">
-                                        <option>
-                                            {{$da->coa->code}}
-                                            -
-                                            {{$da->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="unearned_revenue">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($unearned_revenue->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
-                                    <input value="{{$da->account_id}}" class="selected_sales[]">
-                                    <input class="tampungan_sales[]">
                                 </div>
                             </div>
-                            @endif
-                            @endforeach
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Unbilled Sales</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="unbilled_sales">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($unbilled_sales->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Unbilled Receivable</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="unbilled_receivable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($unbilled_receivable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Sales Tax Receivable</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <select class="form-control selectaccount" name="sales_tax_receiveable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($sales_tax_receiveable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -115,36 +146,30 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Purchase (COGS)</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="purchase">
-                                        <option>
-                                            {{$def_acc->where('name','default_purchase')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_purchase')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="purchase">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($purchase->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Purchase Shipping</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="purchase_shipping">
-                                        <option>
-                                            {{$def_acc->where('name','default_purchase_shipping')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_purchase_shipping')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="purchase_shipping">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($purchase_shipping->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Prepayment</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="prepayment">
-                                        <option>
-                                            {{$def_acc->where('name','default_prepayment')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_prepayment')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="prepayment">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($prepayment->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -153,12 +178,10 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Unbilled Payable</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="unbilled_payable">
-                                        <option>
-                                            {{$def_acc->where('name','default_unbilled_payable')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_unbilled_payable')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="unbilled_payable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($unbilled_payable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -166,12 +189,10 @@
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Purchase Tax
                                     Receivable</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="purchase_tax_receivable">
-                                        <option>
-                                            {{$def_acc->where('name','default_purchase_tax_receivable')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_purchase_tax_receivable')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="purchase_tax_receivable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($purchase_tax_receivable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -189,12 +210,10 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Account Receivable</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="account_receivable">
-                                        <option>
-                                            {{$def_acc->where('name','default_account_receivable')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_account_receivable')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="account_receivable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($account_receivable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -203,12 +222,10 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Account Payable</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="account_payable">
-                                        <option>
-                                            {{$def_acc->where('name','default_account_payable')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_account_payable')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="account_payable">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($account_payable->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -226,24 +243,20 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Inventory</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="inventory">
-                                        <option>
-                                            {{$def_acc->where('name','default_inventory')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_inventory')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="inventory">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($inventory->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Inventory General</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="inventory_general">
-                                        <option>
-                                            {{$def_acc->where('name','default_inventory_general')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_inventory_general')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="inventory_general">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($inventory_general->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -252,24 +265,20 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Inventory Waste</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="inventory_waste">
-                                        <option>
-                                            {{$def_acc->where('name','default_inventory_waste')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_inventory_waste')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="inventory_waste">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($inventory_waste->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Inventory Production</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="inventory_production">
-                                        <option>
-                                            {{$def_acc->where('name','default_inventory_production')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_inventory_production')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="inventory_production">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($inventory_production->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -287,12 +296,10 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Opening Balance Equity</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="opening_balance_equity">
-                                        <option>
-                                            {{$def_acc->where('name','default_opening_balance_equity')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_opening_balance_equity')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="opening_balance_equity">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($opening_balance_equity->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -301,12 +308,10 @@
                             <div class="col-md-12 form-group">
                                 <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">Fixed Asset</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <select class="form-control select_account" name="fixed_asset">
-                                        <option>
-                                            {{$def_acc->where('name','default_fixed_asset')->first()->coa->code}}
-                                            -
-                                            {{$def_acc->where('name','default_fixed_asset')->first()->coa->name}}
-                                        </option>
+                                    <select class="form-control selectaccount" name="fixed_asset">
+                                        @foreach($all_coa as $ac)
+                                        <option value="{{$ac->id}}" @if($fixed_asset->account_id == $ac->id) selected @endif>{{$ac->code}} - {{$ac->name}} ({{$ac->coa_category->name}})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -315,6 +320,7 @@
                 </div>
             </div>
         </div>
+    </form>
 </div>
 <div class="row">
     <br>
@@ -327,11 +333,9 @@
             </div>
         </div>
     </div>
-    </form>
 </div>
-
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/setting/selectaccount.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/setting/updateForm_account.js') }}" charset="utf-8"></script>
 @endpush

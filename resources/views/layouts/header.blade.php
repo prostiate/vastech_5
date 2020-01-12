@@ -7,9 +7,16 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="">
-                    <a href="/setting" class="user-profile dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false">
-                        <img src="/assets/img/defaultlogo.png" alt="">{{Auth::user()->name}}
+                    <a href="/setting" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <!-- {{--<img src="/assets/img/defaultlogo.png" alt="">{{Auth::user()->name}} --}}-->
+                        <?php
+
+                        use App\company_logo;
+                        use Illuminate\Support\Facades\Auth;
+
+                        $logo = company_logo::where('company_id', Auth::user()->company_id)->first();
+                        ?>
+                        <img src="{{ asset('file_logo/'.$logo->filename) }}" alt="">{{Auth::user()->name}}
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">

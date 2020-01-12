@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("#dataTable").DataTable({
+    /*$("#dataTable").DataTable({
         processing: true,
         serverSide: true,
         aaSorting: [[0, "asc"]],
@@ -37,7 +37,7 @@ $(document).ready(function() {
                 render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             }
         ]
-    });
+    });*/
 
     $("#dataTable2").DataTable({
         processing: true,
