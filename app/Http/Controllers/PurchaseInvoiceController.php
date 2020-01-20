@@ -85,7 +85,7 @@ class PurchaseInvoiceController extends Controller
                 ->orderBy('display_name')
                 ->skip($offset)
                 ->take($resultCount)
-                ->get(['id', DB::raw('display_name as text'), 'term_id', 'email']);
+                ->get(['id', DB::raw('display_name as text'), 'term_id', 'email', 'billing_address']);
 
             $count = contact::where('type_vendor', 1)->count();
             $endCount = $offset + $resultCount;
@@ -3003,7 +3003,7 @@ class PurchaseInvoiceController extends Controller
             $pp_po                  = null;
         }
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $logo                       = company_logo::where('company_id', $user->company_id)->latest()->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_1', compact(['pp', 'pp_item', 'pp_po', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
@@ -3021,7 +3021,7 @@ class PurchaseInvoiceController extends Controller
         }
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $logo                       = company_logo::where('company_id', $user->company_id)->latest()->first();
         $pdf = PDF::loadview('admin.purchases.invoices.PrintPDF_2', compact(['pp', 'pp_item', 'pp_po', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }

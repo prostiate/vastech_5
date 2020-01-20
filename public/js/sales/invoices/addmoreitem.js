@@ -232,6 +232,7 @@ function selectContact() {
         $(".selected_contact_id").val(repo.id);
         $(".selected_contact_term").val(repo.term_id);
         $(".selected_email").val(repo.email);
+        $(".selected_shipping_address").val(repo.shipping_address);
         return repo.text || repo.text;
     }
 
@@ -430,14 +431,18 @@ $(document).ready(function() {
         var id = $(".selected_contact_id").val();
         var term = $(".selected_contact_term").val();
         var email = $(".selected_email").val();
+        var shipping_address = $(".selected_shipping_address").val();
         $(".tampungan_contact_id").val(id);
         $(".tampungan_contact_term").val(term);
         $(".tampungan_email").val(email);
+        $(".tampungan_shipping_address").val(shipping_address);
         var tampungan_term = $(".tampungan_contact_term").val();
         var tampungan_email = $(".tampungan_email").val();
+        var tampungan_shipping_address = $(".tampungan_shipping_address").val();
         $(".term")
             .val(tampungan_term)
             .change();
         $(".email_text").val(tampungan_email);
+        $(".address").val(tampungan_shipping_address);
     });
 });

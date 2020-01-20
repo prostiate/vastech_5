@@ -28,10 +28,12 @@
                                     <input class="selected_contact_id" hidden>
                                     <input class="selected_contact_term" hidden>
                                     <input class="selected_email" hidden>
+                                    <input class="selected_billing_address" hidden>
                                     <input class="tampungan_contact_id" name="vendor_name2" value="{{$pq->contact_id}}" hidden>
                                     <input class="tampungan_contact_term" value="{{$pq->term_id}}" hidden>
                                     <input class="tampungan_email" value="{{$pq->email}}" hidden>
                                     <input class="hidden_contact_id" value="{{$pq->contact_id}}" hidden>
+                                    <input class="hidden_billing_address" value="{{$pq->address}}" hidden>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +88,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Vendor Address</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <textarea rows="4" class="form-control" name="vendor_address">{{$pq->address}}</textarea>
+                                    <textarea rows="4" class="form-control address" name="vendor_address">{{$pq->address}}</textarea>
                                 </div>
                             </div>
                         </div>

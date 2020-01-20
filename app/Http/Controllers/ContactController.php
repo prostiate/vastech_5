@@ -386,6 +386,10 @@ class ContactController extends Controller
             'display_name'    => 'required',
         );
 
+        $default_account_receivable     = default_account::find(15);
+        $default_account_payable        = default_account::find(16);
+        $default_term                   = other_term::find(1);
+
         $error = Validator::make($request->all(), $rules);
         if ($error->fails()) {
             return response()->json(['errors' => $error->errors()->all()]);
@@ -393,40 +397,86 @@ class ContactController extends Controller
         DB::beginTransaction();
         try {
             $id                         = $request->hidden_id;
-            if ($request->has('contact_type1')) {
-                $contact_type1 = 1;
+            $type                       = 0;
+            if (isset($request->contact_type1)) {
+                if ($request->has('contact_type1')) {
+                    $contact_type1 = 1;
+                } else {
+                    $contact_type1 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type1 = 0;
-            };
-
-            if ($request->has('contact_type2')) {
-                $contact_type2 = 1;
+            }
+            if (isset($request->contact_type2)) {
+                if ($request->has('contact_type2')) {
+                    $contact_type2 = 1;
+                } else {
+                    $contact_type2 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type2 = 0;
-            };
-
-            if ($request->has('contact_type3')) {
-                $contact_type3 = 1;
+            }
+            if (isset($request->contact_type3)) {
+                if ($request->has('contact_type3')) {
+                    $contact_type3 = 1;
+                } else {
+                    $contact_type3 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type3 = 0;
-            };
-
-            if ($request->has('contact_type4')) {
-                $contact_type4 = 1;
+            }
+            if (isset($request->contact_type4)) {
+                if ($request->has('contact_type4')) {
+                    $contact_type4 = 1;
+                } else {
+                    $contact_type4 = 0;
+                };
             } else {
+                $type                   += 1;
                 $contact_type4 = 0;
+            }
+
+            if ($type == 4) {
+                return response()->json(['errors' => 'Contact type must be filled with at least one type!']);
+            }
+
+            if ($request->get('account_receivable')) {
+                $account_receivable = $request->get('account_receivable');
+            } else {
+                $account_receivable = $default_account_receivable->account_id;
             };
 
-            if ($request->limit_balance == 0) {
+            if ($request->get('account_payable')) {
+                $account_payable = $request->get('account_payable');
+            } else {
+                $account_payable = $default_account_payable->account_id;
+            };
+
+            if ($request->get('default_term')) {
+                $account_term = $request->get('default_term');
+            } else {
+                $account_term = $default_term->id;
+            };
+
+            if ($request->limit_balance != null) {
+                $limit_b                    = $request->limit_balance;
+            } else {
+                $limit_b                    = 0;
+            }
+
+            if ($limit_b == 0) {
                 $is_limit                   = 0;
             } else {
                 $is_limit                   = 1;
             }
 
             $form_data = array(
-                'account_receivable_id'     => $request->get('account_receivable'),
-                'account_payable_id'        => $request->get('account_payable'),
-                'term_id'                   => $request->get('default_term'),
+                'account_receivable_id'     => $account_receivable,
+                'account_payable_id'        => $account_payable,
+                'term_id'                   => $account_term,
                 'display_name'              => $request->get('display_name'),
                 'type_customer'             => $contact_type1,
                 'type_vendor'               => $contact_type2,
@@ -434,8 +484,8 @@ class ContactController extends Controller
                 'type_other'                => $contact_type4,
                 'sales_type'                => $request->sales_type,
                 'is_limit'                  => $is_limit,
-                'limit_balance'             => $request->limit_balance,
-                'current_limit_balance'     => $request->limit_balance,
+                'limit_balance'             => $limit_b,
+                'current_limit_balance'     => $limit_b,
                 'last_limit_balance'        => 0,
                 'first_name'                => $request->get('first_name'),
                 'middle_name'               => $request->get('middle_name'),

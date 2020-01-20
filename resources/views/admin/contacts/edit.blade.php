@@ -66,6 +66,8 @@
                                                 <input value="{{$contact->limit_balance}}" type="text" name="limit_balance" class="hidden_limit_balance" hidden>
                                             </div>
                                         </div>
+                                        @else
+                                        <input value="{{$contact->limit_balance}}" type="text" name="limit_balance" class="hidden_limit_balance" hidden>
                                         @endif
                                         @if($contact->sales_type == 'GT' or $contact->sales_type == 'MT' or $contact->sales_type == 'WS')
                                         <div class="form-group">

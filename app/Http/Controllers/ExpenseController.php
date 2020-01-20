@@ -44,12 +44,7 @@ class ExpenseController extends Controller
         $accounts           = coa::where('coa_category_id', '!=', 16)
             ->orWhere('coa_category_id', '!=', 17)
             ->get();
-        $vendors            = contact::where('type_customer', '1')
-            ->orWhere('type_other', '1')
-            ->orWhere('type_employee', '1')
-            ->orWhere('type_customer', '1')
-            ->orWhere('type_vendor', '1')
-            ->get();
+        $vendors            = contact::get();
         $expenses           = coa::where('coa_category_id', 16)
             ->orWhere('coa_category_id', 17)
             ->orWhere('coa_category_id', 15)
@@ -308,10 +303,7 @@ class ExpenseController extends Controller
         $accounts = coa::where('coa_category_id', '!=', 16)
             ->orWhere('coa_category_id', '!=', 17)
             ->get();
-        $vendors = contact::where('type_customer', '1')
-            ->orWhere('type_other', '1')
-            ->orWhere('type_employee', '1')
-            ->get();
+        $vendors = contact::get();
         $expenses = coa::where('coa_category_id', 16)
             ->orWhere('coa_category_id', 17)
             ->orWhere('coa_category_id', 15)

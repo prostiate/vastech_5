@@ -4,13 +4,13 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function() {
-    $("#click").click(function() {
+    $("#click_per").click(function() {
         event.preventDefault();
-        $("#click").prop("disabled", true);
-        $("#click").html("Processing");
+        $("#click_per").prop("disabled", true);
+        $("#click_per").html("Processing");
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/spk/updateSPK",
+            url: "/wip/updateWIP_per",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -28,14 +28,14 @@ $(document).ready(function() {
                     for (var count = 0; count < data.errors.length; count++) {
                         html += data.errors[count];
                     }
-                    $('#click').prop('disabled', false);
-                    $('#click').html('Update');
+                    $('#click_per').prop('disabled', false);
+                    $('#click_per').html('Update');
                 }
                 if (data.success) {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/spk/" + data.id;
+                    window.location.href = "/wip/" + data.id;
                 }
                 Swal.fire({
                     type: typeswal,

@@ -335,9 +335,9 @@
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan
                             @endrole
-                            <!--{{--<div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/wip/edit/{{$wip->id}}';">Update</button>
-                            </div>--}}-->
+                            <div class="btn-group">
+                                <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/wip/edit/{{$wip->id}}';">Edit</button>
+                            </div>
                             <input type="text" value="{{$wip->id}}" id="form_id" hidden>
                         </div>
                     </div>

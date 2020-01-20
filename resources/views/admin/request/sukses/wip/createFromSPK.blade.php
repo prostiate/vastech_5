@@ -183,9 +183,9 @@
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_per" readonly>
-                                            <input type="text" class="wip_total_price_hidden_pure_per" hidden>
-                                            <input type="text" class="wip_total_price_hidden_pure_input_per" name="grandtotal_with_qty_per" hidden>
-                                            <input type="text" class="wip_total_price_hidden_grand_per" name="grandtotal_without_qty_per" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_per" >
+                                            <input type="text" class="wip_total_price_hidden_pure_input_per" name="grandtotal_with_qty_per" >
+                                            <input type="text" class="wip_total_price_hidden_grand_per" name="grandtotal_without_qty_per" >
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -282,9 +282,9 @@
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_all" readonly>
-                                            <input type="text" class="wip_total_price_hidden_pure_all" hidden>
-                                            <input type="text" class="wip_total_price_hidden_pure_input_all" name="grandtotal_with_qty_all" hidden>
-                                            <input type="text" class="wip_total_price_hidden_grand_all" name="grandtotal_without_qty_all" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_all" >
+                                            <input type="text" class="wip_total_price_hidden_pure_input_all" name="grandtotal_with_qty_all" >
+                                            <input type="text" class="wip_total_price_hidden_grand_all" name="grandtotal_without_qty_all" >
                                         </td>
                                     </tr>
                                 </tfoot>

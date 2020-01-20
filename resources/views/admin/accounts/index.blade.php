@@ -35,6 +35,90 @@
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/chart_of_accounts/new';">New Account
                         </button>
                     </li>
+                    <li>
+                        <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a data-toggle="modal" data-target="#setupAccounts">Setup Accounts</a>
+                            </li>
+                            <li><a href="/products/export_csv">Set Opening Balance</a>
+                            </li>
+                            <li><a target="_blank" href="/products/export_pdf">Closing Book</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a data-toggle="modal" data-target="#importExcel">Import Journal Entry</a>
+                            <li><a data-toggle="modal" data-target="#exportExcel">Export Accounts</a>
+                        </ul>
+                        <div class="modal fade" id="setupAccounts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <form method="post" action="/products/import_excel" enctype="multipart/form-data">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Setup Accounts</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ csrf_field() }}
+                                            <label>Pilih file excel</label>
+                                            <div class="form-group">
+                                                <input type="file" name="file" required="required">
+                                            </div>
+                                            <a href="{{ url('/file_product/SampleProduct.xlsx') }}">Download Sample</a>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Import</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <form method="post" action="/products/import_excel" enctype="multipart/form-data">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ csrf_field() }}
+                                            <label>Pilih file excel</label>
+                                            <div class="form-group">
+                                                <input type="file" name="file" required="required">
+                                            </div>
+                                            <a href="{{ url('/file_product/SampleProduct.xlsx') }}">Download Sample</a>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Import</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="exportExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <form method="post" action="/products/import_excel" enctype="multipart/form-data">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Export Account</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ csrf_field() }}
+                                            <label>Pilih file excel</label>
+                                            <div class="form-group">
+                                                <input type="file" name="file" required="required">
+                                            </div>
+                                            <a href="{{ url('/file_product/SampleProduct.xlsx') }}">Download Sample</a>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Import</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
                     @endcan
                     @endrole
                 </ul>

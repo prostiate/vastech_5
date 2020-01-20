@@ -39,6 +39,8 @@
                         </li>
                         <li role="presentation" class=""><a href="#tab_content_product" role="tab" id="products-tab2" data-toggle="tab" aria-expanded="false">Products</a>
                         </li>
+                        <li role="presentation" class=""><a href="#tab_content_production" role="tab" id="products-tab2" data-toggle="tab" aria-expanded="false">Production</a>
+                        </li>
                         <!--<li role="presentation" class=""><a href="#tab_content5" role="tab" id="assets-tab2" data-toggle="tab" aria-expanded="false">Assets</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content6" role="tab" id="bank-tab2" data-toggle="tab" aria-expanded="false">Bank</a>
@@ -339,7 +341,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <!--<a href="#">
+                            <a href="/reports/expenses_details">
                                 <div class="col-md-3 col-xs-12 widget widget_tally_box">
                                     <div class="x_panel fixed_height_200">
                                         <div class="x_content">
@@ -349,7 +351,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </a>-->
+                            </a>
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="tab_content_product" aria-labelledby="quote-tab">
                             <a href="/reports/inventory_summary">
@@ -415,6 +417,30 @@
                                             <div class="divider"></div>
                                             <p>This report shows stock inventory movement and details transactions that affects stock movement in each warehouse for
                                                 all products or each products in all warehouses in a period .</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content_production" aria-labelledby="quote-tab">
+                            <a href="/reports/spk_list">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Surat Perintah Kerja List</h3>
+                                            <div class="divider"></div>
+                                            <p>Shows list of all stocked items' quantity and value as of a specified date.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/spk_details">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Surat Perintah Kerja Details</h3>
+                                            <div class="divider"></div>
+                                            <p>This report shows stocked quantity in each warehouse for all products.</p>
                                         </div>
                                     </div>
                                 </div>

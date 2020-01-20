@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports', function () {
         return view('admin.reports.index');
     })->name('reportsindex');
+    Route::get('/reports/select_product',                                       'ReportController@select_product');
     // OVERVIEW
     Route::get('/reports/balance_sheet',                                                                        'ReportController@balanceSheet');
     Route::get('/reports/balance_sheet/excel/as_of={today}/start_year={startyear}&end_year={endyear}',          'ReportController@balanceSheet_excel');
@@ -93,8 +94,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/purchases_order_completion/{start}&{end}',         'ReportController@purchases_order_completionInput');
     // PURCHASES
     // EXPENSES
-    Route::get('/reports/expenses_list',                                    'ReportController@expenses_list');
-    Route::get('/reports/expenses_list/{start}&{end}',                      'ReportController@expenses_listInput');
+    Route::get('/reports/expenses_list',                                                               'ReportController@expenses_list');
+    Route::get('/reports/expenses_list/start_date={start}&end_date={end}&contacts={con}',              'ReportController@expenses_listInput');
+    Route::get('/reports/expenses_list/excel/start_date={start}&end_date={end}&contacts={con}',        'ReportController@expenses_list_excel');
+    Route::get('/reports/expenses_list/csv/start_date={start}&end_date={end}&contacts={con}',          'ReportController@expenses_list_csv');
+    Route::get('/reports/expenses_list/pdf/start_date={start}&end_date={end}&contacts={con}',          'ReportController@expenses_list_pdf');
+    Route::get('/reports/expenses_details',                                                            'ReportController@expenses_details');
+    Route::get('/reports/expenses_details/start_date={start}&end_date={end}&contacts={con}',           'ReportController@expenses_detailsInput');
+    Route::get('/reports/expenses_details/excel/start_date={start}&end_date={end}&contacts={con}',     'ReportController@expenses_details_excel');
+    Route::get('/reports/expenses_details/csv/start_date={start}&end_date={end}&contacts={con}',       'ReportController@expenses_details_csv');
+    Route::get('/reports/expenses_details/pdf/start_date={start}&end_date={end}&contacts={con}',       'ReportController@expenses_details_pdf');
     // EXPENSES
     // PRODUCTS             
     Route::get('/reports/inventory_summary',                                                                        'ReportController@inventory_summary');
@@ -102,7 +111,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/inventory_summary/csv/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_csv');
     Route::get('/reports/inventory_summary/pdf/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_pdf');
     Route::get('/reports/inventory_summary/as_of={mulaidari}',                                                      'ReportController@inventory_summaryInput');
-   // Route::get('/reports/inventory_summary/{mulaidari}',                    'ReportController@inventory_summaryInput');
+    // Route::get('/reports/inventory_summary/{mulaidari}',                    'ReportController@inventory_summaryInput');
     Route::get('/reports/warehouse_stock_quantity',                         'ReportController@warehouse_stock_quantity');
     Route::get('/reports/warehouse_stock_quantity/{mulaidari}',             'ReportController@warehouse_stock_quantityInput');
     Route::get('/reports/inventory_valuation',                              'ReportController@inventory_valuation');
@@ -112,6 +121,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/inventory_details',                                'ReportController@inventory_details');
     Route::get('/reports/warehouse_items_stock_movement',                   'ReportController@warehouse_items_stock_movement');
     // PRODUCTS
+    // PRODUCTIONS
+    Route::get('/reports/spk_list',                                                                             'ReportController@spk_list');
+    Route::get('/reports/spk_list/start_date={start}&end_date={end}&warehouses={war}',                          'ReportController@spk_listInput');
+    Route::get('/reports/spk_list/excel/start_date={start}&end_date={end}&warehouses={war}',                    'ReportController@spk_list_excel');
+    Route::get('/reports/spk_list/csv/start_date={start}&end_date={end}&warehouses={war}',                      'ReportController@spk_list_csv');
+    Route::get('/reports/spk_list/pdf/start_date={start}&end_date={end}&warehouses={war}',                      'ReportController@spk_list_pdf');
+    Route::get('/reports/spk_details',                                                                          'ReportController@spk_details');
+    Route::get('/reports/spk_details/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                       'ReportController@spk_detailsInput');
+    Route::get('/reports/spk_details/excel/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                 'ReportController@spk_details_excel');
+    Route::get('/reports/spk_details/csv/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                   'ReportController@spk_details_csv');
+    Route::get('/reports/spk_details/pdf/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                   'ReportController@spk_details_pdf');
+    // PRODUCTIONS
 
     /*---------CASH AND BANK --------------*/
     Route::get('/cashbank',                                                 'CashbankController@index');
@@ -448,7 +469,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/stock_adjustment/newStockCount',                          'StockAdjustmentController@storeStockCount');
     Route::post('/stock_adjustment/newStockInOut',                          'StockAdjustmentController@storeStockInOut');
     Route::get('/stock_adjustment/{id}',                                    'StockAdjustmentController@show');
-    Route::get('/stock_adjustment/edit/stock_count/{id}',                   'StockAdjustmentController@editStockCount');
+    Route::get('/stock_adjustment/edit/stock_count/{id}_{type}_{cat}&{war}', 'StockAdjustmentController@editStockCount');
     Route::get('/stock_adjustment/edit/stock_inout/{id}',                   'StockAdjustmentController@editStockInOut');
     Route::post('/stock_adjustment/updateStockCount',                       'StockAdjustmentController@updateStockCount');
     Route::post('/stock_adjustment/updateStockInOut',                       'StockAdjustmentController@updateStockInOut');
@@ -630,7 +651,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/wip/newWIP_all',                                          'WipController@store_all');
     Route::get('/wip/{id}',                                                 'WipController@show');
     Route::get('/wip/edit/{id}',                                            'WipController@edit');
-    Route::post('/wip/updateWIP',                                           'WipController@update');
+    Route::post('/wip/updateWIP_per',                                       'WipController@update_per');
+    Route::post('/wip/updateWIP_all',                                       'WipController@update_all');
     Route::get('/wip/delete/{id}/per',                                      'WipController@destroy_per');
     Route::get('/wip/delete/{id}/all',                                      'WipController@destroy_all');
 

@@ -103,7 +103,8 @@
                             <tr class="headings">
                                 <th class="column-title">Company Name</th>
                                 <th class="column-title">Name</th>
-                                <th class="column-title">Address</th>
+                                <th class="column-title">Billing Address</th>
+                                <th class="column-title">Shipping Address</th>
                                 <th class="column-title">Email</th>
                                 <th class="column-title">Phone</th>
                                 <th class="column-title">Limit Balance</th>

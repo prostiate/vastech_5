@@ -173,11 +173,11 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/stock_adjustment') }}" class="btn btn-dark">Cancel</a>
-                            <!--<a href="#" class="btn btn-danger" id="click">Delete</a>
+                            <a href="#" class="btn btn-danger" id="click">Delete</a>
                             <input type="text" value="{{$header->id}}" id="form_id" hidden>
                             <div class="btn-group">
-                                <a href="{{ url('/stock_adjustment/edit/'.$header->id) }}" class="btn btn-success">Edit</a>
-                            </div>-->
+                                <a href="{{ url('/stock_adjustment/edit/stock_count/'.$header->id.'_1_'.$header->adjustment_type.'&'.$header->warehouse_id) }}" class="btn btn-success">Edit</a>
+                            </div>
                         </div>
                     </div>
                 </form>

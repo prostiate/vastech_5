@@ -538,7 +538,7 @@ class StockAdjustmentController extends Controller
         return view('admin.products.stock_adjustment.show', compact(['header', 'details', 'get_all_detail', 'total_debit', 'total_credit']));
     }
 
-    public function edit($id)
+    public function editStockCount($id)
     {
         $header                     = stock_adjustment::find($id);
         $details                    = stock_adjustment_detail::where('stock_adjustment_id', $id)->get();
@@ -552,7 +552,7 @@ class StockAdjustmentController extends Controller
         $default_inventory4         = default_account::find(20);
 
         return view(
-            'admin.products.stock_adjustment.edit',
+            'admin.products.stock_adjustment.editStockCount',
             compact([
                 'header',
                 'details',

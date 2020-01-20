@@ -28,6 +28,10 @@ $(document).ready(function() {
                 render: $.fn.dataTable.render.text()
             },
             {
+                data: "shipping_address",
+                render: $.fn.dataTable.render.text()
+            },
+            {
                 data: "email",
                 render: $.fn.dataTable.render.text()
             },

@@ -796,7 +796,7 @@ class SaleDeliveryController extends Controller
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $logo                       = company_logo::where('company_id', $user->company_id)->latest()->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_1', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }
@@ -808,7 +808,7 @@ class SaleDeliveryController extends Controller
         $pp_item                    = sale_delivery_item::where('sale_delivery_id', $id)->get();
         $today                      = Carbon::today()->format('d F Y');
         $company                    = company_setting::where('company_id', $user->company_id)->first();
-        $logo                       = company_logo::where('company_id', $user->company_id)->first();
+        $logo                       = company_logo::where('company_id', $user->company_id)->latest()->first();
         $pdf = PDF::loadview('admin.sales.delivery.PrintPDF_2', compact(['pp', 'pp_item', 'today', 'company', 'logo']))->setPaper('a4', 'portrait');
         return $pdf->stream();
     }

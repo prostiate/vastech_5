@@ -10,40 +10,72 @@ use App\expense;
 use App\expense_item;
 use App\Exports\balance_sheet;
 use App\Exports\cashflow;
+use App\Exports\expenses_details;
+use App\Exports\expenses_list;
 use App\Exports\general_ledger;
 use App\Exports\inventory_summary;
 use App\Exports\journal_report;
 use App\Exports\profit_loss;
+use App\Exports\spk_details;
+use App\Exports\spk_list;
 use App\Exports\trial_balance;
 use App\other_transaction;
 use App\product;
 use App\purchase_delivery;
 use App\purchase_delivery_item;
-use DB;
-use App\purchase_detail;
 use App\purchase_invoice;
 use App\purchase_invoice_item;
-use App\purchase_product;
 use App\purchase_return_item;
 use App\sale_delivery;
 use App\sale_delivery_item;
-use App\sale_detail;
 use App\sale_invoice;
 use App\sale_invoice_item;
 use App\sale_order;
-use App\sale_payment;
 use App\sale_payment_item;
 use App\sale_return_item;
+use App\spk;
+use App\spk_item;
 use App\User;
 use App\warehouse;
 use App\warehouse_detail;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
+    public function select_product()
+    {
+        if (request()->ajax()) {
+            $page = Input::get('page');
+            $resultCount = 10;
+
+            $offset = ($page - 1) * $resultCount;
+
+            $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                ->orderBy('name')
+                ->skip($offset)
+                ->take($resultCount)
+                ->get(['id', DB::raw('name as text'), 'code']);
+
+            $count = product::count();
+            $endCount = $offset + $resultCount;
+            $morePages = $endCount > $count;
+
+            $results = array(
+                "results" => $breeds,
+                "pagination" => array(
+                    "more" => $morePages,
+                ),
+                "total_count" => $count,
+            );
+
+            return response()->json($results);
+        }
+    }
     // OVERVIEW
     public function balanceSheet()
     {
@@ -2129,16 +2161,127 @@ class ReportController extends Controller
     public function expenses_list()
     {
         $today                      = Carbon::today()->toDateString();
-        $ex                         = expense::whereBetween('transaction_date', [$today, $today])->get();
-        $exi                        = expense_item::with('expense_id')->get();
-        return view('admin.reports.expenses.expenses_list', compact(['today', 'ex', 'exi']));
+        $contact                    = contact::get();
+        $expense                    = expense::whereBetween('transaction_date', [$today, $today])
+            ->with(['expense_item' => function ($expense_item) {
+                $expense_item->get();
+            }])->get();
+        return view('admin.reports.expenses.expenses_list', compact(['today', 'expense', 'contact']));
     }
 
-    public function expenses_listInput($start, $end)
+    public function expenses_listInput($start, $end, $con)
     {
-        $ex                         = expense::whereBetween('transaction_date', [$start, $end])->get();
-        $exi                        = expense_item::with('expense_id')->get();
-        return view('admin.reports.expenses.expenses_listInput', compact(['start', 'end', 'ex', 'exi']));
+        $contacts                   = explode(',', $con);
+        $contact                    = contact::get();
+        if ($con == 'null') {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        } else {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('contact_id', $contacts)
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        }
+        return view('admin.reports.expenses.expenses_listInput', compact(['contact', 'start', 'end', 'expense']));
+    }
+
+    public function expenses_list_excel($start, $end, $con)
+    {
+        return Excel::download(new expenses_list($start, $end, $con), 'expenses_list_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function expenses_list_csv($start, $end, $con)
+    {
+        return Excel::download(new expenses_list($start, $end, $con), 'expenses_list_' . $start . '_' . $end . '.csv');
+    }
+
+    public function expenses_list_pdf($start, $end, $con)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $contacts                                   = explode(',', $con);
+        if ($con == 'null') {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        } else {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('contact_id', $contacts)
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        }
+        $view = view('admin.reports.expenses_export.expenses_list_pdf')->with(compact(['company', 'start', 'end', 'expense']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('expenses_list_' . $start . '_' . $end . '.pdf');
+    }
+
+    public function expenses_details()
+    {
+        $today                      = Carbon::today()->toDateString();
+        $contact                    = contact::get();
+        $expense                    = expense::whereBetween('transaction_date', [$today, $today])
+            ->with(['expense_item' => function ($expense_item) {
+                $expense_item->get();
+            }])->get();
+        return view('admin.reports.expenses.expenses_details', compact(['today', 'expense', 'contact']));
+    }
+
+    public function expenses_detailsInput($start, $end, $con)
+    {
+        $contacts                   = explode(',', $con);
+        $contact                    = contact::get();
+        if ($con == 'null') {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        } else {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('contact_id', $contacts)
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        }
+        return view('admin.reports.expenses.expenses_detailsInput', compact(['contact', 'start', 'end', 'expense']));
+    }
+
+    public function expenses_details_excel($start, $end, $con)
+    {
+        return Excel::download(new expenses_details($start, $end, $con), 'expenses_details_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function expenses_details_csv($start, $end, $con)
+    {
+        return Excel::download(new expenses_details($start, $end, $con), 'expenses_details_' . $start . '_' . $end . '.csv');
+    }
+
+    public function expenses_details_pdf($start, $end, $con)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $contacts                                   = explode(',', $con);
+        if ($con == 'null') {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        } else {
+            $expense                    = expense::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('contact_id', $contacts)
+                ->with(['expense_item' => function ($expense_item){
+                    $expense_item->get();
+                }])->get();
+        }
+        $view = view('admin.reports.expenses_export.expenses_details_pdf')->with(compact(['company', 'start', 'end', 'expense']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('expenses_list_' . $start . '_' . $end . '.pdf');
     }
     // EXPENSES
 
@@ -2325,4 +2468,159 @@ class ReportController extends Controller
         return view('admin.reports.products.warehouse_items_stock_movement', compact(['products', 'warehouse']));
     }
     // PRODUCTS
+    // PRODUCTIONS
+    public function spk_list()
+    {
+        $today                                      = Carbon::today()->toDateString();
+        $warehouses                                 = warehouse::get();
+        $spk                                        = spk::whereBetween('transaction_date', [$today, $today])->get();
+        return view(
+            'admin.reports.production.spk_list',
+            compact([
+                'today',
+                'warehouses',
+                'spk'
+            ])
+        );
+    }
+
+    public function spk_listInput($start, $end, $war)
+    {
+        $warehouse                                 = explode(',', $war);
+        $warehouses                                = warehouse::get();
+        /*$spk                                        = spk::with(['punyaspk_item' => function($spk) use($products) {
+            $spk->whereIn('product_id', $products);
+        }])
+        ->get();
+        dd($spk);*/
+        if ($war == 'null') {
+            //dd('if');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])->get();
+        } else {
+            //dd('else');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('warehouse_id', $warehouse)
+                ->get();
+        }
+        return view('admin.reports.production.spk_listInput', compact(['start', 'end', 'warehouse', 'spk', 'warehouses']));
+    }
+
+    public function spk_list_excel($start, $end, $war)
+    {
+        return Excel::download(new spk_list($start, $end, $war), 'spk_list_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function spk_list_csv($start, $end, $war)
+    {
+        return Excel::download(new spk_list($start, $end, $war), 'spk_list_' . $start . '_' . $end . '.csv');
+    }
+
+    public function spk_list_pdf($start, $end, $war)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $warehouse                                 = explode(',', $war);
+        if ($war == 'null') {
+            //dd('if');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])->get();
+        } else {
+            //dd('else');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('warehouse_id', $warehouse)
+                ->get();
+        }
+        $view = view('admin.reports.production_export.spk_list_pdf')->with(compact(['company', 'start', 'end', 'warehouse', 'spk']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('spk_list_' . $start . '_' . $end . '.pdf');
+    }
+
+    public function spk_details()
+    {
+        $today                                      = Carbon::today()->toDateString();
+        $products                                   = product::get();
+        $warehouses                                 = warehouse::get();
+        $spk                                        = spk::whereBetween('transaction_date', [$today, $today])
+            ->with(['spk_item' => function ($spk_item) {
+                $spk_item->get();
+            }])->get();
+        return view(
+            'admin.reports.production.spk_details',
+            compact([
+                'today',
+                'warehouses',
+                'spk',
+                'products'
+            ])
+        );
+    }
+
+    public function spk_detailsInput($start, $end, $prod, $war)
+    {
+        $product                                    = explode(',', $prod);
+        $warehouse                                  = explode(',', $war);
+        $warehouses                                 = warehouse::get();
+        $products                                   = product::get();
+        if ($war == 'null') {
+            //dd('if');
+            if ($prod == 'null') {
+                $spk                                       = spk::whereBetween('transaction_date', [$start, $end])
+                    ->with(['spk_item' => function ($spk_item) {
+                        $spk_item->get();
+                    }])->get();
+            } else {
+                $spk                                       = spk::whereBetween('transaction_date', [$start, $end])
+                    ->with(['spk_item' => function ($spk_item) use ($product) {
+                        $spk_item->whereIn('product_id', $product);
+                    }])->get();
+            }
+        } else {
+            //dd('else');
+            if ($prod == 'null') {
+                $spk                                       = spk::whereBetween('transaction_date', [$start, $end])
+                    ->whereIn('warehouse_id', $warehouse)
+                    ->with(['spk_item' => function ($spk_item) {
+                        $spk_item->get();
+                    }])->get();
+            } else {
+                $spk                                       = spk::whereBetween('transaction_date', [$start, $end])
+                    ->whereIn('warehouse_id', $warehouse)
+                    ->with(['spk_item' => function ($spk_item) use ($product) {
+                        $spk_item->whereIn('product_id', $product);
+                    }])->get();
+            }
+        }
+        return view('admin.reports.production.spk_detailsInput', compact(['start', 'end', 'warehouse', 'spk', 'products', 'warehouses']));
+    }
+
+    public function spk_details_excel($start, $end, $prod, $war)
+    {
+        return Excel::download(new spk_details($start, $end, $prod, $war), 'spk_details_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function spk_details_csv($start, $end, $prod, $war)
+    {
+        return Excel::download(new spk_details($start, $end, $prod, $war), 'spk_details_' . $start . '_' . $end . '.csv');
+    }
+
+    public function spk_details_pdf($start, $end, $war)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $warehouse                                 = explode(',', $war);
+        if ($war == 'null') {
+            //dd('if');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])->get();
+        } else {
+            //dd('else');
+            $spk                                        = spk::whereBetween('transaction_date', [$start, $end])
+                ->whereIn('warehouse_id', $warehouse)
+                ->get();
+        }
+        $view = view('admin.reports.production_export.spk_details_pdf')->with(compact(['company', 'start', 'end', 'warehouse', 'spk']));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html);
+        return $pdf->download('spk_details_' . $start . '_' . $end . '.pdf');
+    }
+    // PRODUCTIONS
 }

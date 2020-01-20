@@ -250,10 +250,6 @@ class CashbankController extends Controller
                 'debit'                         => $request->get('amount'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($request->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('amount'),
-            ]);
             // CREATE COA DETAIL YANG TRANSFER FROM (CREDIT)
             coa_detail::create([
                 'company_id'                    => $user->company_id,
@@ -264,10 +260,6 @@ class CashbankController extends Controller
                 'number'                        => 'Bank Transfer #' . $trans_no,
                 'debit'                         => 0,
                 'credit'                        => $request->get('amount'),
-            ]);
-            $get_current_balance_on_coa         = coa::find($request->transfer_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $request->get('amount'),
             ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $ex->id]);

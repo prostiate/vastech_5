@@ -14,9 +14,9 @@
                         use App\company_logo;
                         use Illuminate\Support\Facades\Auth;
 
-                        $logo = company_logo::where('company_id', Auth::user()->company_id)->first();
+                        $logo = company_logo::where('company_id', Auth::user()->company_id)->latest()->first();
                         ?>
-                        <img src="{{ asset('file_logo/'.$logo->filename) }}" alt="">{{Auth::user()->name}}
+                        <img src="{{ url('file_logo/'.$logo->filename) }}" alt="">{{Auth::user()->name}}
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-usermenu pull-right">
