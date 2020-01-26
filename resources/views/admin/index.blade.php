@@ -3,18 +3,51 @@
 @hasrole('Owner|Ultimate')
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <div class="x_panel">
+        <!--<div class="x_panel">
             <div class="x_title">
                 <h2>Cash Flow</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <h2><b>Rp @number($ending_cash)</b></h2>
+                @foreach($ending_cash as $c)
+                <h2><b>Rp @number($c)</b></h2>
+                @endforeach
+                <h2><b>Rp </b></h2>
                 <small>Cash In & Out Over Time</small>
-                <input class="CF" value="{{$ending_cash}}" hidden>
+                @foreach($ending_cash as $c)
+                <input class="CF" value="{{$c}}" hidden>
+                @endforeach
                 <br>
                 <br>
                 <canvas id="chartCF" height="355" width="710" style="width: 568px; height: 284px;"></canvas>
+            </div>
+        </div>-->
+        <div class="dashboard_graph x_panel">
+            <div class="x_title">
+                <h2>Cash Flow</h2>
+                <div class="clearfix"></div>
+                <!--
+                <div class="col-md-9">
+                    <ul class="nav navbar-right">
+                        <li><a class="collapse-link">Start Date </a></li>
+                        <li><input value="{{$year}}" type="text" id="datepicker1" class="form-control"></li>
+                        <li><a class="collapse-link">End Date </a></li>                        
+                        <li><input value="{{$last_year}}" type="text" id="datepicker2" class="form-control"></li>
+                            <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
+                        </li>
+                    </ul>
+                </div>
+            -->
+            </div>
+            <div class="x_content">
+                <h2><b>Rp @number($total_cash_flow)</b></h2>
+                <canvas id="chartCF" height="355" width="710" style="width: 568px; height: 284px;"></canvas>
+                @foreach($ending_cash as $c)
+                <input class="CF" value="{{$c}}" hidden>
+                @endforeach
+                <input class="CF_l_year" value="{{$last_year}}" type="text" hidden>
+                <input class="CF_year" value="{{$year}}" type="text" hidden>
+
             </div>
         </div>
     </div>
@@ -47,11 +80,14 @@
             </div>
             <div class="x_content">
                 <h2><b>Rp @number($coa_ar_total)</b></h2>
-                @foreach($coa_ar_balance as $a)
+                <input class="AR_ly" value="{{$last_year}}" hidden>
+                <input class="AR_cy" value="{{$year}}" hidden>
+                @foreach($coa_ar_balance_last_year as $a)
                 <input class="AR" value="{{$a}}" hidden>
                 @endforeach
-                <br>
-                <br>
+                @foreach($coa_ar_balance as $b)
+                <input class="AR_1" value="{{$b}}" hidden>
+                @endforeach
                 <canvas id="chartAR" height="355" width="710" style="width: 568px; height: 284px;"></canvas>
             </div>
         </div>
@@ -64,11 +100,14 @@
             </div>
             <div class="x_content">
                 <h2><b>Rp @number($coa_ap_total)</b></h2>
-                @foreach($coa_ap_balance as $a)
+                <input class="AP_ly" value="{{$last_year}}" hidden>
+                <input class="AP_cy" value="{{$year}}" hidden>
+                @foreach($coa_ap_balance_last_year as $a)
                 <input class="AP" value="{{$a}}" hidden>
                 @endforeach
-                <br>
-                <br>
+                @foreach($coa_ap_balance as $b)
+                <input class="AP_1" value="{{$b}}" hidden>
+                @endforeach
                 <canvas id="chartAP" height="355" width="710" style="width: 568px; height: 284px;"></canvas>
             </div>
         </div>
@@ -82,12 +121,14 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <h2><b>Rp @number($net_income)</b></h2>
-                <small>Profit Over Time</small>
-                <input class="NP" value="{{$net_income}}" hidden>
-                <br>
-                <br>
+                <h2><b>Rp @number($total_profit)</b></h2>
                 <canvas id="chartNP" height="355" width="710" style="width: 568px; height: 284px;"></canvas>
+                @foreach($net_income as $c)
+                <input class="NP" value="{{$c}}" hidden>
+                @endforeach
+                <input class="NP_l_year" value="{{$last_year}}" type="text" hidden>
+                <input class="NP_year" value="{{$year}}" type="text" hidden>
+
             </div>
         </div>
     </div>
@@ -105,7 +146,7 @@
                 @endforeach
                 <br>
                 <br>
-                <canvas id="chartTP" height="750" width="710" style="width: 568px; height: 284px;"></canvas>
+                <canvas id="chartSR" height="750" width="710" style="width: 568px; height: 284px;"></canvas>
             </div>
         </div>
     </div>
@@ -132,11 +173,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboard/chartAP.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartAR.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartEX.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartCF.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartNP.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP.js') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP2.js') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAP.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAR.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartEX.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartCF.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartNP.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP2.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/all.js?v=5-26012020') }}" charset="utf-8"> </script>
 @endpush

@@ -246,8 +246,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/production_one/station_one/createForm.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/products/production_one/station_one/addmoreitem.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/production_one/station_one/createForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/production_one/station_one/addmoreitem.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

@@ -176,8 +176,8 @@
                             <a href="#" class="btn btn-danger" id="click">Delete</a>
                             <input type="text" value="{{$header->id}}" id="form_id" hidden>
                             <div class="btn-group">
-                                <a href="{{ url('/stock_adjustment/edit/stock_count/'.$header->id.'_1_'.$header->adjustment_type.'&'.$header->warehouse_id) }}" class="btn btn-success">Edit</a>
-                            </div>
+                                <a href="{{ url('/stock_adjustment/edit/stock_count/'.$header->id) }}" class="btn btn-success">Edit</a>
+                            </div> 
                         </div>
                     </div>
                 </form>
@@ -188,5 +188,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/stock_adjustment/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/stock_adjustment/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

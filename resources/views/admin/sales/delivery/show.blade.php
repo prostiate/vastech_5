@@ -140,11 +140,17 @@
                 @elseif($pd->status == 3)
                 <span class="label label-success" style="color:white;">Paid</span>
                 @elseif($pd->status == 4)
-                <span class="label label-warning" style="color:white;">Partially</span>
+                <span class="label label-warning" style="color:white;">Partial</span>
                 @elseif($pd->status == 5)
                 <span class="label label-danger" style="color:white;">Overdue</span>
-                @else
+                @elseif($pd->status == 6)
                 <span class="label label-success" style="color:white;">Sent</span>
+                @elseif($pd->status == 7)
+                <span class="label label-success" style="color:white;">Active</span>
+                @elseif($pd->status == 8)
+                <span class="label label-success" style="color:white;">Sold</span>
+                @elseif($pd->status == 9)
+                <span class="label label-success" style="color:white;">Disposed</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -316,7 +322,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/delivery/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/delivery/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

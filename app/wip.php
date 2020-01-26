@@ -9,6 +9,9 @@ class wip extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'result_qty' => 'float',
+    ];
 
     public function wip_item()
     {

@@ -9,6 +9,11 @@ class sale_return_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'qty' => 'float',
+        'qty_invoice' => 'float',
+        'qty_remaining_invoice' => 'float',
+    ];
 
     public function sale_return()
     {

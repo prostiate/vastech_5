@@ -1,45 +1,57 @@
-var ctx = document.getElementById("chartTP");
+var ctx = document.getElementById("chartSR");
 var balance = $(".TP");
 
+var date = new Date();
+var now = date.getMonth();
+
+if (now <= 5) {
+    var MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var i = [0, 1, 2, 3, 4, 5];
+} else {
+    var MONTH = ['July', 'August', 'September', 'October', 'November', 'December'];
+    var i = [6, 7, 8, 9, 10, 11];
+}
 
 var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: [
-            'July', 'August', 'September', 'October', 'November', 'December'
+            MONTH[0], MONTH[1], MONTH[2], MONTH[3], MONTH[4], MONTH[5]
         ],
         datasets: [{
-            label: "# of 2019",
+            label: "# of " + $(year).val(),
+            backgroundColor: ["#26B99A", "#03586A", "#26B99A", "#03586A", "#26B99A", "#03586A"],
             data: [
-                $(balance[6]).val(), $(balance[7]).val(), $(balance[8]).val(), $(balance[9]).val(), $(balance[10]).val(), $(balance[11]).val()
+                $(balance[i[0]]).val(), $(balance[i[1]]).val(), $(balance[i[2]]).val(), $(balance[i[3]]).val(), $(balance[i[4]]).val(), $(balance[i[5]]).val()
             ],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderWidth: 1
-        }, ]
+        }]
     },
     options: {
         scales: {
-            xAxes: [{
-                stacked: false
-            }],
             yAxes: [{
-                stacked: false,
+                ticks: {
+                    beginAtZero: 0,
+                    callback: function (value, index, values) {
+                        if (parseInt(value) >= 1000  || parseInt(value) <= 1000) {
+                            return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        } else {
+                            return 'Rp ' + value;
+                        }
+                    }
+                },
+                gridLines: {
+                    offsetGridLines: true
+                },
             }]
+        },
+        tooltips: {
+            callbacks: {
+                label: function (tooltipItem, data) {
+                    return 'Rp ' + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }
+            }
         }
     }
 });
+
+console.log()

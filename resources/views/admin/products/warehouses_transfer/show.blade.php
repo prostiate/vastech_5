@@ -17,8 +17,14 @@
                 <span class="label label-warning" style="color:white;">Partial</span>
                 @elseif($wt->status == 5)
                 <span class="label label-danger" style="color:white;">Overdue</span>
-                @else
+                @elseif($wt->status == 6)
                 <span class="label label-success" style="color:white;">Sent</span>
+                @elseif($wt->status == 7)
+                <span class="label label-success" style="color:white;">Active</span>
+                @elseif($wt->status == 8)
+                <span class="label label-success" style="color:white;">Sold</span>
+                @elseif($wt->status == 9)
+                <span class="label label-success" style="color:white;">Disposed</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -124,5 +130,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

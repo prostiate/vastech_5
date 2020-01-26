@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("#dataTable2").DataTable({
+    $("#dataTable_active").DataTable({
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
@@ -8,49 +8,152 @@ $(document).ready(function() {
         },
         columns: [
             {
-                data: "coa.name",
-                name: "coa.name"
+                data: "date",
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "date",
-                name: "date"
+                data: "coa.name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/chart_of_accounts/' +
+                        row.coa.id +
+                        '">' +
+                        row.coa.name +
+                        "</a>"
+                    );
+                }
             },
             {
                 data: "name",
-                name: "name",
-                render:function(data, type, row){
-                    return '<a href="/asset_managements/' + row.id + '">' + row.name + '</a>'
-                },
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/asset_managements/' +
+                        row.id +
+                        '">' +
+                        row.name +
+                        "</a>"
+                    );
+                }
             },
             {
                 data: "cost",
-                name: "cost",
-                render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp ' )
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
-                data: "cost",
-                name: "cost",
-                render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp ' )
+                data: "actual_cost",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             }
         ]
-    }); /*
+    });
+    $("#dataTable_disposed").DataTable({
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        ajax: {
+            url: "/asset_managements/disposed"
+        },
+        columns: [
+            {
+                data: "coa.name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/chart_of_accounts/' +
+                        row.coa.id +
+                        '">' +
+                        row.coa.name +
+                        "</a>"
+                    );
+                }
+            },
+            {
+                data: "date",
+                render: $.fn.dataTable.render.text()
+            },
+            {
+                data: "name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/asset_managements/' +
+                        row.id +
+                        '">' +
+                        row.name +
+                        "</a>"
+                    );
+                }
+            },
+            {
+                data: "cost",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
+            },
+            {
+                data: "cost",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
+            },
+            {
+                data: "action",
+                name: "action"
+            }
+        ]
+    });
+    $("#dataTable_depreciation").DataTable({
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        ajax: {
+            url: "/asset_managements/depreciation"
+        },
+        columns: [
+            {
+                data: "asset_detail.[0].method",
+                render: $.fn.dataTable.render.text()
+            },
+            {
+                data: "name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/asset_managements/' +
+                        row.id +
+                        '">' +
+                        row.name +
+                        "</a>"
+                    );
+                }
+            },
+            {
+                data: "asset_detail.[0].life",
+                render: $.fn.dataTable.render.text()
+            },
+            {
+                data: "asset_detail.[0].rate",
+                render: $.fn.dataTable.render.text()
+            },
+            {
+                data: "asset_detail.[0].method",
+                render: $.fn.dataTable.render.text()
+            },
+            {
+                data: "action",
+                name: "action"
+            }
+        ]
+    });
 
     var user_id;
-
-    $(document).on('click', '.delete', function() {
-        user_id = $(this).attr('id');
+    var asset_id;
+    $(document).on("click", ".apply", function() {
+        asset_id = $(this).attr("id");
         Swal.fire({
-            title: 'Are you sure?',
+            title: "Are you sure?",
             text: "You won't be able to revert this!",
-            type: 'warning',
+            type: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, apply it!"
+        }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/purchases_invoice/delete/" + user_id,
+                    url: "/asset_managements/apply_depreciation/" + asset_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -64,7 +167,15 @@ $(document).ready(function() {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            $('#dataTable').DataTable().ajax.reload();
+                            $("#dataTable_active")
+                                .DataTable()
+                                .ajax.reload();
+                            $("#dataTable_disposed")
+                                .DataTable()
+                                .ajax.reload();
+                            $("#dataTable_depreciation")
+                                .DataTable()
+                                .ajax.reload();
                         }
                         Swal.fire({
                             type: typeswal,
@@ -72,18 +183,18 @@ $(document).ready(function() {
                             html: html
                         });
                     }
-                })
+                });
                 Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
+                    "Success!",
+                    "Your asset has been depreciated.",
+                    "success"
+                );
             }
-        })
+        });
     });
-    */
-    $(document).on('click', '.edit', function() {
-        user_id = $(this).attr('id');
-        window.location.href = '/asset_managements/edit/' + user_id;
+
+    $(document).on("click", ".edit", function() {
+        user_id = $(this).attr("id");
+        window.location.href = "/asset_managements/edit/" + user_id;
     });
 });

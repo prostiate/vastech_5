@@ -1,6 +1,8 @@
 var ctx = document.getElementById("chartAR");
+var l_year = $(".AR_ly")
+var c_year = $(".AR_cy")
 var balance = $(".AR");
-
+var balance_1 = $(".AR_1");
 
 var myChart = new Chart(ctx, {
     type: 'bar',
@@ -9,50 +11,43 @@ var myChart = new Chart(ctx, {
             'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
         ],
         datasets: [{
-            label: "# of 2019",
+            label: "# of " + $(l_year).val(),
+            backgroundColor: "#26B99A",
             data: [
                 $(balance[0]).val(), $(balance[1]).val(), $(balance[2]).val(), $(balance[3]).val(), $(balance[4]).val(), $(balance[5]).val(), $(balance[6]).val(), $(balance[7]).val(), $(balance[8]).val(), $(balance[9]).val(), $(balance[10]).val(), $(balance[11]).val()
             ],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+        }, {
+            label: "# of " + $(c_year).val(),
+            backgroundColor: "#03586A",
+            data: [
+                $(balance_1[0]).val(), $(balance_1[1]).val(), $(balance_1[2]).val(), $(balance_1[3]).val(), $(balance_1[4]).val(), $(balance_1[5]).val(), $(balance_1[6]).val(), $(balance_1[7]).val(), $(balance_1[8]).val(), $(balance_1[9]).val(), $(balance_1[10]).val(), $(balance_1[11]).val()
             ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderWidth: 1
-        }, ]
+        },]
     },
     options: {
         scales: {
-            xAxes: [{
-                stacked: true
-            }],
             yAxes: [{
-                stacked: true,
-                stepSize: 100000
+                ticks: {
+                    beginAtZero: 0,
+                    callback: function (value, index, values) {
+                        if (parseInt(value) >= 1000) {
+                            return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        } else {
+                            return 'Rp ' + value;
+                        }
+                    }
+                },
+                gridLines: {
+                    offsetGridLines: true
+                },                
             }]
-        }
+        },
+        tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    return 'Rp ' + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }            
+            }
+        },
     }
 });

@@ -268,9 +268,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/request/sukses/sales/invoices/createFormRequestSukses.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/request/sukses/sales/invoices/addmoreitemRequestSukses.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/request/sukses/sales/invoices/createFormRequestSukses.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/request/sukses/sales/invoices/addmoreitemRequestSukses.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

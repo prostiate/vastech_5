@@ -148,10 +148,6 @@ class SalePaymentController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($request->pay_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // KALAU MAU LIHAT PENJELASAN INI, LIAT DI PURCHASE PAYMENT
             foreach ($request->pinumber as $i => $keys) {
                 //$id                             = $request->hidden_id[$i];
@@ -173,10 +169,6 @@ class SalePaymentController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->pipayment_amount[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($contact_id->account_receivable_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $request->pipayment_amount[$i],
                     ]);
                     // CHECK YANG DIBAYAR SAMA GA DENGAN BALANCE DUENYA BUAT NENTUIN STATUS DI INVOICE
                     $total_balance[$i]          = $request->pibalancedue[$i] - $request->pipayment_amount[$i];
@@ -257,18 +249,9 @@ class SalePaymentController extends Controller
             // DELETE COA DETAIL PUNYA PAYMENT
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-            $get_current_balance_on_coa         = coa::find($pp->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pp->grandtotal,
-            ]);
             // HAPUS BALANCE PER ITEM CASHBANK
             $pp_details                         = sale_payment_item::where('sale_payment_id', $id)->get();
             foreach ($pp_details as $a) {
-                $get_current_balance_on_coa     = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $a->payment_amount,
-                ]);
                 $get_pi_data                    = sale_invoice::find($a->sale_invoice_id);
                 $check_limit                    = contact::find($get_pi_data->contact_id);
                 if ($check_limit->is_limit == 1) {
@@ -338,10 +321,6 @@ class SalePaymentController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($request->pay_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // KALAU MAU LIHAT PENJELASAN INI, LIAT DI PURCHASE PAYMENT
             foreach ($request->pinumber as $i => $keys) {
                 //$id                             = $request->hidden_id[$i];
@@ -364,10 +343,6 @@ class SalePaymentController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->pipayment_amount[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($contact_id->account_receivable_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $request->pipayment_amount[$i],
                     ]);
                     // CHECK YANG DIBAYAR SAMA GA DENGAN BALANCE DUENYA BUAT NENTUIN STATUS DI INVOICE
                     $pi                         = sale_invoice::find($request->pinumber[$i]);
@@ -419,18 +394,9 @@ class SalePaymentController extends Controller
             // DELETE COA DETAIL PUNYA PAYMENT
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-            $get_current_balance_on_coa         = coa::find($pp->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pp->grandtotal,
-            ]);
             // HAPUS BALANCE PER ITEM CASHBANK
             $pp_details                         = sale_payment_item::where('sale_payment_id', $id)->get();
             foreach ($pp_details as $a) {
-                $get_current_balance_on_coa     = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $a->payment_amount,
-                ]);
                 $get_pi_data                    = sale_invoice::find($a->sale_invoice_id);
                 $check_limit                    = contact::find($get_pi_data->contact_id);
                 if ($check_limit->is_limit == 1) {

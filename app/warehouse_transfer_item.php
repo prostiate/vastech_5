@@ -9,6 +9,9 @@ class warehouse_transfer_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'qty' => 'float',
+    ];
 
     public function warehouse_transfer()
     {

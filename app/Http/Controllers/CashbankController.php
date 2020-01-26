@@ -349,10 +349,6 @@ class CashbankController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($request->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
 
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
@@ -366,10 +362,6 @@ class CashbankController extends Controller
                     'contact_id'                => $request->get('vendor_name'),
                     'debit'                     => 0,
                     'credit'                    => $request->get('taxtotal'),
-                ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
                 ]);
             }
 
@@ -396,10 +388,6 @@ class CashbankController extends Controller
                     'contact_id'                => $request->get('vendor_name'),
                     'debit'                     => 0,
                     'credit'                    => $request->amount_acc[$i],
-                ]);
-                $get_current_balance_on_coa     = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
                 ]);
             };
             DB::commit();
@@ -503,10 +491,6 @@ class CashbankController extends Controller
                     'debit'                     => $request->amount_acc[$i],
                     'credit'                    => 0,
                 ]);
-                $get_current_balance_on_coa     = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                ]);
             };
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
@@ -521,10 +505,6 @@ class CashbankController extends Controller
                     'debit'                 => $request->get('taxtotal'),
                     'credit'                => 0,
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
@@ -537,10 +517,6 @@ class CashbankController extends Controller
                 'contact_id'                    => $request->get('vendor_name'),
                 'debit'                         => 0,
                 'credit'                        => $request->get('balance'),
-            ]);
-            $get_current_balance_on_coa         = coa::find($request->pay_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $request->get('balance'),
             ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $ex->id]);
@@ -656,10 +632,6 @@ class CashbankController extends Controller
                 'debit'                         => $request->amount_acc,
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($expense_account_coa_detail);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->amount_acc,
-            ]);
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
                 'company_id'                    => $user->company_id,
@@ -671,10 +643,6 @@ class CashbankController extends Controller
                 'contact_id'                    => $request->get('vendor_name'),
                 'debit'                         => 0,
                 'credit'                        => $request->get('amount_acc'),
-            ]);
-            $get_current_balance_on_coa         = coa::find($request->pay_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $request->get('amount_acc'),
             ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $ex->id]);
@@ -805,63 +773,31 @@ class CashbankController extends Controller
             // CHECK DULU ACCOUNT DEPOSIT TO CURRENT SAMA TIDAK SEPERTI YANG PREVIOUS
             if ($request->deposit_to == $ambil_amount_coa_detail_sebelumnya->deposit_to) {
                 // ACCOUNT DEPOSIT TO SAMA, BERARTI DELETE DULU BALANCE YANG SEBELUMNYA BARU ABIS TUH DI TAMBAH SAMA YANG BARU
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->deposit_to);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya->amount,
-                ]);
                 coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $ambil_amount_coa_detail_sebelumnya->number)->where('credit', 0)->update([
                     'date'                          => $request->get('trans_date'),
                     'debit'                         => $request->get('amount'),
                 ]);
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->deposit_to);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $request->get('amount'),
-                ]);
             } else {
                 // ACCOUNT DEPOSIT TO BEDA, BERARTI DELETE DULU BALANCE YANG SEBELUMNYA BARU ABIS TUH DI TAMBAH SAMA YANG BARU
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->deposit_to);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya->amount,
-                ]);
                 coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $ambil_amount_coa_detail_sebelumnya->number)->where('credit', 0)->update([
                     'coa_id'                        => $request->deposit_to,
                     'date'                          => $request->get('trans_date'),
                     'debit'                         => $request->get('amount'),
                 ]);
-                $get_current_balance_on_coa = coa::find($request->deposit_to);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $request->get('amount'),
-                ]);
             }
             // CHECK DULU ACCOUNT TRANSFER FROM CURRENT SAMA TIDAK SEPERTI YANG PREVIOUS
             if ($request->transfer_from == $ambil_amount_coa_detail_sebelumnya->transfer_from) {
                 // ACCOUNT DEPOSIT TO SAMA, BERARTI DELETE DULU BALANCE YANG SEBELUMNYA BARU ABIS TUH DI TAMBAH SAMA YANG BARU
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->transfer_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $ambil_amount_coa_detail_sebelumnya->amount,
-                ]);
                 coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->update([
                     'date'                          => $request->get('trans_date'),
                     'credit'                        => $request->get('amount'),
                 ]);
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->transfer_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $request->get('amount'),
-                ]);
             } else {
                 // ACCOUNT DEPOSIT TO BEDA, BERARTI DELETE DULU BALANCE YANG SEBELUMNYA BARU ABIS TUH DI TAMBAH SAMA YANG BARU
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->transfer_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $ambil_amount_coa_detail_sebelumnya->amount,
-                ]);
                 coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->update([
                     'coa_id'                        => $request->transfer_from,
                     'date'                          => $request->get('trans_date'),
                     'credit'                        => $request->get('amount'),
-                ]);
-                $get_current_balance_on_coa = coa::find($request->transfer_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $request->get('amount'),
                 ]);
             }
             // UPDATE CABA DI AKHIR CYCLE SOALNYA BIAR GA KETIBAN SAMA YANG BARU SOALNYA CABA DIPAKE PADA SAAT CYCLE
@@ -899,36 +835,12 @@ class CashbankController extends Controller
         DB::beginTransaction();
         try {
             $id                                 = $request->hidden_id;
-            $ambil_amount_coa_detail_sebelumnya = cashbank::find($id);
             $pp                                 = cashbank_item::where('cashbank_id', $id)->get();
-            $rp                                 = $request->expense_acc;
             $default_tax                        = default_account::find(8);
             $caba                               = cashbank::find($id);
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('debit', 0)->delete();
             //$debit->delete();
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('credit', 0)->delete();
-            //$credit->delete();
-
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (DEPOSIT TO)
-            $get_current_balance_on_coa = coa::find($caba->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $caba->amount,
-            ]);
-            // HAPUS PAJAK
-            if ($caba->taxtotal > 0) {
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance - $caba->taxtotal,
-                ]);
-            }
-            // HAPUS BALANCE PER ITEM CASHBANK
-            $caba_details       = cashbank_item::where('cashbank_id', $id)->get();
-            foreach ($caba_details as $a) {
-                $get_current_balance_on_coa = coa::find($a->receive_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                ]);
-            }
             cashbank_item::where('cashbank_id', $id)->delete();
             // BARU BIKIN LAGI
             other_transaction::where('type', 'bankdeposit')->where('number', $caba->number)->update([
@@ -958,10 +870,6 @@ class CashbankController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa = coa::find($request->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
 
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(8);
@@ -975,10 +883,6 @@ class CashbankController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => 0,
                     'credit'                => $request->get('taxtotal'),
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
                 ]);
             }
             // CREATE CASH BANK DETAILS
@@ -1004,10 +908,6 @@ class CashbankController extends Controller
                     'contact_id'                => $request->get('vendor_name'),
                     'debit'                     => 0,
                     'credit'                    => $request->amount_acc[$i],
-                ]);
-                $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
                 ]);
             };
             DB::commit();
@@ -1058,11 +958,6 @@ class CashbankController extends Controller
                 'amount'                        => $request->get('balance'),
             ]);
             if ($ambil_amount_coa_detail_sebelumnya->pay_from == $request->deposit_to) {
-                $get_current_balance_on_coa = coa::find($request->deposit_to); // CASH 1
-                // NGURANGIN AMOUNT YANG SEBELUMNYA ABIS TUH LANGSUNG DI UPDATE PAKE YANG BARU, SOALNYA KAN GA BERUBAH YANG DEPOSIT TO NYA
-                coa::find($get_current_balance_on_coa->id)->update([ // 1
-                    'balance'           => ($get_current_balance_on_coa->balance + $ambil_amount_coa_detail_sebelumnya->amount) - $request->get('balance'),
-                ]);                                     // (2 - 2) + 4 = 4
                 // UPDATE COA DETAIL YANG DEPOSIT TO
                 coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->where('coa_id', $request->deposit_to)->update([
                     'coa_id'                        => $request->deposit_to,
@@ -1071,11 +966,6 @@ class CashbankController extends Controller
                     'credit'                        => $request->get('balance'),
                 ]);
             } else {
-                $get_current_balance_on_coa = coa::find($ambil_amount_coa_detail_sebelumnya->pay_from);
-                // NGURANGIN AMOUNT YANG SEBELUMNYA ABIS TUH LANGSUNG DI UPDATE PAKE YANG BARU, SOALNYA KAN GA BERUBAH YANG DEPOSIT TO NYA
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'           => $get_current_balance_on_coa->balance + $ambil_amount_coa_detail_sebelumnya->amount,
-                ]);
                 // UPDATE COA DETAIL YANG DEPOSIT TO
                 coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->where('coa_id', $ambil_amount_coa_detail_sebelumnya->pay_from)->update([
                     'coa_id'                        => $request->deposit_to,
@@ -1083,17 +973,9 @@ class CashbankController extends Controller
                     'contact_id'                    => $request->get('vendor_name'),
                     'credit'                        => $request->get('balance'),
                 ]);
-                $get_current_balance_on_coa = coa::find($request->deposit_to);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'           => $get_current_balance_on_coa->balance - $request->get('balance'),
-                ]);
             }
             // HAPUS PAJAK
             if ($ambil_amount_coa_detail_sebelumnya->taxtotal > 0) {
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya->taxtotal,
-                ]);
                 coa_detail::where('type', 'bankwithdrawalaccount')
                     ->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)
                     ->where('credit', 0)
@@ -1105,21 +987,12 @@ class CashbankController extends Controller
                         'debit'                 => $request->get('taxtotal'),
                         'credit'                => 0,
                     ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
             //UNTUK UPDATE DATA JIKA BANYAKNYA TETAP
             if (count($rp) == count($pp)) {
                 foreach ($request->expense_acc as $i => $keys) {
                     if ($pp[$i]->receive_from == $request->expense_acc[$i]) {
                         $ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $id)->where('receive_from', $request->expense_acc[$i])->first();
-                        // UPDATE DULU BALANCE COA-NYA YANG DARI SEBELUMNYA, ABIS TUH BARU UPDATE PAKE BALANCE COA YANG BARU
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya_dalem->amount,
-                        ]);
                         // UPDATE CASH BANK ITEMNYA
                         $pp[$i]->update([
                             'receive_from'              => $request->expense_acc[$i],
@@ -1137,27 +1010,13 @@ class CashbankController extends Controller
                             'contact_id'                => $request->get('vendor_name'),
                             'debit'                     => $request->amount_acc[$i],
                         ]);
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                        ]);
                     } else {
-                        //$ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $id)->where('receive_from', $request->expense_acc[$i])->first();
-                        // KURANGIN DULU BALANCE COA DARI YANG SEBELUMNYA
-                        $get_current_balance_on_coa = coa::find($pp[$i]->receive_from); // 4
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance - $pp[$i]->amount,  // 1 + (-1) = 0
-                        ]);
                         // UPDATE PAKE COA DETAIL YANG BARU, SOALNYA KAN KALI AJA ITEMNYA DI GANTI MAKANYA PAKE CARA YANG INI                                       4
                         coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('credit', 0)->where('coa_id', $pp[$i]->receive_from)->update([
                             'coa_id'                    => $request->expense_acc[$i], // 6
                             'date'                      => $request->get('trans_date'),
                             'contact_id'                => $request->get('vendor_name'),
                             'debit'                     => $request->amount_acc[$i], // 2
-                        ]);
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]); // 6
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i], // 0 - 2 = (-2)
                         ]);
                         // UPDATE CASH BANK ITEMNYA
                         $pp[$i]->update([
@@ -1180,11 +1039,6 @@ class CashbankController extends Controller
                 for ($i = 0; $i < count($pp); $i++) {
                     if ($pp[$i]->receive_from == $request->expense_acc[$i]) {
                         $ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $id)->where('receive_from', $request->expense_acc[$i])->first();
-                        // UPDATE DULU BALANCE COA-NYA YANG DARI SEBELUMNYA, ABIS TUH BARU UPDATE PAKE BALANCE COA YANG BARU
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya_dalem->amount,
-                        ]);
                         // UPDATE CASH BANK ITEMNYA
                         $pp[$i]->update([
                             'receive_from'              => $request->expense_acc[$i],
@@ -1202,27 +1056,13 @@ class CashbankController extends Controller
                             'contact_id'                => $request->get('vendor_name'),
                             'debit'                     => $request->amount_acc[$i],
                         ]);
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                        ]);
                     } else {
-                        //$ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $id)->where('receive_from', $request->expense_acc[$i])->first();
-                        // KURANGIN DULU BALANCE COA DARI YANG SEBELUMNYA
-                        $get_current_balance_on_coa = coa::find($pp[$i]->receive_from); // 4
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance - $pp[$i]->amount,  // 1 + (-1) = 0
-                        ]);
                         // UPDATE PAKE COA DETAIL YANG BARU, SOALNYA KAN KALI AJA ITEMNYA DI GANTI MAKANYA PAKE CARA YANG INI                                       4
                         coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('credit', 0)->where('coa_id', $pp[$i]->receive_from)->update([
                             'coa_id'                    => $request->expense_acc[$i], // 6
                             'date'                      => $request->get('trans_date'),
                             'contact_id'                => $request->get('vendor_name'),
                             'debit'                     => $request->amount_acc[$i], // 2
-                        ]);
-                        $get_current_balance_on_coa = coa::find($request->expense_acc[$i]); // 6
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i], // 0 - 2 = (-2)
                         ]);
                         // UPDATE CASH BANK ITEMNYA
                         $pp[$i]->update([
@@ -1260,10 +1100,6 @@ class CashbankController extends Controller
                         'debit'                     => $request->amount_acc[$i],
                         'credit'                    => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                    ]);
                 };
                 DB::commit();
                 return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
@@ -1275,11 +1111,6 @@ class CashbankController extends Controller
                         if (isset($pp[$j]->receive_from) == isset($request->expense_acc[$j])) {
                             if ($pp[$j]->receive_from == $request->expense_acc[$j]) {
                                 $ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $id)->where('receive_from', $request->expense_acc[$j])->first();
-                                // UPDATE DULU BALANCE COA-NYA YANG DARI SEBELUMNYA, ABIS TUH BARU UPDATE PAKE BALANCE COA YANG BARU
-                                $get_current_balance_on_coa = coa::find($request->expense_acc[$j]);
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'       => $get_current_balance_on_coa->balance - $ambil_amount_coa_detail_sebelumnya_dalem->amount,
-                                ]);
                                 // UPDATE CASH BANK ITEMNYA
                                 $pp[$j]->update([
                                     'receive_from'              => $request->expense_acc[$j],
@@ -1297,27 +1128,13 @@ class CashbankController extends Controller
                                     'contact_id'                => $request->get('vendor_name'),
                                     'debit'                     => $request->amount_acc[$j],
                                 ]);
-                                $get_current_balance_on_coa = coa::find($request->expense_acc[$j]);
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$j],
-                                ]);
                             } else {
-                                //$ambil_amount_coa_detail_sebelumnya_dalem   = cashbank_item::where('cashbank_id', $jd)->where('receive_from', $request->expense_acc[$j])->first();
-                                // KURANGIN DULU BALANCE COA DARI YANG SEBELUMNYA
-                                $get_current_balance_on_coa = coa::find($pp[$j]->receive_from); // 4
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'       => $get_current_balance_on_coa->balance - $pp[$j]->amount,  // 1 + (-1) = 0
-                                ]);
                                 // UPDATE PAKE COA DETAIL YANG BARU, SOALNYA KAN KALI AJA ITEMNYA DI GANTI MAKANYA PAKE CARA YANG INI                                       4
                                 coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('credit', 0)->where('coa_id', $pp[$j]->receive_from)->update([
                                     'coa_id'                    => $request->expense_acc[$j], // 6
                                     'date'                      => $request->get('trans_date'),
                                     'contact_id'                => $request->get('vendor_name'),
                                     'debit'                     => $request->amount_acc[$j], // 2
-                                ]);
-                                $get_current_balance_on_coa = coa::find($request->expense_acc[$j]); // 6
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'       => $get_current_balance_on_coa->balance + $request->amount_acc[$j], // 0 - 2 = (-2)
                                 ]);
                                 // UPDATE CASH BANK ITEMNYA
                                 $pp[$j]->update([
@@ -1338,11 +1155,6 @@ class CashbankController extends Controller
                                 ->where('coa_id', $pp[$j]->receive_from)
                                 ->first();
                             $credit->delete();
-                            // TAMBAHIN BALANCE DARI YANG PENGEN DI DELETE (TRANSFER FROM)
-                            $get_current_balance_on_coa = coa::find($pp[$j]->receive_from);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'                       => $get_current_balance_on_coa->balance - $pp[$j]->amount,
-                            ]);
                             // FINALLY DELETE THE CASHBANK ID
                             $pp[$j]->delete();
                         }
@@ -1424,45 +1236,22 @@ class CashbankController extends Controller
                 'contact_id'                    => $request->get('vendor_name'),
                 'debit'                         => $request->get('amount_acc'),
             ]);
-            $get_current_balance_on_coa         = coa::find($expense_account_coa_detail);
             $get_current_caba_data              = cashbank::find($id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + ($request->amount_acc - $get_current_caba_data->amount),
-            ]);
             // UPDATE COA DETAIL YANG DARI INPUT PAY FROM (CREDIT) KALAU SAMA TIDAK USAH UPDATE COA_ID LAGI TINGGAL UPDATE YANG LAINNYA SAJA
             if ($request->pay_from == $get_current_caba_data->pay_from) {
-                // UPDATE DULU BALANCE YANG DARI SEBELUMNYA
-                $get_current_balance_on_coa         = coa::find($request->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $get_current_caba_data->amount,
-                ]);
                 coa_detail::where('type', 'bankwithdrawalfromexpense')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->where('coa_id', $request->pay_from)->update([
                     'date'                          => $request->get('trans_date'),
                     'contact_id'                    => $request->get('vendor_name'),
                     'credit'                        => $request->get('amount_acc'),
                 ]);
-                $get_current_balance_on_coa         = coa::find($request->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $request->amount_acc,
-                ]);
                 // UPDATE COA DETAIL YANG DARI INPUT PAY FROM (CREDIT) KALAU TIDAK SAMA BARU ILANGIN BALANCE DARI PAY_FROM ID SEBELUMNYA ABIS TUH BARU DI TAMBAHIN PAKE YANG BARU
             } else {
-                // UPDATE DULU BALANCE YANG DARI SEBELUMNYA
-                $get_current_balance_on_coa         = coa::find($get_current_caba_data->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $get_current_caba_data->amount,
-                ]);
                 // BARU UPDATE COA DETAIL PAKE YANG BARU
                 coa_detail::where('type', 'bankwithdrawalfromexpense')->where('number', 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number)->where('debit', 0)->where('coa_id', $get_current_caba_data->pay_from)->update([
                     'coa_id'                        => $request->pay_from,
                     'date'                          => $request->get('trans_date'),
                     'contact_id'                    => $request->get('vendor_name'),
                     'credit'                        => $request->get('amount_acc'),
-                ]);
-                // BARY UPDATE BALANCE COA PAKE YANG BARU
-                $get_current_balance_on_coa         = coa::find($request->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $request->get('amount_acc'),
                 ]);
             }
             // UPDATE CURRENT CASHBANK
@@ -1490,20 +1279,8 @@ class CashbankController extends Controller
             $debit->delete();
             $credit             = coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $caba->number)->where('credit', 0)->first();
             $credit->delete();
-
-            // TAMBAHIN BALANCE DARI YANG PENGEN DI DELETE (TRANSFER FROM)
-            $get_current_balance_on_coa = coa::find($caba->transfer_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $caba->amount,
-            ]);
-            // TAMBAHIN BALANCE DARI YANG PENGEN DI DELETE (DEPOSIT TO)
-            $get_current_balance_on_coa = coa::find($caba->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $caba->amount,
-            ]);
             // DELETE ROOT OTHER TRANSACTION
-            $other_transaction  = other_transaction::where('type', 'banktransfer')->where('number', $caba->number)->first();
-            $other_transaction->delete();
+            other_transaction::where('type', 'banktransfer')->where('number', $caba->number)->first();
             // FINALLY DELETE THE CASHBANK ID
             $caba->delete();
             DB::commit();
@@ -1519,36 +1296,12 @@ class CashbankController extends Controller
         DB::beginTransaction();
         try {
             $caba               = cashbank::find($id);
-            $default_tax                        = default_account::find(8);
-            $debit              = coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('debit', 0)->delete();
-            //$debit->delete();
-            $credit             = coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('credit', 0)->delete();
-            //$credit->delete();
+            coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('debit', 0)->delete();
+            coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('credit', 0)->delete();
 
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (DEPOSIT TO)
-            $get_current_balance_on_coa = coa::find($caba->deposit_to);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $caba->amount,
-            ]);
-            // HAPUS PAJAK
-            if ($caba->taxtotal > 0) {
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance - $caba->taxtotal,
-                ]);
-            }
-            // HAPUS BALANCE PER ITEM CASHBANK
-            $caba_details       = cashbank_item::where('cashbank_id', $id)->get();
-            foreach ($caba_details as $a) {
-                $get_current_balance_on_coa = coa::find($a->receive_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                ]);
-            }
-            $caba_details = cashbank_item::where('cashbank_id', $id)->delete();
+            cashbank_item::where('cashbank_id', $id)->delete();
             // DELETE ROOT OTHER TRANSACTION
-            $other_transaction  = other_transaction::where('type', 'bankdeposit')->where('number', $caba->number)->delete();
-            $other_transaction->delete();
+            other_transaction::where('type', 'bankdeposit')->where('number', $caba->number)->delete();
             // FINALLY DELETE THE CASHBANK ID
             $caba->delete();
             DB::commit();
@@ -1569,27 +1322,7 @@ class CashbankController extends Controller
             if ($caba->bank_withdrawal_acc == 1) {
                 coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $caba->number)->where('debit', 0)->delete();
                 coa_detail::where('type', 'bankwithdrawalaccount')->where('number', 'Bank Withdrawal #' . $caba->number)->where('credit', 0)->delete();
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (DEPOSIT TO)
-                $get_current_balance_on_coa = coa::find($caba->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $caba->amount,
-                ]);
-                // HAPUS PAJAK
-                if ($caba->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $caba->taxtotal,
-                    ]);
-                }
-                // HAPUS BALANCE PER ITEM CASHBANK
-                $caba_details                       = cashbank_item::where('cashbank_id', $id)->get();
-                foreach ($caba_details as $a) {
-                    $get_current_balance_on_coa = coa::find($a->receive_from);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                   => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
-                }
-                $caba_details                       = cashbank_item::where('cashbank_id', $id)->delete();
+                cashbank_item::where('cashbank_id', $id)->delete();
                 // DELETE ROOT OTHER TRANSACTION
                 other_transaction::where('type', 'bankwithdrawalfromexpense')->where('number', $caba->number)->delete();
                 // FINALLY DELETE THE CASHBANK ID
@@ -1599,18 +1332,9 @@ class CashbankController extends Controller
             } else if ($caba->bank_withdrawal_ex == 1) {
                 coa_detail::where('type', 'bankwithdrawalfromexpense')->where('number', 'Bank Withdrawal #' . $caba->number)->where('debit', 0)->delete();
                 coa_detail::where('type', 'bankwithdrawalfromexpense')->where('number', 'Bank Withdrawal #' . $caba->number)->where('credit', 0)->delete();
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (DEPOSIT TO)
-                $get_current_balance_on_coa = coa::find($caba->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $caba->amount,
-                ]);
                 // HAPUS BALANCE PER ITEM CASHBANK
                 $caba_details                   = cashbank_item::where('cashbank_id', $id)->get();
                 foreach ($caba_details as $a) {
-                    $get_current_balance_on_coa = coa::find($default_trade_payable->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     $get_ex_data                = expense::find($a->expense_id);
                     expense::find($a->expense_id)->update([
                         'amount_paid'                   => $get_ex_data->amount_paid - $a->amount,
@@ -1633,7 +1357,7 @@ class CashbankController extends Controller
                         ]);
                     }
                 }
-                $caba_details = cashbank_item::where('cashbank_id', $id)->delete();
+                cashbank_item::where('cashbank_id', $id)->delete();
                 // DELETE ROOT OTHER TRANSACTION
                 other_transaction::where('type', 'bankwithdrawalfromexpense')->where('number', $caba->number)->delete();
                 // FINALLY DELETE THE CASHBANK ID

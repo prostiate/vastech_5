@@ -19,7 +19,36 @@ function chk()
     }
 }
 
+function inputMasking() {
+    Inputmask.extendAliases({
+        "numeric":
+        {
+            "prefix": "Rp",
+            "digits": 2,
+            "digitsOptional": false,
+            "decimalProtect": true,
+            "groupSeparator": ",",
+            "radixPoint": ".",
+            "radixFocus": true,
+            "autoGroup": true,
+            "autoUnmask": true,
+            "removeMaskOnSubmit": true
+        }
+    });
+
+    Inputmask.extendAliases({
+        "IDR":
+        {
+            "alias": "numeric",
+            "prefix": "Rp "
+        }
+    }); 
+
+    $(".asset_cost").inputmask("IDR");
+}
+
 $(document).ready(function () {
+    inputMasking();
     chk();
 
     $('#check_depreciable').click(function() {

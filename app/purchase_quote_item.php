@@ -9,6 +9,9 @@ class purchase_quote_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'qty' => 'float',
+    ];
 
     public function purchase_quote()
     {

@@ -5,8 +5,9 @@ $.ajaxSetup({
 });
 $(document).ready(function() {
     $("#click").click(function() {
-        //$("click").on("submit", function(event) {
         event.preventDefault();
+        $("#click").prop("disabled", true);
+        $("#click").html("Processing");
         var form = document.getElementById("formCreate");
         $.ajax({
             url: "/asset_managements/newAsset",
@@ -23,16 +24,60 @@ $(document).ready(function() {
                 if (data.errors) {
                     typeswal = "error";
                     titleswal = "Oops...";
-                    //for (var count = 0; count < data.errors.length; count++) {
-                    //    html += "<br>" + data.errors[count] + "</br>";
-                    //}
-                    html = data.errors
+                    for (var count = 0; count < data.errors.length; count++) {
+                        html += data.errors[count];
+                    }
+                    $("#click").prop("disabled", false);
+                    $("#click").html("Create");
                 }
                 if (data.success) {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/asset_managements";
+                    window.location.href = "/asset_managements/" + data.id;
+                }
+                Swal.fire({
+                    type: typeswal,
+                    title: titleswal,
+                    html: html
+                });
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
+    $("#clicknew").click(function() {
+        event.preventDefault();
+        $("#click").prop("disabled", true);
+        $("#click").html("Processing");
+        var form = document.getElementById("formCreate");
+        $.ajax({
+            url: "/asset_managements/newAsset",
+            method: "POST",
+            data: new FormData(form),
+            contentType: false,
+            cache: false,
+            processData: false,
+            dataType: "json",
+            success: function(data) {
+                var html = "";
+                var typeswal = "";
+                var titleswal = "";
+                if (data.errors) {
+                    typeswal = "error";
+                    titleswal = "Oops...";
+                    for (var count = 0; count < data.errors.length; count++) {
+                        html += data.errors[count];
+                    }
+                    $("#click").prop("disabled", false);
+                    $("#click").html("Create");
+                }
+                if (data.success) {
+                    typeswal = "success";
+                    titleswal = "Success...";
+                    html = data.success;
+                    window.location.href = "/asset_managements/new";
                 }
                 Swal.fire({
                     type: typeswal,

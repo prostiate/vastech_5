@@ -9,6 +9,10 @@ class warehouse_detail extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'qty_in' => 'float',
+        'qty_out' => 'float',
+    ];
 
     public function product()
     {

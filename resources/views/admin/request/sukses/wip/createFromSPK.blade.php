@@ -183,9 +183,9 @@
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_per" readonly>
-                                            <input type="text" class="wip_total_price_hidden_pure_per" >
-                                            <input type="text" class="wip_total_price_hidden_pure_input_per" name="grandtotal_with_qty_per" >
-                                            <input type="text" class="wip_total_price_hidden_grand_per" name="grandtotal_without_qty_per" >
+                                            <input type="text" class="wip_total_price_hidden_pure_per" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_input_per" name="grandtotal_with_qty_per" hidden>
+                                            <input type="text" class="wip_total_price_hidden_grand_per" name="grandtotal_without_qty_per" hidden>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -282,9 +282,9 @@
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_all" readonly>
-                                            <input type="text" class="wip_total_price_hidden_pure_all" >
-                                            <input type="text" class="wip_total_price_hidden_pure_input_all" name="grandtotal_with_qty_all" >
-                                            <input type="text" class="wip_total_price_hidden_grand_all" name="grandtotal_without_qty_all" >
+                                            <input type="text" class="wip_total_price_hidden_pure_all" hidden>
+                                            <input type="text" class="wip_total_price_hidden_pure_input_all" name="grandtotal_with_qty_all" hidden>
+                                            <input type="text" class="wip_total_price_hidden_grand_all" name="grandtotal_without_qty_all" hidden>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -310,12 +310,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_per.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_all.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

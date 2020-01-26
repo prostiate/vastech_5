@@ -12,7 +12,6 @@ use App\sale_delivery_item;
 use App\default_account;
 use App\other_transaction;
 use App\coa_detail;
-use App\coa;
 use App\company_logo;
 use App\company_setting;
 use App\other_tax;
@@ -309,10 +308,6 @@ class SaleDeliveryController extends Controller
                         'debit'             => $total_avg,
                         'credit'            => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // DEFAULT INVENTORY BARANG
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -324,10 +319,6 @@ class SaleDeliveryController extends Controller
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
                         'credit'            => $total_avg,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance - $total_avg,
                     ]);
                 }
             };
@@ -359,10 +350,6 @@ class SaleDeliveryController extends Controller
                 'debit'                     => $grandtotal_header_other,
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
             // DEFAULT SETTING UNBILLED REVENUE
             coa_detail::create([
                 'company_id'                    => $user->company_id,
@@ -374,10 +361,6 @@ class SaleDeliveryController extends Controller
                 'contact_id'                => $request->get('vendor_name'),
                 'debit'                     => 0,
                 'credit'                    => $grandtotal_header_other,
-            ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
             ]);
 
             DB::commit();
@@ -470,16 +453,6 @@ class SaleDeliveryController extends Controller
             // DEFAULT DARI SETTING
             $default_unbilled_receivable    = default_account::find(7);
             $default_unbilled_revenue       = default_account::find(6);
-            // DEFAULT SETTING UNBILLED ACCOUNT RECEIVABLE
-            $get_current_balance_on_coa     = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance - $checknumberpd->grandtotal,
-            ]);
-            // DEFAULT SETTING UNBILLED REVENUE
-            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance - $checknumberpd->grandtotal,
-            ]);
 
             $get_ot->update([
                 'memo'                      => $request->get('memo'),
@@ -562,10 +535,6 @@ class SaleDeliveryController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                     coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $checknumberpd->number)
@@ -577,20 +546,12 @@ class SaleDeliveryController extends Controller
                             'contact_id'        => $request->get('vendor_name'),
                             'debit'             => $total_avg,
                         ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // DEFAULT INVENTORY ACCOUNT
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $checknumberpd->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                     coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $checknumberpd->number)
@@ -602,10 +563,6 @@ class SaleDeliveryController extends Controller
                             'contact_id'        => $request->get('vendor_name'),
                             'credit'            => $total_avg,
                         ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 }
                 // FINALLY UPDATE THE ITEM
                 $pp[$i]->update([
@@ -648,10 +605,6 @@ class SaleDeliveryController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => $grandtotal_header_other,
                 ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
 
             coa_detail::where('type', 'sales delivery')
                 ->where('number', 'Sales Delivery #' . $checknumberpd->number)
@@ -663,10 +616,6 @@ class SaleDeliveryController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'credit'                => $grandtotal_header_other,
                 ]);
-            $get_current_balance_on_coa     = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
         } catch (\Exception $e) {
@@ -681,17 +630,6 @@ class SaleDeliveryController extends Controller
         try {
             $pi                                     = sale_delivery::find($id);
             $idsipo                                 = sale_order::find($pi->selected_so_id);
-            $default_unbilled_receivable            = default_account::find(7);
-            $default_unbilled_revenue               = default_account::find(6);
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa             = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                           => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
-            $get_current_balance_on_coa             = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                           => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
             // BALIKIN STATUS ORDER
             $ambilpo                            = sale_order::find($pi->selected_so_id);
             $ambilpo->update([
@@ -757,20 +695,12 @@ class SaleDeliveryController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa     = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                   => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales delivery')
                         ->where('number', 'Sales Delivery #' . $pi->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa     = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                   => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                 }
             }

@@ -133,6 +133,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/order/dataTable.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/sales/order/chartdiindex.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/order/dataTable.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/order/chartdiindex.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

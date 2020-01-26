@@ -308,12 +308,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_per.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_all.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

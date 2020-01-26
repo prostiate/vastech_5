@@ -22,6 +22,8 @@ Route::group(['middleware' => 'auth'], function () {
         Artisan::call('cache:clear');
         return "Cache is cleared";
     });
+    Route::get('/testing',                                       'PurchaseInvoiceController@benerin_avg_price');
+
     /*---------REPORTS --------------*/
     Route::get('/reports', function () {
         return view('admin.reports.index');
@@ -495,9 +497,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*---------Asset Managements --------------*/
     Route::get('/asset_managements',                                        'FixedAssetController@index');
+    Route::get('/asset_managements/disposed',                               'FixedAssetController@index_disposed');
+    Route::get('/asset_managements/depreciation',                           'FixedAssetController@index_depreciation');
+    Route::get('/asset_managements/apply_depreciation/{id}',                'FixedAssetController@apply_depreciation');
     Route::get('/asset_managements/new',                                    'FixedAssetController@create');
     Route::post('/asset_managements/newAsset',                              'FixedAssetController@store')->name('asset.store');
-    Route::get('/asset_managements/show',                                   'FixedAssetController@show');
+    Route::get('/asset_managements/{id}',                                   'FixedAssetController@show');
     Route::get('/asset_managements/edit',                                   'FixedAssetController@edit');
     Route::post('/asset_managements/edit/{id}',                             'FixedAssetController@update')->name('asset.update');;
     Route::get('/asset_managements/delete/{id}',                            'FixedAssetController@destroy');

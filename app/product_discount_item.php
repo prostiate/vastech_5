@@ -9,6 +9,7 @@ class product_discount_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = ['qty' => 'float'];
 
     public function product()
     {

@@ -73,7 +73,7 @@
                         </ul>
                     </li>
                     <li><a href="/cashbank"><i class="fa fa-bank"></i> Cash & Bank </a></li>
-                    <!--<li><a href="#"><i class="fa fa-desktop"></i> Assets Management </a></li>-->
+                    <li><a href="/asset_managements"><i class="fa fa-desktop"></i> Assets Management </a></li>
                     <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> Chart of Accounts </a></li>
                 </ul>
             </div>

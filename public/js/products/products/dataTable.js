@@ -26,6 +26,16 @@ $(document).ready(function() {
             {
                 data: "qty",
                 render: $.fn.dataTable.render.text()
+                /*render: function(data, type, row) {
+                    var txt = "";
+                    data.forEach(function(lalawd) {
+                        if (txt.length > 0) {
+                            txt += "</br> ";
+                        }
+                        txt += lalawd.qty;
+                    });
+                    return txt;
+                }*/
             },
             {
                 data: "other_unit.name",
@@ -35,17 +45,17 @@ $(document).ready(function() {
             {
                 data: "avg_price",
                 className: "text-right",
-                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
                 data: "buy_price",
                 className: "text-right",
-                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
                 data: "sell_price",
                 className: "text-right",
-                render: $.fn.dataTable.render.number(".", ",", 2, "Rp "),
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             },
             {
                 data: "other_product_category.name",

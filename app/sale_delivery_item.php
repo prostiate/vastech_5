@@ -9,6 +9,10 @@ class sale_delivery_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = [
+        'qty' => 'float',
+        'qty_remaining' => 'float',
+    ];
 
     public function sale_delivery()
     {

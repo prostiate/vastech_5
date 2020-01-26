@@ -166,10 +166,6 @@ class ProductionOneController extends Controller
                 'debit'                     => $request->total_grand,
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa = coa::find($create_product->default_inventory_account);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'       => $get_current_balance_on_coa->balance + $request->total_grand,
-            ]);
 
             foreach($product as $i => $p){
                 $item[$i]                       = new production_one_item([
@@ -188,10 +184,6 @@ class ProductionOneController extends Controller
                     'debit'                     => 0,
                     'credit'                    => $request->raw_amount[$i],
                 ]);
-                $get_current_balance_on_coa = coa::find($check_product->default_inventory_account);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'       => $get_current_balance_on_coa->balance - $request->raw_amount[$i],
-                ]);
             }
             foreach($cost as $i => $p){
                 $item[$i]                       = new production_one_cost([
@@ -209,10 +201,6 @@ class ProductionOneController extends Controller
                     'contact_id'                => $request->get('contact'),
                     'debit'                     => 0,
                     'credit'                    => $request->cost_total[$i],
-                ]);
-                $get_current_balance_on_coa = coa::find($request->cost_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'       => $get_current_balance_on_coa->balance - $request->cost_total[$i],
                 ]);
             }
             $total_avg_price                    = (($create_product->avg_price * $create_product->qty) + ($request->total_grand * $request->result_qty)) / ($create_product->qty + $request->result_qty);

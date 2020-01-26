@@ -8,10 +8,7 @@ $(document).ready(function () {
         $(".neworderbody").find('.actual_qty').val(null);
 
         $(".neworderbody").on("keyup keydown change", ".actual_qty", function () {       
-            var tr = $(this)
-                .parent()
-                .parent();
-            
+            var tr = $(this).closest("tr");
     
             var recorded_qty    = tr.find(".recorded_qty").val() - 0;
             var actual_qty      = tr.find(".actual_qty").val() - 0;
@@ -29,10 +26,7 @@ $(document).ready(function () {
         $(".neworderbody").find('.actual_qty').val(null);
 
         $(".neworderbody").on("keyup keydown change", ".difference_qty", function () {       
-            var tr = $(this)
-                .parent()
-                .parent();
-            
+            var tr = $(this).closest("tr");
     
             var difference_qty  = tr.find(".difference_qty").val() - 0;
             var recorded_qty      = tr.find(".recorded_qty").val() - 0;
@@ -45,10 +39,7 @@ $(document).ready(function () {
     
 
     $(".neworderbody").on("keyup keydown change", ".actual_qty", function () {       
-        var tr = $(this)
-            .parent()
-            .parent();
-        
+        var tr = $(this).closest("tr");       
 
         var recorded_qty    = tr.find(".recorded_qty").val() - 0;
         var actual_qty      = tr.find(".actual_qty").val() - 0;

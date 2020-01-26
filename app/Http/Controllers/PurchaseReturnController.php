@@ -101,10 +101,6 @@ class PurchaseReturnController extends Controller
                 'debit'                     => $request->get('balance'),
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa = coa::find($contact_account->account_payable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance - $request->get('balance'),
-            ]);
             // CREATE OTHER TRANSACTION PUNYA RETURN
             $transactions = other_transaction::create([
                 'company_id'                    => $user->company_id,
@@ -191,10 +187,6 @@ class PurchaseReturnController extends Controller
                     'debit'                 => 0,
                     'credit'                => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance - $request->get('taxtotal'),
-                ]);
             }
 
             // CREATE PURCHASE RETURN DETAILS
@@ -239,10 +231,6 @@ class PurchaseReturnController extends Controller
                             'debit'             => 0,
                             'credit'            => $request->total_price[$i],
                         ]);
-                        $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'           => $get_current_balance_on_coa->balance - $request->total_price[$i],
-                        ]);
                     } else {
                         coa_detail::create([
                             'company_id'                    => $user->company_id,
@@ -254,10 +242,6 @@ class PurchaseReturnController extends Controller
                             'contact_id'        => $request->get('vendor_name'),
                             'debit'             => 0,
                             'credit'            => $request->total_price[$i],
-                        ]);
-                        $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'           => $get_current_balance_on_coa->balance - $request->total_price[$i],
                         ]);
                     }
                     //menambahkan stok barang ke gudang
@@ -362,18 +346,6 @@ class PurchaseReturnController extends Controller
             // DELETE ALL COA DETAILS
             coa_detail::where('type', 'purchase return')->where('number', 'Purchase Return #' . $pi->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'purchase return')->where('number', 'Purchase Return #' . $pi->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa         = coa::find($contact_id->account_payable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $pi->grandtotal,
-            ]);
-            // HAPUS PAJAK
-            if ($pi->taxtotal > 0) {
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $pi->taxtotal,
-                ]);
-            }
             // HAPUS BALANCE PER ITEM RETURN
             $pi_details                         = purchase_return_item::where('purchase_return_id', $id)->get();
             foreach ($pi_details as $a) {
@@ -383,17 +355,9 @@ class PurchaseReturnController extends Controller
                     $ambil_pii->update([
                         'qty_remaining_return' => $ambil_pii->qty_remaining_return + $a->qty
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $a->amount,
-                    ]);
                 } else {
                     $ambil_pii->update([
                         'qty_remaining_return' => $ambil_pii->qty_remaining_return + $a->qty
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $a->amount,
                     ]);
                 }
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT

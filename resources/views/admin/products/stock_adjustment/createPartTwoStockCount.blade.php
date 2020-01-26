@@ -93,7 +93,7 @@
                                     <th class="column-title" style="width:200px">Product Code</th>
                                     <th class="column-title" style="width:200px">Recorded Quantity</th>
                                     <th class="column-title" style="width:200px">Actual Quantity</th>
-                                    <!--<th class="column-title" style="width:200px">Average Price</th>-->
+                                    <th class="column-title" style="width:200px">Average Price</th>
                                     <th class="column-title" style="width:50px"></th>
                                 </tr>
                             </thead>
@@ -104,7 +104,7 @@
                                             <option></option>
                                             @foreach($warehouse_detail_from as $a)
                                             <option value="{{$a->product_id}}" code="{{$a->product->code}}" qty="{{$a->qty}}" avgprice="{{$a->product->avg_price}}">
-                                                {{$a->product->code}} - {{$a->product->name}}
+                                                {{$a->product->code}} - {{$a->product->name}} - {{$a->product->avg_price}}
                                             </option>
                                             @endforeach
                                         </select>
@@ -117,6 +117,10 @@
                                     </td>
                                     <td>
                                         <input onClick="this.select();" value="0" type="number" class="form-control" name="actual_qty[]">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control avg_price_display">
+                                        <input type="text" class="form-control avg_price" name="avg_price[]" hidden>
                                     </td>
                                     <td>
                                         <input type="button" class="btn btn-danger delete" value="x">
@@ -148,9 +152,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/category_to_account.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

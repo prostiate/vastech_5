@@ -20,9 +20,9 @@ class asset extends Model
         return $this->belongsTo('App\coa','asset_account');
     }       
 
-    public function other_transaction()
+    public function journal_entry()
     {
-        return $this->belongsTo('App\other_transaction');
+        return $this->belongsTo('App\journal_entry');
     }
 
 }

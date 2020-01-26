@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class stock_adjustment_detail extends Model
 {
     protected $guarded = [];
+    protected $casts = [
+        'recorded' => 'float',
+        'actual' => 'float',
+        'difference' => 'float',
+    ];
 
     public function stock_adjustment()
     {

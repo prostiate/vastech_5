@@ -211,8 +211,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/delivery/createForm.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/addmoreitem.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/qty_remaining.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/delivery/createForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/addmoreitem.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/qty_remaining.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

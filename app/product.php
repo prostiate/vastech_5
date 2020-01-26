@@ -9,6 +9,7 @@ class product extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
+    protected $casts = ['qty' => 'float'];
 
     public function product_bundle_cost()
     {
@@ -66,6 +67,16 @@ class product extends Model
         return $this->hasMany('App\warehouse_detail');
     }
 
+    public function lalawd()
+    {
+        return $this->hasMany('App\warehouse_detail')->selectRaw('SUM(qty_in - qty_out) as qty, product_id, id, warehouse_id')->groupBy('product_id');
+    }
+
+    public function wdhehe()
+    {
+        return $this->hasMany('App\warehouse_detail')->select(['qty_in', 'qty_out']);
+    }
+
     public function spk_item()
     {
         return $this->hasMany('App\spk_item');
@@ -80,7 +91,7 @@ class product extends Model
     {
         return $this->hasMany('App\wip_item');
     }
-    
+
     public function stock_adjustment_detail()
     {
         return $this->belongsTo('App\stock_adjustment_detail');
@@ -120,5 +131,4 @@ class product extends Model
     {
         return $this->belongsTo('App\stock_adjustment');
     }
-
 }

@@ -200,10 +200,6 @@ class ExpenseController extends Controller
                     'debit'                 => $request->get('taxtotal'),
                     'credit'                => 0,
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->expense_acc as $i => $keys) {
@@ -229,10 +225,6 @@ class ExpenseController extends Controller
                     'debit'                     => $request->amount_acc[$i],
                     'credit'                    => 0,
                 ]);
-                $get_current_balance_on_coa = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                ]);
             };
 
             // CREATE COA DETAIL YANG DARI PAY FROM
@@ -249,10 +241,6 @@ class ExpenseController extends Controller
                     'debit'                         => 0,
                     'credit'                        => $request->get('balance'),
                 ]);
-                $get_current_balance_on_coa = coa::find($default_trade_payable->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'       => $get_current_balance_on_coa->balance - $request->get('balance'),
-                ]);
             } else {
                 coa_detail::create([
                     'company_id'                    => $user->company_id,
@@ -264,10 +252,6 @@ class ExpenseController extends Controller
                     'contact_id'                    => $request->get('vendor_name'),
                     'debit'                         => 0,
                     'credit'                        => $request->get('balance'),
-                ]);
-                $get_current_balance_on_coa = coa::find($request->pay_from);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'       => $get_current_balance_on_coa->balance - $request->get('balance'),
                 ]);
             }
             DB::commit();
@@ -324,35 +308,13 @@ class ExpenseController extends Controller
         DB::beginTransaction();
         try {
             $id                                                 = $request->hidden_id;
-            $checknumberpd                                      = expense::find($id);
             $pp                                                 = expense_item::where('expense_id', $id)->get();
-            $rp                                                 = $request->expense_acc;
             $default_tax                                        = default_account::find(14);
             $ex                                                 = expense::find($id);
 
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-            $get_current_balance_on_coa                         = coa::find($ex->pay_from_coa_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                                       => $get_current_balance_on_coa->balance + $ex->grandtotal,
-            ]);
-            // HAPUS PAJAK
-            if ($ex->taxtotal > 0) {
-                $get_current_balance_on_coa                     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance - $ex->taxtotal,
-                ]);
-            }
-            // HAPUS BALANCE PER ITEM CASHBANK
-            $ex_details                                         = expense_item::where('expense_id', $id)->get();
-            foreach ($ex_details as $a) {
-                $get_current_balance_on_coa                     = coa::find($a->coa_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance - $a->amount,
-                ]);
-            }
-            $ex_details                                         = expense_item::where('expense_id', $id)->delete();
+            expense_item::where('expense_id', $id)->delete();
 
             // BARU BIKIN BARU LAGI
             other_transaction::where('type', 'expense')->where('number', $ex->number)->update([
@@ -391,10 +353,6 @@ class ExpenseController extends Controller
                     'debit'                                     => $request->get('taxtotal'),
                     'credit'                                    => 0,
                 ]);
-                $get_current_balance_on_coa                     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->expense_acc as $i => $keys) {
@@ -421,10 +379,6 @@ class ExpenseController extends Controller
                     'debit'                                     => $request->amount_acc[$i],
                     'credit'                                    => 0,
                 ]);
-                $get_current_balance_on_coa                     = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                ]);
             };
 
             // CREATE COA DETAIL YANG DARI PAY FROM
@@ -440,10 +394,6 @@ class ExpenseController extends Controller
                 'contact_id'                                    => $request->get('vendor_name'),
                 'debit'                                         => 0,
                 'credit'                                        => $request->get('balance'),
-            ]);
-            $get_current_balance_on_coa = coa::find($default_trade_payable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                                       => $get_current_balance_on_coa->balance - $request->get('balance'),
             ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
@@ -467,27 +417,7 @@ class ExpenseController extends Controller
 
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-            $get_current_balance_on_coa                         = coa::find($ex->pay_from_coa_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                                       => $get_current_balance_on_coa->balance + $ex->amount_paid,
-            ]);
-            // HAPUS PAJAK
-            if ($ex->taxtotal > 0) {
-                $get_current_balance_on_coa                     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance - $ex->taxtotal,
-                ]);
-            }
-            // HAPUS BALANCE PER ITEM CASHBANK
-            $ex_details                                         = expense_item::where('expense_id', $id)->get();
-            foreach ($ex_details as $a) {
-                $get_current_balance_on_coa                     = coa::find($a->coa_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance - $a->amount,
-                ]);
-            }
-            $ex_details                                         = expense_item::where('expense_id', $id)->delete();
+            expense_item::where('expense_id', $id)->delete();
 
             // BARU BIKIN BARU LAGI
             other_transaction::where('type', 'expense')->where('number', $ex->number)->update([
@@ -526,10 +456,6 @@ class ExpenseController extends Controller
                     'debit'                                     => $request->get('taxtotal'),
                     'credit'                                    => 0,
                 ]);
-                $get_current_balance_on_coa                     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->expense_acc as $i => $keys) {
@@ -556,10 +482,6 @@ class ExpenseController extends Controller
                     'debit'                                     => $request->amount_acc[$i],
                     'credit'                                    => 0,
                 ]);
-                $get_current_balance_on_coa                     = coa::find($request->expense_acc[$i]);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                                   => $get_current_balance_on_coa->balance + $request->amount_acc[$i],
-                ]);
             };
 
             // CREATE COA DETAIL YANG DARI PAY FROM
@@ -574,10 +496,6 @@ class ExpenseController extends Controller
                 'contact_id'                                    => $request->get('vendor_name'),
                 'debit'                                         => 0,
                 'credit'                                        => $request->get('balance'),
-            ]);
-            $get_current_balance_on_coa = coa::find($request->pay_from);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                                       => $get_current_balance_on_coa->balance - $request->get('balance'),
             ]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
@@ -600,27 +518,7 @@ class ExpenseController extends Controller
             } else {
                 coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('debit', 0)->delete();
                 coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('credit', 0)->delete();
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-                $get_current_balance_on_coa     = coa::find($ex->pay_from_coa_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $ex->grandtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($ex->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ex->taxtotal,
-                    ]);
-                }
-                // HAPUS BALANCE PER ITEM CASHBANK
-                $ex_details                     = expense_item::where('expense_id', $id)->get();
-                foreach ($ex_details as $a) {
-                    $get_current_balance_on_coa = coa::find($a->coa_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
-                }
-                $ex_details                     = expense_item::where('expense_id', $id)->delete();
+                expense_item::where('expense_id', $id)->delete();
                 // DELETE ROOT OTHER TRANSACTION
                 other_transaction::where('type', 'expense')->where('number', $ex->number)->delete();
                 // FINALLY DELETE THE CASHBANK ID
@@ -642,27 +540,7 @@ class ExpenseController extends Controller
             $default_tax                            = default_account::find(14);
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'expense')->where('number', 'Expense #' . $ex->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (PAY FROM)
-            $get_current_balance_on_coa             = coa::find($ex->pay_from_coa_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                           => $get_current_balance_on_coa->balance + $ex->amount_paid,
-            ]);
-            // HAPUS PAJAK
-            if ($ex->taxtotal > 0) {
-                $get_current_balance_on_coa         = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $ex->taxtotal,
-                ]);
-            }
-            // HAPUS BALANCE PER ITEM CASHBANK
-            $ex_details                             = expense_item::where('expense_id', $id)->get();
-            foreach ($ex_details as $a) {
-                $get_current_balance_on_coa         = coa::find($a->coa_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                ]);
-            }
-            $ex_details                             = expense_item::where('expense_id', $id)->delete();
+            expense_item::where('expense_id', $id)->delete();
             // DELETE ROOT OTHER TRANSACTION
             other_transaction::where('type', 'expense')->where('number', $ex->number)->delete();
             // FINALLY DELETE THE CASHBANK ID

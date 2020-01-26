@@ -34,8 +34,14 @@
                 <span class="label label-warning" style="color:white;">Partial</span>
                 @elseif($pi->status == 5)
                 <span class="label label-danger" style="color:white;">Overdue</span>
-                @else
+                @elseif($pi->status == 6)
                 <span class="label label-success" style="color:white;">Sent</span>
+                @elseif($pi->status == 7)
+                <span class="label label-success" style="color:white;">Active</span>
+                @elseif($pi->status == 8)
+                <span class="label label-success" style="color:white;">Sold</span>
+                @elseif($pi->status == 9)
+                <span class="label label-success" style="color:white;">Disposed</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -201,5 +207,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expense/deleteForm.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/expense/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

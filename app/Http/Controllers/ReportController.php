@@ -2175,13 +2175,13 @@ class ReportController extends Controller
         $contact                    = contact::get();
         if ($con == 'null') {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         } else {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
                 ->whereIn('contact_id', $contacts)
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         }
@@ -2205,13 +2205,13 @@ class ReportController extends Controller
         $contacts                                   = explode(',', $con);
         if ($con == 'null') {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         } else {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
                 ->whereIn('contact_id', $contacts)
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         }
@@ -2238,13 +2238,13 @@ class ReportController extends Controller
         $contact                    = contact::get();
         if ($con == 'null') {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         } else {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
                 ->whereIn('contact_id', $contacts)
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         }
@@ -2268,13 +2268,13 @@ class ReportController extends Controller
         $contacts                                   = explode(',', $con);
         if ($con == 'null') {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         } else {
             $expense                    = expense::whereBetween('transaction_date', [$start, $end])
                 ->whereIn('contact_id', $contacts)
-                ->with(['expense_item' => function ($expense_item){
+                ->with(['expense_item' => function ($expense_item) {
                     $expense_item->get();
                 }])->get();
         }

@@ -35,9 +35,9 @@
             <div class="x_content">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Pending Assets</a>
-                        </li>
-                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">Active Assets</a>
+                        <!--<li role="presentation" class=""><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Pending Assets</a>
+                        </li>-->
+                        <li role="presentation" class="active"><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">Active Assets</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content3" role="tab" id="order-tab2" data-toggle="tab" aria-expanded="false">Sold/Disposed</a>
                         </li>
@@ -45,7 +45,7 @@
                         </li>
                     </ul>
                     <div id="myTabContent" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="invoice-tab">
+                        <div role="tabpanel" class="tab-pane fade " id="tab_content1" aria-labelledby="invoice-tab">
                             <div class="table-responsive">
                                 <table class="table table-striped jambo_table bulk_action">
                                     <thead>
@@ -60,17 +60,16 @@
                                 </table>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="delivery-tab">
+                        <div role="tabpanel" class="tab-pane fade active in" id="tab_content2" aria-labelledby="delivery-tab">
                             <div class="table-responsive">
-                                <table class="table table-striped jambo_table bulk_action" id="dataTable2" style="width:100%">
+                                <table class="table table-striped jambo_table bulk_action" id="dataTable_active" style="width:100%">
                                     <thead>
                                         <tr class="headings">
-                                            <th class="column-title">Asset Account </th>
-                                            <th class="column-title">Acquisition Date </th>
-                                            <th class="column-title">Asset Detail </th>
-                                            <th class="column-title">Acquisition Cost </th>
-                                            <th class="column-title">Book Value </th>
-                                            <!--<th class="column-title no-link last"><span class="nobr">Action</span>-->
+                                            <th class="column-title">Acquisition Date</th>
+                                            <th class="column-title">Asset Account</th>
+                                            <th class="column-title">Asset Detail</th>
+                                            <th class="column-title">Acquisition Cost</th>
+                                            <th class="column-title">Book Value</th>
                                             </th>
                                         </tr>
                                     </thead>                                    
@@ -79,15 +78,15 @@
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="order-tab">
                             <div class="table-responsive">
-                                <table class="table table-striped jambo_table bulk_action">
+                                <table class="table table-striped jambo_table bulk_action" id="dataTable_disposed" style="width:100%">
                                     <thead>
                                         <tr class="headings">
-                                            <th class="column-title">Transaction Number </th>
-                                            <th class="column-title">Acquisition Date </th>
-                                            <th class="column-title">Detail </th>
-                                            <th class="column-title">Sell Price </th>
-                                            <th class="column-title">Gain Loss </th>
-                                            <th class="column-title no-link last"><span class="nobr">Action</span></th>
+                                            <th class="column-title">Acquisition Date</th>
+                                            <th class="column-title">Transaction Number</th>
+                                            <th class="column-title">Detail</th>
+                                            <th class="column-title">Sell Price</th>
+                                            <th class="column-title">Gain Loss</th>
+                                            <th class="column-title no-link last"><span class="nobr"></span></th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -95,15 +94,15 @@
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="quote-tab">
                             <div class="table-responsive">
-                                <table class="table table-striped jambo_table bulk_action">
+                                <table class="table table-striped jambo_table bulk_action" id="dataTable_depreciation" style="width:100%">
                                     <thead>
                                         <tr class="headings">
-                                            <th class="column-title">Method </th>
-                                            <th class="column-title">Detail </th>
-                                            <th class="column-title">Period </th>
-                                            <th class="column-title">Rate </th>
-                                            <th class="column-title">Depreciation Method </th>
-                                            <th class="column-title no-link last"><span class="nobr">Action</span></th>
+                                            <th class="column-title">Method</th>
+                                            <th class="column-title">Detail</th>
+                                            <th class="column-title">Period</th>
+                                            <th class="column-title">Rate</th>
+                                            <th class="column-title">Depreciation Method</th>
+                                            <th class="column-title no-link last"><span class="nobr"></span></th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -118,5 +117,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/asset_management/dataTable.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/asset_management/dataTable.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

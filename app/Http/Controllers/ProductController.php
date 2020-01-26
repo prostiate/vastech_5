@@ -39,7 +39,8 @@ use App\User;
 use App\warehouse_transfer_item;
 use App\wip;
 use App\wip_item;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -123,7 +124,12 @@ class ProductController extends Controller
             //return view('admin.request.joyday.products.index', compact(['avail_stock', 'low_stock', 'out_stock']));
         } else {
             if (request()->ajax()) {
-                return datatables()->of(product::where('id', '>', 0)->with('other_product_category', 'other_unit'))
+                return datatables()->of(
+                    product::where('id', '>', 0)->with('other_product_category', 'other_unit')
+                        //->with(['warehouse_detail' => function ($query) {
+                        //    $query->selectRaw('SUM(qty_in - qty_out) as qty, product_id')->groupBy('product_id');
+                        //}])
+                )
                     ->make(true);
             }
         }

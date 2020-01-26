@@ -109,7 +109,7 @@
                                     <label>
                                         <input type="checkbox" class="js-switch" 
                                         value="1" id="check_depreciable"
-                                        name="is_depreciable" @if($asset->isDepreciable == 0) checked @endif />
+                                        name="is_depreciable" @if($asset->is_depreciable == 0) checked @endif />
                                     </label>
                                 </div>
                             </div>
@@ -224,10 +224,10 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/asset_management/updateForm.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/sum.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/add_field.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/is_depreciable.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script src="{{asset('js/asset_management/updateForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/sum.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/add_field.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/is_depreciable.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

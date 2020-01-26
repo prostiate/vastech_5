@@ -247,9 +247,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/purchases/quote/createForm.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/purchases/quote/addmoreitem.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format_pquote.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/quote/createForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/quote/addmoreitem.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format_pquote.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

@@ -103,8 +103,14 @@
                 <span class="label label-warning" style="color:white;">Partial</span>
                 @elseif($caba->status == 5)
                 <span class="label label-danger" style="color:white;">Overdue</span>
-                @else
+                @elseif($caba->status == 6)
                 <span class="label label-success" style="color:white;">Sent</span>
+                @elseif($caba->status == 7)
+                <span class="label label-success" style="color:white;">Active</span>
+                @elseif($caba->status == 8)
+                <span class="label label-success" style="color:white;">Sold</span>
+                @elseif($caba->status == 9)
+                <span class="label label-success" style="color:white;">Disposed</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -193,5 +199,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/cashbank/deleteFormBankTransfer.js')}}" charset="utf-8"></script>
+<script src="{{asset('js/cashbank/deleteFormBankTransfer.js?v=5-26012020') }}" charset="utf-8"></script>
 @endpush

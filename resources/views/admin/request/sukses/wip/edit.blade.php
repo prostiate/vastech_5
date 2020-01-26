@@ -97,7 +97,7 @@
                                         <option value="0" selected>Material Per Product Qty</option>
                                         <option value="1">Material For All Product Qty</option>
                                     </select>
-                                    <input class="wip_production_method" value="{{$wip->production_method}}" hidden>
+                                    <input class="wip_production_method" value="{{$wip->production_method}}" name="wip_production_method" hidden>
                                 </div>
                             </div>
                         </div>
@@ -115,18 +115,14 @@
                                 <thead>
                                     <tr class="headings">
                                         <th class="column-title" style="width: 350px">Product Name</th>
-                                        <th class="column-title" style="width: 250px">Quantity
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 250px">Quantity</th>
                                         <th class="column-title" style="width: 300px">Price</th>
-                                        <th class="column-title" style="width: 300px">Total Price
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 300px">Total Price</th>
                                         <th class="column-title" style="width: 50px"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="neworderbody_per">
-                                    @if($wip->production_method == 0)
+                                    @if($wip->production_method != 1)
                                     @foreach($wip_item as $wi)
                                     <tr>
                                         <td>
@@ -140,15 +136,15 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty" name="wip_product_req_qty_per[]" value="{{$wip->qty_require}}">
+                                            <input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty" name="wip_product_req_qty_per[]" value="{{$wi->qty_require}}">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="wip_product_price_display_per form-control" value="{{$wip->price}}">
-                                            <input type="text" class="wip_product_price_per" name="wip_product_price_per[]" value="{{$wip->price}}" hidden>
+                                            <input onClick="this.select();" type="text" class="wip_product_price_display_per form-control" value="{{$wi->price}}">
+                                            <input type="text" class="wip_product_price_per" name="wip_product_price_per[]" value="{{$wi->price}}" hidden>
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="wip_product_total_price_display_per form-control" value="{{$wip->total_price}}" readonly>
-                                            <input type="text" class="wip_product_total_price_per" name="wip_product_total_price_per[]" value="{{$wip->total_price}}" hidden>
+                                            <input onClick="this.select();" type="text" class="wip_product_total_price_display_per form-control" value="{{$wi->total_price}}" readonly>
+                                            <input type="text" class="wip_product_total_price_per" name="wip_product_total_price_per[]" value="{{$wi->total_price}}" hidden>
                                         </td>
                                         <td>
                                             <input type="button" class="btn btn-danger delete_per" value="x">
@@ -319,8 +315,8 @@
                                         </td>
                                         <td colspan="2">
                                             <input onClick="this.select();" type="text" class="form-control wip_margin_display_all" @if($wip->margin_type == 'rp') value="{{$wip->margin_total}}" @else value="{{$wip->margin_value}}" @endif>
-                                            <input type="text" class="wip_margin_hidden_per_all" name="margin_value_all" value="{{$wip->margin_value}}" >
-                                            <input type="text" class="wip_margin_hidden_total_all" name="margin_total_all" value="{{$wip->margin_total}}" >
+                                            <input type="text" class="wip_margin_hidden_per_all" name="margin_value_all" value="{{$wip->margin_value}}" hidden>
+                                            <input type="text" class="wip_margin_hidden_total_all" name="margin_total_all" value="{{$wip->margin_total}}" hidden>
                                         </td>
                                     </tr>
                                     <tr>
@@ -358,12 +354,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/updateForm_per.js') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/updateForm_all.js') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/updateForm_per.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/updateForm_all.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-26012020') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

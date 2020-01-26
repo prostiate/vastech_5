@@ -9,6 +9,7 @@ class journal_entry extends Model
 {
     //protected $primaryKey = ['id', 'ref_id'];
     use SoftDeletes;
+    protected $guarded = [];
     protected $table = "journal_entries";
 
     public function journal_entry_item()
@@ -24,5 +25,10 @@ class journal_entry extends Model
     public function other_transaction()
     {
         return $this->belongsTo('App\other_transaction');
+    }
+
+    public function asset()
+    {
+        return $this->hasMany('App\asset');
     }
 }

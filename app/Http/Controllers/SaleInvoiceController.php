@@ -648,10 +648,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa1->id)->update([
-                        'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
-                    ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -663,10 +659,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'               => $get_current_balance_on_coa2->balance + $subtotal,
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
@@ -681,10 +673,6 @@ class SaleInvoiceController extends Controller
                         'credit'                => $total_avg,
                         //'from_product_id'   => 0,
                     ]);
-                    $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa3->id)->update([
-                        'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
-                    ]);
                 } else {
                     // DEFAULT SETTING
                     coa_detail::create([
@@ -698,10 +686,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $subtotal,
                         //'from_product_id'   => $request->products[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -738,10 +722,6 @@ class SaleInvoiceController extends Controller
                 'debit'                     => $grandtotal_header_other,
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
 
             other_transaction::find($transactions->id)->update([
                 'balance_due'       => $grandtotal_header_other,
@@ -768,10 +748,6 @@ class SaleInvoiceController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => 0,
                     'credit'                => $taxtotal_header_other,
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
                 ]);
             }
 
@@ -857,10 +833,6 @@ class SaleInvoiceController extends Controller
                 'debit'                     => $request->get('balance'),
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
 
             if ($request->warehouse == null) {
                 $is_warehouse                   = 1;
@@ -930,10 +902,6 @@ class SaleInvoiceController extends Controller
                     'debit'                 => 0,
                     'credit'                => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $product) {
@@ -969,10 +937,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa1->id)->update([
-                        'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
-                    ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -984,10 +948,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
@@ -1001,10 +961,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $total_avg,
                         //'from_product_id'   => 0,
-                    ]);
-                    $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa3->id)->update([
-                        'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
                     ]);
                 } else {
                     // DEFAULT SETTING
@@ -1020,10 +976,6 @@ class SaleInvoiceController extends Controller
                         'credit'                => $request->total_price[$i],
                         //'from_product_id'   => $request->products[$i],
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                    ]);
                 }
                 //menambahkan stok barang ke gudang
                 $wh                             = new warehouse_detail();
@@ -1031,7 +983,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $trans_no;
                 $wh->product_id                 = $request->products[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -1121,10 +1073,6 @@ class SaleInvoiceController extends Controller
                 'debit'                         => $request->get('subtotal'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($default_unbilled_revenue->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $request->get('subtotal'),
-            ]);
 
             $contact_account                    = contact::find($id_contact);
             if ($contact_account->is_limit == 1) {
@@ -1145,10 +1093,6 @@ class SaleInvoiceController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // DEFAULT SETTING UNBILLED RECEIVABLE
             $default_unbilled_receivable        = default_account::find(7);
             coa_detail::create([
@@ -1161,10 +1105,6 @@ class SaleInvoiceController extends Controller
                 'contact_id'                    => $request->get('vendor_name'),
                 'debit'                         => 0,
                 'credit'                        => $request->get('subtotal'),
-            ]);
-            $get_current_balance_on_coa         = coa::find($default_unbilled_receivable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $request->get('subtotal'),
             ]);
 
             $transactions                       = other_transaction::create([
@@ -1224,10 +1164,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => 0,
                     'credit'                    => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $keys) {
@@ -1263,10 +1199,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                    ]);
                     /*coa_detail::create([
                         'coa_id'            => $default_product_account->buy_account,
                         'date'              => $request->get('trans_date'),
@@ -1275,10 +1207,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
                         'credit'            => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa2 = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'       => $get_current_balance_on_coa2->balance + $request->get('balance'),
                     ]);*/
                 } else {
                     // YANG GA DI TRACK SELL ACCOUNT
@@ -1292,10 +1220,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
 
@@ -1413,10 +1337,6 @@ class SaleInvoiceController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // MENGUBAH STATUS SI SALES ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                     = sale_order::find($id);
             $check_total_po->update([
@@ -1491,10 +1411,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => 0,
                     'credit'                    => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $keys) {
@@ -1536,10 +1452,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -1551,10 +1463,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -1568,10 +1476,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -1583,10 +1487,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
 
@@ -1824,10 +1724,6 @@ class SaleInvoiceController extends Controller
                         'debit'             => $total_avg,
                         'credit'            => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -1839,10 +1735,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
                         'credit'            => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -1856,10 +1748,6 @@ class SaleInvoiceController extends Controller
                         'debit'             => 0,
                         'credit'            => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -1871,10 +1759,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
 
@@ -1912,10 +1796,6 @@ class SaleInvoiceController extends Controller
                 'debit'                     => $grandtotal_header_other,
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
 
             other_transaction::find($transactions->id)->update([
                 'balance_due'       => $grandtotal_header_other,
@@ -1942,10 +1822,6 @@ class SaleInvoiceController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => 0,
                     'credit'                => $taxtotal_header_other,
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
                 ]);
             }
 
@@ -2014,10 +1890,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => $request->get('balance'),
                     'credit'                    => 0,
                 ]);
-                $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
-                ]);
             } else {
                 coa_detail::create([
                     'company_id'                    => $user->company_id,
@@ -2030,10 +1902,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => $request->get('costtotal'),
                     'credit'                    => 0,
                 ]);
-                $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('costtotal'),
-                ]);
                 // REVENUE BUAT TEMENNYA AR SI JASA ONLY
                 coa_detail::create([
                     'company_id'                    => $user->company_id,
@@ -2045,10 +1913,6 @@ class SaleInvoiceController extends Controller
                     'contact_id'                => $request->get('vendor_name'),
                     'debit'                     => 0,
                     'credit'                    => $request->get('costtotal'),
-                ]);
-                $get_current_balance_on_coa     = coa::find(65);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('costtotal'),
                 ]);
             }
 
@@ -2152,10 +2016,6 @@ class SaleInvoiceController extends Controller
                     'debit'                 => 0,
                     'credit'                => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             /*if ($cost_bundle != null) {
@@ -2175,10 +2035,6 @@ class SaleInvoiceController extends Controller
                             'contact_id'            => $request->get('vendor_name'),
                             'debit'                 => 0,
                             'credit'                => $request->cost_amount[$i],
-                        ]);
-                        $get_current_balance_on_coa = coa::find($request->cost_acc[$i]);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $request->cost_amount[$i],
                         ]);
                     }
                 }
@@ -2239,10 +2095,6 @@ class SaleInvoiceController extends Controller
                                 'debit'                 => $total_avg,
                                 'credit'                => 0,
                             ]);
-                            $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
-                            coa::find($get_current_balance_on_coa1->id)->update([
-                                'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
-                            ]);
                             // DEFAULT SELL ACCOUNT
                             coa_detail::create([
                                 'company_id'                    => $user->company_id,
@@ -2254,10 +2106,6 @@ class SaleInvoiceController extends Controller
                                 'contact_id'            => $request->get('vendor_name'),
                                 'debit'                 => 0,
                                 'credit'                => $request->total_price[$i],
-                            ]);
-                            $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
-                            coa::find($get_current_balance_on_coa2->id)->update([
-                                'balance'               => $get_current_balance_on_coa2->balance + $request->total_price[$i],
                             ]);
                             // DEFAULT INVENTORY ACCOUNT
                             coa_detail::create([
@@ -2272,10 +2120,6 @@ class SaleInvoiceController extends Controller
                                 'credit'                => $total_avg,
                                 //'from_product_id'   => 0,
                             ]);
-                            $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
-                            coa::find($get_current_balance_on_coa3->id)->update([
-                                'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
-                            ]);
                             // PUNYA COST
                             coa_detail::create([
                                 'company_id'                    => $user->company_id,
@@ -2288,10 +2132,6 @@ class SaleInvoiceController extends Controller
                                 'debit'                 => 0,
                                 'credit'                => $request->cost_total_price[$i],
                                 //'from_product_id'   => $request->products[$i],
-                            ]);
-                            $get_current_balance_on_coa = coa::find(69);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
                             ]);
                         } else {
                             // DEFAULT SETTING
@@ -2307,10 +2147,6 @@ class SaleInvoiceController extends Controller
                                 'credit'                => $request->total_price[$i],
                                 //'from_product_id'   => $request->products[$i],
                             ]);
-                            $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                            ]);
                             // PUNYA COST
                             coa_detail::create([
                                 'company_id'                    => $user->company_id,
@@ -2323,10 +2159,6 @@ class SaleInvoiceController extends Controller
                                 'debit'                 => 0,
                                 'credit'                => $request->cost_total_price[$i],
                                 //'from_product_id'   => $request->products[$i],
-                            ]);
-                            $get_current_balance_on_coa = coa::find(69);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance + $request->cost_total_price[$i],
                             ]);
                         }
                         //menambahkan stok barang ke gudang
@@ -2488,10 +2320,6 @@ class SaleInvoiceController extends Controller
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
             ]);
-            $get_current_balance_on_coa         = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // MENGUBAH STATUS SI SALES ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                     = sale_order::find($id);
             $check_total_po->update([
@@ -2582,10 +2410,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => 0,
                     'credit'                    => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $keys) {
@@ -2627,10 +2451,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -2642,10 +2462,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -2659,10 +2475,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -2674,10 +2486,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
 
@@ -2910,18 +2718,6 @@ class SaleInvoiceController extends Controller
                     'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
                 ]);
             }
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
-            // HAPUS PAJAK
-            if ($pi->taxtotal > 0) {
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                ]);
-            }
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
@@ -2933,26 +2729,13 @@ class SaleInvoiceController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
-                    // DEFAULT SELL ACCOUNT
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DEFAULT INVENTORY ACCOUNT
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
@@ -2968,10 +2751,6 @@ class SaleInvoiceController extends Controller
                         'qty'                   => $produk->qty + $qty,
                     ]);
                 } else {
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
@@ -3116,10 +2895,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa1 = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa1->id)->update([
-                        'balance'               => $get_current_balance_on_coa1->balance + $total_avg,
-                    ]);
                     // DEFAULT SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -3131,10 +2906,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name2'),
                         'debit'                 => 0,
                         'credit'                => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa2 = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa2->id)->update([
-                        'balance'               => $get_current_balance_on_coa2->balance + $subtotal,
                     ]);
                     // DEFAULT INVENTORY ACCOUNT
                     coa_detail::create([
@@ -3149,10 +2920,6 @@ class SaleInvoiceController extends Controller
                         'credit'                => $total_avg,
                         //'from_product_id'   => 0,
                     ]);
-                    $get_current_balance_on_coa3 = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa3->id)->update([
-                        'balance'               => $get_current_balance_on_coa3->balance - $total_avg,
-                    ]);
                 } else {
                     // DEFAULT SETTING
                     coa_detail::create([
@@ -3166,10 +2933,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $subtotal,
                         //'from_product_id'   => $request->products[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -3202,10 +2965,6 @@ class SaleInvoiceController extends Controller
                 'debit'                     => $grandtotal_header_other,
                 'credit'                    => 0,
             ]);
-            $get_current_balance_on_coa     = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
 
             $get_ot->update([
                 'balance_due'       => $grandtotal_header_other,
@@ -3231,10 +2990,6 @@ class SaleInvoiceController extends Controller
                     'contact_id'                => $request->get('vendor_name2'),
                     'debit'                     => 0,
                     'credit'                    => $taxtotal_header_other,
-                ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $taxtotal_header_other,
                 ]);
             }
 
@@ -3336,18 +3091,6 @@ class SaleInvoiceController extends Controller
                     return response()->json(['errors' => 'Quantity must be more than zero']);
                 }
             }
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
-            // HAPUS PAJAK
-            if ($pi->taxtotal > 0) {
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                ]);
-            }
             // BALIKIN STATUS ORDER
             $ambilpo                            = sale_order::find($pi->selected_so_id);
             $ambilpo->update([
@@ -3377,32 +3120,15 @@ class SaleInvoiceController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
-                    // DEFAULT SELL ACCOUNT
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DEFAULT INVENTORY ACCOUNT
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                 } else {
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                 }
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                 warehouse_detail::where('type', 'sales invoice')
@@ -3434,10 +3160,6 @@ class SaleInvoiceController extends Controller
                 'contact_id'                    => $request->get('vendor_name'),
                 'debit'                         => $request->get('balance'),
                 'credit'                        => 0,
-            ]);
-            $get_current_balance_on_coa         = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
             ]);
             // MENGUBAH STATUS SI PURCHASE ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                     = sale_order::find($id_so);
@@ -3497,10 +3219,6 @@ class SaleInvoiceController extends Controller
                     'debit'                     => 0,
                     'credit'                    => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa     = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                   => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $keys) {
@@ -3542,10 +3260,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -3557,10 +3271,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -3574,10 +3284,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -3589,10 +3295,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
 
@@ -3675,12 +3377,6 @@ class SaleInvoiceController extends Controller
             );
             sale_quote::where('number', $pi->transaction_no_sq)->update($updatepdstatus);
             other_transaction::where('number', $pi->transaction_no_sq)->where('type', 'sales quote')->update($updatepdstatus);
-
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
@@ -3692,26 +3388,13 @@ class SaleInvoiceController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
-                    // DEFAULT SELL ACCOUNT
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DEFAULT INVENTORY ACCOUNT
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
@@ -3727,10 +3410,6 @@ class SaleInvoiceController extends Controller
                         'qty'                   => $produk->qty + $qty,
                     ]);
                 } else {
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
@@ -3867,10 +3546,6 @@ class SaleInvoiceController extends Controller
                         'debit'             => $total_avg,
                         'credit'            => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -3882,10 +3557,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'        => $request->get('vendor_name'),
                         'debit'             => 0,
                         'credit'            => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -3899,10 +3570,6 @@ class SaleInvoiceController extends Controller
                         'debit'             => 0,
                         'credit'            => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'           => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -3914,10 +3581,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $subtotal,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $subtotal,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -3951,10 +3614,6 @@ class SaleInvoiceController extends Controller
                 'debit'                 => $grandtotal_header_other,
                 'credit'                => 0,
             ]);
-            $get_current_balance_on_coa = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'               => $get_current_balance_on_coa->balance + $grandtotal_header_other,
-            ]);
 
             $get_ot->update([
                 'balance_due'       => $grandtotal_header_other,
@@ -3980,10 +3639,6 @@ class SaleInvoiceController extends Controller
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => 0,
                     'credit'                => $taxtotal_header_other,
-                ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $taxtotal_header_other,
                 ]);
             }
 
@@ -4024,18 +3679,6 @@ class SaleInvoiceController extends Controller
                     return response()->json(['errors' => 'Quantity must be more than zero']);
                 }
             }
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
-            // HAPUS PAJAK
-            if ($pi->taxtotal > 0) {
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                ]);
-            }
             // BALIKIN STATUS ORDER
             $ambilpo                            = sale_order::find($pi->selected_so_id);
             $ambilpo->update([
@@ -4065,32 +3708,15 @@ class SaleInvoiceController extends Controller
                         ->where('credit', 0)
                         ->where('coa_id', $default_product_account->buy_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
-                    // DEFAULT SELL ACCOUNT
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                     // DEFAULT INVENTORY ACCOUNT
                     $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
                         ->where('debit', 0)
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                    ]);
                     $ambil_avg_price_dari_coadetial->delete();
                 } else {
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
                 }
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                 warehouse_detail::where('type', 'sales invoice')
@@ -4135,10 +3761,6 @@ class SaleInvoiceController extends Controller
                 'contact_id'                => $request->get('vendor_name'),
                 'debit'                     => $request->get('balance'),
                 'credit'                    => 0,
-            ]);
-            $get_current_balance_on_coa = coa::find($contact_account->account_receivable_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                   => $get_current_balance_on_coa->balance + $request->get('balance'),
             ]);
             // MENGUBAH STATUS SI PURCHASE ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                 = sale_order::find($id_so);
@@ -4198,10 +3820,6 @@ class SaleInvoiceController extends Controller
                     'debit'                 => 0,
                     'credit'                => $request->get('taxtotal'),
                 ]);
-                $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'               => $get_current_balance_on_coa->balance + $request->get('taxtotal'),
-                ]);
             }
 
             foreach ($request->products as $i => $keys) {
@@ -4243,10 +3861,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => $total_avg,
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $total_avg,
-                    ]);
                     // CREATE COA DETAIL YANG DARI SELL ACCOUNT
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -4258,10 +3872,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                     // CREATE COA DETAIL YANG DARI INVENTORY ACCOUNT
                     coa_detail::create([
@@ -4275,10 +3885,6 @@ class SaleInvoiceController extends Controller
                         'debit'                 => 0,
                         'credit'                => $total_avg,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $total_avg,
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -4290,10 +3896,6 @@ class SaleInvoiceController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => 0,
                         'credit'                => $request->total_price[$i],
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
 
@@ -4343,19 +3945,6 @@ class SaleInvoiceController extends Controller
                 );
                 sale_quote::where('number', $pi->transaction_no_sq)->update($updatepdstatus);
                 other_transaction::where('number', $pi->transaction_no_sq)->where('type', 'sales quote')->update($updatepdstatus);
-
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($pi->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                    ]);
-                }
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
@@ -4367,26 +3956,13 @@ class SaleInvoiceController extends Controller
                             ->where('credit', 0)
                             ->where('coa_id', $default_product_account->buy_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
-                        // DEFAULT SELL ACCOUNT
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DEFAULT INVENTORY ACCOUNT
                         $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
                             ->where('debit', 0)
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
@@ -4402,10 +3978,6 @@ class SaleInvoiceController extends Controller
                             'qty'                   => $produk->qty + $qty,
                         ]);
                     } else {
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4434,40 +4006,13 @@ class SaleInvoiceController extends Controller
                         'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
                     ]);
                 }
-                // DEFAULT SETTING UNBILLED REVENUE
-                $default_unbilled_revenue           = default_account::find(6);
                 coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('debit', 0)->delete();
                 coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('credit', 0)->delete();
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                $get_current_balance_on_coa         = coa::find($default_unbilled_revenue->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $pi->subtotal,
-                ]);
-                $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                ]);
-                $default_unbilled_receivable        = default_account::find(7);
-                $get_current_balance_on_coa         = coa::find($default_unbilled_receivable->account_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance + $pi->subtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($pi->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                    ]);
-                }
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
                     $default_product_account        = product::find($a->product_id);
                     if ($default_product_account->is_track == 1) {
-                        $get_current_balance_on_coa         = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4482,10 +4027,6 @@ class SaleInvoiceController extends Controller
                             'qty'                           => $produk->qty + $qty,
                         ]);
                     } else {
-                        $get_current_balance_on_coa         = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'                       => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4510,18 +4051,6 @@ class SaleInvoiceController extends Controller
                 if ($contact_id->is_limit == 1) {
                     $contact_id->update([
                         'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
-                    ]);
-                }
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($pi->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
                     ]);
                 }
                 // BALIKIN STATUS ORDER
@@ -4553,32 +4082,15 @@ class SaleInvoiceController extends Controller
                             ->where('credit', 0)
                             ->where('coa_id', $default_product_account->buy_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
-                        // DEFAULT SELL ACCOUNT
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DEFAULT INVENTORY ACCOUNT
                         $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
                             ->where('debit', 0)
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
                     } else {
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                     }
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
@@ -4608,32 +4120,6 @@ class SaleInvoiceController extends Controller
                     ]);
                 }
                 if ($pi->jasa_only == 0) {
-                    // NGUBAH STATUS SI SPK MENJADI CLOSED
-                    /*spk::find($pi->selected_spk_id)->update(['status' => 2]);
-                    other_transaction::where('type', 'spk')->where('number', $pi->transaction_no_spk)->update(['status' => 2]);*/
-                    // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                    $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                    ]);
-                    // HAPUS PAJAK
-                    if ($pi->taxtotal > 0) {
-                        $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                        ]);
-                    }
-                    $cost_bundle                        = sale_invoice_cost::where('sale_invoice_id', $pi->id)->get();
-                    if ($cost_bundle != null) {
-                        foreach ($cost_bundle as $i => $p) {
-                            if ($cost_bundle[$i] != null) {
-                                $get_current_balance_on_coa = coa::find($cost_bundle[$i]->coa_id);
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'               => $get_current_balance_on_coa->balance - $cost_bundle[$i]->amount,
-                                ]);
-                            }
-                        }
-                    }
                     // HAPUS BALANCE PER ITEM INVOICE
                     $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                     foreach ($pi_details as $a) {
@@ -4650,42 +4136,15 @@ class SaleInvoiceController extends Controller
                                 ->where('credit', 0)
                                 ->where('coa_id', $default_product_account->buy_account)
                                 ->first();
-                            $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                            ]);
                             $ambil_avg_price_dari_coadetial->delete();
-                            // DEFAULT SELL ACCOUNT
-                            $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                            ]);
                             // DEFAULT INVENTORY ACCOUNT
                             $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                                 ->where('number', 'Sales Invoice #' . $pi->number)
                                 ->where('debit', 0)
                                 ->where('coa_id', $default_product_account->default_inventory_account)
                                 ->first();
-                            $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                            ]);
                             $ambil_avg_price_dari_coadetial->delete();
-                            // PUNYA COST
-                            $get_current_balance_on_coa = coa::find(69);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance - $a->cost_amount,
-                            ]);
                         } else {
-                            $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                            ]);
-                            // PUNYA COST
-                            $get_current_balance_on_coa = coa::find(69);
-                            coa::find($get_current_balance_on_coa->id)->update([
-                                'balance'               => $get_current_balance_on_coa->balance - $a->cost_amount,
-                            ]);
                         }
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
@@ -4711,29 +4170,6 @@ class SaleInvoiceController extends Controller
                     // FINALLY DELETE THE INVOICE
                     $pi->delete();
                 } else {
-                    // NGUBAH STATUS SI SPK MENJADI CLOSED
-                    /*spk::find($pi->selected_spk_id)->update(['status' => 2]);
-                    other_transaction::where('type', 'spk')->where('number', $pi->transaction_no_spk)->update(['status' => 2]);*/
-                    // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                    $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                    ]);
-                    $get_current_balance_on_coa         = coa::find(65);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                    ]);
-                    /*$cost_bundle                        = sale_invoice_cost::where('sale_invoice_id', $pi->id)->get();
-                    if ($cost_bundle != null) {
-                        foreach ($cost_bundle as $i => $p) {
-                            if ($cost_bundle[$i] != null) {
-                                $get_current_balance_on_coa = coa::find($cost_bundle[$i]->coa_id);
-                                coa::find($get_current_balance_on_coa->id)->update([
-                                    'balance'               => $get_current_balance_on_coa->balance - $cost_bundle[$i]->amount,
-                                ]);
-                            }
-                        }
-                    }*/
                     // HAPUS BALANCE PER ITEM INVOICE
                     $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                     foreach ($pi_details as $a) {
@@ -4772,18 +4208,6 @@ class SaleInvoiceController extends Controller
                         'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
                     ]);
                 }
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($pi->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                    ]);
-                }
                 // BALIKIN STATUS ORDER
                 $ambilpo                            = sale_order::find($pi->selected_so_id);
                 $ambilpo->update([
@@ -4813,32 +4237,15 @@ class SaleInvoiceController extends Controller
                             ->where('credit', 0)
                             ->where('coa_id', $default_product_account->buy_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial1->debit,
-                        ]);
                         $ambil_avg_price_dari_coadetial1->delete();
-                        // DEFAULT SELL ACCOUNT
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DEFAULT INVENTORY ACCOUNT
                         $ambil_avg_price_dari_coadetial2 = coa_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
                             ->where('debit', 0)
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial2->credit,
-                        ]);
                         $ambil_avg_price_dari_coadetial2->delete();
                     } else {
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                     }
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
@@ -4867,18 +4274,6 @@ class SaleInvoiceController extends Controller
                         'current_limit_balance'         => $contact_id->current_limit_balance + $pi->balance_due,
                     ]);
                 }
-                // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-                $get_current_balance_on_coa         = coa::find($contact_id->account_receivable_id);
-                coa::find($get_current_balance_on_coa->id)->update([
-                    'balance'                       => $get_current_balance_on_coa->balance - $pi->grandtotal,
-                ]);
-                // HAPUS PAJAK
-                if ($pi->taxtotal > 0) {
-                    $get_current_balance_on_coa = coa::find($default_tax->account_id);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance - $pi->taxtotal,
-                    ]);
-                }
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
@@ -4890,26 +4285,13 @@ class SaleInvoiceController extends Controller
                             ->where('credit', 0)
                             ->where('coa_id', $default_product_account->buy_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $ambil_avg_price_dari_coadetial->debit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
-                        // DEFAULT SELL ACCOUNT
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DEFAULT INVENTORY ACCOUNT
                         $ambil_avg_price_dari_coadetial = coa_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
                             ->where('debit', 0)
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
-                        $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance + $ambil_avg_price_dari_coadetial->credit,
-                        ]);
                         $ambil_avg_price_dari_coadetial->delete();
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
@@ -4925,10 +4307,6 @@ class SaleInvoiceController extends Controller
                             'qty'                   => $produk->qty + $qty,
                         ]);
                     } else {
-                        $get_current_balance_on_coa = coa::find($default_product_account->sell_account);
-                        coa::find($get_current_balance_on_coa->id)->update([
-                            'balance'               => $get_current_balance_on_coa->balance - $a->amount,
-                        ]);
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)

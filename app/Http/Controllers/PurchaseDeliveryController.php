@@ -177,10 +177,6 @@ class PurchaseDeliveryController extends Controller
                 'debit'                         => 0,
                 'credit'                        => $request->get('balance'),
             ]);
-            $get_current_balance_on_coa         = coa::find($default_unbilled_account_payable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
 
             $transactions = other_transaction::create([
                 'company_id'                    => $user->company_id,
@@ -257,10 +253,6 @@ class PurchaseDeliveryController extends Controller
                         'debit'                 => $request->total_price[$i],
                         'credit'                => 0,
                     ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                    ]);
                 } else {
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
@@ -272,10 +264,6 @@ class PurchaseDeliveryController extends Controller
                         'contact_id'            => $request->get('vendor_name'),
                         'debit'                 => $request->total_price[$i],
                         'credit'                => 0,
-                    ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'               => $get_current_balance_on_coa->balance + $request->total_price[$i],
                     ]);
                 }
             };
@@ -370,10 +358,6 @@ class PurchaseDeliveryController extends Controller
             ]);
             // DELETE DULU BALANCE YANG SEBELUMNYA
             $default_unbilled_account_payable   = default_account::find(13);
-            $get_current_balance_on_coa = coa::find($default_unbilled_account_payable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'       => $get_current_balance_on_coa->balance - $checknumberpd->grandtotal,
-            ]);
             coa_detail::where('number', 'Purchase Delivery #' . $checknumberpd->number)
                 ->where('type', 'purchase delivery')
                 ->where('debit', 0)
@@ -382,11 +366,6 @@ class PurchaseDeliveryController extends Controller
                     'date'          => $request->shipping_date,
                     'credit'        => $request->balance,
                 ]);
-            // ABIS TU BARU DI TAMBAH SAMA YANG BARU
-            $get_current_balance_on_coa = coa::find($default_unbilled_account_payable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'       => $get_current_balance_on_coa->balance + $request->get('balance'),
-            ]);
             // UDPATE DELIVERY HEADERNYA
             purchase_delivery::find($id)->update([
                 'email'             => $request->get('email'),
@@ -404,10 +383,6 @@ class PurchaseDeliveryController extends Controller
                 $default_product_account = product::find($request->products[$i]);
                 // DEFAULT INVENTORY 17 dan yang di input di debit ini adalah total harga dari per barang
                 if ($default_product_account->is_track == 1) {
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance - $pp[$i]->amount,
-                    ]);
                     coa_detail::where('number', 'Purchase Delivery #' . $checknumberpd->number)
                         ->where('type', 'purchase delivery')
                         ->where('credit', 0)
@@ -416,15 +391,7 @@ class PurchaseDeliveryController extends Controller
                             'date'          => $request->shipping_date,
                             'debit'         => $request->total_price[$i],
                         ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                    ]);
                 } else {
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance - $pp[$i]->amount,
-                    ]);
                     coa_detail::where('number', 'Purchase Delivery #' . $checknumberpd->number)
                         ->where('type', 'purchase delivery')
                         ->where('credit', 0)
@@ -433,10 +400,6 @@ class PurchaseDeliveryController extends Controller
                             'date'          => $request->shipping_date,
                             'debit'         => $request->total_price[$i],
                         ]);
-                    $get_current_balance_on_coa = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'       => $get_current_balance_on_coa->balance + $request->total_price[$i],
-                    ]);
                 }
                 $pp[$i]->update([
                     'product_id'    => $request->products[$i],
@@ -471,11 +434,6 @@ class PurchaseDeliveryController extends Controller
             $default_unbilled_account_payable       = default_account::find(13);
             coa_detail::where('type', 'purchase delivery')->where('number', 'Purchase Delivery #' . $pi->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'purchase delivery')->where('number', 'Purchase Delivery #' . $pi->number)->where('credit', 0)->delete();
-            // DELETE BALANCE DARI YANG PENGEN DI DELETE (CONTACT)
-            $get_current_balance_on_coa             = coa::find($default_unbilled_account_payable->account_id);
-            coa::find($get_current_balance_on_coa->id)->update([
-                'balance'                           => $get_current_balance_on_coa->balance - $pi->grandtotal,
-            ]);
             // BALIKIN STATUS ORDER
             $ambilpo                            = purchase_order::find($pi->selected_po_id);
             $ambilpo->update([
@@ -534,18 +492,6 @@ class PurchaseDeliveryController extends Controller
                 $ambilpoo->update([
                     'qty_remaining'             => $ambilpoo->qty_remaining + $a->qty,
                 ]);
-                $default_product_account            = product::find($a->product_id);
-                if ($default_product_account->is_track == 1) {
-                    $get_current_balance_on_coa     = coa::find($default_product_account->default_inventory_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                   => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
-                } else {
-                    $get_current_balance_on_coa     = coa::find($default_product_account->buy_account);
-                    coa::find($get_current_balance_on_coa->id)->update([
-                        'balance'                   => $get_current_balance_on_coa->balance - $a->amount,
-                    ]);
-                }
             }
             purchase_delivery_item::where('purchase_delivery_id', $id)->delete();
             // DELETE ROOT OTHER TRANSACTION
