@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\sale_quote;
+use App\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -39,13 +40,19 @@ class CheckSalesQuoteStatus extends Command
      */
     public function handle()
     {
-        $date = Carbon::now();
-        $quotes = sale_quote::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $date               = Carbon::now();
+        $header             = sale_quote::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'sales quote')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
 
-        foreach ($quotes as $quote) {
-            $quote->status = 5;
-            printf("Quote %s is OVERDUE \n", $quote->number);
-            $quote->save();
+        foreach ($header as $h) {
+            $h->status = 5;
+            printf("Quote %s is OVERDUE \n", $h->number);
+            $h->save();
+        }
+        foreach ($other_transactions as $ot) {
+            $ot->status = 5;
+            printf("Other Transaction %s is OVERDUE \n", $ot->number);
+            $ot->save();
         }
     }
 }

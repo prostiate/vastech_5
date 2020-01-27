@@ -167,6 +167,19 @@ class FixedAssetController extends Controller
                 'transaction_date'                  => $request->get('asset_date'),
                 'number'                            => $trans_no_journal,
                 'number_complete'                   => 'Journal Entry #' . $trans_no_journal,
+                'type'                              => 'journal entry',
+                'memo'                              => $request->get('asset_desc'),
+                'status'                            => 2,
+                'balance_due'                       => 0,
+                'total'                             => 0,
+            ]);
+
+            $transactions_asset = other_transaction::create([
+                'company_id'                        => $user->company_id,
+                'user_id'                           => Auth::id(),
+                'transaction_date'                  => $request->get('asset_date'),
+                'number'                            => $trans_no_journal,
+                'number_complete'                   => 'Fixed Asset #' . $trans_no_journal,
                 'type'                              => 'asset',
                 'memo'                              => $request->get('asset_desc'),
                 'status'                            => 2,
@@ -179,7 +192,7 @@ class FixedAssetController extends Controller
                 'user_id'                           => Auth::id(),
                 'coa_id'                            => $request->get('asset_account'),
                 'date'                              => $request->get('asset_date'),
-                'type'                              => 'journal',
+                'type'                              => 'journal entry',
                 'number'                            => 'Journal Entry #' . $trans_no_journal,
                 'debit'                             => $request->get('asset_cost'),
                 'credit'                            => 0,
@@ -191,7 +204,7 @@ class FixedAssetController extends Controller
                 'user_id'                           => Auth::id(),
                 'coa_id'                            => $request->get('asset_account_credited'),
                 'date'                              => $request->get('asset_date'),
-                'type'                              => 'journal',
+                'type'                              => 'journal entry',
                 'number'                            => 'Journal Entry #' . $trans_no_journal,
                 'debit'                             => 0,
                 'credit'                            => $request->get('asset_cost'),
@@ -208,6 +221,9 @@ class FixedAssetController extends Controller
                 'status'                            => 2,
                 'total_debit'                       => $request->get('asset_cost'),
                 'total_credit'                      => $request->get('asset_cost'),
+            ]);
+            other_transaction::find($transactions->id)->update([
+                'ref_id'                                => $je->id,
             ]);
 
             $jei1 = new journal_entry_item([
@@ -237,6 +253,9 @@ class FixedAssetController extends Controller
                 'is_depreciable'                    => $is_depreciable, // ini yang di centang apakah ini deprecate atau ga
                 'is_depreciated'                    => $is_depreciated, // ini buat apply
                 'status'                            => 7,
+            ]);
+            other_transaction::find($transactions_asset->id)->update([
+                'ref_id'                                => $asset->id,
             ]);
 
             if ($is_depreciable == 1) {
@@ -275,7 +294,7 @@ class FixedAssetController extends Controller
             $details = null;
         }
 
-        return view('admin.asset_managements.show', compact('assets', 'details', 'journals'));
+        return view('admin.asset_managements.show', compact(['assets', 'details', 'journals']));
     }
 
     public function apply_depreciation($id)
@@ -321,7 +340,7 @@ class FixedAssetController extends Controller
                 'transaction_date'              => $today,
                 'number'                        => $trans_no,
                 'number_complete'               => 'Journal Entry #' . $trans_no,
-                'type'                          => 'journal',
+                'type'                          => 'journal entry',
                 'status'                        => 2,
                 'balance_due'                   => 0,
                 'total'                         => 0,
@@ -332,7 +351,7 @@ class FixedAssetController extends Controller
                 'user_id'                       => Auth::id(),
                 'coa_id'                        => $asset_detail->depreciate_account,
                 'date'                          => $today,
-                'type'                          => 'journal',
+                'type'                          => 'journal entry',
                 'number'                        => 'Journal Entry #' . $trans_no,
                 'debit'                         => $depreciate,
                 'credit'                        => 0,
@@ -344,7 +363,7 @@ class FixedAssetController extends Controller
                 'user_id'                       => Auth::id(),
                 'coa_id'                        => $asset_detail->accumulated_depreciate_account,
                 'date'                          => $today,
-                'type'                          => 'journal',
+                'type'                          => 'journal entry',
                 'number'                        => 'Journal Entry #' . $trans_no,
                 'debit'                         => 0,
                 'credit'                        => $depreciate,
@@ -385,25 +404,17 @@ class FixedAssetController extends Controller
     public function edit($id)
     {
         $asset                                      = asset::find($id);
-
         if ($asset->is_depreciable == 1) {
             $detail                                 = asset_detail::where('asset_id', $id)->first();
         } else {
             $detail                                 = null;
         }
-
         $fixed_accounts                             = coa::where('coa_category_id', 5)->get();
         $accounts                                   = coa::all();
         $expense_accounts                           = coa::where('coa_category_id', 16)->get();
         $depreciation_accounts                      = coa::where('coa_category_id', 7)->get();
         $depreciation_accumulated_accounts          = coa::whereIn('coa_category_id', [16, 17, 15])->get();
-        $today                                      = Carbon::today();
-
-        $number                                     = asset::latest()->first();
-
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
+        $today                                      = Carbon::today()->toDateString();
 
         return view('admin.asset_managements.edit', compact([
             'asset',
@@ -414,7 +425,6 @@ class FixedAssetController extends Controller
             'depreciation_accumulated_accounts',
             'expense_accounts',
             'today',
-            'trans_no'
         ]));
     }
 
@@ -467,8 +477,40 @@ class FixedAssetController extends Controller
         return response()->json(['success' => 'Data is successfully added']);
     }
 
-    public function destroy(fixed_asset $fixed_asset)
+    public function destroy($id)
     {
-        //
+        IlluminateDB::beginTransaction();
+        try {
+            $asset                                      = asset::find($id);
+            $number_complete                            = 'Journal Entry #' . $asset->number;
+            if ($asset->is_depreciable == 1) {
+                $detail                                 = asset_detail::where('asset_id', $id)->first();
+            } else {
+                $detail                                 = null;
+            }
+            if ($detail) {
+                // JOURNAL ENTRY
+                other_transaction::where('type', 'journal entry')->where('number', $asset->number)->where('number_complete', $number_complete)->delete();
+                coa_detail::where('type', 'journal entry')->where('number', $number_complete)->delete();
+                journal_entry::where('number', $number_complete)->where('ref_id', $id)->delete();
+                // ASSET
+                other_transaction::where('type', 'asset')->where('number', $asset->number)->where('number_complete', $number_complete)->delete();
+                // ASSET DETAIL
+                $detail->delete();
+                $asset->delete();
+            } else {
+                other_transaction::where('type', 'journal entry')->where('number', $asset->number)->where('number_complete', $number_complete)->delete();
+                coa_detail::where('type', 'journal entry')->where('number', $number_complete)->delete();
+                journal_entry::where('number', $number_complete)->where('ref_id', $id)->delete();
+                // ASSET
+                other_transaction::where('type', 'asset')->where('number', $asset->number)->where('number_complete', $number_complete)->delete();
+                $asset->delete();
+            }
+            IlluminateDB::commit();
+            return response()->json(['success' => 'Data is successfully deleted']);
+        } catch (\Exception $e) {
+            IlluminateDB::rollback();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 }

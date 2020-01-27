@@ -56,52 +56,52 @@ class CheckDepreciateStatus extends Command
                 $this->info($a);
 
                 if ($user->company_id == 5) {
-                    $number             = journal_entry::latest()->first();
+                    $number                     = journal_entry::latest()->first();
                     if ($number != null) {
-                        $misahm             = explode("/", $number->number);
-                        $misahy             = explode(".", $misahm[1]);
+                        $misahm                 = explode("/", $number->number);
+                        $misahy                 = explode(".", $misahm[1]);
                     }
                     if (isset($misahy[1]) == 0) {
-                        $misahy[1]      = 10000;
+                        $misahy[1]              = 10000;
                     }
                     $number1                    = $misahy[1] + 1;
                     $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
                 } else {
-                    $number             = journal_entry::max('number');
+                    $number                     = journal_entry::max('number');
                     if ($number == 0)
-                        $number = 10000;
-                    $trans_no = $number + 1;
+                        $number                 = 10000;
+                    $trans_no                   = $number + 1;
                 }
                 $this->info($trans_no);
 
-                $d[$i]                                  = asset_detail::where('asset_id', $a->id)->first();
+                $d[$i]                          = asset_detail::where('asset_id', $a->id)->first();
                 $d[$i]->update([
-                    'accumulated_depreciate'            => $d[$i]->accumulated_depreciate + ($a->cost / ($d[$i]->life * 12))
+                    'accumulated_depreciate'    => $d[$i]->accumulated_depreciate + ($a->cost / ($d[$i]->life * 12))
                 ]);
                 $this->info($d[$i]);
 
-                $depreciate                         = $a->cost / ($d[$i]->life * 12);
-                $a->actual_cost                     = $a->actual_cost - $depreciate;
+                $depreciate                     = $a->cost / ($d[$i]->life * 12);
+                $a->actual_cost                 = $a->actual_cost - $depreciate;
                 $a->save();
 
-                $transactions           = other_transaction::create([
-                    'company_id'        => $user->company_id,
-                    'user_id'           => Auth::id(),
-                    'transaction_date'  => $today,
-                    'number'            => $trans_no,
-                    'number_complete'   => 'Journal Entry #' . $trans_no,
-                    'type'              => 'journal',
-                    'status'            => 2,
-                    'balance_due'       => 0,
-                    'total'             => 0,
+                $transactions = other_transaction::create([
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'transaction_date'          => $today,
+                    'number'                    => $trans_no,
+                    'number_complete'           => 'Journal Entry #' . $trans_no,
+                    'type'                      => 'journal entry',
+                    'status'                    => 2,
+                    'balance_due'               => 0,
+                    'total'                     => 0,
                 ]);
 
                 $cd1 = new coa_detail([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
                     'coa_id'                    => $d[$i]->depreciate_account,
                     'date'                      => $today,
-                    'type'                      => 'journal',
+                    'type'                      => 'journal entry',
                     'number'                    => 'Journal Entry #' . $trans_no,
                     'debit'                     => $depreciate,
                     'credit'                    => 0,
@@ -109,11 +109,11 @@ class CheckDepreciateStatus extends Command
                 $transactions->coa_detail()->save($cd1);
 
                 $cd2 = new coa_detail([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
                     'coa_id'                    => $d[$i]->accumulated_depreciate_account,
                     'date'                      => $today,
-                    'type'                      => 'journal',
+                    'type'                      => 'journal entry',
                     'number'                    => 'Journal Entry #' . $trans_no,
                     'debit'                     => 0,
                     'credit'                    => $depreciate,
@@ -121,30 +121,33 @@ class CheckDepreciateStatus extends Command
                 $transactions->coa_detail()->save($cd2);
 
                 $je = journal_entry::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'ref_id'                        => $a->id,
-                    'other_transaction_id'          => $transactions->id,
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $a->id,
+                    'other_transaction_id'      => $transactions->id,
                     'number'                    => 'Journal Entry #' . $trans_no,
                     'transaction_date'          => $today,
                     'status'                    => 2,
                     'total_debit'               => $depreciate,
                     'total_credit'              => $depreciate,
                 ]);
+                other_transaction::find($transactions->id)->update([
+                    'ref_id'                    => $je->id,
+                ]);
 
                 $jei1 = new journal_entry_item([
-                    'coa_id'                   => $d[$i]->depreciate_account,
-                    'debit'                    => $depreciate,
+                    'coa_id'                    => $d[$i]->depreciate_account,
+                    'debit'                     => $depreciate,
                 ]);
                 $je->journal_entry_item()->save($jei1);
 
                 $jei2 = new journal_entry_item([
-                    'coa_id'                   => $d[$i]->accumulated_depreciate_account,
-                    'credit'                   => $depreciate,
+                    'coa_id'                    => $d[$i]->accumulated_depreciate_account,
+                    'credit'                    => $depreciate,
                 ]);
                 $je->journal_entry_item()->save($jei2);
 
-                $this->info("berhasil gan");
+                $this->info("Data is successfully added from schedule");
             }
         } catch (\Exception $e) {
             $this->info($e->getMessage());

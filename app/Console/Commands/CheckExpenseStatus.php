@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\expense;
+use App\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -39,13 +40,19 @@ class CheckExpenseStatus extends Command
      */
     public function handle()
     {
-        $date = Carbon::now();
-        $expenses = expense::where('status', '<>', 3)->whereDate('due_date', '<',$date)->get();
+        $date               = Carbon::now();
+        $header             = expense::where('status', '<>', 3)->whereDate('due_date', '<', $date)->get();
+        $other_transactions = other_transaction::where('type', 'expense')->where('due_date', '!=', 'null')->where('status', '<>', 3)->whereDate('due_date', '<', $date)->get();
 
-        foreach ($expenses as $expense) {
-            $expense->status = 5;
-            printf("Expense %s is OVERDUE \n", $expense->number);
-            $expense->save();
+        foreach ($header as $h) {
+            $h->status = 5;
+            printf("Expense %s is OVERDUE \n", $h->number);
+            $h->save();
+        }
+        foreach ($other_transactions as $ot) {
+            $ot->status = 5;
+            printf("Other Transaction %s is OVERDUE \n", $ot->number_complete);
+            $ot->save();
         }
     }
 }

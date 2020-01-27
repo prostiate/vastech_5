@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <ul class="nav navbar-right panel_toolbox">
+                <!--<ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">Transaction History
                         </button>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                     </li>
-                </ul>
+                </ul>-->
                 <h3><b>Asset #{{$assets->number}}</b></h3>
                 <a>Status: </a>
                 @if($assets->status == 1)
@@ -258,29 +258,20 @@
         @endif
         <br>
     </div>
-    <div class="col-md-3 center-margin">
+    <div class="col-md-2 center-margin">
         <div class="form-group">
             <a href="{{ url('/asset_managements') }}" class="btn btn-danger">Cancel</a>
             <div class="btn-group">
-                @if($assets->is_depreciable == 1)
-                    @if($assets->is_depreciated == 1)
-                    <button type="button" class="btn btn-success" onclick="window.location.href = '/asset_managements/edit/{{$assets->id}}';">Edit</button>
-                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    @endif
-                @else
                 <button type="button" class="btn btn-success" onclick="window.location.href = '/asset_managements/edit/{{$assets->id}}';">Edit</button>
                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
-                @endif
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="/asset_managements/edit/">Edit</a></li>
-                    <li><a href="/asset_managements/dispose">Sell/Dispose</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <!--<li><a href="/asset_managements/dispose/{{$assets->id}}">Sell/Dispose</a></li>-->
+                    <li><a href="#" id="click">Delete</a>
+                        <input type="text" value="{{$assets->id}}" id="form_id" hidden>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -289,5 +280,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/asset_management/dataTable.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/asset_management/dataTable.js?v=5-27012020') }}" charset="utf-8"></script>
 @endpush

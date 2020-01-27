@@ -10,7 +10,7 @@ $(document).ready(function() {
         $('#click').html('Processing');
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/sales_return/updatePInvoiceFromQuote",
+            url: "/sales_return/updateReturn",
             method: "POST",
             data: new FormData(form),
             contentType: false,

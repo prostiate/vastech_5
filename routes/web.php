@@ -503,8 +503,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/asset_managements/new',                                    'FixedAssetController@create');
     Route::post('/asset_managements/newAsset',                              'FixedAssetController@store')->name('asset.store');
     Route::get('/asset_managements/{id}',                                   'FixedAssetController@show');
-    Route::get('/asset_managements/edit',                                   'FixedAssetController@edit');
-    Route::post('/asset_managements/edit/{id}',                             'FixedAssetController@update')->name('asset.update');;
+    Route::get('/asset_managements/edit/{id}',                              'FixedAssetController@edit');
+    Route::post('/asset_managements/updateAsset',                           'FixedAssetController@update')->name('asset.update');;
     Route::get('/asset_managements/delete/{id}',                            'FixedAssetController@destroy');
 
     /*---------CoA--------------*/

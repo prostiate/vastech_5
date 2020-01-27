@@ -267,7 +267,7 @@
                             @endrole
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
-                            @elseif($pi->status == 3 && $pi->total_return != $pi->balance_due or $pi->total_return == null)
+                            @elseif($pi->status == 3 && $pi->total_return != $pi->grandtotal or $pi->total_return == null)
                             <li><a href="#">Clone Transaction</a></li>
                             @hasrole('Owner|Ultimate|Sales Return')
                             <li><a href="/sales_return/new/{{$pi->id}}">Sales Return</a></li>
@@ -620,7 +620,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-27012020') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

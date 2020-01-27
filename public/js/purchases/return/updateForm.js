@@ -10,7 +10,7 @@ $(document).ready(function() {
         $('#click').html('Processing');
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/purchases_invoice/updatePInvoiceFromQuote",
+            url: "/purchases_return/updateReturn",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -35,7 +35,7 @@ $(document).ready(function() {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/purchases_invoice/" + data.id;
+                    window.location.href = "/purchases_return/" + data.id;
                 }
                 Swal.fire({
                     type: typeswal,

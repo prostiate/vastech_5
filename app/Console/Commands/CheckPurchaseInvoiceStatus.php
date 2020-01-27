@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\purchase_invoice;
+use App\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -39,13 +40,19 @@ class CheckPurchaseInvoiceStatus extends Command
      */
     public function handle()
     {
-        $date = Carbon::now();
-        $invoices = purchase_invoice::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $date               = Carbon::now();
+        $header             = purchase_invoice::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'purchase invoice')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
 
-        foreach ($invoices as $invoice) {
-            $invoice->status = 5;
-            printf("Invoice %s is OVERDUE \n", $invoice->number);
-            $invoice->save();
+        foreach ($header as $h) {
+            $h->status = 5;
+            printf("Invoice %s is OVERDUE \n", $h->number);
+            $h->save();
+        }
+        foreach ($other_transactions as $ot) {
+            $ot->status = 5;
+            printf("Other Transaction %s is OVERDUE \n", $ot->number);
+            $ot->save();
         }
     }
 }

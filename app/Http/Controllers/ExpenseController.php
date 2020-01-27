@@ -116,8 +116,8 @@ class ExpenseController extends Controller
             $default_trade_payable                  = default_account::find(16);
             if ($request->pay_later == 1) {
                 $transactions = other_transaction::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
                     'transaction_date'      => $request->get('trans_date'),
                     'number'                => $trans_no,
                     'number_complete'       => 'Expense #' . $trans_no,
@@ -131,8 +131,8 @@ class ExpenseController extends Controller
                 ]);
 
                 $ex = new expense([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
                     'number'                => $trans_no,
                     'contact_id'            => $request->get('vendor_name'),
                     'payment_method_id'     => $request->get('payment_method'),
@@ -150,9 +150,9 @@ class ExpenseController extends Controller
                     'status'                => 1,
                 ]);
             } else {
-                $transactions               = other_transaction::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                $transactions = other_transaction::create([
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
                     'transaction_date'      => $request->get('trans_date'),
                     'number'                => $trans_no,
                     'number_complete'       => 'Expense #' . $trans_no,
@@ -165,8 +165,8 @@ class ExpenseController extends Controller
                 ]);
 
                 $ex = new expense([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
                     'number'                => $trans_no,
                     'contact_id'            => $request->get('vendor_name'),
                     'payment_method_id'     => $request->get('payment_method'),

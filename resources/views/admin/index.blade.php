@@ -144,8 +144,6 @@
                 @foreach($sales_invoice as $a)
                 <input class="TP" value="{{$a}}" hidden>
                 @endforeach
-                <br>
-                <br>
                 <canvas id="chartSR" height="750" width="710" style="width: 568px; height: 284px;"></canvas>
             </div>
         </div>
@@ -162,8 +160,6 @@
                 @foreach($purchase_invoice as $a)
                 <input class="TP2" value="{{$a}}" hidden>
                 @endforeach
-                <br>
-                <br>
                 <canvas id="chartTP2" height="750" width="710" style="width: 568px; height: 284px;"></canvas>
             </div>
         </div>
@@ -173,12 +169,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboard/chartAP.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartAR.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartEX.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartCF.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartNP.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP2.js?v=5-26012020') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/all.js?v=5-26012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAP.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAR.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartEX.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartCF.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartNP.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP2.js?v=5-27012020') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/all.js?v=5-27012020') }}" charset="utf-8"> </script>
 @endpush

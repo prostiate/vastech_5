@@ -166,7 +166,7 @@ class ProductionFourController extends Controller
         $units = other_unit::where('id', '>', 0)->get();
         $taxes = other_tax::all();
 
-        return view('admin.products.products.edit', compact(
+        return view('admin.products.products.edit', compact([
             'products',
             'categories',
             'units',
@@ -177,7 +177,7 @@ class ProductionFourController extends Controller
             'default_sell_account',
             'default_buy_account',
             'default_inventory_account'
-        ));
+        ]));
     }
 
     /**

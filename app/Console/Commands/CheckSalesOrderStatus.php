@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\sale_order;
+use App\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -39,13 +40,19 @@ class CheckSalesOrderStatus extends Command
      */
     public function handle()
     {
-        $date = Carbon::now();
-        $orders = sale_order::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $date               = Carbon::now();
+        $header             = sale_order::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'sales order')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
 
-        foreach ($orders as $order) {
-            $order->status = 5;
-            printf("Order %s is OVERDUE \n", $order->number);
-            $order->save();
+        foreach ($header as $h) {
+            $h->status = 5;
+            printf("Order %s is OVERDUE \n", $h->number);
+            $h->save();
+        }
+        foreach ($other_transactions as $ot) {
+            $ot->status = 5;
+            printf("Other Transaction %s is OVERDUE \n", $ot->number);
+            $ot->save();
         }
     }
 }

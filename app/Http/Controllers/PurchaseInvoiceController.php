@@ -1584,7 +1584,7 @@ class PurchaseInvoiceController extends Controller
         if ($check_pipo == null) {
             return view(
                 'admin.purchases.invoices.show',
-                compact(
+                compact([
                     'pi',
                     'terms',
                     'products',
@@ -1598,12 +1598,12 @@ class PurchaseInvoiceController extends Controller
                     'get_all_detail',
                     'total_debit',
                     'total_credit'
-                )
+                ])
             );
         } else {
             return view(
                 'admin.request.sukses.purchases.invoices.show',
-                compact(
+                compact([
                     'pi',
                     'terms',
                     'products',
@@ -1619,7 +1619,7 @@ class PurchaseInvoiceController extends Controller
                     'total_credit',
                     'pipo',
                     'pipoi'
-                )
+                ])
             );
         }
     }

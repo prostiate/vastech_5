@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:expense:status')->daily();
         $schedule->command('check:purchase_quote:status')->daily();
         $schedule->command('check:purchase_order:status')->daily();
-        $schedule->command('check:purchase_delivery:status')->daily();
+        //$schedule->command('check:purchase_delivery:status')->daily();
         $schedule->command('check:purchase_invoice:status')->daily();
         $schedule->command('check:purchase_payment:status')->daily();
         $schedule->command('check:sales_quote:status')->daily();

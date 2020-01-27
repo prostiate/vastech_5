@@ -187,6 +187,22 @@ $(document).ready(function() {
                                 row.number_complete +
                                 "</a>"
                             );
+                        } else if (row.type == "journal entry") {
+                            return (
+                                '<a href="/chart_of_accounts/journal_entry/' +
+                                row.ref_id +
+                                '">' +
+                                row.number_complete +
+                                "</a>"
+                            );
+                        } else if (row.type == "asset") {
+                            return (
+                                '<a href="/asset_managements/' +
+                                row.ref_id +
+                                '">' +
+                                row.number_complete +
+                                "</a>"
+                            );
                         }
                     }
                 }

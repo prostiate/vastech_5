@@ -39,13 +39,19 @@ class CheckPurchaseDeliveryStatus extends Command
      */
     public function handle()
     {
-        $date = Carbon::now();
-        $deliveries = purchase_delivery::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $date               = Carbon::now();
+        $header             = purchase_delivery::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'purchase delivery')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
 
-        foreach ($deliveries as $delivery) {
-            $delivery->status = 5;
-            printf("Delivery %s is OVERDUE \n", $delivery->number);
-            $delivery->save();
+        foreach ($header as $h) {
+            $h->status = 5;
+            printf("Delivery %s is OVERDUE \n", $h->number);
+            $h->save();
+        }
+        foreach ($other_transactions as $ot) {
+            $ot->status = 5;
+            printf("Other Transaction %s is OVERDUE \n", $ot->number_complete);
+            $ot->save();
         }
     }
 }

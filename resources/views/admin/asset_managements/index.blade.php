@@ -67,6 +67,7 @@
                                         <tr class="headings">
                                             <th class="column-title">Acquisition Date</th>
                                             <th class="column-title">Asset Account</th>
+                                            <th class="column-title">Number</th>
                                             <th class="column-title">Asset Detail</th>
                                             <th class="column-title">Acquisition Cost</th>
                                             <th class="column-title">Book Value</th>
@@ -117,5 +118,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/asset_management/dataTable.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/asset_management/dataTable.js?v=5-27012020') }}" charset="utf-8"></script>
 @endpush

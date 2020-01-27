@@ -413,7 +413,7 @@ class SaleInvoiceController extends Controller
             $trans_no = $number + 1;
         }
 
-        return view('admin.request.sukses.sales.invoices.createFromSPK', compact(
+        return view('admin.request.sukses.sales.invoices.createFromSPK', compact([
             'today',
             'trans_no',
             'terms',
@@ -426,7 +426,7 @@ class SaleInvoiceController extends Controller
             'costs',
             'cost_from_bundle',
             'check_cost_from_bundle'
-        ));
+        ]));
     }
 
     public function createFromOrderRequestSukses($id)
@@ -2536,7 +2536,7 @@ class SaleInvoiceController extends Controller
         if ($pi->selected_spk_id != 0) {
             return view(
                 'admin.request.sukses.sales.invoices.show',
-                compact(
+                compact([
                     'pi',
                     'terms',
                     'products',
@@ -2552,12 +2552,12 @@ class SaleInvoiceController extends Controller
                     'total_credit',
                     'bundle_cost'
 
-                )
+                ])
             );
         } else if ($pi->marketting != 0) {
             return view(
                 'admin.request.sukses.sales.invoices.showRequestSukses',
-                compact(
+                compact([
                     'pi',
                     'terms',
                     'products',
@@ -2572,12 +2572,12 @@ class SaleInvoiceController extends Controller
                     'total_debit',
                     'total_credit',
                     'bundle_cost'
-                )
+                ])
             );
         } else {
             return view(
                 'admin.sales.invoices.show',
-                compact(
+                compact([
                     'pi',
                     'terms',
                     'products',
@@ -2592,7 +2592,7 @@ class SaleInvoiceController extends Controller
                     'total_debit',
                     'total_credit',
                     'bundle_cost'
-                )
+                ])
             );
         }
     }

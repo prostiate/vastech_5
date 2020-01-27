@@ -243,8 +243,8 @@ class PurchaseDeliveryController extends Controller
                 // DEFAULT INVENTORY 17 dan yang di input di debit ini adalah total harga dari per barang
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',
@@ -255,8 +255,8 @@ class PurchaseDeliveryController extends Controller
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',

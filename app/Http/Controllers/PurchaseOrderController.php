@@ -252,7 +252,7 @@ class PurchaseOrderController extends Controller
             $trans_no = $number + 1;
         }
 
-        return view('admin.request.sukses.purchases.order.create', compact(
+        return view('admin.request.sukses.purchases.order.create', compact([
             'vendors',
             'warehouses',
             'terms',
@@ -262,7 +262,7 @@ class PurchaseOrderController extends Controller
             'today',
             'todaytambahtiga',
             'trans_no'
-        ));
+        ]));
     }
 
     public function store(Request $request)
@@ -696,7 +696,7 @@ class PurchaseOrderController extends Controller
         $today          = Carbon::today();
         $taxes          = other_tax::all();
         if ($po->jasa_only == 0) {
-            return view('admin.purchases.order.edit', compact(
+            return view('admin.purchases.order.edit', compact([
                 'vendors',
                 'warehouses',
                 'terms',
@@ -706,9 +706,9 @@ class PurchaseOrderController extends Controller
                 'today',
                 'po',
                 'po_item'
-            ));
+            ]));
         } else {
-            return view('admin.request.sukses.purchases.order.edit', compact(
+            return view('admin.request.sukses.purchases.order.edit', compact([
                 'vendors',
                 'warehouses',
                 'terms',
@@ -718,7 +718,7 @@ class PurchaseOrderController extends Controller
                 'today',
                 'po',
                 'po_item'
-            ));
+            ]));
         }
     }
 

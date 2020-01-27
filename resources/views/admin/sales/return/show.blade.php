@@ -223,7 +223,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Vendor*</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Customer*</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="{{ url('/contacts/'.$pi->contact_id) }}">
                                         <h5>{{$pi->contact->display_name}}</h5>
@@ -405,10 +405,10 @@
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan
                             @endrole
-                            <!--<div class="btn-group">
+                            <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_return/edit/' + {{$pi->id}};">Edit
                                 </button>
-                            </div>-->
+                            </div>
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
                     </div>
@@ -420,7 +420,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/return/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/return/deleteForm.js?v=5-27012020') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

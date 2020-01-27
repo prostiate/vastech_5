@@ -48,8 +48,8 @@
                         </ul>
                     </li>
                     <li><a href="/expenses"><i class="fa fa-outdent"></i> Expenses </a></li>
-                    <li><a href="/spk"><i class="fa fa-times"></i> Surat Perintah Kerja </a></li>
-                    <li><a href="/wip"><i class="fa fa-times"></i> Work In Progress </a></li>
+                    <li><a href="/spk"><i class="fa fa-pencil-square"></i> Surat Perintah Kerja </a></li>
+                    <li><a href="/wip"><i class="fa fa-cogs"></i> Work In Progress </a></li>
                 </ul>
             </div>
             <div class="menu_section">

@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h3>Create Purchase Return</h3>
+                <h3>Update Purchase Return</h3>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -16,16 +16,16 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$trans_no}}" type="text" class="form-control" name="trans_no" readonly>
+                                    <input value="{{$header->number}}" type="text" class="form-control" name="trans_no" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Vendor*</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <a href="{{ url('/contacts/'.$po->contact_id) }}">
-                                        <h5>{{$po->contact->display_name}}</h5>
+                                    <a href="{{ url('/contacts/'.$header->contact_id) }}">
+                                        <h5>{{$header->contact->display_name}}</h5>
                                     </a>
-                                    <input type="hidden" name="vendor_name" value="{{$po->contact_id}}">
+                                    <input type="hidden" name="vendor_name" value="{{$header->contact_id}}">
                                 </div>
                             </div>
                         </div>
@@ -36,18 +36,18 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
-                                        <h5>{{$po->transaction_date}}</h5>
+                                        <h5>{{$header->transaction_date}}</h5>
                                     </a>
-                                    <input type="hidden" name="trans_date" value="{{$po->transaction_date}}">
+                                    <input type="hidden" name="trans_date" value="{{$header->transaction_date}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Email</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
-                                        <h5>{{$po->email}}</h5>
+                                        <h5>{{$header->email}}</h5>
                                     </a>
-                                    <input type="hidden" name="email" value="{{$po->email}}">
+                                    <input type="hidden" name="email" value="{{$header->email}}">
                                 </div>
                             </div>
                         </div>
@@ -58,16 +58,16 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Due Date</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
-                                        <h5>{{$po->due_date}}</h5>
+                                        <h5>{{$header->due_date}}</h5>
                                     </a>
-                                    <input type="hidden" name="due_date" value="{{$po->due_date}}">
+                                    <input type="hidden" name="due_date" value="{{$header->due_date}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Purchase No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <a href="{{ url('/purchases_invoice/'.$po->id) }}">
-                                        <h5> Purchase Invoice #{{$po->number}}</h5>
+                                    <a href="{{ url('/purchases_invoice/'.$header->selected_pi_id) }}">
+                                        <h5> Purchase Invoice #{{$header->transaction_no_pi}}</h5>
                                     </a>
                                 </div>
                             </div>
@@ -78,16 +78,16 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Return Date</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$today}}" type="text" class="form-control" name="return_date" id="datepicker3">
+                                    <input value="{{$header->return_date}}" type="text" class="form-control" name="return_date" id="datepicker3">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
-                                        <h5>{{$po->warehouse->name}}</h5>
+                                        <h5>{{$header->warehouse->name}}</h5>
                                     </a>
-                                    <input type="hidden" name="warehouse" value="{{$po->warehouse_id}}">
+                                    <input type="hidden" name="warehouse" value="{{$header->warehouse_id}}">
                                 </div>
                             </div>
                         </div>
@@ -98,9 +98,9 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Vendor Address</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
-                                        <h5>{{$po->address}}</h5>
+                                        <h5>{{$header->address}}</h5>
                                     </a>
-                                    <input type="hidden" name="vendor_address" value="{{$po->address}}">
+                                    <input type="hidden" name="vendor_address" value="{{$header->address}}">
                                 </div>
                             </div>
                         </div>
@@ -123,8 +123,8 @@
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
-                                @foreach($po_item as $item)
-                                <input type="text" name="invoice_item[]" value="{{$item->id}}" hidden>
+                                @foreach($item as $item)
+                                <input type="text" name="invoice_item[]" value="{{$item->purchase_invoice_item_id}}" hidden>
                                 <tr>
                                     <td>
                                         <div class="form-group">
@@ -136,18 +136,18 @@
                                     </td>
                                     <td>
                                         <a>
-                                            <h5>{{$item->qty}}</h5>
+                                            <h5>{{$item->qty_invoice}}</h5>
                                         </a>
-                                        <input type="text" name="qty_invoice[]" value="{{$item->qty}}" hidden>
+                                        <input type="text" name="qty_invoice[]" value="{{$item->qty_invoice}}" hidden>
                                     </td>
                                     <td>
                                         <a>
-                                            <h5>{{$item->qty_remaining_return}}</h5>
+                                            <h5>{{$item->qty_remaining_invoice}}</h5>
                                         </a>
-                                        <input type="text" name="qty_remaining_return[]" value="{{$item->qty_remaining_return}}" hidden>
+                                        <input type="text" name="qty_remaining_return[]" value="{{$item->qty_remaining_invoice}}" hidden>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" type="text" class="form-control qty" value='0' name='qty[]'>
+                                        <input onClick="this.select();" type="text" class="form-control qty" value='{{$item->qty}}' name='qty[]'>
                                     </td>
                                     <td>
                                         <div class="form-group">
@@ -174,11 +174,11 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <input value="0" type="text" class="amount_display form-control" name="total_price_display[]" readonly>
-                                        <input value="0" type="text" class="amount form-control form-control-sm " name="total_price[]" hidden>
-                                        <input value="0" type="text" class="amounttax" name="total_price_tax[]" hidden>
-                                        <input value="0" type="text" class="amountsub" name="total_price_sub[]" hidden>
-                                        <input value="0" type="text" class="amountgrand" name="total_price_grand[]" hidden>
+                                        <input value="{{$item->amount}}" type="text" class="amount_display form-control" name="total_price_display[]" readonly>
+                                        <input value="{{$item->amount}}" type="text" class="amount " name="total_price[]" hidden>
+                                        <input value="{{$item->amounttax}}" type="text" class="amounttax" name="total_price_tax[]" hidden>
+                                        <input value="{{$item->amountsub}}" type="text" class="amountsub" name="total_price_sub[]" hidden>
+                                        <input value="{{$item->amountgrand}}" type="text" class="amountgrand" name="total_price_grand[]" hidden>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -191,7 +191,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="messageForm" style="text-align: left;">Message</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <textarea class="form-control" name="message" rows="4"></textarea>
+                                    <textarea class="form-control" name="message" rows="4">{{$header->message}}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -201,19 +201,27 @@
                                     <div class="col-md-4">
                                         <h4>Invoice Amount</h4>
                                         <h4>Sub Total</h4>
-                                        @if($po->taxtotal > 0)
+                                        @if($header->taxtotal > 0)
                                         <h4>Tax Total</h4>
                                         @endif
                                         <br>
                                         <h3><b>Total Return</b></h3>
                                         <h4>Balance Due</h4>
                                     </div>
+                                    <?php
+                                    $invoice_amount         = $header->purchase_invoice->grandtotal;
+                                    if ($other_return == 0) {
+                                        $balancedue_amount  = $header->purchase_invoice->grandtotal;
+                                    } else {
+                                        $balancedue_amount  = $other_return;
+                                    }
+                                    ?>
                                     <div class="col-md-4 float-right">
-                                        <input class="invoice_amount form-control" readonly value="{{$po->grandtotal}}">
-                                        <input type="text" class="invoice_amount_input" name="invoice_amount" value="{{$po->grandtotal}}" hidden>
+                                        <input class="invoice_amount form-control" readonly value="{{$invoice_amount}}">
+                                        <input type="text" class="invoice_amount_input" name="invoice_amount" value="{{$invoice_amount}}" hidden>
                                         <input class="subtotal form-control" readonly>
                                         <input type="text" class="subtotal_input" name="subtotal" hidden>
-                                        @if($po->taxtotal > 0)
+                                        @if($header->taxtotal > 0)
                                         <input class="total form-control" readonly>
                                         <input type="text" class="total_input" name="taxtotal" hidden>
                                         @else
@@ -222,9 +230,9 @@
                                         <br>
                                         <input class="balance form-control" readonly>
                                         <input type="text" class="balance_input" name="balance" hidden>
-                                        <input class="balancedue form-control" readonly value="{{$po->balance_due}}">
-                                        <input type="text" class="balancedue_input_get" value="{{$po->balance_due}}" hidden>
-                                        <input type="text" class="balancedue_input_post" name="invoice_balancedue" value="{{$po->balance_due}}" hidden>
+                                        <input class="balancedue form-control" readonly value="{{$balancedue_amount}}">
+                                        <input type="text" class="balancedue_input_get" value="{{$balancedue_amount}}" hidden>
+                                        <input type="text" class="balancedue_input_post" name="invoice_balancedue" value="{{$balancedue_amount}}" hidden>
                                         <div class="form-group tile"></div>
                                     </div>
                                 </div>
@@ -236,7 +244,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Memo</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <textarea class="form-control" name="memo" rows="4"></textarea>
+                                    <textarea class="form-control" name="memo" rows="4">{{$header->memo}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -244,12 +252,11 @@
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="{{ url('/purchases_invoice/'.$po->id) }}" class="btn btn-danger">Cancel</a>
+                            <a href="{{ url('/purchases_return/'.$header->id) }}" class="btn btn-danger">Cancel</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Create</button>
+                                <button id="click" type="button" class="btn btn-success">Update</button>
                             </div>
-                            <input value="{{$po->id}}" type="hidden" name="hidden_id">
-                            <input value="{{$po->number}}" type="hidden" name="hidden_id_number">
+                            <input value="{{$header->id}}" type="hidden" name="hidden_id">
                         </div>
                     </div>
                 </form>
@@ -260,7 +267,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/purchases/return/createForm.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/return/updateForm.js?v=5-27012020') }}" charset="utf-8"></script>
 <script src="{{asset('js/purchases/return/addmoreitem.js?v=5-27012020') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/zebradatepicker.js?v=5-27012020') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js?v=5-27012020') }}" charset="utf-8"></script>

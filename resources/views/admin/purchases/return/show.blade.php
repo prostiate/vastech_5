@@ -403,10 +403,10 @@
                             @hasrole('Owner|Ultimate|Purchase Return')
                             @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            <!--<div class="btn-group">
+                            <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/purchases_return/edit/' + {{$pi->id}};">Edit
                                 </button>
-                            </div>-->
+                            </div>
                             @endcan
                             @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
@@ -420,7 +420,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/return/deleteForm.js?v=5-26012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/return/deleteForm.js?v=5-27012020') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();
