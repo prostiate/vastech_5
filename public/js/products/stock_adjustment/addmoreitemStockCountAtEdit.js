@@ -52,7 +52,7 @@ $(document).ready(function () {
                 '<input type="text" class="form-control difference_qty" name="difference_qty[]" readonly>' +
                 "</td>" +
                 "<td>" +
-                '<input type="text" class="form-control avg_price_display">"' +
+                '<input onClick="this.select();" type="text" class="form-control avg_price_display" readonly>"' +
                 '<input type="text" class="form-control avg_price" name="avg_price[]" hidden>' +
                 "</td>" +
                 "<td>" +

@@ -30,17 +30,14 @@ use App\purchase_quote_item;
 use App\purchase_invoice_po_item;
 use App\purchase_payment_item;
 use App\purchase_return;
-use App\sale_invoice;
 use App\sale_invoice_item;
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 
 class PurchaseInvoiceController extends Controller
 {
-
     public function benerin_avg_price()
     {
         DB::beginTransaction();
@@ -134,7 +131,7 @@ class PurchaseInvoiceController extends Controller
             return $e->getMessage();
         }
     }
-    
+
     public function select_product()
     {
         if (request()->ajax()) {

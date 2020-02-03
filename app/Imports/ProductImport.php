@@ -10,9 +10,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Validator;
 
-class ProductImport implements ToCollection, WithStartRow
+class ProductImport implements ToCollection, WithStartRow, WithMultipleSheets
 {
     /**
      * @param array $row
@@ -99,5 +100,12 @@ class ProductImport implements ToCollection, WithStartRow
     public function startRow(): int
     {
         return 14;
+    }
+
+    public function sheets(): array
+    {
+        return [
+            0 => $this,
+        ];
     }
 }

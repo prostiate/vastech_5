@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Validator;
-use DB;
 use Illuminate\Support\Facades\DB as IlluminateDB;
 
 use App\User;
@@ -285,13 +284,13 @@ class FixedAssetController extends Controller
 
     public function show($id)
     {
-        $assets = asset::find($id);
-        $journals = journal_entry::with('journal_entry_item')->where('ref_id', $assets->id)->get();
+        $assets         = asset::find($id);
+        $journals       = journal_entry::with('journal_entry_item')->where('ref_id', $assets->id)->get();
 
         if ($assets->is_depreciable == 1) {
-            $details = asset_detail::where('asset_id', $id)->first();
+            $details    = asset_detail::where('asset_id', $id)->first();
         } else {
-            $details = null;
+            $details    = null;
         }
 
         return view('admin.asset_managements.show', compact(['assets', 'details', 'journals']));
@@ -428,53 +427,221 @@ class FixedAssetController extends Controller
         ]));
     }
 
-    public function update(Request $request)
+    public function update_non_depreciable(Request $request)
     {
-        //validasi form yang wajib di isi
-        $request->validate([
-            'asset_name' => 'required',
-            'asset_number' => 'required',
-            'asset_account' => 'required',
-        ]);
+        $user                                       = User::find(Auth::id());
+        $rules = array(
+            'asset_name'                            => 'required',
+            'asset_number'                          => 'required',
+            'asset_account'                         => 'required',
+        );
 
-        $id = $request->hidden_id;
-        //untuk mencari nomer asset
-        if ($request->get('is_depreciable')) {
-            $asset = asset::find($id)->update([
-                'name' => $request->get('asset_name'),
-                'number' =>  $request->get('asset_number'),
-                'asset_account' => $request->get('asset_account'),
-                'description' => $request->get('asset_desc'),
-                'date' => $request->get('asset_date'),
-                'cost' => $request->get('asset_cost'),
-                'credited_account' => $request->get('asset_account_credited'),
-                'is_depreciable' => 0,
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        IlluminateDB::beginTransaction();
+        try {
+            $id                                     = $request->hidden_id;
+            $asset                                  = asset::find($id);
+            $number_complete                        = 'Journal Entry #' . $asset->number;
+            asset::find($id)->update([
+                'name'                              => $request->get('asset_name'),
+                'asset_account'                     => $request->get('asset_account'),
+                'description'                       => $request->get('asset_desc'),
+                'date'                              => $request->get('asset_date'),
+                'cost'                              => $request->get('asset_cost'),
+                'actual_cost'                       => $request->get('asset_cost'),
+                'credited_account'                  => $request->get('asset_account_credited'),
             ]);
+            $transactions = other_transaction::where('type', 'journal entry')
+                ->where('number', $asset->number)
+                ->where('number_complete', $number_complete)->first();
+            other_transaction::where('type', 'journal entry')
+                ->where('number', $asset->number)
+                ->where('number_complete', $number_complete)
+                ->update([
+                    'transaction_date'              => $request->get('asset_date'),
+                    'memo'                          => $request->get('asset_desc'),
+                ]);
+            coa_detail::where('type', 'journal entry')
+                ->where('number', $number_complete)
+                ->delete();
+            coa_detail::create([
+                'company_id'                        => $user->company_id,
+                'user_id'                           => Auth::id(),
+                'other_transaction_id'              => $transactions->id,
+                'coa_id'                            => $request->get('asset_account'),
+                'date'                              => $request->get('asset_date'),
+                'type'                              => 'journal entry',
+                'number'                            => 'Journal Entry #' . $asset->number,
+                'debit'                             => $request->get('asset_cost'),
+                'credit'                            => 0,
+            ]);
+
+            coa_detail::create([
+                'company_id'                        => $user->company_id,
+                'user_id'                           => Auth::id(),
+                'other_transaction_id'              => $transactions->id,
+                'coa_id'                            => $request->get('asset_account_credited'),
+                'date'                              => $request->get('asset_date'),
+                'type'                              => 'journal entry',
+                'number'                            => 'Journal Entry #' . $asset->number,
+                'debit'                             => 0,
+                'credit'                            => $request->get('asset_cost'),
+            ]);
+            $journal_entry = journal_entry::where('number', $number_complete)
+                ->where('ref_id', $id)
+                ->first();
+            journal_entry::where('number', $number_complete)
+                ->where('ref_id', $id)
+                ->update([
+                    'transaction_date'              => $request->get('asset_date'),
+                    'total_debit'                   => $request->get('asset_cost'),
+                    'total_credit'                  => $request->get('asset_cost'),
+                ]);
+            journal_entry_item::where('journal_entry_id', $journal_entry->id)
+                ->where('credit', 'null')
+                ->update([
+                    'coa_id'                            => $request->get('asset_account'),
+                    'debit'                             => $request->get('asset_cost'),
+                ]);
+            journal_entry_item::where('journal_entry_id', $journal_entry->id)
+                ->where('debit', 'null')
+                ->update([
+                    'coa_id'                            => $request->get('asset_account_credited'),
+                    'credit'                            => $request->get('asset_cost'),
+                ]);
+            IlluminateDB::commit();
+            return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
+        } catch (\Exception $e) {
+            IlluminateDB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function update_depreciable(Request $request)
+    {
+        $user                                       = User::find(Auth::id());
+        $id                                         = $request->hidden_id;
+        $asset                                      = asset::find($id);
+        $number_complete                            = 'Journal Entry #' . $asset->number;
+        if ($asset->is_depreciated == 1) {
+            $rules = array(
+                'asset_name'                            => 'required',
+                'asset_number'                          => 'required',
+                'asset_account'                         => 'required',
+            );
         } else {
-            $asset = asset::find($id)->update([
-                'name' => $request->get('asset_name'),
-                'number' =>  $request->get('asset_number'),
-                'asset_account' => $request->get('asset_account'),
-                'description' => $request->get('asset_desc'),
-                'date' => $request->get('asset_date'),
-                'cost' => $request->get('asset_cost'),
-                'credited_account' => $request->get('asset_account_credited'),
-                'is_depreciable' => 1,
-            ]);
+            $rules = array(
+                'asset_name'                            => 'required',
+            );
+        }
 
-            $depreciate = asset_detail::where('asset_id', $id)->updateOrCreate([
-                'asset_id' => $id,
-                'method' => $request->get('depreciate_method'),
-                'life' =>  $request->get('depreciate_life'),
-                'rate' => $request->get('depreciate_rate'),
-                'depreciate_account' => $request->get('depreciate_account'),
-                'accumulated_depreciate_account' => $request->get('depreciate_accumulated_account'),
-                'accumulated_depreciate' => $request->get('depreciate_accumulated'),
-                'date' => $request->get('depreciate_date'),
-            ]);
-        };
+        $error = Validator::make($request->all(), $rules);
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        IlluminateDB::beginTransaction();
+        try {
+            if ($asset->is_depreciated == 1) {
+                asset::find($id)->update([
+                    'name'                              => $request->asset_name,
+                    'asset_account'                     => $request->asset_account,
+                    'description'                       => $request->asset_desc,
+                    'date'                              => $request->asset_date,
+                    'cost'                              => $request->asset_cost,
+                    'actual_cost'                       => $request->asset_cost,
+                    'credited_account'                  => $request->asset_account_credited,
+                ]);
+                $transactions = other_transaction::where('type', 'journal entry')
+                    ->where('number', $asset->number)
+                    ->where('number_complete', $number_complete)->first();
+                other_transaction::where('type', 'journal entry')
+                    ->where('number', $asset->number)
+                    ->where('number_complete', $number_complete)
+                    ->update([
+                        'transaction_date'              => $request->asset_date,
+                        'memo'                          => $request->asset_desc,
+                    ]);
+                coa_detail::where('type', 'journal entry')
+                    ->where('number', $number_complete)
+                    ->delete();
+                coa_detail::create([
+                    'company_id'                        => $user->company_id,
+                    'user_id'                           => Auth::id(),
+                    'other_transaction_id'              => $transactions->id,
+                    'coa_id'                            => $request->asset_account,
+                    'date'                              => $request->asset_date,
+                    'type'                              => 'journal entry',
+                    'number'                            => 'Journal Entry #' . $asset->number,
+                    'debit'                             => $request->asset_cost,
+                    'credit'                            => 0,
+                ]);
 
-        return response()->json(['success' => 'Data is successfully added']);
+                coa_detail::create([
+                    'company_id'                        => $user->company_id,
+                    'user_id'                           => Auth::id(),
+                    'other_transaction_id'              => $transactions->id,
+                    'coa_id'                            => $request->asset_account_credited,
+                    'date'                              => $request->asset_date,
+                    'type'                              => 'journal entry',
+                    'number'                            => 'Journal Entry #' . $asset->number,
+                    'debit'                             => 0,
+                    'credit'                            => $request->asset_cost,
+                ]);
+                $journal_entry = journal_entry::where('number', $number_complete)
+                    ->where('ref_id', $id)
+                    ->first();
+                journal_entry::where('number', $number_complete)
+                    ->where('ref_id', $id)
+                    ->update([
+                        'transaction_date'              => $request->asset_date,
+                        'total_debit'                   => $request->asset_cost,
+                        'total_credit'                  => $request->asset_cost,
+                    ]);
+                journal_entry_item::where('journal_entry_id', $journal_entry->id)
+                    ->where('credit', null)
+                    ->update([
+                        'coa_id'                        => $request->asset_account,
+                        'debit'                         => $request->asset_cost,
+                        'credit'                        => 0,
+                    ]);
+                journal_entry_item::where('journal_entry_id', $journal_entry->id)
+                    ->where('debit', null)
+                    ->update([
+                        'coa_id'                        => $request->asset_account_credited,
+                        'debit'                         => 0,
+                        'credit'                        => $request->asset_cost,
+                    ]);
+                asset_detail::where('asset_id', $id)->update([
+                    'method'                            => $request->depreciate_method,
+                    'life'                              => $request->depreciate_life,
+                    'rate'                              => $request->depreciate_rate,
+                    'depreciate_account'                => $request->depreciate_account,
+                    'accumulated_depreciate_account'    => $request->depreciate_accumulated_account,
+                    'accumulated_depreciate'            => $request->depreciate_accumulated,
+                    'date'                              => $request->depreciate_date,
+                ]);
+            } else {
+                asset::find($id)->update([
+                    'name'                              => $request->asset_name,
+                    'description'                       => $request->asset_desc,
+                ]);
+                other_transaction::where('type', 'journal entry')
+                    ->where('number', $asset->number)
+                    ->where('number_complete', $number_complete)
+                    ->update([
+                        'memo'                          => $request->asset_desc,
+                    ]);
+            }
+            IlluminateDB::commit();
+            return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
+        } catch (\Exception $e) {
+            IlluminateDB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 
     public function destroy($id)

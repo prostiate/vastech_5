@@ -32,11 +32,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:purchase_order:status')->daily();
         //$schedule->command('check:purchase_delivery:status')->daily();
         $schedule->command('check:purchase_invoice:status')->daily();
-        $schedule->command('check:purchase_payment:status')->daily();
+        //$schedule->command('check:purchase_payment:status')->daily();
         $schedule->command('check:sales_quote:status')->daily();
         $schedule->command('check:sales_order:status')->daily();
         $schedule->command('check:sales_invoice:status')->daily();
-        $schedule->command('check:sales_payment:status')->daily();
+        //$schedule->command('check:sales_payment:status')->daily();
         $schedule->command('check:depreciate')->everyMinute()->appendOutputTo(storage_path('logs/inspire.log'));;
         
     }

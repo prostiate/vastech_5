@@ -15,7 +15,6 @@ use App\product_bundle_item;
 use App\spk;
 use App\spk_item;
 use App\warehouse_detail;
-use App\coa;
 use App\coa_detail;
 use App\product_production_item;
 use Illuminate\Support\Facades\DB;
@@ -122,7 +121,7 @@ class WipController extends Controller
             $trans_no = $number + 1;
         }
         $products                       = product::where('is_track', 1)->get();
-        $wd                             = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->whereNotIn('type', ['initial qty', 'wip', 'initial qty warehouse'])->groupBy('product_id')->get();
+        $wd                             = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->groupBy('product_id')->get();
 
         if ($spk_item->product->is_production_bundle == 1) {
             return view('admin.request.sukses.wip_production_bundle.createFromSPK', compact([
@@ -184,6 +183,19 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_per;
             $spk_id                             = $request->spk_id;
+            $force_submit                       = $request->force_submit_item_per;
+            $number                             = 1;
+            if (!$request->force_submit) {
+                foreach ($force_submit as $i => $p) {
+                    $force_number               = $request->force_submit_item_per[$i];
+                    if ($force_number == 1) {
+                        $number++;
+                    }
+                }
+                if ($number > 1) {
+                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                }
+            }
 
             if ($request->product_qty == $request->product_qty_to_make) {
                 $qty_remaining                  = 0;
@@ -300,8 +312,8 @@ class WipController extends Controller
             // BIKIN COA DETAIL DAN BALANCE BUAT MARGIN
             if ($request->margin_total_per > 0) {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -341,8 +353,8 @@ class WipController extends Controller
                 // BIKIN COA DETAIL DAN BALANCE BUAT PER BARANG RAW (MASUK KE INVENTORY CREDIT)
                 $default_product_account        = product::find($request->wip_product_id_per[$i]);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -394,6 +406,19 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_all;
             $spk_id                             = $request->spk_id;
+            $force_submit                       = $request->force_submit_item_all;
+            $number                             = 1;
+            if (!$request->force_submit) {
+                foreach ($force_submit as $i => $p) {
+                    $force_number               = $request->force_submit_item_all[$i];
+                    if ($force_number == 1) {
+                        $number++;
+                    }
+                }
+                if ($number > 1) {
+                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                }
+            }
 
             if ($request->product_qty == $request->product_qty_to_make) {
                 $qty_remaining                  = 0;
@@ -615,7 +640,7 @@ class WipController extends Controller
             $trans_no = $number + 1;
         }
         $products                       = product::where('is_track', 1)->get();
-        $wd                             = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->whereNotIn('type', ['initial qty', 'wip', 'initial qty warehouse'])->groupBy('product_id')->get();
+        $wd                             = warehouse_detail::where('warehouse_id', $spk->warehouse_id)->groupBy('product_id')->get();
 
         if ($spk_item->product->is_production_bundle == 1) {
             return view('admin.request.sukses.wip_production_bundle.createFromSPK', compact([
@@ -662,6 +687,20 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_per;
             $spk_id                             = $request->spk_id;
+            $force_submit                       = $request->force_submit_item_per;
+            $number                             = 1;
+            if (!$request->force_submit) {
+                foreach ($force_submit as $i => $p) {
+                    $force_number               = $request->force_submit_item_per[$i];
+                    if ($force_number == 1) {
+                        $number++;
+                    }
+                }
+                if ($number > 1) {
+                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                }
+            }
+
             if ($request->product_qty == $request->product_qty_to_make) {
                 $qty_remaining                  = 0;
                 spk_item::where('spk_id', $spk_id)
@@ -888,6 +927,19 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_all;
             $spk_id                             = $request->spk_id;
+            $force_submit                       = $request->force_submit_item_all;
+            $number                             = 1;
+            if (!$request->force_submit) {
+                foreach ($force_submit as $i => $p) {
+                    $force_number               = $request->force_submit_item_all[$i];
+                    if ($force_number == 1) {
+                        $number++;
+                    }
+                }
+                if ($number > 1) {
+                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                }
+            }
             if ($request->product_qty == $request->product_qty_to_make) {
                 $qty_remaining                  = 0;
                 spk_item::where('spk_id', $spk_id)

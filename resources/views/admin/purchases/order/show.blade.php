@@ -442,8 +442,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/order/deleteForm.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/purchases/order/closeOrderForm.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/closeOrderForm.js?v=5-03022020') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

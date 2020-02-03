@@ -101,6 +101,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="form-horizontal form-label-left">
+                            <div class="col-md-6">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Force Submit</label>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <input value="1" name="force_submit" type="checkbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <br>
                     <div class="form-group tiles"></div>
                     <br>
@@ -114,13 +124,10 @@
                                 <thead>
                                     <tr class="headings">
                                         <th class="column-title" style="width: 350px">Product Name</th>
-                                        <th class="column-title" style="width: 250px">Quantity
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 250px">Quantity</th>
+                                        <th class="column-title" style="width: 150px">Unit</th>
                                         <th class="column-title" style="width: 300px">Price</th>
-                                        <th class="column-title" style="width: 300px">Total Price
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 300px">Total Price</th>
                                         <th class="column-title" style="width: 50px"></th>
                                     </tr>
                                 </thead>
@@ -138,13 +145,18 @@
                                                 <select class="form-control selectproduct_normal product_id_per" name="wip_product_id_per[]">
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                        <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}">{{$qis->product->name}}</option>
+                                                    <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}" unit="{{$qis->product->other_unit->name}}" qty="{{$qis->product->qty}}">{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty" name="wip_product_req_qty_per[]" value="0">
+                                            <span class="red span_alert_qty_per" hidden><strong>Stock is not enough!</strong></span>
+                                            <input class="force_submit_per" name="force_submit_item_per[]" type="text" value="1" disabled hidden>
+                                        </td>
+                                        <td>
+                                            <input class="product_unit_per form-control" type="text" readonly>
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="text" class="wip_product_price_display_per form-control" value="0">
@@ -163,6 +175,7 @@
                                     <tr>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                         <td class="text-right">
                                             <h5><strong>Margin </strong>
                                                 <select class="form-control selectmargin" id="margin_per" style="width: 50px" name="margin_type_per">
@@ -178,7 +191,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="text-right">
+                                        <td colspan="4" class="text-right">
                                             <h5><strong>Cost of Goods Sold</strong></h5>
                                         </td>
                                         <td colspan="2">
@@ -213,13 +226,10 @@
                                 <thead>
                                     <tr class="headings">
                                         <th class="column-title" style="width: 350px">Product Name</th>
-                                        <th class="column-title" style="width: 250px">Quantity
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 250px">Quantity</th>
+                                        <th class="column-title" style="width: 150px">Unit</th>
                                         <th class="column-title" style="width: 300px">Price</th>
-                                        <th class="column-title" style="width: 300px">Total Price
-                                            <!-- per {{$spk_item->product->other_unit->name}}-->
-                                        </th>
+                                        <th class="column-title" style="width: 300px">Total Price</th>
                                         <th class="column-title" style="width: 50px"></th>
                                     </tr>
                                 </thead>
@@ -237,13 +247,18 @@
                                                 <select class="form-control selectproduct_normal product_id_all" name="wip_product_id_all[]">
                                                     <option></option>
                                                     @foreach($wd as $qis)
-                                                        <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}">{{$qis->product->name}}</option>
+                                                    <option value="{{$qis->product_id}}" unitprice="{{$qis->product->avg_price}}" unit="{{$qis->product->other_unit->name}}" qty="{{$qis->product->qty}}">{{$qis->product->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="number" class="wip_req_qty_display_all form-control qty" name="wip_product_req_qty_all[]" value="0">
+                                            <span class="red span_alert_qty_all" hidden><strong>Stock is not enough!</strong></span>
+                                            <input class="force_submit_all" name="force_submit_item_all[]" type="number" value="1" disabled hidden>
+                                        </td>
+                                        <td>
+                                            <input class="product_unit_all form-control" type="text" readonly>
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="text" class="wip_product_price_display_all form-control" value="0">
@@ -262,6 +277,7 @@
                                     <tr>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                         <td class="text-right">
                                             <h5><strong>Margin </strong>
                                                 <select class="form-control selectmargin" id="margin_all" style="width: 50px" name="margin_type_all">
@@ -277,7 +293,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="text-right">
+                                        <td colspan="4" class="text-right">
                                             <h5><strong>Cost of Goods Sold</strong></h5>
                                         </td>
                                         <td colspan="2">
@@ -310,12 +326,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {
@@ -325,6 +341,15 @@
             } else if ($(this).val() == '1') {
                 document.getElementById("material_per_product").setAttribute("hidden", "hidden");
                 document.getElementById("material_all_product").removeAttribute("hidden");
+            }
+        });
+        $('input[type="checkbox"]').click(function() {
+            if ($(this).prop("checked") == true) {
+                Swal.fire({
+                    type: "warning",
+                    title: "Are you sure?",
+                    html: 'You are about to enabling force submit.<br>Please double check your input.',
+                });
             }
         });
     });

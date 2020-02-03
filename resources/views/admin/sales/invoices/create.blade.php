@@ -137,12 +137,14 @@
                                             <input class="selected_product_price" hidden>
                                             <input class="selected_product_tax" hidden>
                                             <input class="selected_product_is_lock_sales" hidden>
+                                            <input class="selected_product_qty" hidden>
                                             <input class="tampungan_product_id" hidden>
                                             <input class="tampungan_product_desc" hidden>
                                             <input class="tampungan_product_unit" hidden>
                                             <input class="tampungan_product_price" hidden>
                                             <input class="tampungan_product_tax" hidden>
                                             <input class="tampungan_product_is_lock_sales" hidden>
+                                            <input class="tampungan_product_qty" hidden>
                                         </div>
                                     </td>
                                     <td>
@@ -150,6 +152,7 @@
                                     </td>
                                     <td>
                                         <input onClick="this.select();" type="text" class="qty form-control" value='1' name='qty[]'>
+                                        <span class="red span_alert_qty" hidden><strong>Stock is not enough!</strong></span>
                                     </td>
                                     <td>
                                         <div class="form-group">
@@ -262,9 +265,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/sales/invoices/createForm.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/sales/invoices/addmoreitem.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/sales/invoices/createForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/sales/invoices/addmoreitem.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-03022020') }}" charset="utf-8"></script>
 @endpush

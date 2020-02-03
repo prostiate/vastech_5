@@ -2,19 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\sale_payment;
+use App\purchase_payment;
 use App\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CheckSalesPaymentStatus extends Command
+class CheckPurchasePaymentStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'check:sales_payment:status';
+    protected $signature = 'check:purchase_payment:status';
 
     /**
      * The console command description.
@@ -40,9 +40,9 @@ class CheckSalesPaymentStatus extends Command
      */
     public function handle()
     {
-        $date               = Carbon::now();
-        $header             = sale_payment::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
-        $other_transactions = other_transaction::where('type', 'sales payment')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
+        $date               = Carbon::today()->toDateString();
+        $header             = purchase_payment::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'purchase payment')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
 
         foreach ($header as $h) {
             $h->status = 5;

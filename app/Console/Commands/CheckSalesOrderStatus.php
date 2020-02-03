@@ -40,9 +40,9 @@ class CheckSalesOrderStatus extends Command
      */
     public function handle()
     {
-        $date               = Carbon::now();
-        $header             = sale_order::where('status', '<>', 2)->whereDate('due_date', '<',$date)->get();
-        $other_transactions = other_transaction::where('type', 'sales order')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
+        $date               = Carbon::today()->toDateString();
+        $header             = sale_order::whereIn('status', [1, 4])->whereDate('due_date', '<',$date)->get();
+        $other_transactions = other_transaction::where('type', 'sales order')->whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
 
         foreach ($header as $h) {
             $h->status = 5;

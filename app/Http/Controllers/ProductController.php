@@ -913,7 +913,8 @@ class ProductController extends Controller
 
             try {
                 // import data
-                Excel::import(new ProductImport, public_path('/file_product/' . $nama_file));
+                Excel::import(new ProductImport, public_path('/file_product/' . $nama_file));// First sheet
+                //Excel::selectSheetsByIndex(0)->load();
             } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                 $failures = $e->failures();
 

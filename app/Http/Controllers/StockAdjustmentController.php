@@ -315,31 +315,31 @@ class StockAdjustmentController extends Controller
 
     public function storeStockCount(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $user                           = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number             = stock_adjustment::latest()->first();
+            $number                     = stock_adjustment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm                 = explode("/", $number->number);
+                $misahy                 = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
+                $misahy[1]              = 10000;
             }
             $number1                    = $misahy[1] + 1;
             $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
-            $number             = stock_adjustment::max('number');
+            $number                     = stock_adjustment::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number                 = 10000;
+            $trans_no                   = $number + 1;
         }
         $rules = array(
-            'adjustment_category'   => 'required',
-            'trans_date'            => 'required',
-            'actual_qty'            => 'required|array|min:1',
-            'actual_qty.*'          => 'required',
-            'product'            => 'required|array|min:1',
-            'product.*'          => 'required',
+            'adjustment_category'       => 'required',
+            'trans_date'                => 'required',
+            'actual_qty'                => 'required|array|min:1',
+            'actual_qty.*'              => 'required',
+            'product'                   => 'required|array|min:1',
+            'product.*'                 => 'required',
         );
 
         $error = Validator::make($request->all(), $rules);
@@ -350,141 +350,143 @@ class StockAdjustmentController extends Controller
 
         DB::beginTransaction();
         try {
-            $transactions           = other_transaction::create([
-                'transaction_date'  => $request->get('trans_date'),
-                'number'            => $trans_no,
-                'number_complete'   => 'Stock Adjustment #' . $trans_no,
-                'type'              => 'stock adjustment',
-                'memo'              => $request->get('memo'),
-                'status'            => 2,
-                'balance_due'       => 0,
-                'total'             => 0,
+            $transactions = other_transaction::create([
+                'transaction_date'      => $request->trans_date,
+                'number'                => $trans_no,
+                'number_complete'       => 'Stock Adjustment #' . $trans_no,
+                'type'                  => 'stock adjustment',
+                'memo'                  => $request->memo,
+                'status'                => 2,
+                'balance_due'           => 0,
+                'total'                 => 0,
             ]);
 
             $sa = new stock_adjustment([
                 'user_id'               => Auth::id(),
                 'stock_type'            => 1,
                 'number'                => $trans_no,
-                'adjustment_type'       => $request->get('adjustment_category'),
-                'coa_id'                => $request->get('account'),
-                'date'                  => $request->get('trans_date'),
-                'warehouse_id'          => $request->get('warehouse'),
-                'memo'                  => $request->get('memo'),
+                'adjustment_type'       => $request->adjustment_category,
+                'coa_id'                => $request->account,
+                'date'                  => $request->trans_date,
+                'warehouse_id'          => $request->warehouse,
+                'memo'                  => $request->memo,
             ]);
             $transactions->stock_adjustment()->save($sa);
             other_transaction::find($transactions->id)->update([
-                'ref_id'                        => $sa->id,
+                'ref_id'                => $sa->id,
             ]);
 
             $total_semua                = 0;
             foreach ($request->product as $i => $keys) {
-                $pp[$i]                 = new stock_adjustment_detail([
+                $default_product_account = product::find($request->product[$i]);
+                if ($default_product_account->avg_price == $request->avg_price[$i]) {
+                    $product_avg_price  = $default_product_account->avg_price;
+                } else {
+                    $product_avg_price  = $request->avg_price[$i];
+                }
+                $difference             = $request->recorded_qty[$i] - $request->actual_qty[$i];
+                $total                  = $difference;
+                $total_avg              = $total * $product_avg_price;
+
+                $pp[$i] = new stock_adjustment_detail([
                     'product_id'        => $request->product[$i],
                     'recorded'          => $request->recorded_qty[$i],
                     'actual'            => $request->actual_qty[$i],
-                    'difference'        => $request->actual_qty[$i] - $request->recorded_qty[$i],
+                    'difference'        => $difference,
                     'avg_price'         => $request->avg_price[$i],
                 ]);
                 $sa->stock_adjustment_detail()->save($pp[$i]);
-                // NGAMBIL PRODUCT ID YANG MUNCUL
-                $default_product_account = product::find($request->product[$i]);
 
                 if ($request->actual_qty[$i] > $request->recorded_qty[$i]) {
-                    $total              = $request->recorded_qty[$i] - $request->actual_qty[$i];
-                    $total_avg          = $total * $request->avg_price[$i];
-                    // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'    => $user->company_id,
+                        'user_id'       => Auth::id(),
+                        'ref_id'        => $sa->id,
                         'coa_id'        => $default_product_account->default_inventory_account,
-                        'date'          => $request->get('trans_date'),
+                        'date'          => $request->trans_date,
                         'type'          => 'stock adjustment',
                         'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => abs($total_avg),
                         'credit'        => 0,
                     ]);
                     $transactions->coa_detail()->save($cd);
-                        $total_semua        += $total_avg;
+                    $total_semua        += $total_avg;
+                    $avgprice           = $request->avg_price[$i];
+
                     // KALAU ACTUAL QTY LEBIH KECIL SAMA DENGAN RECORDED QTY, MEREKA BERDUA DI KURANGIN DULU ABIS TU DIKALI AVERAGE PRICE
                 } else if ($request->actual_qty[$i] < $request->recorded_qty[$i]) {
-                    $total              = $request->recorded_qty[$i] - $request->actual_qty[$i];
-                    $total_avg          = $total * $request->avg_price[$i];
-                    // COA BERDASARKAN INPUT ACCOUNT
                     $cd = new coa_detail([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'    => $user->company_id,
+                        'user_id'       => Auth::id(),
+                        'ref_id'        => $sa->id,
                         'coa_id'        => $default_product_account->default_inventory_account,
-                        'date'          => $request->get('trans_date'),
+                        'date'          => $request->trans_date,
                         'type'          => 'stock adjustment',
                         'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => 0,
                         'credit'        => abs($total_avg),
                     ]);
                     $transactions->coa_detail()->save($cd);
-                    // UPDATE COA BERDASARKAN INPUT ACCOUNT
-
                     $total_semua        += $total_avg;
+                    $avgprice           = $default_product_account->avg_price;
+
+                    // KALAU ACTUAL QTY SAMA DENGAN LEBIH BESAR DARI RECORDED QTY, DIFFERENCE QTY HARUS DIKALIKAN DENGAN AVERAGE PRICE
                 } else if ($request->actual_qty[$i] == $request->recorded_qty[$i]) {
-                    $total              = $request->recorded_qty[$i] - $request->actual_qty[$i];
-                    $total_avg          = $total * $request->avg_price[$i];
-                    // COA BERDASARKAN PRODUCT
                     $cd = new coa_detail([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'    => $user->company_id,
+                        'user_id'       => Auth::id(),
+                        'ref_id'        => $sa->id,
                         'coa_id'        => $default_product_account->default_inventory_account,
-                        'date'          => $request->get('trans_date'),
+                        'date'          => $request->trans_date,
                         'type'          => 'stock adjustment',
                         'number'        => 'Stock Adjustment #' . $trans_no,
                         'debit'         => 0,
                         'credit'        => 0,
                     ]);
                     $transactions->coa_detail()->save($cd);
-
                     $total_semua        += $total_avg;
-                    // KALAU ACTUAL QTY SAMA DENGAN LEBIH BESAR DARI RECORDED QTY, DIFFERENCE QTY HARUS DIKALIKAN DENGAN AVERAGE PRICE
                 }
-
                 // UPDATE QTY DI PRODUCT
                 product::where('id', $request->product[$i])->update([
-                    'qty'           => $request->actual_qty[$i],
-                    'avg_price'     => $request->avg_price[$i]
+                    'qty'               => $request->actual_qty[$i],
+                    'avg_price'         => (($default_product_account->qty * $default_product_account->avg_price) + ($difference * $request->avg_price[$i]) / $request->actual_qty[$i]),
                 ]);
                 //menambahkan stok barang ke gudang / UPDATE QTY DI WAREHOUSES DETAILS
                 $wh = new warehouse_detail();
-                $wh->type           = 'stock adjustment';
-                $wh->number         = 'Stock Adjustment #' . $trans_no;
-                $wh->product_id     = $request->product[$i];
-                $wh->warehouse_id   = $request->warehouse;
-                $wh->date           = $request->trans_date;
-                $wh->qty_in         = $request->actual_qty[$i];
-                $wh->qty_out        = $request->recorded_qty[$i];
+                $wh->type               = 'stock adjustment';
+                $wh->number             = 'Stock Adjustment #' . $trans_no;
+                $wh->product_id         = $request->product[$i];
+                $wh->warehouse_id       = $request->warehouse;
+                $wh->date               = $request->trans_date;
+                $wh->qty_in             = $request->actual_qty[$i];
+                $wh->qty_out            = $request->recorded_qty[$i];
                 $wh->save();
             }
 
             if ($total_semua >= 0) {
-                // COA BERDASARKAN INPUT ACCOUNT
                 $cd = new coa_detail([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'        => $request->get('account'),
-                    'date'          => $request->get('trans_date'),
-                    'type'          => 'stock adjustment',
-                    'number'        => 'Stock Adjustment #' . $trans_no,
-                    'debit'         => abs($total_semua),
-                    'credit'        => 0,
+                    'company_id'        => $user->company_id,
+                    'user_id'           => Auth::id(),
+                    'ref_id'            => $sa->id,
+                    'coa_id'            => $request->account,
+                    'date'              => $request->trans_date,
+                    'type'              => 'stock adjustment',
+                    'number'            => 'Stock Adjustment #' . $trans_no,
+                    'debit'             => abs($total_semua),
+                    'credit'            => 0,
                 ]);
                 $transactions->coa_detail()->save($cd);
             } else {
-                // COA BERDASARKAN INPUT ACCOUNT
                 $cd = new coa_detail([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'        => $request->get('account'),
-                    'date'          => $request->get('trans_date'),
-                    'type'          => 'stock adjustment',
-                    'number'        => 'Stock Adjustment #' . $trans_no,
-                    'debit'         => 0,
-                    'credit'        => abs($total_semua),
+                    'company_id'        => $user->company_id,
+                    'user_id'           => Auth::id(),
+                    'ref_id'            => $sa->id,
+                    'coa_id'            => $request->account,
+                    'date'              => $request->trans_date,
+                    'type'              => 'stock adjustment',
+                    'number'            => 'Stock Adjustment #' . $trans_no,
+                    'debit'             => 0,
+                    'credit'            => abs($total_semua),
                 ]);
                 $transactions->coa_detail()->save($cd);
             }
@@ -814,7 +816,7 @@ class StockAdjustmentController extends Controller
             ]);
 
             // HAPUS BALANCE PER ITEM STOCK ADJUSTMENT
-            foreach ($sd as $a) {                
+            foreach ($sd as $a) {
                 // DELETE QTY PRODUCT DAN KURANGIN AVG PRICE PRODUCT
                 $produk                     = product::find($a->product_id);
                 $qty                        = $a->qty;
@@ -829,9 +831,9 @@ class StockAdjustmentController extends Controller
             coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->where('credit', 0)->delete();
             stock_adjustment_detail::where('stock_adjustment_id', $id)->delete();
             warehouse_detail::where('type', 'stock adjustment')
-                    ->where('number', 'Stock Adjustment #' . $sa->number)
-                    ->where('warehouse_id', $sa->warehouse_id)
-                    ->delete();
+                ->where('number', 'Stock Adjustment #' . $sa->number)
+                ->where('warehouse_id', $sa->warehouse_id)
+                ->delete();
 
             $sa->update([
                 'user_id'               => Auth::id(),
@@ -872,7 +874,7 @@ class StockAdjustmentController extends Controller
                         'credit'        => 0,
                     ]);
                     $transactions->coa_detail()->save($cd);
-                        $total_semua        += $total_avg;
+                    $total_semua        += $total_avg;
                     // KALAU ACTUAL QTY LEBIH KECIL SAMA DENGAN RECORDED QTY, MEREKA BERDUA DI KURANGIN DULU ABIS TU DIKALI AVERAGE PRICE
                 } else if ($request->actual_qty[$i] < $request->recorded_qty[$i]) {
                     $total              = $request->recorded_qty[$i] - $request->actual_qty[$i];
@@ -966,43 +968,25 @@ class StockAdjustmentController extends Controller
 
     public function destroy($id)
     {
-        $user                               = User::find(Auth::id());
         $sa                                 = stock_adjustment::find($id);
         $sd                                 = stock_adjustment_detail::where('stoct_adjustment_id', $id)->get();
-        
+
         DB::beginTransaction();
         try {
             // uPDATE OTHER TRANSACTION, HANYA MEMO KARENA BALANCE DAN BALANCE DUE -NYA PASTI 0
-            $transactions           = other_transaction::where('type', 'stock adjustment')->where('number', $sa->number)->first();
+            $transactions                   = other_transaction::where('type', 'stock adjustment')->where('number', $sa->number)->first();
             $transactions->update([
-                'number'            => $sa->number,
-                'number_complete'   => 'Stock Adjustment #' . $sa->number,
-                'type'              => 'stock adjustment',
-                'memo'              => '',
-                'status'            => 2,
-                'balance_due'       => 0,
-                'total'             => 0,
+                'number'                    => $sa->number,
+                'number_complete'           => 'Stock Adjustment #' . $sa->number,
+                'type'                      => 'stock adjustment',
+                'memo'                      => '',
+                'status'                    => 2,
+                'balance_due'               => 0,
+                'total'                     => 0,
             ]);
 
             // HAPUS BALANCE PER ITEM STOCK ADJUSTMENT
             foreach ($sd as $a) {
-                $default_product_account        = product::find($a->product_id);
-                // DEFAULT INVENTORY ACCOUNT
-                $get_avg_price_from_coa_detail = coa_detail::where('type', 'stock adjustment')
-                    ->where('number', 'Stock Adjustment #' . $sa->number)
-                    ->where('credit', 0)
-                    ->where('coa_id', $default_product_account->default_inventory_account)
-                    ->first();
-                $get_avg_price_from_coa_detail->delete();
-
-                // DEFAULT STOCK ADJUSTMENT ACCOUNT
-                $get_avg_price_from_coa_detail = coa_detail::where('type', 'stock adjustment')
-                    ->where('number', 'Stock Adjustment #' . $sa->number)
-                    ->where('debit', 0)
-                    ->where('coa_id', $sa->coa_id)
-                    ->first();
-                $get_avg_price_from_coa_detail->delete();
-
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                 warehouse_detail::where('type', 'stock adjustment')
                     ->where('number', 'Stock Adjustment #' . $sa->number)
@@ -1024,7 +1008,7 @@ class StockAdjustmentController extends Controller
             coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->where('credit', 0)->delete();
             stock_adjustment_detail::where('stock_adjustment_id', $id)->delete();
-            
+
             $sa->update([
                 'user_id'               => Auth::id(),
                 'stock_type'            => 1,
@@ -1035,7 +1019,7 @@ class StockAdjustmentController extends Controller
                 'warehouse_id'          => '',
                 'memo'                  => '',
             ]);
-            
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully deleted', 'id' => $sa->id]);
         } catch (\Exception $e) {

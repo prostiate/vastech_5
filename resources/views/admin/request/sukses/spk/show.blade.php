@@ -128,10 +128,12 @@
                             @hasrole('Owner|Ultimate|Production')
                             @can('Create')
                             @if($can >= 1)
+                            @if($spk->user->company_id == 2)
                             @hasrole('Owner|Ultimate|Sales Invoice')
                             <li><a href="/sales_invoice/new/fromSPK/{{$spk->id}}">Create Invoice</a></li>
                             @endrole
                             <li class="divider"></li>
+                            @endif
                             @endif
                             @endcan
                             @endrole
@@ -272,20 +274,20 @@
                         <div class="form-group">
                             <a href="{{ url('/spk') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Production')
-                            @if($statusajah == 0)
-                            @if($spk->status == 2)
-                            <!-- header close-->
-                            @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            @endcan
-                            @can('Edit')
-                            <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">Edit</button>
-                            </div>
-                            @endcan
-                            <input type="text" value="{{$spk->id}}" id="form_id" hidden>
-                            @endif
-                            @endif
+                                @if($statusajah == 0)
+                                    @if($spk->status == 2)
+                                    <!-- header close-->
+                                    @can('Delete')
+                                        <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                    @endcan
+                                    @can('Edit')
+                                        <div class="btn-group">
+                                            <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">Edit</button>
+                                        </div>
+                                    @endcan
+                                    <input type="text" value="{{$spk->id}}" id="form_id" hidden>
+                                    @endif
+                                @endif
                             @endrole
                         </div>
                     </div>
@@ -297,5 +299,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/spk/deleteForm.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
 @endpush

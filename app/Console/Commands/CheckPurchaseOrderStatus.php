@@ -40,9 +40,9 @@ class CheckPurchaseOrderStatus extends Command
      */
     public function handle()
     {
-        $date               = Carbon::now();
-        $header             = purchase_order::where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
-        $other_transactions = other_transaction::where('type', 'purchase order')->where('status', '<>', 2)->whereDate('due_date', '<', $date)->get();
+        $date               = Carbon::today()->toDateString();
+        $header             = purchase_order::whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
+        $other_transactions = other_transaction::where('type', 'purchase order')->whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
 
         foreach ($header as $h) {
             $h->status = 5;

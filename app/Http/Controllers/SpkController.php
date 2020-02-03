@@ -11,7 +11,6 @@ use Illuminate\Support\Carbon;
 use App\spk;
 use App\spk_item;
 use App\other_transaction;
-use App\sale_invoice;
 use App\sale_invoice_item;
 use App\warehouse_detail;
 use PDF;

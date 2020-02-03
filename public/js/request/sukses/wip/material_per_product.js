@@ -113,7 +113,9 @@ function totalGrandAll_per(a) {
 
     $(".wip_total_price_display_per").val(total);
     $(".wip_total_price_hidden_pure_per").val(total);
-    $(".wip_total_price_hidden_pure_input_per").val($(".wip_total_price_hidden_pure_per").val() - 0);
+    $(".wip_total_price_hidden_pure_input_per").val(
+        $(".wip_total_price_hidden_pure_per").val() - 0
+    );
     $(".wip_total_price_hidden_grand_per").val(t);
 }
 
@@ -121,6 +123,7 @@ function selectProduct_per() {
     $(".product_id_per").select2({
         placeholder: "Select Product",
         width: "100%",
+        minimumInputLength: 1
     });
 }
 
@@ -144,6 +147,11 @@ $(function() {
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty_per" name="wip_product_req_qty_per[]" value="0">' +
+            '<span class="red span_alert_qty_per" hidden><strong>Stock is not enough!</strong></span>' +
+            '<input class="force_submit_per" name="force_submit_item_per[]" type="text" value="1" disabled hidden>' +
+            "</td>" +
+            "<td>" +
+            '<input class="product_unit_per form-control" type="text" readonly>' +
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="text" class="wip_product_price_display_per form-control" value="0">' +
@@ -169,12 +177,36 @@ $(function() {
     //    totalGrandAll();
     //});
 
+    $(".neworderbody_per").on("click", ".delete_per", function() {
+        $(this)
+            .parent()
+            .parent()
+            .remove();
+        totalGrandAll();
+        var tr = $(this).closest("tr");
+        totalPrice_per(tr);
+    });
+
     $(".neworderbody_per").on(
         "keyup change",
         ".wip_req_qty_display_per, .wip_product_price_display_per",
         function() {
             var tr = $(this).closest("tr");
             totalPrice_per(tr);
+            var input_qty = tr.find(".wip_req_qty_display_per").val() - 0;
+            var result_qty = $(".product_qty").val() - 0;
+            var product_qty = tr
+                .find(".product_id_per")
+                .find("option:selected")
+                .attr("qty");
+            var hasil_qty = input_qty * result_qty;
+            if (hasil_qty > product_qty) {
+                tr.find(".span_alert_qty_per").prop("hidden", false);
+                tr.find(".force_submit_per").prop("disabled", false);
+            } else {
+                tr.find(".span_alert_qty_per").prop("hidden", true);
+                tr.find(".force_submit_per").prop("disabled", true);
+            }
         }
     );
 
@@ -216,7 +248,15 @@ $(function() {
         ".product_id_per",
         function() {
             var tr = $(this).closest("tr");
-            var price = tr.find('.product_id_per').find('option:selected').attr('unitprice');
+            var price = tr
+                .find(".product_id_per")
+                .find("option:selected")
+                .attr("unitprice");
+            var unit = tr
+                .find(".product_id_per")
+                .find("option:selected")
+                .attr("unit");
+            tr.find(".product_unit_per").val(unit);
             tr.find(".wip_product_price_display_per").val(price);
             tr.find(".wip_product_price_per").val(price);
             totalPrice_per(tr);

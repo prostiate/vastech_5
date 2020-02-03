@@ -49,7 +49,7 @@ $(document).ready(function () {
                 '<input onClick="this.select();" type="number" class="form-control qty" name="actual_qty[]" value="0">' +
                 "</td>" +
                 "<td>" +
-                '<input type="text" class="form-control avg_price_display">"' +
+                '<input onClick="this.select();" type="text" class="form-control avg_price_display" readonly>"' +
                 '<input type="text" class="form-control avg_price" name="avg_price[]" hidden>' +
                 "</td>" +
                 "<td>" +

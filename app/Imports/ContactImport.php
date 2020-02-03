@@ -8,9 +8,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Validator;
 
-class ContactImport implements ToCollection, WithStartRow
+class ContactImport implements ToCollection, WithStartRow, WithMultipleSheets
 {
     /**
      * @param array $row
@@ -71,5 +72,12 @@ class ContactImport implements ToCollection, WithStartRow
     public function startRow(): int
     {
         return 12;
+    }
+
+    public function sheets(): array
+    {
+        return [
+            0 => $this,
+        ];
     }
 }

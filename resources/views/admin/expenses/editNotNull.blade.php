@@ -208,8 +208,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/expenses/updateFormNotNull.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/addmoreitem_expenses.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/expenses/updateFormNotNull.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/addmoreitem_expenses.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
 @endpush

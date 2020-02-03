@@ -54,5 +54,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/production_four/station_four/dataTable.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/production_four/station_four/dataTable.js?v=5-03022020') }}" charset="utf-8"></script>
 @endpush

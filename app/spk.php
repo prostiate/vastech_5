@@ -9,7 +9,12 @@ class spk extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
-    
+
+    public function user()
+    {
+        return $this->belongsTo('App\user');
+    }
+
     public function spk_item()
     {
         return $this->hasMany('App\spk_item');

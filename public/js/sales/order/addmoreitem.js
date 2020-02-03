@@ -352,7 +352,13 @@ $(document).ready(function() {
             var tr = $(this).closest("tr");
             var tax = tr.find(".taxes option:selected").attr("rate");
             var price = tr.find(".unit_price_display").val() - 0;
+            var tampungan_qty = tr.find(".tampungan_product_qty").val() - 0;
             var qty = tr.find(".qty").val() - 0;
+            if (qty > tampungan_qty) {
+                tr.find(".span_alert_qty").prop("hidden", false);
+            } else {
+                tr.find(".span_alert_qty").prop("hidden", true);
+            }
             var subtotal = qty * price; //(qty * price) - ((qty * price * tax) / 100);
             var taxtotal = (qty * price * tax) / 100;
             var total = subtotal + taxtotal; //(qty * price);

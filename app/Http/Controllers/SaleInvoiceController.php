@@ -43,43 +43,43 @@ class SaleInvoiceController extends Controller
 {
     public function select_product()
     {
-        $user               = User::find(Auth::id());
+        $user                       = User::find(Auth::id());
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
-                $page = Input::get('page');
-                $resultCount = 10;
+                $page               = Input::get('page');
+                $resultCount        = 10;
 
-                $offset = ($page - 1) * $resultCount;
+                $offset             = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds             = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_sell', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
-                $count = product::where('is_sell', 1)->count();
-                $endCount = $offset + $resultCount;
-                $morePages = $endCount > $count;
+                $count              = product::where('is_sell', 1)->count();
+                $endCount           = $offset + $resultCount;
+                $morePages          = $endCount > $count;
 
                 $results = array(
-                    "results" => $breeds,
-                    "pagination" => array(
-                        "more" => $morePages,
+                    "results"       => $breeds,
+                    "pagination"    => array(
+                        "more"      => $morePages,
                     ),
-                    "total_count" => $count,
+                    "total_count"   => $count,
                 );
 
                 return response()->json($results);
             }
         } else {
             if (request()->ajax()) {
-                $page = Input::get('page');
-                $resultCount = 10;
+                $page               = Input::get('page');
+                $resultCount        = 10;
 
-                $offset = ($page - 1) * $resultCount;
+                $offset             = ($page - 1) * $resultCount;
 
                 $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
                     ->where('is_sell', 1)
@@ -87,18 +87,18 @@ class SaleInvoiceController extends Controller
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
-                $count = product::where('is_sell', 1)->count();
-                $endCount = $offset + $resultCount;
-                $morePages = $endCount > $count;
+                $count              = product::where('is_sell', 1)->count();
+                $endCount           = $offset + $resultCount;
+                $morePages          = $endCount > $count;
 
                 $results = array(
-                    "results" => $breeds,
-                    "pagination" => array(
-                        "more" => $morePages,
+                    "results"       => $breeds,
+                    "pagination"    => array(
+                        "more"      => $morePages,
                     ),
-                    "total_count" => $count,
+                    "total_count"   => $count,
                 );
 
                 return response()->json($results);
@@ -3128,8 +3128,7 @@ class SaleInvoiceController extends Controller
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
                     $ambil_avg_price_dari_coadetial->delete();
-                } else {
-                }
+                } else { }
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                 warehouse_detail::where('type', 'sales invoice')
                     ->where('number', 'Sales Invoice #' . $pi->number)
@@ -3716,8 +3715,7 @@ class SaleInvoiceController extends Controller
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->first();
                     $ambil_avg_price_dari_coadetial->delete();
-                } else {
-                }
+                } else { }
                 // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                 warehouse_detail::where('type', 'sales invoice')
                     ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4090,8 +4088,7 @@ class SaleInvoiceController extends Controller
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
                         $ambil_avg_price_dari_coadetial->delete();
-                    } else {
-                    }
+                    } else { }
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4144,8 +4141,7 @@ class SaleInvoiceController extends Controller
                                 ->where('coa_id', $default_product_account->default_inventory_account)
                                 ->first();
                             $ambil_avg_price_dari_coadetial->delete();
-                        } else {
-                        }
+                        } else { }
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                         warehouse_detail::where('type', 'sales invoice')
                             ->where('number', 'Sales Invoice #' . $pi->number)
@@ -4245,8 +4241,7 @@ class SaleInvoiceController extends Controller
                             ->where('coa_id', $default_product_account->default_inventory_account)
                             ->first();
                         $ambil_avg_price_dari_coadetial2->delete();
-                    } else {
-                    }
+                    } else { }
                     // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
                     warehouse_detail::where('type', 'sales invoice')
                         ->where('number', 'Sales Invoice #' . $pi->number)

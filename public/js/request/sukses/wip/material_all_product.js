@@ -122,7 +122,8 @@ function totalGrandAll(a) {
 function selectProduct() {
     $(".product_id_all").select2({
         placeholder: "Select Product",
-        width: "100%"
+        width: "100%",
+        minimumInputLength: 1
     });
 }
 
@@ -146,6 +147,11 @@ $(function() {
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="number" class="wip_req_qty_display_all form-control qty_all" name="wip_product_req_qty_all[]" value="0">' +
+            '<span class="red span_alert_qty_all" hidden><strong>Stock is not enough!</strong></span>' +
+            '<input class="force_submit_all" name="force_submit_item_all[]" type="number" value="1" disabled hidden>' +
+            "</td>" +
+            "<td>" +
+            '<input class="product_unit_all form-control" type="text" readonly>' +
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="text" class="wip_product_price_display_all form-control" value="0">' +
@@ -167,6 +173,16 @@ $(function() {
         inputMaskingTotal();
     });
 
+    $(".neworderbody_all").on("click", ".delete_all", function() {
+        $(this)
+            .parent()
+            .parent()
+            .remove();
+        totalGrandAll();
+        var tr = $(this).closest("tr");
+        totalPrice_per(tr);
+    });
+
     $(".product_qty").on("keyup change", function() {
         totalGrandAll();
         $(".text_product_qty").html($(".product_qty").val() - 0);
@@ -178,6 +194,18 @@ $(function() {
         function() {
             var tr = $(this).closest("tr");
             totalPrice(tr);
+            var input_qty = tr.find(".wip_req_qty_display_all").val() - 0;
+            var product_qty = tr
+                .find(".product_id_all")
+                .find("option:selected")
+                .attr("qty");
+            if (input_qty > product_qty) {
+                tr.find(".span_alert_qty_all").prop("hidden", false);
+                tr.find(".force_submit_all").prop("disabled", false);
+            } else {
+                tr.find(".span_alert_qty_all").prop("hidden", true);
+                tr.find(".force_submit_all").prop("disabled", true);
+            }
         }
     );
 
@@ -223,6 +251,11 @@ $(function() {
                 .find(".product_id_all")
                 .find("option:selected")
                 .attr("unitprice");
+            var unit = tr
+                .find(".product_id_all")
+                .find("option:selected")
+                .attr("unit");
+            tr.find(".product_unit_all").val(unit);
             tr.find(".wip_product_price_display_all").val(price);
             tr.find(".wip_product_price_all").val(price);
             totalPrice(tr);

@@ -119,7 +119,7 @@
                                         <input onClick="this.select();" value="0" type="number" class="form-control" name="actual_qty[]">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control avg_price_display">
+                                        <input onClick="this.select();" type="text" class="form-control avg_price_display" readonly>
                                         <input type="text" class="form-control avg_price" name="avg_price[]" hidden>
                                     </td>
                                     <td>
@@ -152,9 +152,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js?v=5-27012020') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-27012020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-03022020') }}" charset="utf-8"></script>
 @endpush
