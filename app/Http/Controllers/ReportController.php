@@ -320,7 +320,7 @@ class ReportController extends Controller
     {
         $today                                      = Carbon::today()->toDateString();
         $coa                                        = coa::get();
-        $coa_detail                                 = coa_detail::whereBetween('date', [$today, $today])
+        $coa_detail                                 = coa_detail::orderBy('date')->whereBetween('date', [$today, $today])
             ->orderBy('coa_id', 'asc')
             ->get()
             ->groupBy('coa_id');
@@ -337,6 +337,7 @@ class ReportController extends Controller
             $coa2                                   = coa::get();
             $coa_detail                             = coa_detail::whereBetween('date', [$start, $end])
                 ->orderBy('coa_id', 'asc')
+                ->orderBy('date')
                 ->get()
                 ->groupBy('coa_id');
         } else {
@@ -345,6 +346,7 @@ class ReportController extends Controller
             $coa2                                   = coa::get();
             $coa_detail                             = coa_detail::whereIn('coa_id', $ids)->whereBetween('date', [$start, $end])
                 ->orderBy('coa_id', 'asc')
+                ->orderBy('date')
                 ->get()
                 ->groupBy('coa_id');
         }
@@ -371,7 +373,7 @@ class ReportController extends Controller
             //dd('if');
             $coa                                    = coa::get();
             $coa2                                   = coa::get();
-            $coa_detail                             = coa_detail::whereBetween('date', [$start, $end])
+            $coa_detail                             = coa_detail::orderBy('date')->whereBetween('date', [$start, $end])
                 ->orderBy('coa_id', 'asc')
                 ->get()
                 ->groupBy('coa_id');
@@ -379,7 +381,7 @@ class ReportController extends Controller
             //dd('else');
             $coa                                    = coa::whereIn('id', $ids)->get();
             $coa2                                   = coa::get();
-            $coa_detail                             = coa_detail::whereIn('coa_id', $ids)->whereBetween('date', [$start, $end])
+            $coa_detail                             = coa_detail::orderBy('date')->whereIn('coa_id', $ids)->whereBetween('date', [$start, $end])
                 ->orderBy('coa_id', 'asc')
                 ->get()
                 ->groupBy('coa_id');
@@ -587,7 +589,7 @@ class ReportController extends Controller
     public function journal_report()
     {
         $today                      = Carbon::today()->toDateString();
-        $coa_detail                 = coa_detail::whereBetween('date', [$today, $today])
+        $coa_detail                 = coa_detail::orderBy('date')->whereBetween('date', [$today, $today])
             ->orderBy('date')
             ->get()
             ->groupBy('number');
@@ -596,7 +598,7 @@ class ReportController extends Controller
 
     public function journal_reportInput($start, $end)
     {
-        $coa_detail                 = coa_detail::whereBetween('date', [$start, $end])
+        $coa_detail                 = coa_detail::orderBy('date')->whereBetween('date', [$start, $end])
             ->select('coa_details.*')->groupBy('number')->groupBy('coa_id')
             ->selectSub(function ($query) {
                 return $query->selectRaw('SUM(debit)');
@@ -625,7 +627,7 @@ class ReportController extends Controller
     {
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
-        $coa_detail                 = coa_detail::whereBetween('date', [$start, $end])
+        $coa_detail                 = coa_detail::orderBy('date')->whereBetween('date', [$start, $end])
             ->select('coa_details.*')->groupBy('number')->groupBy('coa_id')
             ->selectSub(function ($query) {
                 return $query->selectRaw('SUM(debit)');
@@ -648,8 +650,8 @@ class ReportController extends Controller
 
     public function trial_balance()
     {
-        $today                      = Carbon::today()->toDateString();
-        $coa_detail2                 = coa_detail::whereBetween('date', [$today, $today])
+        $today                          = Carbon::today()->toDateString();
+        $coa_detail2                    = coa_detail::whereBetween('date', [$today, $today])
             ->select('coa_details.*')->groupBy('coa_id')
             ->selectSub(function ($query) {
                 return $query->selectRaw('SUM(debit)');

@@ -132,6 +132,7 @@
                                                         <td></td>
                                                     </tr>
                                                 </thead>
+                                            </tr>
                                             <tr class="headings">
                                                 <th class="column-title" style="width: 250px">Product</th>
                                                 <th class="column-title" style="width: 100px">Qty Order</th>
@@ -273,9 +274,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/request/sukses/purchases/invoices/createForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/request/sukses/purchases/invoices/addmoreitem3.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/request/sukses/purchases/invoices/createForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/request/sukses/purchases/invoices/addmoreitem3.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 @endpush

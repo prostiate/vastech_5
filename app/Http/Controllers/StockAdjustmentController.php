@@ -446,10 +446,15 @@ class StockAdjustmentController extends Controller
                     $transactions->coa_detail()->save($cd);
                     $total_semua        += $total_avg;
                 }
+                if ($request->actual_qty[$i] == 0) {
+                    $product_avg_price      = (($default_product_account->qty * $default_product_account->avg_price) + ($difference * $request->avg_price[$i]));
+                } else {
+                    $product_avg_price      = (($default_product_account->qty * $default_product_account->avg_price) + ($difference * $request->avg_price[$i]) / $request->actual_qty[$i]);
+                }
                 // UPDATE QTY DI PRODUCT
                 product::where('id', $request->product[$i])->update([
                     'qty'               => $request->actual_qty[$i],
-                    'avg_price'         => (($default_product_account->qty * $default_product_account->avg_price) + ($difference * $request->avg_price[$i]) / $request->actual_qty[$i]),
+                    'avg_price'         => $product_avg_price,
                 ]);
                 //menambahkan stok barang ke gudang / UPDATE QTY DI WAREHOUSES DETAILS
                 $wh = new warehouse_detail();
@@ -966,10 +971,10 @@ class StockAdjustmentController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroyStockCount($id)
     {
         $sa                                 = stock_adjustment::find($id);
-        $sd                                 = stock_adjustment_detail::where('stoct_adjustment_id', $id)->get();
+        $sd                                 = stock_adjustment_detail::where('stock_adjustment_id', $id)->get();
 
         DB::beginTransaction();
         try {
@@ -996,7 +1001,7 @@ class StockAdjustmentController extends Controller
 
                 // DELETE QTY PRODUCT DAN KURANGIN AVG PRICE PRODUCT
                 $produk                     = product::find($a->product_id);
-                $qty                        = $a->qty;
+                $qty                        = $a->difference;
 
                 //menyimpan jumlah perubahan pada produk
                 product::where('id', $a->product_id)->update([
@@ -1005,20 +1010,9 @@ class StockAdjustmentController extends Controller
             }
 
             // DELETE COA DETAIL WITH DEBIT = 0
-            coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->where('debit', 0)->delete();
-            coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->where('credit', 0)->delete();
+            coa_detail::where('type', 'stock adjustment')->where('number', 'Stock Adjustment #' . $sa->number)->delete();
             stock_adjustment_detail::where('stock_adjustment_id', $id)->delete();
-
-            $sa->update([
-                'user_id'               => Auth::id(),
-                'stock_type'            => 1,
-                'number'                => $sa->number,
-                'adjustment_type'       => '',
-                'coa_id'                => '',
-                'date'                  => '',
-                'warehouse_id'          => '',
-                'memo'                  => '',
-            ]);
+            $sa->delete();
 
             DB::commit();
             return response()->json(['success' => 'Data is successfully deleted', 'id' => $sa->id]);

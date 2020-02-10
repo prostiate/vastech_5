@@ -105,7 +105,7 @@ class CoAController extends Controller
     public function show($id)
     {
         $coa            = coa::find($id);
-        $coa_detail     = coa_detail::where('coa_id', $id)->get();
+        $coa_detail     = coa_detail::where('coa_id', $id)->orderBy('date')->get();
         /*$debit          = coa_detail::where('coa_id', $id)->sum('debit');
         $credit         = coa_detail::where('coa_id', $id)->sum('credit');
         $total          = $debit + $credit;
@@ -135,7 +135,7 @@ class CoAController extends Controller
             return view('admin.accounts.showCashbank', compact(['coa', 'coa_detail']));
         } else {*/
             if (request()->ajax()) {
-                return datatables()->of(coa_detail::where('coa_id', $id)->get())
+                return datatables()->of(coa_detail::where('coa_id', $id)->orderBy('date')->get())
                     ->addColumn('action', function ($data) {
                         $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
                         $button .= '&nbsp;&nbsp;';

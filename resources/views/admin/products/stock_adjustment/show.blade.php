@@ -173,11 +173,11 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/stock_adjustment') }}" class="btn btn-dark">Cancel</a>
-                            <a href="#" class="btn btn-danger" id="click">Delete</a>
+                            <button type="button" class="btn btn-danger" id="click">Delete</button>
                             <input type="text" value="{{$header->id}}" id="form_id" hidden>
-                            <div class="btn-group">
+                            <!--<div class="btn-group">
                                 <a href="{{ url('/stock_adjustment/edit/stock_count/'.$header->id) }}" class="btn btn-success">Edit</a>
-                            </div> 
+                            </div>-->
                         </div>
                     </div>
                 </form>
@@ -188,5 +188,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/stock_adjustment/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/stock_adjustment/deleteForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 @endpush

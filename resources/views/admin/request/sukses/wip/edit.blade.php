@@ -243,6 +243,7 @@
                                     <button id="click_per" type="button" class="btn btn-success">Update</button>
                                     <input value="{{$wip->id}}" name="hidden_wip_id" hidden>
                                     <input value="{{$wip->selected_spk_id}}" name="spk_id" hidden>
+                                    <input value="0" name="production_bundle" hidden>
                                 </div>
                             </div>
                         </div>
@@ -377,6 +378,7 @@
                                     <button id="click_all" type="button" class="btn btn-success">Update</button>
                                     <input value="{{$wip->id}}" name="hidden_wip_id" hidden>
                                     <input value="{{$wip->selected_spk_id}}" name="spk_id" hidden>
+                                    <input value="0" name="production_bundle" hidden>
                                 </div>
                             </div>
                         </div>
@@ -389,12 +391,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/updateForm_per.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/updateForm_all.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/updateForm_per.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/updateForm_all.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

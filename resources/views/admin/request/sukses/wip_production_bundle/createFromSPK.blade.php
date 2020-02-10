@@ -198,6 +198,7 @@
                                 <div class="btn-group">
                                     <button id="click_per" type="button" class="btn btn-success">Create</button>
                                     <input value="{{$spk->id}}" name="spk_id" hidden>
+                                    <input value="1" name="production_bundle" hidden>
                                 </div>
                             </div>
                         </div>
@@ -296,6 +297,7 @@
                                 <div class="btn-group">
                                     <button id="click_all" type="button" class="btn btn-success">Create</button>
                                     <input value="{{$spk->id}}" name="spk_id" hidden>
+                                    <input value="1" name="production_bundle" hidden>
                                 </div>
                             </div>
                         </div>
@@ -308,12 +310,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

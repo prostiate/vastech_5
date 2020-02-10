@@ -5,11 +5,9 @@ $.ajaxSetup({
 });
 $(document).ready(function() {
     $("#click").click(function() {
-        for (var count = 0; count < data.errors.length; count++) {
-            html += data.errors[count];
-        }
-        $("#click").prop("disabled", false);
-        $("#click").html("Create");
+        event.preventDefault();
+        $("#click").prop("disabled", true);
+        $("#click").html("Processing");
         var user_id = document.getElementById("form_id").value;
         Swal.fire({
             title: "Are you sure?",
@@ -22,7 +20,7 @@ $(document).ready(function() {
         }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/stock_adjustment/delete/" + user_id,
+                    url: "/stock_adjustment/delete/stock_count/" + user_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -30,11 +28,15 @@ $(document).ready(function() {
                         if (data.errors) {
                             typeswal = "error";
                             titleswal = "Oops...";
-                            for (var count = 0; count < data.errors.length; count++) {
+                            for (
+                                var count = 0;
+                                count < data.errors.length;
+                                count++
+                            ) {
                                 html += data.errors[count];
                             }
-                            $('#click').prop('disabled', false);
-                            $('#click').html('Delete');
+                            $("#click").prop("disabled", false);
+                            $("#click").html("Delete");
                         }
                         if (data.success) {
                             typeswal = "success";

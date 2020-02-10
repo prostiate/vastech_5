@@ -6,7 +6,7 @@
         <div class="x_panel">
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
-                    @if($pi->status == 1)
+                    @if($pi->status == 1 or $pi->status == 5)
                     <li>
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
@@ -264,7 +264,7 @@
                         <div class="form-group">
                             <a href="{{ url('/purchases_quote') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Purchase Quote')
-                            @if($pi->status == 1)
+                            @if($pi->status == 1 or $pi->status == 5)
                             @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan
@@ -287,7 +287,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/quote/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/quote/deleteForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

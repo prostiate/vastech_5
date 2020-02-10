@@ -56,8 +56,9 @@ $(document).ready(function() {
         $("#click").prop("disabled", true);
         $("#click").html("Processing");
         var form = document.getElementById("formCreate");
+        var id = document.getElementById("hidden_id");
         $.ajax({
-            url: "/settings/company",
+            url: "/settings/user/setRoles/" + id.value,
             method: "POST",
             data: new FormData(form),
             contentType: false,

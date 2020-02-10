@@ -12,6 +12,7 @@ class warehouse_detail extends Model
     protected $casts = [
         'qty_in' => 'float',
         'qty_out' => 'float',
+        'qty_total' => 'float',
     ];
 
     public function product()

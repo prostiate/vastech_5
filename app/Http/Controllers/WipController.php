@@ -183,17 +183,21 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_per;
             $spk_id                             = $request->spk_id;
-            $force_submit                       = $request->force_submit_item_per;
-            $number                             = 1;
-            if (!$request->force_submit) {
-                foreach ($force_submit as $i => $p) {
-                    $force_number               = $request->force_submit_item_per[$i];
-                    if ($force_number == 1) {
-                        $number++;
+            if ($request->production_bundle == 0) {
+                $force_submit                       = $request->force_submit_item_per;
+                $number                             = 1;
+                if (!$request->force_submit) {
+                    if ($force_submit != null) {
+                        foreach ($force_submit as $i => $p) {
+                            $force_number               = $request->force_submit_item_per[$i];
+                            if ($force_number == 1) {
+                                $number++;
+                            }
+                        }
                     }
-                }
-                if ($number > 1) {
-                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    if ($number > 1) {
+                        return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    }
                 }
             }
 
@@ -406,17 +410,21 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_all;
             $spk_id                             = $request->spk_id;
-            $force_submit                       = $request->force_submit_item_all;
-            $number                             = 1;
-            if (!$request->force_submit) {
-                foreach ($force_submit as $i => $p) {
-                    $force_number               = $request->force_submit_item_all[$i];
-                    if ($force_number == 1) {
-                        $number++;
+            if ($request->production_bundle == 0) {
+                $force_submit                       = $request->force_submit_item_all;
+                $number                             = 1;
+                if (!$request->force_submit) {
+                    if ($force_submit != null) {
+                        foreach ($force_submit as $i => $p) {
+                            $force_number               = $request->force_submit_item_all[$i];
+                            if ($force_number == 1) {
+                                $number++;
+                            }
+                        }
                     }
-                }
-                if ($number > 1) {
-                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    if ($number > 1) {
+                        return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    }
                 }
             }
 
@@ -687,17 +695,21 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_per;
             $spk_id                             = $request->spk_id;
-            $force_submit                       = $request->force_submit_item_per;
-            $number                             = 1;
-            if (!$request->force_submit) {
-                foreach ($force_submit as $i => $p) {
-                    $force_number               = $request->force_submit_item_per[$i];
-                    if ($force_number == 1) {
-                        $number++;
+            if ($request->production_bundle == 0) {
+                $force_submit                       = $request->force_submit_item_per;
+                $number                             = 1;
+                if (!$request->force_submit) {
+                    if ($force_submit != null) {
+                        foreach ($force_submit as $i => $p) {
+                            $force_number               = $request->force_submit_item_per[$i];
+                            if ($force_number == 1) {
+                                $number++;
+                            }
+                        }
                     }
-                }
-                if ($number > 1) {
-                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    if ($number > 1) {
+                        return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
+                    }
                 }
             }
 
@@ -927,19 +939,24 @@ class WipController extends Controller
         try {
             $product                            = $request->wip_product_id_all;
             $spk_id                             = $request->spk_id;
-            $force_submit                       = $request->force_submit_item_all;
-            $number                             = 1;
-            if (!$request->force_submit) {
-                foreach ($force_submit as $i => $p) {
-                    $force_number               = $request->force_submit_item_all[$i];
-                    if ($force_number == 1) {
-                        $number++;
+            if ($request->production_bundle == 0) {
+                $force_submit                       = $request->force_submit_item_all;
+                $number                             = 1;
+                if (!$request->force_submit) {
+                    if ($force_submit != null) {
+                        foreach ($force_submit as $i => $p) {
+                            $force_number               = $request->force_submit_item_all[$i];
+                            if ($force_number == 1) {
+                                $number++;
+                            }
+                        }
+                    }
+                    if ($number > 1) {
+                        return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
                     }
                 }
-                if ($number > 1) {
-                    return response()->json(['errors' => 'Stock is not enough!<br>Please check again your input.']);
-                }
             }
+
             if ($request->product_qty == $request->product_qty_to_make) {
                 $qty_remaining                  = 0;
                 spk_item::where('spk_id', $spk_id)

@@ -16,7 +16,7 @@ class expense_observer
      */
     public function saving(expense $expense)
     {
-        if ($expense->due_date != 'null') {
+        if ($expense->due_date != null) {
             if ($expense->due_date < Carbon::today()->toDateString()) {
                 $expense->status = 5;
                 other_transaction::where('type', 'expense')

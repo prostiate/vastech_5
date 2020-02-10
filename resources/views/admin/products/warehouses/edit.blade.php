@@ -57,7 +57,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/warehouses/updateForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/warehouses/updateForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 @endpush

@@ -41,8 +41,8 @@ class CheckExpenseStatus extends Command
     public function handle()
     {
         $date               = Carbon::today()->toDateString();
-        $header             = expense::where('due_date', '!=', 'null')->whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
-        $other_transactions = other_transaction::where('type', 'expense')->where('due_date', '!=', 'null')->whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
+        $header             = expense::where('due_date', '!=', 'null')->whereIn('status', [1])->whereDate('due_date', '<', $date)->get();
+        $other_transactions = other_transaction::where('type', 'expense')->where('due_date', '!=', 'null')->whereIn('status', [1])->whereDate('due_date', '<', $date)->get();
 
         foreach ($header as $h) {
             $h->status = 5;

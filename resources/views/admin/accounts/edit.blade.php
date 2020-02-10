@@ -100,8 +100,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/accounts/updateForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/updateForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     function getval(sel) {
         if (sel.value == 1) {

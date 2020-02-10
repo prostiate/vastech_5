@@ -130,37 +130,36 @@
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Purchase Order')
-                            @can('Create')
-                            @if($pi->status == 1)
-                            <li><a href="#">Clone Transaction</a></li>
-                            @hasrole('Owner|Ultimate|Purchase Delivery')
-                            <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
-                            @endrole
-                            @hasrole('Owner|Ultimate|Purchase Invoice')
-                            <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
-                            @endrole
-                            <li><a href="#">Add Deposit</a></li>
-                            <li><a href="#">Set as Recurring</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#" id="clickClose">Close Order</a></li>
-                            @elseif($pi->status == 2)
-                            <li><a href="#">Clone Transaction</a></li>
-                            <li><a href="#">Add Deposit</a></li>
-                            <li class="divider"></li>
-                            @else
-                            <li><a href="#">Clone Transaction</a></li>
-                            @hasrole('Owner|Ultimate|Purchase Delivery')
-                            <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
-                            @endrole
-                            @hasrole('Owner|Ultimate|Purchase Invoice')
-                            <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
-                            @endrole
-                            <li><a href="#">Set as Recurring</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#" id="clickClose">Close Order</a>
-                            </li>
-                            @endif
-                            @endcan
+                                @can('Create')
+                                    @if($pi->status == 1 or $pi->status == 5)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        @hasrole('Owner|Ultimate|Purchase Delivery')
+                                            <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
+                                        @endrole
+                                        @hasrole('Owner|Ultimate|Purchase Invoice')
+                                            <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                                        @endrole
+                                        <li><a href="#">Add Deposit</a></li>
+                                        <li><a href="#">Set as Recurring</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#" id="clickClose">Close Order</a></li>
+                                    @elseif($pi->status == 2)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        <li><a href="#">Add Deposit</a></li>
+                                        <li class="divider"></li>
+                                    @elseif($pi->status == 4)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        @hasrole('Owner|Ultimate|Purchase Delivery')
+                                            <li><a href="/purchases_delivery/new/from/{{$pi->id}}">Receive Delivery</a></li>
+                                        @endrole
+                                        @hasrole('Owner|Ultimate|Purchase Invoice')
+                                            <li><a href="/purchases_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                                        @endrole
+                                        <li><a href="#">Set as Recurring</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#" id="clickClose">Close Order</a></li>
+                                    @endif
+                                @endcan
                             @endrole
                             <li><a data-toggle="modal" data-target=".print_preview">Print & Preview</a></li>
                         </ul>
@@ -419,7 +418,7 @@
                         <div class="form-group">
                             <a href="{{ url('/purchases_order') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Purchase Order')
-                            @if($pi->status == 1)
+                            @if($pi->status == 1 or $pi->status == 5)
                             @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan
@@ -442,8 +441,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/order/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/purchases/order/closeOrderForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/deleteForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/closeOrderForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

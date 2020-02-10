@@ -29,7 +29,7 @@ class journal_report implements FromView, ShouldAutoSize
     {
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
-        $coa_detail                 = coa_detail::whereBetween('date', [$this->start, $this->end])
+        $coa_detail                                 = coa_detail::orderBy('date')->whereBetween('date', [$this->start, $this->end])
             ->select('coa_details.*')->groupBy('number')->groupBy('coa_id')
             ->selectSub(function ($query) {
                 return $query->selectRaw('SUM(debit)');

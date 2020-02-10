@@ -77,6 +77,18 @@
                     <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> Chart of Accounts </a></li>
                 </ul>
             </div>
+            @if(Auth::user()->name == 'user')
+            <div class="menu_section">
+                <h3>Construction</h3>
+                <ul class="nav side-menu">
+                    <li><a href="/construction/offering_letter"><i class="fa fa-close"></i> Offering Letter </a></li>
+                    <li><a href="/construction/budget_plan"><i class="fa fa-close"></i> Budget Plan </a></li>
+                    <li><a href="/construction/bill_quantities"><i class="fa fa-close"></i> Bill of Quantities </a></li>
+                    <li><a href="/construction/form_order"><i class="fa fa-close"></i> Form Order </a></li>
+                    <li><a href="/construction/progress"><i class="fa fa-close"></i> Progress </a></li>
+                </ul>
+            </div>
+            @endif
             <div class="menu_section">
 
                 <h3>Setting</h3>

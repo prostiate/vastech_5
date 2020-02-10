@@ -131,39 +131,38 @@
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Sales Order')
-                            @can('Create')
-                            @if($pi->status == 1)
-                            <li><a href="#">Clone Transaction</a></li>
-                            @hasrole('Owner|Ultimate|Sales Delivery')
-                            <li><a href="/sales_delivery/new/from/{{$pi->id}}">Create Delivery</a></li>
-                            @endrole
-                            @hasrole('Owner|Ultimate|Sales Invoice')
-                            <li><a href="/sales_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
-                            @endrole
-                            <li><a href="#">Add Deposit</a></li>
-                            <li><a href="#">Set as Recurring</a></li>
-                            <li class="divider"></li>
-                            @elseif($pi->status == 2)
-                            <li><a href="#">Clone Transaction</a></li>
-                            <li><a href="#">Add Deposit</a></li>
-                            <li class="divider"></li>
-                            @else
-                            <li><a href="#">Clone Transaction</a></li>
-                            @hasrole('Owner|Ultimate|Sales Delivery')
-                            <li><a href="/sales_delivery/new/from/{{$pi->id}}">Create Delivery</a></li>
-                            @endrole
-                            @hasrole('Owner|Ultimate|Sales Invoice')
-                            <li><a href="/sales_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
-                            @endrole
-                            <li><a href="#">Set as Recurring</a></li>
-                            <li class="divider"></li>
-                            @endif
-                            @endcan
+                                @can('Create')
+                                    @if($pi->status == 1 or $pi->status == 5)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        @hasrole('Owner|Ultimate|Sales Delivery')
+                                            <li><a href="/sales_delivery/new/from/{{$pi->id}}">Create Delivery</a></li>
+                                        @endrole
+                                        @hasrole('Owner|Ultimate|Sales Invoice')
+                                            <li><a href="/sales_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                                        @endrole
+                                        <li><a href="#">Add Deposit</a></li>
+                                        <li><a href="#">Set as Recurring</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#" id="clickClose">Close Order</a></li>
+                                    @elseif($pi->status == 2)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        <li><a href="#">Add Deposit</a></li>
+                                        <li class="divider"></li>
+                                    @elseif($pi->status == 4)
+                                        <li><a href="#">Clone Transaction</a></li>
+                                        @hasrole('Owner|Ultimate|Sales Delivery')
+                                            <li><a href="/sales_delivery/new/from/{{$pi->id}}">Create Delivery</a></li>
+                                        @endrole
+                                        @hasrole('Owner|Ultimate|Sales Invoice')
+                                            <li><a href="/sales_invoice/new/fromOrder/{{$pi->id}}">Create Invoice</a></li>
+                                        @endrole
+                                        <li><a href="#">Set as Recurring</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#" id="clickClose">Close Order</a></li>
+                                    @endif
+                                @endcan
                             @endrole
                             <li><a data-toggle="modal" data-target=".print_preview">Print & Preview</a></li>
-                            @hasrole('Owner|Ultimate|Sales Order')
-                            <li><a href="#" id="clickClose">Close Order</a></li>
-                            @endrole
                         </ul>
                         <div class="modal fade print_preview" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-md">
@@ -422,17 +421,17 @@
                         <div class="form-group">
                             <a href="{{ url('/sales_order') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Sales Order')
-                            @if($pi->status == 1)
-                            @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            @endcan
-                            @can('Edit')
-                            <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_order/edit/' + {{$pi->id}};">Edit
-                                </button>
-                            </div>
-                            @endcan
-                            @endif
+                                @if($pi->status == 1 or $pi->status == 5)
+                                    @can('Delete')
+                                        <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                    @endcan
+                                    @can('Edit')
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_order/edit/' + {{$pi->id}};">Edit
+                                            </button>
+                                        </div>
+                                    @endcan
+                                @endif
                             @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
@@ -445,8 +444,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/order/deleteForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/sales/order/closeOrderForm.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/order/deleteForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/order/closeOrderForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

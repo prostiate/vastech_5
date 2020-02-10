@@ -41,8 +41,8 @@ class CheckPurchaseInvoiceStatus extends Command
     public function handle()
     {
         $date               = Carbon::today()->toDateString();
-        $header             = purchase_invoice::whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
-        $other_transactions = other_transaction::where('type', 'purchase invoice')->whereIn('status', [1, 4])->whereDate('due_date', '<', $date)->get();
+        $header             = purchase_invoice::whereIn('status', [1])->whereDate('due_date', '<', $date)->get();
+        $other_transactions = other_transaction::where('type', 'purchase invoice')->whereIn('status', [1])->whereDate('due_date', '<', $date)->get();
 
         foreach ($header as $h) {
             $h->status = 5;

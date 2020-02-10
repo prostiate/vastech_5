@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\CheckStatus;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,21 +14,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/',                                                         'HomeController@index');
+    Route::get('/',                                                                                             'HomeController@index');
 
-    Route::get('/dashboard',                                                'HomeController@index')->name('home');
+    Route::get('/dashboard',                                                                                    'HomeController@index')->name('home');
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');
         return "Cache is cleared";
     });
-    Route::get('/testing',                                                  'PurchaseInvoiceController@benerin_avg_price');
+    Route::get('/testing',                                                                                      'PurchaseInvoiceController@benerin_avg_price');
 
     /*---------REPORTS --------------*/
     Route::get('/reports', function () {
         return view('admin.reports.index');
     })->name('reportsindex');
-    Route::get('/reports/select_product',                                       'ReportController@select_product');
+    Route::get('/reports/select_product',                                                                       'ReportController@select_product');
     // OVERVIEW
     Route::get('/reports/balance_sheet',                                                                        'ReportController@balanceSheet');
     Route::get('/reports/balance_sheet/excel/as_of={today}/start_year={startyear}&end_year={endyear}',          'ReportController@balanceSheet_excel');
@@ -185,7 +184,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_invoice/newInvoiceFromDelivery',                    'SaleInvoiceController@storeFromDelivery');
     Route::post('/sales_invoice/newInvoiceFromSPK',                         'SaleInvoiceController@storeFromSPK');
     Route::post('/sales_invoice/newInvoiceFromOrderRequestSukses',          'SaleInvoiceController@storeFromOrderRequestSukses');
-    Route::get('/sales_invoice/edit/{id}',                                  'SaleInvoiceController@edit')->middleware('checkstatus');
+    Route::get('/sales_invoice/edit/{id}',                                  'SaleInvoiceController@edit');
     Route::post('/sales_invoice/updateSInvoice',                            'SaleInvoiceController@update');
     Route::post('/sales_invoice/updateSInvoiceFromQuote',                   'SaleInvoiceController@updateFromQuote');
     Route::post('/sales_invoice/updateSInvoiceFromOrder',                   'SaleInvoiceController@updateFromOrder');
@@ -210,7 +209,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sales_return/new/{id}',                                    'SaleReturnController@create');
     Route::post('/sales_return/newReturn',                                  'SaleReturnController@store');
     Route::get('/sales_return/{id}',                                        'SaleReturnController@show');
-    Route::get('/sales_return/edit/{id}',                                   'SaleReturnController@edit')->middleware('checkstatus');
+    Route::get('/sales_return/edit/{id}',                                   'SaleReturnController@edit');
     Route::post('/sales_return/updateReturn',                               'SaleReturnController@update');
     Route::get('/sales_return/delete/{id}',                                 'SaleReturnController@destroy');
     Route::get('/sales_return/print/PDF/1/{id}',                            'SaleReturnController@cetak_pdf_1');
@@ -231,7 +230,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sales_order/newSOrder',                                   'SaleOrderController@store');
     Route::post('/sales_order/newOrderFromQuote',                           'SaleOrderController@storeFromQuote');
     Route::post('/sales_order/newOrderRequestSukses',                       'SaleOrderController@storeRequestSukses');
-    Route::get('/sales_order/edit/{id}',                                    'SaleOrderController@edit')->middleware('checkstatus');
+    Route::get('/sales_order/edit/{id}',                                    'SaleOrderController@edit');
     Route::post('/sales_order/updateSOrder',                                'SaleOrderController@update');
     Route::post('/sales_order/updateOrderRequestSukses',                    'SaleOrderController@updateRequestSukses');
     Route::get('/sales_order/{id}',                                         'SaleOrderController@show');
@@ -248,7 +247,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sales_quote',                                              'SaleQuoteController@index');
     Route::get('/sales_quote/new',                                          'SaleQuoteController@create');
     Route::post('/sales_quote/newSQuote',                                   'SaleQuoteController@store');
-    Route::get('/sales_quote/edit/{id}',                                    'SaleQuoteController@edit')->middleware('checkstatus');
+    Route::get('/sales_quote/edit/{id}',                                    'SaleQuoteController@edit');
     Route::post('/sales_quote/updateSQuote',                                'SaleQuoteController@update');
     Route::get('/sales_quote/{id}',                                         'SaleQuoteController@show');
     Route::get('/sales_quote/print/PDF/1/{id}',                             'SaleQuoteController@cetak_pdf_1');
@@ -262,7 +261,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sales_delivery',                                           'SaleDeliveryController@index');
     Route::get('/sales_delivery/new/from/{id}',                             'SaleDeliveryController@createFromPO');
     Route::post('/sales_delivery/newDelivery',                              'SaleDeliveryController@storeFromPO');
-    Route::get('/sales_delivery/edit/from/{id}',                            'SaleDeliveryController@edit')->middleware('checkstatus');
+    Route::get('/sales_delivery/edit/from/{id}',                            'SaleDeliveryController@edit');
     Route::post('/sales_delivery/updateDelivery',                           'SaleDeliveryController@updateFromPO');
     Route::get('/sales_delivery/{id}',                                      'SaleDeliveryController@show');
     Route::get('/sales_delivery/print/PDF/1/{id}',                          'SaleDeliveryController@cetak_pdf_1');
@@ -276,7 +275,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sales_payment',                                            'SalePaymentController@index');
     Route::get('/sales_payment/new/from/{id}',                              'SalePaymentController@createFromSale');
     Route::post('/sales_payment/newFromSale',                               'SalePaymentController@store');
-    Route::get('/sales_payment/edit/{id}',                                  'SalePaymentController@edit')->middleware('checkstatus');
+    Route::get('/sales_payment/edit/{id}',                                  'SalePaymentController@edit');
     Route::post('/sales_payment/updatePayment',                             'SalePaymentController@update');
     Route::get('/sales_payment/{id}',                                       'SalePaymentController@show');
     Route::get('/sales_payment/print/PDF/1/{id}',                           'SalePaymentController@cetak_pdf_1');
@@ -303,7 +302,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/purchases_invoice/newInvoiceFromOrder',                   'PurchaseInvoiceController@storeFromOrder');
     Route::post('/purchases_invoice/newInvoiceFromDelivery',                'PurchaseInvoiceController@storeFromDelivery');
     Route::post('/purchases_invoice/newInvoiceRS',                          'PurchaseInvoiceController@storeRequestSukses');
-    Route::get('/purchases_invoice/edit/{id}',                              'PurchaseInvoiceController@edit')->middleware('checkstatus');
+    Route::get('/purchases_invoice/edit/{id}',                              'PurchaseInvoiceController@edit');
     Route::post('/purchases_invoice/updatePInvoice',                        'PurchaseInvoiceController@update');
     Route::post('/purchases_invoice/updatePInvoiceFromQuote',               'PurchaseInvoiceController@updateFromQuote');
     Route::post('/purchases_invoice/updatePInvoiceFromOrder',               'PurchaseInvoiceController@updateFromOrder');
@@ -318,15 +317,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/purchases_invoice/print/PDF/gelora/{id}',                  'PurchaseInvoiceController@cetak_pdf_gg');
     Route::get('/purchases_invoice/print/PDF/sukses/{id}',                  'PurchaseInvoiceController@cetak_pdf_sukses');
     Route::get('/purchases_invoice/print/PDF/sukses_surabaya/{id}',         'PurchaseInvoiceController@cetak_pdf_sukses_surabaya');
-    Route::get('/purchases_invoice/delete/{id}',                            'PurchaseInvoiceController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_invoice/delete/{id}',                            'PurchaseInvoiceController@destroy');
 
     Route::get('/purchases_return',                                         'PurchaseReturnController@index');
     Route::get('/purchases_return/new/{id}',                                'PurchaseReturnController@create');
     Route::post('/purchases_return/newReturn',                              'PurchaseReturnController@store');
     Route::get('/purchases_return/{id}',                                    'PurchaseReturnController@show');
-    Route::get('/purchases_return/edit/{id}',                               'PurchaseReturnController@edit')->middleware('checkstatus');
+    Route::get('/purchases_return/edit/{id}',                               'PurchaseReturnController@edit');
     Route::post('/purchases_return/updateReturn',                           'PurchaseReturnController@update');
-    Route::get('/purchases_return/delete/{id}',                             'PurchaseReturnController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_return/delete/{id}',                             'PurchaseReturnController@destroy');
     Route::get('/purchases_return/print/PDF/1/{id}',                        'PurchaseReturnController@cetak_pdf_1');
     Route::get('/purchases_return/print/PDF/2/{id}',                        'PurchaseReturnController@cetak_pdf_2');
     Route::get('/purchases_return/print/PDF/fas/{id}',                      'PurchaseReturnController@cetak_pdf_fas');
@@ -344,7 +343,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/purchases_order/newPOrder',                               'PurchaseOrderController@store');
     Route::post('/purchases_order/newOrderFromQuote',                       'PurchaseOrderController@storeFromQuote');
     Route::post('/purchases_order/newOrderRequestSukses',                   'PurchaseOrderController@storeRequestSukses');
-    Route::get('/purchases_order/edit/{id}',                                'PurchaseOrderController@edit')->middleware('checkstatus');
+    Route::get('/purchases_order/edit/{id}',                                'PurchaseOrderController@edit');
     Route::post('/purchases_order/updatePOrder',                            'PurchaseOrderController@update');
     Route::post('/purchases_order/updatePOrderRequestSukses',               'PurchaseOrderController@updateRequestSukses');
     Route::get('/purchases_order/{id}',                                     'PurchaseOrderController@show');
@@ -354,14 +353,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/purchases_order/print/PDF/gelora/{id}',                    'PurchaseOrderController@cetak_pdf_gg');
     Route::get('/purchases_order/print/PDF/sukses/{id}',                    'PurchaseOrderController@cetak_pdf_sukses');
     Route::get('/purchases_order/print/PDF/sukses_surabaya/{id}',           'PurchaseOrderController@cetak_pdf_sukses_surabaya');
-    Route::get('/purchases_order/delete/{id}',                              'PurchaseOrderController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_order/delete/{id}',                              'PurchaseOrderController@destroy');
 
     Route::get('/purchases_quote/select_product',                           'PurchaseQuoteController@select_product');
     Route::get('/purchases_quote/select_contact',                           'PurchaseQuoteController@select_contact');
     Route::get('/purchases_quote',                                          'PurchaseQuoteController@index');
     Route::get('/purchases_quote/new',                                      'PurchaseQuoteController@create');
     Route::post('/purchases_quote/newPQuote',                               'PurchaseQuoteController@store');
-    Route::get('/purchases_quote/edit/{id}',                                'PurchaseQuoteController@edit')->middleware('checkstatus');
+    Route::get('/purchases_quote/edit/{id}',                                'PurchaseQuoteController@edit');
     Route::post('/purchases_quote/updatePQuote',                            'PurchaseQuoteController@update');
     Route::get('/purchases_quote/{id}',                                     'PurchaseQuoteController@show');
     Route::get('/purchases_quote/print/PDF/1/{id}',                         'PurchaseQuoteController@cetak_pdf_1');
@@ -371,20 +370,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/purchases_quote/print/PDF/sukses/{id}',                    'PurchaseQuoteController@cetak_pdf_sukses');
     Route::get('/purchases_quote/print/PDF/sukses_surabaya/{id}',           'PurchaseQuoteController@cetak_pdf_sukses_surabaya');
     Route::get('/purchases_quote/print/PDF/sukses_surabaya_sj/{id}',        'PurchaseQuoteController@cetak_pdf_sukses_surabaya_sj');
-    Route::get('/purchases_quote/delete/{id}',                              'PurchaseQuoteController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_quote/delete/{id}',                              'PurchaseQuoteController@destroy');
 
     Route::get('/purchases_delivery',                                       'PurchaseDeliveryController@index');
     Route::get('/purchases_delivery/new/from/{id}',                         'PurchaseDeliveryController@createFromPO');
     Route::post('/purchases_delivery/newDelivery',                          'PurchaseDeliveryController@storeFromPO');
-    Route::get('/purchases_delivery/edit/from/{id}',                        'PurchaseDeliveryController@edit')->middleware('checkstatus');
+    Route::get('/purchases_delivery/edit/from/{id}',                        'PurchaseDeliveryController@edit');
     Route::post('/purchases_delivery/updateDelivery',                       'PurchaseDeliveryController@updateFromPO');
     Route::get('/purchases_delivery/{id}',                                  'PurchaseDeliveryController@show');
-    Route::get('/purchases_delivery/delete/{id}',                           'PurchaseDeliveryController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_delivery/delete/{id}',                           'PurchaseDeliveryController@destroy');
 
     Route::get('/purchases_payment',                                        'PurchasePaymentController@index');
     Route::get('/purchases_payment/new/from/{id}',                          'PurchasePaymentController@createFromPurchase');
     Route::post('/purchases_payment/newFromPurchase',                       'PurchasePaymentController@store');
-    Route::get('/purchases_payment/edit/{id}',                              'PurchasePaymentController@edit')->middleware('checkstatus');
+    Route::get('/purchases_payment/edit/{id}',                              'PurchasePaymentController@edit');
     Route::post('/purchases_payment/updatePayment',                         'PurchasePaymentController@update');
     Route::get('/purchases_payment/{id}',                                   'PurchasePaymentController@show');
     Route::get('/purchases_payment/print/PDF/1/{id}',                       'PurchasePaymentController@cetak_pdf_1');
@@ -392,21 +391,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/purchases_payment/print/PDF/gelora/{id}',                  'PurchasePaymentController@cetak_pdf_gg');
     Route::get('/purchases_payment/print/PDF/sukses/{id}',                  'PurchasePaymentController@cetak_pdf_sukses');
     Route::get('/purchases_payment/print/PDF/sukses_surabaya/{id}',         'PurchasePaymentController@cetak_pdf_sukses_surabaya');
-    Route::get('/purchases_payment/delete/{id}',                            'PurchasePaymentController@destroy')->middleware('checkstatus');
+    Route::get('/purchases_payment/delete/{id}',                            'PurchasePaymentController@destroy');
     /*###################################### PURCHASES /*######################################*/
 
     /*---------Expenses --------------*/
     Route::get('/expenses',                                                 'ExpenseController@index');
     Route::get('/expenses/new',                                             'ExpenseController@create');
     Route::post('/expenses/newExpense',                                     'ExpenseController@store');
-    Route::get('/expenses/edit/{id}',                                       'ExpenseController@edit')->middleware('checkstatus');
+    Route::get('/expenses/edit/{id}',                                       'ExpenseController@edit');
     Route::post('/expenses/updateExpenseNotNull',                           'ExpenseController@updateNotNull');
     Route::post('/expenses/updateExpenseNull',                              'ExpenseController@updateNull');
     Route::get('/expenses/{id}',                                            'ExpenseController@show');
     Route::get('/expenses/print/PDF1/{id}',                                 'ExpenseController@cetak_pdfNotNull');
     Route::get('/expenses/print/PDF2/{id}',                                 'ExpenseController@cetak_pdfNull');
     Route::get('/expenses/deleteNotNull/{id}',                              'ExpenseController@destroyNotNull');
-    Route::get('/expenses/deleteNull/{id}',                                 'ExpenseController@destroyNull')->middleware('checkstatus');
+    Route::get('/expenses/deleteNull/{id}',                                 'ExpenseController@destroyNull');
 
     /*---------Contacts --------------*/
     Route::get('/contacts_customer',                                        'ContactController@indexCustomer');
@@ -619,14 +618,14 @@ Route::group(['middleware' => 'auth'], function () {
                 'index' => 'user',
             ]
         ]);
-        Route::get('/user/roles/{id}', 'UserController@roles');
-        Route::post('/user/roles/{id}', 'UserController@setRole')->name('user.roles');
+        Route::get('/user/roles/{id}',                                      'UserController@roles');
+        Route::post('/user/setRoles/{id}',                                  'UserController@setRole')->name('user.roles');
 
-        Route::get('/account', 'SettingController@account_index')->name('acc_map.index');
-        Route::post('/account', 'SettingController@account_store')->name('acc_map.store');
+        Route::get('/account',                                              'SettingController@account_index')->name('acc_map.index');
+        Route::post('/account',                                             'SettingController@account_store')->name('acc_map.store');
 
-        Route::get('/company', 'SettingController@company_index')->name('company.index');
-        Route::post('/company', 'SettingController@company_store')->name('company.store');
+        Route::get('/company',                                              'SettingController@company_index')->name('company.index');
+        Route::post('/companyStore',                                        'SettingController@company_store')->name('company.store');
     });
     Route::get('/coa/select_account',                                       'SettingController@select_account');
     Route::post('/settings/account/store',                                  'SettingController@account_store');
@@ -635,19 +634,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/setting', function () {
         return view('admin.settings.index');
     })->name('settingindex');
+
     ##############################################################
     ####################### REQUEST SUKSES #######################
     ##############################################################
-
     Route::get('/spk/select_product',                                       'SpkController@select_product');
     Route::get('/spk/select_contact',                                       'SpkController@select_contact');
     Route::get('/spk',                                                      'SpkController@index');
     Route::get('/spk/new',                                                  'SpkController@create');
     Route::post('/spk/newSPK',                                              'SpkController@store');
     Route::get('/spk/{id}',                                                 'SpkController@show');
-    Route::get('/spk/edit/{id}',                                            'SpkController@edit')->middleware('checkstatus');
+    Route::get('/spk/edit/{id}',                                            'SpkController@edit');
     Route::post('/spk/updateSPK',                                           'SpkController@update');
-    Route::get('/spk/delete/{id}',                                          'SpkController@destroy')->middleware('checkstatus');
+    Route::get('/spk/delete/{id}',                                          'SpkController@destroy');
     Route::get('/spk/print/PDF/{id}',                                       'SpkController@cetak_pdf');
 
     Route::get('/wip/select_product',                                       'WipController@select_product');
@@ -662,9 +661,60 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/wip/updateWIP_all',                                       'WipController@update_all');
     Route::get('/wip/delete/{id}/per',                                      'WipController@destroy_per');
     Route::get('/wip/delete/{id}/all',                                      'WipController@destroy_all');
-
     ##############################################################
     ####################### REQUEST SUKSES #######################
+    ##############################################################
+
+    ##############################################################
+    ######################## CONSTRUCTION ########################
+    ##############################################################
+    Route::get('/construction/offering_letter',                                         'ConOfferingLetterController@index');
+    Route::get('/construction/offering_letter/new',                                     'ConOfferingLetterController@create');
+    Route::post('/construction/offering_letter/newOL',                                  'ConOfferingLetterController@store');
+    Route::get('/construction/offering_letter/{id}',                                    'ConOfferingLetterController@show');
+    Route::get('/construction/offering_letter/edit/',                                   'ConOfferingLetterController@edit');
+    Route::post('/construction/offering_letter/updateOL',                               'ConOfferingLetterController@update');
+    Route::get('/construction/offering_letter/delete/{id}',                             'ConOfferingLetterController@destroy');
+    Route::get('/construction/print/PDF/{id}',                                          'ConOfferingLetterController@cetak_pdf');
+    
+    Route::get('/construction/budget_plan',                                             'ConBudgetPlanController@index');
+    Route::get('/construction/budget_plan/new/offering_letter={ol}',                    'ConBudgetPlanController@create');
+    Route::post('/construction/budget_plan/newBP/offering_letter={ol}',                 'ConBudgetPlanController@store');
+    Route::get('/construction/budget_plan/{bp}',                                        'ConBudgetPlanController@show');
+    Route::get('/construction/budget_plan/edit/',                                       'ConBudgetPlanController@edit');
+    Route::post('/construction/budget_plan/updateOL',                                   'ConBudgetPlanController@update');
+    Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
+    Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
+    
+    Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
+    Route::get('/construction/bill_quantities',                                         'ConBillQuantitiesController@index');
+    Route::get('/construction/bill_quantities/new/budget_plan={bp}',                    'ConBillQuantitiesController@create');
+    Route::post('/construction/bill_quantities/newOL/budget_plan={bp}',                 'ConBillQuantitiesController@store');
+    Route::get('/construction/bill_quantities/{bq}',                                    'ConBillQuantitiesController@show');
+    Route::get('/construction/bill_quantities/edit/',                                   'ConBillQuantitiesController@edit');
+    Route::post('/construction/bill_quantities/updateOL',                               'ConBillQuantitiesController@update');
+    Route::get('/construction/bill_quantities/delete/{id}',                             'ConBillQuantitiesController@destroy');
+    Route::get('/construction/print/PDF/{id}',                                          'ConBillQuantitiesController@cetak_pdf');
+    
+    Route::get('/construction/form_order',                                              'ConFormOrderController@index');
+    Route::get('/construction/form_order/new',                                          'ConFormOrderController@create');
+    Route::post('/construction/form_order/newOL',                                       'ConFormOrderController@store');
+    Route::get('/construction/form_order/show',                                         'ConFormOrderController@show');
+    Route::get('/construction/form_order/edit/',                                        'ConFormOrderController@edit');
+    Route::post('/construction/form_order/updateOL',                                    'ConFormOrderController@update');
+    Route::get('/construction/form_order/delete/{id}',                                  'ConFormOrderController@destroy');
+    Route::get('/construction/print/PDF/{id}',                                          'ConFormOrderController@cetak_pdf');
+    
+    Route::get('/construction/progress',                                                'ConProgressController@index');
+    Route::get('/construction/progress/new',                                            'ConProgressController@create');
+    Route::post('/construction/progress/newOL',                                         'ConProgressController@store');
+    Route::get('/construction/progress/show',                                           'ConProgressController@show');
+    Route::get('/construction/progress/edit/',                                          'ConProgressController@edit');
+    Route::post('/construction/progress/updateOL',                                      'ConProgressController@update');
+    Route::get('/construction/progress/delete/{id}',                                    'ConProgressController@destroy');
+    Route::get('/construction/print/PDF/{id}',                                          'ConProgressController@cetak_pdf');
+    ##############################################################
+    ######################## CONSTRUCTION ########################
     ##############################################################
 });
 Auth::routes();

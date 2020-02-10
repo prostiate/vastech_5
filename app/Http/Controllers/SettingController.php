@@ -283,7 +283,7 @@ class SettingController extends Controller
                 'account_id'            => $request->purchase_shipping
             ]);
             default_account::where('name', 'default_prepayment')->update([
-                'account_id'            => $request->sales_rdefault_prepaymentevenue
+                'account_id'            => $request->prepayment
             ]);
             default_account::where('name', 'default_unbilled_payable')->update([
                 'account_id'            => $request->unbilled_payable

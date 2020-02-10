@@ -38,7 +38,7 @@ class general_ledger implements FromView, ShouldAutoSize
             //dd('if');
             $coa                                    = coa::get();
             $coa2                                   = coa::get();
-            $coa_detail                             = coa_detail::whereBetween('date', [$this->start, $this->end])
+            $coa_detail                             = coa_detail::orderBy('date')->whereBetween('date', [$this->start, $this->end])
                 ->orderBy('coa_id', 'asc')
                 ->get()
                 ->groupBy('coa_id');
@@ -46,7 +46,7 @@ class general_ledger implements FromView, ShouldAutoSize
             //dd('else');
             $coa                                    = coa::whereIn('id', $ids)->get();
             $coa2                                   = coa::get();
-            $coa_detail                             = coa_detail::whereIn('coa_id', $ids)->whereBetween('date', [$this->start, $this->end])
+            $coa_detail                             = coa_detail::orderBy('date')->whereIn('coa_id', $ids)->whereBetween('date', [$this->start, $this->end])
                 ->orderBy('coa_id', 'asc')
                 ->get()
                 ->groupBy('coa_id');

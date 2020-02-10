@@ -118,8 +118,9 @@
                         <div class="form-group">
                             <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success" >Update</button>
+                                <button id="click" type="button" class="btn btn-success">Update</button>
                                 <input value="{{$spk->id}}" name="hidden_id" hidden>
+                                <input value="1" name="production_bundle" hidden>
                             </div>
                         </div>
                     </div>
@@ -131,8 +132,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/spk/updateForm.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/spk/addmoreitem.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-03022020') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-03022020') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/updateForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/addmoreitem.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
 @endpush
