@@ -11,7 +11,7 @@ $(document).ready(function() {
         var form = document.getElementById("formCreate");
         var bp = document.getElementById("budget_plan_id");
         $.ajax({
-            url: "/construction/bill_quantities/newOL/budget_plan=" + bp.value,
+            url: "/construction/bill_quantities/newBQ/budget_plan=" + bp.value,
             method: "POST",
             data: new FormData(form),
             contentType: false,

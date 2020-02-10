@@ -689,7 +689,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
     Route::get('/construction/bill_quantities',                                         'ConBillQuantitiesController@index');
     Route::get('/construction/bill_quantities/new/budget_plan={bp}',                    'ConBillQuantitiesController@create');
-    Route::post('/construction/bill_quantities/newOL/budget_plan={bp}',                 'ConBillQuantitiesController@store');
+    Route::post('/construction/bill_quantities/newBQ/budget_plan={bp}',                 'ConBillQuantitiesController@store');
     Route::get('/construction/bill_quantities/{bq}',                                    'ConBillQuantitiesController@show');
     Route::get('/construction/bill_quantities/edit/',                                   'ConBillQuantitiesController@edit');
     Route::post('/construction/bill_quantities/updateOL',                               'ConBillQuantitiesController@update');
@@ -697,8 +697,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/print/PDF/{id}',                                          'ConBillQuantitiesController@cetak_pdf');
     
     Route::get('/construction/form_order',                                              'ConFormOrderController@index');
-    Route::get('/construction/form_order/new',                                          'ConFormOrderController@create');
-    Route::post('/construction/form_order/newOL',                                       'ConFormOrderController@store');
+    Route::get('/construction/form_order/new/bill_quantities={bq}',                     'ConBillQuantitiesController@create');
+    Route::post('/construction/form_order/newFO/bill_quantities={bq}',                  'ConBillQuantitiesController@store');
     Route::get('/construction/form_order/show',                                         'ConFormOrderController@show');
     Route::get('/construction/form_order/edit/',                                        'ConFormOrderController@edit');
     Route::post('/construction/form_order/updateOL',                                    'ConFormOrderController@update');
