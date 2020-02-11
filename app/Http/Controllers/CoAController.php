@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\coa_category;
 use App\tax;
 use App\coa_detail;
+use App\opening_balance;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,9 @@ class CoAController extends Controller
     public function index()
     {
         $coa            = coa::orderBy('code', 'asc')->get();
-        $coa_detail     = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();
-        $coa_all        = count(coa::all());;
+        $coa_detail     = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();        
+        $coa_all        = count(coa::all());
+        $ob             = opening_balance::where('user_id', Auth::id())->first();
         /*$coa_detail     = coa_detail::where('coa_id', $id)->get();
         $debit          = coa_detail::where('coa_id', $id)->sum('debit');
         $credit         = coa_detail::where('coa_id', $id)->sum('credit');
@@ -41,7 +43,7 @@ class CoAController extends Controller
                 ->make(true);
         }*/
 
-        return view('admin.accounts.index', compact(['coa', 'coa_detail']));
+        return view('admin.accounts.index', compact(['coa', 'coa_detail', 'ob']));
     }
 
     public function create()
@@ -135,7 +137,7 @@ class CoAController extends Controller
             return view('admin.accounts.showCashbank', compact(['coa', 'coa_detail']));
         } else {*/
             if (request()->ajax()) {
-                return datatables()->of(coa_detail::where('coa_id', $id)->orderBy('date')->get())
+                return datatables()->of(coa_detail::where('coa_id', $id)->get())
                     ->addColumn('action', function ($data) {
                         $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
                         $button .= '&nbsp;&nbsp;';

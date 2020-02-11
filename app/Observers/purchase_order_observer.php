@@ -9,12 +9,12 @@ use Carbon\Carbon;
 class purchase_order_observer
 {
     /**
-     * Handle the purchase_order "saving" event.
+     * Handle the purchase_order "creating" event.
      *
      * @param  \App\purchase_order  $purchaseOrder
      * @return void
      */
-    public function saving(purchase_order $purchaseOrder)
+    public function creating(purchase_order $purchaseOrder)
     {
         if ($purchaseOrder->due_date < Carbon::today()->toDateString()) {
             $purchaseOrder->status = 5;

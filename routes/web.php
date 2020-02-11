@@ -504,15 +504,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/asset_managements/newAsset',                              'FixedAssetController@store')->name('asset.store');
     Route::get('/asset_managements/{id}',                                   'FixedAssetController@show');
     Route::get('/asset_managements/edit/{id}',                              'FixedAssetController@edit');
-    Route::post('/asset_managements/update_non_depreciable',                'FixedAssetController@update_non_depreciable')->name('asset.update');;
-    Route::post('/asset_managements/update_depreciable',                    'FixedAssetController@update_depreciable')->name('asset.update');;
+    Route::post('/asset_managements/update_non_depreciable',                'FixedAssetController@update_non_depreciable')->name('asset.update');
+    Route::post('/asset_managements/update_depreciable',                    'FixedAssetController@update_depreciable')->name('asset.update');
     Route::get('/asset_managements/delete/{id}',                            'FixedAssetController@destroy');
 
     /*---------CoA--------------*/
-    Route::get('/chart_of_accounts',                                        'CoAController@index');
+    Route::get('/chart_of_accounts',                                        'CoAController@index')->name('coa');
     Route::get('/chart_of_accounts/new',                                    'CoAController@create');
     Route::post('/chart_of_accounts/newAccount',                            'CoAController@store');
-    Route::get('/chart_of_accounts/{id}',                                   'CoAController@show');
+    Route::get('/chart_of_accounts/{id}',                                   'CoAController@show')->name('coa.show');
     Route::get('/chart_of_accounts/edit/{id}',                              'CoAController@edit');
     Route::post('/chart_of_accounts/updateAccount',                         'CoAController@update');
     Route::get('/chart_of_accounts/delete/{id}',                            'CoAController@destroy');
@@ -525,6 +525,24 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/chart_of_accounts/journal_entry/updateAccount',           'JournalEntryController@update');
     Route::get('/chart_of_accounts/journal_entry/delete/{id}',              'JournalEntryController@destroy');
 
+    Route::get('/conversion/setup',                                         'JournalEntryController@setup');
+    Route::post('/conversion/setup/store',                                  'JournalEntryController@setup_store');
+    Route::get('/conversion_balance/{id}/edit',                             'JournalEntryController@edit_balance');
+    Route::post('/conversion_balance/update',                               'JournalEntryController@update_balance_drafted');
+    Route::post('/conversion_balance/publish',                              'JournalEntryController@update_balance_published');
+
+    Route::get('/closing_book',                                             'ClosingBookController@index');
+    Route::get('/closing_book/setup',                                       'ClosingBookController@setup');
+    Route::get('/closing_book/{id}/setup',                                  'ClosingBookController@setup_update');
+    Route::post('/closing_book/setup',                                      'ClosingBookController@setup_store');
+    Route::get('/closing_book/{id}/worksheet',                              'ClosingBookController@worksheet');
+    Route::post('/closing_book/worksheetStore',                             'ClosingBookController@worksheet_store');
+    Route::get('/closing_book/{id}/financial_periode',                      'ClosingBookController@edit_balance');
+    Route::get('/closing_book/{id}/reconsilation',                          'ClosingBookController@edit_balance');
+    Route::get('/closing_book/{id}/financial_statements',                   'ClosingBookController@financial_statement');
+    Route::post('/closing_book/update',                                     'ClosingBookController@update_balance_drafted');
+    Route::post('/closing_book/publish',                                    'ClosingBookController@update_balance_published');
+    Route::post('/closing_book/delete',                                     'ClosingBookController@destroy');
     /*---------Other List--------------*/
     Route::get('/other', function () {
         return view('admin.other.index');
@@ -618,7 +636,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'index' => 'user',
             ]
         ]);
-        Route::get('/user/roles/{id}',                                      'UserController@roles');
+        Route::get('/user/roles/{id}',                                      'UserController@roles')->name('user.roles.index');
         Route::post('/user/setRoles/{id}',                                  'UserController@setRole')->name('user.roles');
 
         Route::get('/account',                                              'SettingController@account_index')->name('acc_map.index');

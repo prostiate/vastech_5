@@ -390,7 +390,6 @@ class SalePaymentController extends Controller
         try {
             // AMBIL HEADER SESUAI DENGAN ID
             $pp                                 = sale_payment::find($id);
-            $contact_id                         = contact::find($pp->contact_id);
             // DELETE COA DETAIL PUNYA PAYMENT
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('credit', 0)->delete();

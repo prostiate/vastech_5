@@ -57,8 +57,9 @@
                     <div class="ln_solid"></div>
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
-                            <tbody>
-                                @foreach($item_ol as $item)
+                            <tbody class="newbody">
+                                @foreach($item_ol as $k => $item)
+                            
                                 <thead>
                                     <tr class="headings">
                                         <th class="column-title" style="width: 350px; text-align: center">{{$item->name}}</th>
@@ -75,31 +76,32 @@
                                     <th colspan="2" class="column-title" style="width: 350px">Price</th>
                                 </tr>
                                 <tbody class="neworderbody">
-                                    <tr>
+                                    <tr class="initialtr">
                                         <td>
-                                            <input onClick="this.select();" type="text" class="form-control" name="working_detail[]">
+                                            <input value="{{$k}}" class="kon" hidden>
+                                            <input onClick="this.select();" type="text" class="form-control" name="working_detail[][{{$k}}]">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">
+                                            <input onClick="this.select();" type="number" class="form-control" name="duration[][]" value="0">
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="text" class="form-control price_display" value="0">
-                                            <input type="text" class="price_hidden" name="price[]" value="0" hidden>
+                                            <input type="text" class="price_hidden" name="price[][]" value="0" hidden>
                                         </td>
                                         <td>
                                             <input type="button" class="btn btn-dark add" value="+">
                                         </td>
                                     </tr>
+                                    <tr class="outputbody">
+                                        <td colspan="2" style="text-align: right">
+                                            <h4><strong>Sub Total</strong></h4>
+                                        </td>
+                                        <td colspan="2">
+                                            <input type="text" class="form-control sub_display" value="0" readonly>
+                                            <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
+                                        </td>
+                                    </tr>
                                 </tbody>
-                                <tr>
-                                    <td colspan="2" style="text-align: right">
-                                        <h4><strong>Sub Total</strong></h4>
-                                    </td>
-                                    <td colspan="2">
-                                        <input type="text" class="form-control sub_display" value="0" readonly>
-                                        <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
-                                    </td>
-                                </tr>
                                 @endforeach
                             </tbody>
                             <tfoot hidden>
@@ -131,7 +133,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200206-1313') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
 @endpush

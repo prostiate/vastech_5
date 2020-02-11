@@ -9,12 +9,12 @@ use Carbon\Carbon;
 class sale_quote_observer
 {
     /**
-     * Handle the sale_quote "saving" event.
+     * Handle the sale_quote "creating" event.
      *
      * @param  \App\sale_quote  $saleQuote
      * @return void
      */
-    public function saving(sale_quote $saleQuote)
+    public function creating(sale_quote $saleQuote)
     {
         if ($saleQuote->due_date < Carbon::today()->toDateString()) {
             $saleQuote->status = 5;

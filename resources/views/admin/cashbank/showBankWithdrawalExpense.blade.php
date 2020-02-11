@@ -213,7 +213,7 @@
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
                             <a href="{{ url('/cashbank') }}" class="btn btn-dark">Cancel</a>
-                            Owner|Ultimate|Cash & Bank')
+                            @role('Owner|Ultimate|Cash & Bank')
                             @can('Delete')
                             <button type="button" class="btn btn-danger" id="click">Delete</button>
                             @endcan
@@ -238,5 +238,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/cashbank/deleteFormBankWithdrawal.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/cashbank/deleteFormBankWithdrawal.js?v=5-20200211-1624') }}" charset="utf-8"></script>
 @endpush

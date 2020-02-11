@@ -207,5 +207,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expense/deleteForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{ asset('js/expense/deleteForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
 @endpush

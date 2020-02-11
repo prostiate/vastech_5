@@ -7,12 +7,12 @@ use App\sale_return;
 class sale_return_observer
 {
     /**
-     * Handle the sale_return "saving" event.
+     * Handle the sale_return "creating" event.
      *
      * @param  \App\sale_return  $saleReturn
      * @return void
      */
-    public function saving(sale_return $saleReturn)
+    public function creating(sale_return $saleReturn)
     {
         if ($saleReturn->due_date < Carbon::today()->toDateString()) {
             $saleReturn->status = 5;

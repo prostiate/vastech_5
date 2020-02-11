@@ -165,7 +165,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200206-1313') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200206-1313') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200206-1313') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
 @endpush

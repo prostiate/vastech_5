@@ -102,15 +102,27 @@ class VastechSeeder extends Seeder
 
         DB::table('other_payment_methods')->insert([
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Cash',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Check',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Bank Transfer',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Credit Card',
             ],
         ]);
@@ -1340,22 +1352,37 @@ class VastechSeeder extends Seeder
 
         DB::table('other_terms')->insert([
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Custom',
                 'length'                            => '0',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Net 30',
                 'length'                            => '30',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Cash on Delivery',
                 'length'                            => '0',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Net 15',
                 'length'                            => '15',
             ],
             [
+                'tenant_id'                         => '1',
+                'company_id'                        => '1',
+                'user_id'                           => '1',
                 'name'                              => 'Net 60',
                 'length'                            => '60',
             ],

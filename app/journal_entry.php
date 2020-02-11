@@ -10,7 +10,7 @@ class journal_entry extends Model
     //protected $primaryKey = ['id', 'ref_id'];
     use SoftDeletes;
     protected $guarded = [];
-    protected $table = "journal_entries";
+    protected $table = "journal_entry";
 
     public function journal_entry_item()
     {

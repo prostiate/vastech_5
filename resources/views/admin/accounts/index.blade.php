@@ -39,15 +39,23 @@
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            @if($ob && $ob->status == "Publish")
+                            <li>
+                                <a href="/conversion_balance/{{$ob->id}}/edit">Conversion Balance</a>
+                            </li>
+                            @else
+                            <li>
+                                <a href="/conversion/setup">Opening Balance</a>
+                            </li>
+                            @endif
+                            <li>
+                                <a href="/closing_book">Closing Book</a>
+                            </li>
+                            <!--<li class="divider"></li>
                             <li><a data-toggle="modal" data-target="#setupAccounts">Setup Accounts</a>
                             </li>
-                            <li><a href="/products/export_csv">Set Opening Balance</a>
-                            </li>
-                            <li><a target="_blank" href="/products/export_pdf">Closing Book</a>
-                            </li>
-                            <li class="divider"></li>
                             <li><a data-toggle="modal" data-target="#importExcel">Import Journal Entry</a>
-                            <li><a data-toggle="modal" data-target="#exportExcel">Export Accounts</a>
+                            <li><a data-toggle="modal" data-target="#exportExcel">Export Accounts</a>-->
                         </ul>
                         <div class="modal fade" id="setupAccounts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -191,5 +199,5 @@
 @endsection
 
 @push('scripts')
-<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200206-1313') }}" charset="utf-8"></script>-->
+<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200211-1624') }}" charset="utf-8"></script>-->
 @endpush

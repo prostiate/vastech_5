@@ -9,12 +9,12 @@ use Carbon\Carbon;
 class purchase_return_observer
 {
     /**
-     * Handle the purchase_return "saving" event.
+     * Handle the purchase_return "creating" event.
      *
      * @param  \App\purchase_return  $purchaseReturn
      * @return void
      */
-    public function saving(purchase_return $purchaseReturn)
+    public function creating(purchase_return $purchaseReturn)
     {
         if ($purchaseReturn->due_date < Carbon::today()->toDateString()) {
             $purchaseReturn->status = 5;

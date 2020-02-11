@@ -30,7 +30,7 @@ class ConBudgetPlanController extends Controller
                 ->rawColumns(['action'])*/
                 ->make(true);
         }
-        return view('admin.construction.budget_plans.index');
+        return view('admin.construction.budget_plan.index');
     }
 
     public function create($ol)
@@ -93,6 +93,10 @@ class ConBudgetPlanController extends Controller
         }
         DB::beginTransaction();
         try {
+
+            dd($request->all() );
+
+
             $header = new budget_plan_con([
                 'tenant_id'             => $user->tenant_id,
                 'company_id'            => $user->company_id,
@@ -105,14 +109,19 @@ class ConBudgetPlanController extends Controller
                 'grandtotal'            => $request->grandtotal,
                 'status'                => 1,
             ]);
-            $header->save();
+            $header->save();           
+         
             foreach ($request->offering_letter_detail_id as $j => $ol_detail) {
+                //var_dump("aku item ke- ". $j);
                 foreach ($request->working_detail as $i => $detail) {
+                    //var_dump("barang ke- ". $i);
                     // INI FUNGSINYA BUAT NGECEK SUBTOTAL GABOLE LEBIH DI SETIAP WORKING DESCRIPTION
                     //if ($request->subtotal[$i] > $request->offering_letter_detail_price[$j]) {
                     //    DB::rollBack();
                     //    return response()->json(['errors' => 'Sub total cannot be more than the price that already assigned.']);
                     //}
+
+                    /**
                     $item[$i] = new budget_plan_detail_con([
                         'tenant_id'         => $user->tenant_id,
                         'company_id'        => $user->company_id,
@@ -123,10 +132,14 @@ class ConBudgetPlanController extends Controller
                         'amount'            => $request->price[$i],
                         //'amountsub'         => $request->subtotal[$i], //GA KEBACA KARENA BANYAKNYA subtotal TIDAK SEBANYAK working_detail
                         'status'            => 1,
-                    ]);
-                    $header->budget_plan_detail()->save($item[$i]);
+                        ]);
+                        $header->budget_plan_detail()->save($item[$i]);
+                    }
+                    
+                    */
                 }
-            }
+                }
+                
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $header->id]);
         } catch (\Exception $e) {

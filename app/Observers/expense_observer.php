@@ -9,12 +9,12 @@ use Carbon\Carbon;
 class expense_observer
 {
     /**
-     * Handle the expense "saving" event.
+     * Handle the expense "creating" event.
      *
      * @param  \App\expense  $expense
      * @return void
      */
-    public function saving(expense $expense)
+    public function creating(expense $expense)
     {
         if ($expense->due_date != null) {
             if ($expense->due_date < Carbon::today()->toDateString()) {

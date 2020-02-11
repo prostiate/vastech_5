@@ -9,25 +9,29 @@ use Carbon\Carbon;
 class purchase_invoice_observer
 {
     /**
-     * Handle the purchase_invoice "saving" event.
+     * Handle the purchase_invoice "creating" event.
      *
      * @param  \App\purchase_invoice  $purchaseInvoice
      * @return void
      */
-    public function saving(purchase_invoice $purchaseInvoice)
+    public function creating(purchase_invoice $purchaseInvoice)
     {
         if ($purchaseInvoice->due_date < Carbon::today()->toDateString()) {
             $purchaseInvoice->status = 5;
             other_transaction::where('type', 'purchase invoice')
                 ->where('number', $purchaseInvoice->number)
-                ->where('number_complete', 'Purchase Invoice #' . $purchaseInvoice->number)->update([
+                ->where('number_complete', 'Purchase Invoice #' . $purchaseInvoice->number)
+                ->where('balance_due', $purchaseInvoice->grandtotal)
+                ->update([
                     'status'    => 5
                 ]);
         } else {
             $purchaseInvoice->status = 1;
             other_transaction::where('type', 'purchase invoice')
                 ->where('number', $purchaseInvoice->number)
-                ->where('number_complete', 'Purchase Invoice #' . $purchaseInvoice->number)->update([
+                ->where('number_complete', 'Purchase Invoice #' . $purchaseInvoice->number)
+                ->where('balance_due', $purchaseInvoice->grandtotal)
+                ->update([
                     'status'    => 1
                 ]);
         }

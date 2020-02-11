@@ -10,12 +10,16 @@ function totalGrand() {
 
 function totalSub() {
     var t = 0;
-    $(".price_hidden").each(function(i, e) {
-        var amt = $(this).val() - 0;
-        t += amt;
+    $(".neworderbody").each(function (i, e) {
+        var newbody = $(this);
+        newbody.find(".price_hidden").each(function(i, e) {
+            var amt = $(this).val() - 0;
+            t += amt;
+        });
+        newbody.find(".sub_display").val(t);
+        newbody.find(".sub_hidden").val(t);
+        t = 0;
     });
-    $(".sub_display").val(t);
-    $(".sub_hidden").val(t);
 }
 
 function inputMasking() {
@@ -52,33 +56,34 @@ $(document).ready(function() {
     totalSub();
 
     //$(".add").click(function() {
-    $(".neworderbody").on("click", ".add", function() {
+    $(".neworderbody").on("click", ".add", function () {
+        
+        var k = $(this).closest("tbody").find(".kon").val();
+
         tr =
             "<tr>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control" name="working_detail[]">' +
+            "<input value="+k+" class='kon' hidden>" +
+            '<input onClick="this.select();" type="text" class="form-control" name="working_detail[]['+k+']">' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">' +
+            '<input onClick="this.select();" type="number" class="form-control" name="duration[]['+k+']" value="0">' +
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="text" class="form-control price_display" value="0">' +
-            '<input type="text" class="price_hidden" name="price[]" value="0" hidden>' +
+            '<input type="text" class="price_hidden" name="price[]['+k+']" value="0" hidden>' +
             "</td>" +
             "<td>" +
             '<input type="button" class="btn btn-danger delete" value="x">' +
             "</td>" +
             "</tr>";
 
-        $(".neworderbody").append(tr);
+        $(this).closest("tbody").find(".outputbody").before(tr);
         inputMasking();
     });
 
     $(".neworderbody").on("click", ".delete", function() {
-        $(this)
-            .parent()
-            .parent()
-            .remove();
+        $(this).closest("tr").remove();
         totalGrand();
         totalSub();
     });
