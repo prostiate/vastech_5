@@ -162,7 +162,7 @@
             </div>
             <div class="column-50">
                 <div class="card" style="text-align: right;">
-                    <a>Surabaya, {{$today}}</a>
+                    <a>Surabaya, <?php echo date_format($pp->transaction_date,"d F y"); ?></a>
                 </div>
             </div>
         </div>

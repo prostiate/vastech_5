@@ -89,17 +89,6 @@ class PurchaseReturnController extends Controller
             $number_pi                      = $request->hidden_id_number;
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account                = contact::find($request->vendor_name);
-            coa_detail::create([
-                'company_id'                => $user->company_id,
-                'user_id'                   => Auth::id(),
-                'coa_id'                    => $contact_account->account_payable_id,
-                'date'                      => $request->get('return_date'),
-                'type'                      => 'purchase return',
-                'number'                    => 'Purchase Return #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => $request->get('balance'),
-                'credit'                    => 0,
-            ]);
             // CREATE OTHER TRANSACTION PUNYA RETURN
             $transactions = other_transaction::create([
                 'company_id'                => $user->company_id,
@@ -140,6 +129,19 @@ class PurchaseReturnController extends Controller
             other_transaction::find($transactions->id)->update([
                 'ref_id'                    => $pd->id,
             ]);
+            coa_detail::create([
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
+                'coa_id'                    => $contact_account->account_payable_id,
+                'date'                      => $request->get('return_date'),
+                'type'                      => 'purchase return',
+                'number'                    => 'Purchase Return #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => $request->get('balance'),
+                'credit'                    => 0,
+            ]);
             // UPDATE STATUS ON PURCHASE INVOICE & OTHER TRANSACTION INVOICE'S
             $ambilpi                        = purchase_invoice::find($id_pi);
             $ambilpi->update([
@@ -176,15 +178,17 @@ class PurchaseReturnController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'            => $user->company_id,
-                    'user_id'               => Auth::id(),
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('return_date'),
-                    'type'                  => 'purchase return',
-                    'number'                => 'Purchase Return #' . $trans_no,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => 0,
-                    'credit'                => $request->get('taxtotal'),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $pd->id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $default_tax->account_id,
+                    'date'                      => $request->get('return_date'),
+                    'type'                      => 'purchase return',
+                    'number'                    => 'Purchase Return #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => 0,
+                    'credit'                    => $request->get('taxtotal'),
                 ]);
             }
 
@@ -220,27 +224,31 @@ class PurchaseReturnController extends Controller
                     $default_product_account = product::find($request->products[$i]);
                     if ($default_product_account->is_track == 1) {
                         coa_detail::create([
-                            'company_id'        => $user->company_id,
-                            'user_id'           => Auth::id(),
-                            'coa_id'            => $default_product_account->default_inventory_account,
-                            'date'              => $request->get('return_date'),
-                            'type'              => 'purchase return',
-                            'number'            => 'Purchase Return #' . $trans_no,
-                            'contact_id'        => $request->get('vendor_name'),
-                            'debit'             => 0,
-                            'credit'            => $request->total_price[$i],
+                            'company_id'                => $user->company_id,
+                            'user_id'                   => Auth::id(),
+                            'ref_id'                    => $pd->id,
+                            'other_transaction_id'      => $transactions->id,
+                            'coa_id'                    => $default_product_account->default_inventory_account,
+                            'date'                      => $request->get('return_date'),
+                            'type'                      => 'purchase return',
+                            'number'                    => 'Purchase Return #' . $trans_no,
+                            'contact_id'                => $request->get('vendor_name'),
+                            'debit'                     => 0,
+                            'credit'                    => $request->total_price[$i],
                         ]);
                     } else {
                         coa_detail::create([
-                            'company_id'        => $user->company_id,
-                            'user_id'           => Auth::id(),
-                            'coa_id'            => $default_product_account->buy_account,
-                            'date'              => $request->get('return_date'),
-                            'type'              => 'purchase return',
-                            'number'            => 'Purchase Return #' . $trans_no,
-                            'contact_id'        => $request->get('vendor_name'),
-                            'debit'             => 0,
-                            'credit'            => $request->total_price[$i],
+                            'company_id'                => $user->company_id,
+                            'user_id'                   => Auth::id(),
+                            'ref_id'                    => $pd->id,
+                            'other_transaction_id'      => $transactions->id,
+                            'coa_id'                    => $default_product_account->buy_account,
+                            'date'                      => $request->get('return_date'),
+                            'type'                      => 'purchase return',
+                            'number'                    => 'Purchase Return #' . $trans_no,
+                            'contact_id'                => $request->get('vendor_name'),
+                            'debit'                     => 0,
+                            'credit'                    => $request->total_price[$i],
                         ]);
                     }
                     //menambahkan stok barang ke gudang
@@ -313,6 +321,7 @@ class PurchaseReturnController extends Controller
         try {
             $id                                 = $request->hidden_id;
             $pi                                 = purchase_return::find($id);
+            $transactions                       = other_transaction::where('type', 'purchase return')->where('number', $pi->number)->first();
             // UPDATE STATUS ON PURCHASE QUOTE & OTHER TRANSACTION QUOTE'S
             $ambilpi                            = purchase_invoice::find($pi->selected_pi_id);
             if ($ambilpi->debit_memo > 0) {
@@ -397,6 +406,8 @@ class PurchaseReturnController extends Controller
             coa_detail::create([
                 'company_id'                => $user->company_id,
                 'user_id'                   => Auth::id(),
+                'ref_id'                    => $id,
+                'other_transaction_id'      => $transactions->id,
                 'coa_id'                    => $contact_account->account_payable_id,
                 'date'                      => $request->get('return_date'),
                 'type'                      => 'purchase return',
@@ -443,6 +454,8 @@ class PurchaseReturnController extends Controller
                 coa_detail::create([
                     'company_id'                => $user->company_id,
                     'user_id'                   => Auth::id(),
+                    'ref_id'                    => $id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('return_date'),
                     'type'                      => 'purchase return',
@@ -483,27 +496,31 @@ class PurchaseReturnController extends Controller
                     $default_product_account = product::find($request->products[$i]);
                     if ($default_product_account->is_track == 1) {
                         coa_detail::create([
-                            'company_id'        => $user->company_id,
-                            'user_id'           => Auth::id(),
-                            'coa_id'            => $default_product_account->default_inventory_account,
-                            'date'              => $request->get('return_date'),
-                            'type'              => 'purchase return',
-                            'number'            => 'Purchase Return #' . $pi->number,
-                            'contact_id'        => $request->get('vendor_name'),
-                            'debit'             => 0,
-                            'credit'            => $request->total_price[$i],
+                            'company_id'                => $user->company_id,
+                            'user_id'                   => Auth::id(),
+                            'ref_id'                    => $id,
+                            'other_transaction_id'      => $transactions->id,
+                            'coa_id'                    => $default_product_account->default_inventory_account,
+                            'date'                      => $request->get('return_date'),
+                            'type'                      => 'purchase return',
+                            'number'                    => 'Purchase Return #' . $pi->number,
+                            'contact_id'                => $request->get('vendor_name'),
+                            'debit'                     => 0,
+                            'credit'                    => $request->total_price[$i],
                         ]);
                     } else {
                         coa_detail::create([
-                            'company_id'        => $user->company_id,
-                            'user_id'           => Auth::id(),
-                            'coa_id'            => $default_product_account->buy_account,
-                            'date'              => $request->get('return_date'),
-                            'type'              => 'purchase return',
-                            'number'            => 'Purchase Return #' . $pi->number,
-                            'contact_id'        => $request->get('vendor_name'),
-                            'debit'             => 0,
-                            'credit'            => $request->total_price[$i],
+                            'company_id'                => $user->company_id,
+                            'user_id'                   => Auth::id(),
+                            'ref_id'                    => $id,
+                            'other_transaction_id'      => $transactions->id,
+                            'coa_id'                    => $default_product_account->buy_account,
+                            'date'                      => $request->get('return_date'),
+                            'type'                      => 'purchase return',
+                            'number'                    => 'Purchase Return #' . $pi->number,
+                            'contact_id'                => $request->get('vendor_name'),
+                            'debit'                     => 0,
+                            'credit'                    => $request->total_price[$i],
                         ]);
                     }
                     //menambahkan stok barang ke gudang

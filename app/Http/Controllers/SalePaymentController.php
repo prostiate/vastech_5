@@ -140,6 +140,8 @@ class SalePaymentController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $pd->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'sales payment',
@@ -160,8 +162,10 @@ class SalePaymentController extends Controller
                     $pd->sale_payment_item()->save($pp[$i]);
                     // TRADE PAYABLE DEFAULT
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $contact_id->account_receivable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'sales payment',
@@ -246,6 +250,7 @@ class SalePaymentController extends Controller
             // AMBIL HEADER SESUAI DENGAN ID
             $pp                                 = sale_payment::find($id);
             $contact_id                         = contact::find($pp->contact_id);
+            $transactions                       = other_transaction::where('type', 'sales payment')->where('number', $pp->number)->first();
             // DELETE COA DETAIL PUNYA PAYMENT
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales payment')->where('number', 'Sales Payment #' . $pp->number)->where('credit', 0)->delete();
@@ -313,6 +318,8 @@ class SalePaymentController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $pp->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'sales payment',
@@ -325,7 +332,7 @@ class SalePaymentController extends Controller
             foreach ($request->pinumber as $i => $keys) {
                 //$id                             = $request->hidden_id[$i];
                 if ($request->pipayment_amount[$i] > 0) {
-                    $ppp[$i]                     = new sale_payment_item([
+                    $ppp[$i]                    = new sale_payment_item([
                         'sale_payment_id'       => $id,
                         'sale_invoice_id'       => $request->pinumber[$i],
                         'desc'                  => $request->pidesc[$i],
@@ -334,8 +341,10 @@ class SalePaymentController extends Controller
                     $ppp[$i]->save();
                     // TRADE PAYABLE DEFAULT
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pp->id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $contact_id->account_receivable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'sales payment',

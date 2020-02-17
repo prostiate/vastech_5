@@ -154,7 +154,7 @@
     <div class="container">
         <br>
         <div class="row">
-            <div class="column-50">
+            <div class="column-50" style="width: 300px">
                 <div class="card card-costumer align-mid">
                     <h2 class="align-mid"><b> {{$company->name}} </b></h2>
                     <h3 class="align-mid"><b> {{$company->address}} </b></h3>

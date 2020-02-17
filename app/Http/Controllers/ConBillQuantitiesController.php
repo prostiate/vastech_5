@@ -54,19 +54,19 @@ class ConBillQuantitiesController extends Controller
 
     public function index()
     {
-        if (request()->ajax()) {
-            return datatables()->of(other_tax::where('id', '>', 0)->get())
-                /*->addColumn('action', function ($data) {
-                    $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<button type="button" name="delete" id="' . $data->id . '" class="fa fa-trash delete btn btn-danger btn-sm"></button>';
-                    return $button;
-                })
-                ->rawColumns(['action'])*/
-                ->make(true);
-        }
-
-        return view('admin.other.taxes.index');
+            if (request()->ajax()) {
+                return datatables()->of(bill_quantities_con::get())
+                    /*->addColumn('action', function ($data) {
+                        $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
+                        $button .= '&nbsp;&nbsp;';
+                        $button .= '<button type="button" name="delete" id="' . $data->id . '" class="fa fa-trash delete btn btn-danger btn-sm"></button>';
+                        return $button;
+                    })
+                    ->rawColumns(['action'])*/
+                    ->make(true);
+            };
+            return view('admin.construction.bill_quantities.index');
+        
     }
 
     public function create($bp)

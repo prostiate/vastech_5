@@ -63,15 +63,15 @@ $(document).ready(function() {
         tr =
             "<tr>" +
             "<td>" +
-            "<input value="+k+" class='kon' hidden>" +
-            '<input onClick="this.select();" type="text" class="form-control" name="working_detail[]['+k+']">' +
+            "<input value="+k+" class='kon' name='kon[]' hidden>" +
+            '<input onClick="this.select();" type="text" class="form-control" name="working_detail[]">' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="number" class="form-control" name="duration[]['+k+']" value="0">' +
+            '<input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">' +
             "</td>" +
             "<td>" +
             '<input onClick="this.select();" type="text" class="form-control price_display" value="0">' +
-            '<input type="text" class="price_hidden" name="price[]['+k+']" value="0" hidden>' +
+            '<input type="text" class="price_hidden" name="price[]" value="0" hidden>' +
             "</td>" +
             "<td>" +
             '<input type="button" class="btn btn-danger delete" value="x">' +

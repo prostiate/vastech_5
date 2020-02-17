@@ -91,17 +91,6 @@ class SaleReturnController extends Controller
             $number_pi                      = $request->hidden_id_number;
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account                = contact::find($request->vendor_name);
-            coa_detail::create([
-                'company_id'                => $user->company_id,
-                'user_id'                   => Auth::id(),
-                'coa_id'                    => $contact_account->account_receivable_id,
-                'date'                      => $request->get('return_date'),
-                'type'                      => 'sales return',
-                'number'                    => 'Sales Return #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => 0,
-                'credit'                    => $request->get('balance'),
-            ]);
             // CREATE OTHER TRANSACTION PUNYA RETURN
             $transactions = other_transaction::create([
                 'company_id'                => $user->company_id,
@@ -142,6 +131,19 @@ class SaleReturnController extends Controller
             other_transaction::find($transactions->id)->update([
                 'ref_id'                    => $pd->id,
             ]);
+            coa_detail::create([
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
+                'coa_id'                    => $contact_account->account_receivable_id,
+                'date'                      => $request->get('return_date'),
+                'type'                      => 'sales return',
+                'number'                    => 'Sales Return #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => 0,
+                'credit'                    => $request->get('balance'),
+            ]);
             // UPDATE STATUS ON PURCHASE INVOICE & OTHER TRANSACTION INVOICE'S
             $ambilpi                        = sale_invoice::find($id_pi);
             $ambilpi->update([
@@ -180,6 +182,8 @@ class SaleReturnController extends Controller
                 coa_detail::create([
                     'company_id'            => $user->company_id,
                     'user_id'               => Auth::id(),
+                    'ref_id'                => $pd->id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('return_date'),
                     'type'                  => 'sales return',
@@ -228,6 +232,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pd->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->buy_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -240,6 +246,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pd->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_sales_return->account_id,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -252,6 +260,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pd->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->default_inventory_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -266,6 +276,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pd->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -346,6 +358,7 @@ class SaleReturnController extends Controller
         try {
             $id                                 = $request->hidden_id;
             $pi                                 = sale_return::find($id);
+            $transactions                       = other_transaction::where('type', 'sales return')->where('number', $pi->number)->first();
             // UPDATE STATUS ON QUOTE & OTHER TRANSACTION QUOTE'S
             $ambilpi                            = sale_invoice::find($pi->selected_si_id);
             if ($ambilpi->credit_memo > 0) {
@@ -432,6 +445,8 @@ class SaleReturnController extends Controller
             coa_detail::create([
                 'company_id'                        => $user->company_id,
                 'user_id'                           => Auth::id(),
+                'ref_id'                            => $pi->id,
+                'other_transaction_id'              => $transactions->id,
                 'coa_id'                            => $contact_account->account_receivable_id,
                 'date'                              => $request->get('return_date'),
                 'type'                              => 'sales return',
@@ -478,6 +493,8 @@ class SaleReturnController extends Controller
                 coa_detail::create([
                     'company_id'                    => $user->company_id,
                     'user_id'                       => Auth::id(),
+                    'ref_id'                        => $pi->id,
+                    'other_transaction_id'          => $transactions->id,
                     'coa_id'                        => $default_tax->account_id,
                     'date'                          => $request->get('return_date'),
                     'type'                          => 'sales return',
@@ -526,6 +543,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pi->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->buy_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -538,6 +557,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pi->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_sales_return->account_id,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -550,6 +571,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pi->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->default_inventory_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',
@@ -564,6 +587,8 @@ class SaleReturnController extends Controller
                         coa_detail::create([
                             'company_id'            => $user->company_id,
                             'user_id'               => Auth::id(),
+                            'ref_id'                => $pi->id,
+                            'other_transaction_id'  => $transactions->id,
                             'coa_id'                => $default_product_account->sell_account,
                             'date'                  => $request->get('return_date'),
                             'type'                  => 'sales return',

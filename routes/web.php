@@ -704,7 +704,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
     
-    Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
+    //Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
     Route::get('/construction/bill_quantities',                                         'ConBillQuantitiesController@index');
     Route::get('/construction/bill_quantities/new/budget_plan={bp}',                    'ConBillQuantitiesController@create');
     Route::post('/construction/bill_quantities/newBQ/budget_plan={bp}',                 'ConBillQuantitiesController@store');

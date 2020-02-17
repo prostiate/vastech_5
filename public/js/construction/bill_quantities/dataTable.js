@@ -2,73 +2,54 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[1, 'asc']],
+        aaSorting: [[0, "asc"]],
         ajax: {
-            url: "/expenses"
+            url: "/construction/bill_quantities"
         },
         columns: [
             {
-                data: "expense_number",
-                name: "expense_number",
-                render:function(data, type, row){
-                    return '<a href="/expenses/' + row.id + '">' + row.expense_number + '</a>'
-                },
+                data: "name",
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/construction/bill_quantities/' +
+                        row.id +
+                        '">' +
+                        row.name +
+                        "</a>"
+                    );
+                }
             },
             {
-                data: "expense_transaction_date",
-                name: "expense_transaction_date",
+                data: "offering_letter_id",
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "expense_contact.display_name",
-                name: "expense_contact.display_name",
-                render:function(data, type, row){
-                    return '<a href="/contacts/' + row.expense_contact.id + '">' + row.expense_contact.display_name + '</a>'
-                },
+                data: "status",
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "expense_due_date",
-                name: "expense_due_date",
-                searchable: false
-            },
-            {
-                data: "expense_subtotal",
-                name: "expense_subtotal",
-            },
-            {
-                data: "expense_grandtotal",
-                name: "expense_grandtotal",
-            },
-            {
-                data: "expense_memo",
-                name: "expense_memo",
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: "action",
-                name: "action",
-                orderable: false,
-                searchable: false
+                data: "grandtotal",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             }
         ]
     });
 
     var user_id;
 
-    $(document).on('click', '.delete', function() {
-        user_id = $(this).attr('id');
+    $(document).on("click", ".delete", function() {
+        user_id = $(this).attr("id");
         Swal.fire({
-            title: 'Are you sure?',
+            title: "Are you sure?",
             text: "You won't be able to revert this!",
-            type: 'warning',
+            type: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/expenses/delete/" + user_id,
+                    url: "/other/payment_methods/delete/" + user_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -82,7 +63,9 @@ $(document).ready(function() {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            $('#dataTable').DataTable().ajax.reload();
+                            $("#dataTable")
+                                .DataTable()
+                                .ajax.reload();
                         }
                         Swal.fire({
                             type: typeswal,
@@ -90,18 +73,14 @@ $(document).ready(function() {
                             html: html
                         });
                     }
-                })
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
+                });
+                Swal.fire("Deleted!", "Your file has been deleted.", "success");
             }
-        })
+        });
     });
 
-    $(document).on('click', '.edit', function() {
-        user_id = $(this).attr('id');
-        window.location.href = '/expenses/edit/' + user_id;
+    $(document).on("click", ".edit", function() {
+        user_id = $(this).attr("id");
+        window.location.href = "/other/payment_methods/edit/" + user_id;
     });
 });

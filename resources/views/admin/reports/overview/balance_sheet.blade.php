@@ -154,8 +154,53 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
+                                                @if($a->coa->coa_category_id == 1)
+                                                    @if($a->total != 0)
+                                                        @if($a->coa->is_parent == 1)
+                                                            @if($stop == 0)
+                                                                <?php $stop += 1 ?>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
+                                                                    <td></td>
+                                                                    <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                                </tr>
+                                                            @endif
+                                                        @endif
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                            <?php $stop = 0 ?>
+                                            @foreach($coa_detail as $a)
+                                                @if($a->coa->coa_category_id == 1)
+                                                    @if($a->total != 0)
+                                                        @if($a->coa->is_parent == 0)
+                                                            @if($stop == 0)
+                                                                <?php $stop += 1 ?>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td><a href="/chart_of_accounts/{{$a->coa_id}}">1-10100 - Account Receivable (A/R)</a></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            @endif
+                                                            <tr>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
+                                                                <td></td>
+                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                            </tr>
+                                                        @endif
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                            <?php $stop = 0 ?>
+                                            @foreach($coa_detail as $a)
+                                            @if($a->coa->coa_category_id == 2)
                                             @if($a->total != 0)
-                                            @if($a->coa->coa_category_id == 1)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -173,53 +218,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
-                                            @if($a->coa->coa_category_id == 1)
-                                            @if($a->coa->is_parent == 0)
-                                            @if($stop == 0)
-                                            <?php $stop += 1 ?>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td><a href="/chart_of_accounts/{{$a->coa_id}}">1-10100 - Account Receivable (A/R)</a></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            @endif
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
-                                                <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
-                                            </tr>
-                                            @endif
-                                            @endif
-                                            @endif
-                                            @endforeach
-                                            <?php $stop = 0 ?>
-                                            @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 2)
-                                            @if($a->coa->is_parent == 1)
-                                            @if($stop == 0)
-                                            <?php $stop += 1 ?>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
-                                                <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
-                                            </tr>
-                                            @endif
-                                            @endif
-                                            @endif
-                                            @endif
-                                            @endforeach
-                                            <?php $stop = 0 ?>
-                                            @foreach($coa_detail as $a)
                                             @if($a->total != 0)
-                                            @if($a->coa->coa_category_id == 2)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -244,8 +244,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 3)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -263,8 +263,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 3)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -289,8 +289,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 4)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -308,8 +308,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 4)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -341,8 +341,8 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 5)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -360,8 +360,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 5)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -386,8 +386,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 6)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -405,8 +405,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 6)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -438,8 +438,8 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 7)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -457,8 +457,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 7)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -497,8 +497,8 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 8)
+                                            @if($a->total2 != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -507,7 +507,7 @@
                                                 <td></td>
                                                 <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                 <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                             </tr>
                                             @endif
                                             @endif
@@ -516,8 +516,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 8)
+                                            @if($a->total2 != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -534,7 +534,7 @@
                                                 <td></td>
                                                 <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                 <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                             </tr>
                                             @endif
                                             @endif
@@ -542,8 +542,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 10)
+                                            @if($a->total2 != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -552,7 +552,7 @@
                                                 <td></td>
                                                 <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                 <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                             </tr>
                                             @endif
                                             @endif
@@ -561,8 +561,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 10)
+                                            @if($a->total2 != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -579,7 +579,7 @@
                                                 <td></td>
                                                 <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                 <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                             </tr>
                                             @endif
                                             @endif
@@ -587,8 +587,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 17)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -606,8 +606,8 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 17)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 0)
                                             @if($stop == 0)
                                             <?php $stop += 1 ?>
@@ -639,8 +639,8 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                            @if($a->total != 0)
                                             @if($a->coa->coa_category_id == 12)
+                                            @if($a->total != 0)
                                             @if($a->coa->is_parent == 1)
                                             <tr>
                                                 <td></td>
@@ -661,7 +661,7 @@
                                             </tr>
                                             @endif
                                             @if($a->coa->is_parent == 0)
-                                            <tr>
+                                            <tr></tr>
                                                 <td></td>
                                                 <td></td>
                                                 <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
@@ -711,7 +711,7 @@
 </div> 
 @endsection 
 @push('scripts') 
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1 = document.getElementById('datepicker1');

@@ -513,8 +513,8 @@ class VastechConstruction extends Migration
                 ->references('id')->on('contacts')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->decimal('debit', 17, 2)->default('0');
-            $table->decimal('credit', 17, 2)->default('0');
+            $table->decimal('debit', 17, 2)->default('0')->nullable();
+            $table->decimal('credit', 17, 2)->default('0')->nullable();
             $table->decimal('balance', 17, 2)->default('0');
             $table->timestamps();
             $table->softDeletes();
@@ -577,11 +577,11 @@ class VastechConstruction extends Migration
                 ->onUpdate('cascade');
             $table->boolean('is_track')->default('1');
             $table->boolean('is_bundle')->default('1');
-            $table->boolean('is_production_bundle')->default('1');
-            $table->boolean('is_discount')->default('1');
-            $table->boolean('is_lock_sales')->default('1');
-            $table->boolean('is_lock_purchase')->default('1');
-            $table->boolean('is_lock_production')->default('1');
+            $table->boolean('is_production_bundle')->default('0');
+            $table->boolean('is_discount')->default('0');
+            $table->boolean('is_lock_sales')->default('0');
+            $table->boolean('is_lock_purchase')->default('0');
+            $table->boolean('is_lock_production')->default('0');
             $table->string('sales_type')->nullable();
             $table->integer('min_qty')->default('0');
             $table->unsignedBigInteger('default_inventory_account')->default('7');
@@ -1126,7 +1126,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('ref_id');
+            $table->unsignedBigInteger('ref_id')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -1197,7 +1197,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('ref_id');
+            $table->unsignedBigInteger('ref_id')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -1245,8 +1245,8 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->text('desc')->nullable();
-            $table->decimal('debit', 17, 2)->default('0');
-            $table->decimal('credit', 17, 2)->default('0');
+            $table->decimal('debit', 17, 2)->default('0')->nullable();
+            $table->decimal('credit', 17, 2)->default('0')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -1704,7 +1704,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_statuses')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_pq_id');
+            $table->unsignedBigInteger('selected_pq_id')->nullable();
             $table->foreign('selected_pq_id')
                 ->references('id')->on('purchase_quotes')
                 ->onDelete('cascade')
@@ -1945,22 +1945,22 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_statuses')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_pq_id');
+            $table->unsignedBigInteger('selected_pq_id')->nullable();
             $table->foreign('selected_pq_id')
                 ->references('id')->on('purchase_quotes')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_po_id');
+            $table->unsignedBigInteger('selected_po_id')->nullable();
             $table->foreign('selected_po_id')
                 ->references('id')->on('purchase_orders')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_pd_id');
+            $table->unsignedBigInteger('selected_pd_id')->nullable();
             $table->foreign('selected_pd_id')
                 ->references('id')->on('purchase_deliveries')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('witholding_coa_id');
+            $table->unsignedBigInteger('witholding_coa_id')->nullable();
             $table->foreign('witholding_coa_id')
                 ->references('id')->on('coas')
                 ->onDelete('cascade')
@@ -1993,7 +1993,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('purchase_invoices')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('purchase_order_item_id');
+            $table->unsignedBigInteger('purchase_order_item_id')->nullable();
             $table->foreign('purchase_order_item_id')
                 ->references('id')->on('purchase_order_items')
                 ->onDelete('cascade')
@@ -2053,7 +2053,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('purchase_orders')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->decimal('amount', 17, 2)->default('0');
+            $table->decimal('amount', 17, 2)->default('0')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -2461,7 +2461,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->boolean('is_marketting')->default('0')->nullable();
-            $table->unsignedBigInteger('marketting');
+            $table->unsignedBigInteger('marketting')->nullable();
             $table->foreign('marketting')
                 ->references('id')->on('contacts')
                 ->onDelete('cascade')
@@ -2478,7 +2478,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_statuses')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_sq_id');
+            $table->unsignedBigInteger('selected_sq_id')->nullable();
             $table->foreign('selected_sq_id')
                 ->references('id')->on('sale_quotes')
                 ->onDelete('cascade')
@@ -2724,27 +2724,27 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_statuses')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_sq_id');
+            $table->unsignedBigInteger('selected_sq_id')->nullable();
             $table->foreign('selected_sq_id')
                 ->references('id')->on('sale_quotes')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_so_id');
+            $table->unsignedBigInteger('selected_so_id')->nullable();
             $table->foreign('selected_so_id')
                 ->references('id')->on('sale_orders')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_sd_id');
+            $table->unsignedBigInteger('selected_sd_id')->nullable();
             $table->foreign('selected_sd_id')
                 ->references('id')->on('sale_deliveries')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_spk_id');
+            $table->unsignedBigInteger('selected_spk_id')->nullable();
             $table->foreign('selected_spk_id')
                 ->references('id')->on('spks')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('witholding_coa_id');
+            $table->unsignedBigInteger('witholding_coa_id')->nullable();
             $table->foreign('witholding_coa_id')
                 ->references('id')->on('coas')
                 ->onDelete('cascade')
@@ -2809,7 +2809,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('sale_invoices')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('sale_order_item_id');
+            $table->unsignedBigInteger('sale_order_item_id')->nullable();
             $table->foreign('sale_order_item_id')
                 ->references('id')->on('sale_order_items')
                 ->onDelete('cascade')
@@ -3077,12 +3077,12 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_transactions')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('ref_id');
+            $table->unsignedBigInteger('ref_id')->nullable();
             $table->string('number');
             $table->date('transaction_date');
             $table->date('start_period');
             $table->date('end_period');
-            $table->unsignedBigInteger('retained_acc');
+            $table->unsignedBigInteger('retained_acc')->nullable();
             $table->foreign('retained_acc')
                 ->references('id')->on('coas')
                 ->onDelete('cascade')
@@ -3185,8 +3185,8 @@ class VastechConstruction extends Migration
                 ->references('id')->on('coas')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->decimal('debit', 17, 2)->default('0');
-            $table->decimal('credit', 17, 2)->default('0');
+            $table->decimal('debit', 17, 2)->default('0')->nullable();
+            $table->decimal('credit', 17, 2)->default('0')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\coa_category;
 use App\tax;
 use App\coa_detail;
+use App\journal_entry;
 use App\opening_balance;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class CoAController extends Controller
     public function index()
     {
         $coa            = coa::orderBy('code', 'asc')->get();
-        $coa_detail     = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();        
+        $coa_detail     = coa_detail::selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')->groupBy('coa_id')->get();
         $coa_all        = count(coa::all());
         $ob             = opening_balance::where('user_id', Auth::id())->first();
         /*$coa_detail     = coa_detail::where('coa_id', $id)->get();
@@ -54,10 +55,27 @@ class CoAController extends Controller
 
         return view('admin.accounts.create', compact(['coa', 'coac', 'taxes']));
     }
-    
+
     public function store(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $user                   = User::find(Auth::id());
+        if ($user->company_id == 5) {
+            $number             = journal_entry::latest()->first();
+            if ($number != null) {
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
+            }
+            if (isset($misahy[1]) == 0) {
+                $misahy[1]      = 10000;
+            }
+            $number1            = $misahy[1] + 1;
+            $trans_no           = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+        } else {
+            $number             = journal_entry::max('number');
+            if ($number == 0)
+                $number = 10000;
+            $trans_no = $number + 1;
+        }
         $rules                  = array(
             'code'              => 'required',
             'name'              => 'required',
@@ -71,19 +89,19 @@ class CoAController extends Controller
         }
         DB::beginTransaction();
         try {
-            if($request->get('parent') == 1){
+            if ($request->get('parent') == 1) {
                 $parent             = 1;
                 $parent_account     = null;
-            }else{
+            } else {
                 $parent             = 0;
                 $parent_account     = $request->get('parent_account');
             }
-            if($request->get('coa_category_id') == 3){
+            if ($request->get('coa_category_id') == 3) {
                 $cashbank           = 1;
-            }else{
+            } else {
                 $cashbank           = null;
             }
-            $accounts               = new coa([
+            $accounts = new coa([
                 'company_id'        => $user->company_id,
                 'user_id'           => Auth::id(),
                 'code'              => $request->get('code'),
@@ -96,6 +114,48 @@ class CoAController extends Controller
                 'balance'           => $request->get('balance'),
             ]);
             $accounts->save();
+            /*if ($request->balance > 0) {
+                $transactions = other_transaction::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'transaction_date'              => $request->get('trans_date'),
+                    'number'                        => $trans_no,
+                    'number_complete'               => 'Bank Transfer #' . $trans_no,
+                    'type'                          => 'banktransfer',
+                    'memo'                          => $request->get('memo'),
+                    'status'                        => 2,
+                    'balance_due'                   => 0,
+                    'total'                         => $request->get('amount'),
+                ]);
+
+                $header = journal_entry::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'number'                        => $trans_no,
+                    'memo'                          => $request->memo,
+                    'transaction_date'              => $request->trans_date,
+                    'other_transaction_id'          => $transactions->id,
+                    'status'                        => 2,
+                    'total_debit'                   => $request->total_debit,
+                    'total_credit'                  => $request->total_credit,
+                ]);
+                $item = new journal_entry_item([
+                    'coa_id'                    => $request->account,
+                    'desc'                      => $request->desc,
+                    'debit'                     => $request->debit,
+                    'credit'                    => $request->credit,
+                ]);
+                coa_detail::create([
+                    'company_id'                    => $user->company_id,
+                    'user_id'                       => Auth::id(),
+                    'coa_id'                        => $request->account,
+                    'date'                          => $request->trans_date,
+                    'type'                          => 'journal entry',
+                    'number'                        => 'Journal Entry #' . $trans_no,
+                    'debit'                         => 0,
+                    'credit'                        => $request->credit,
+                ]);
+            }*/
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $accounts->id]);
         } catch (\Exception $e) {
@@ -136,18 +196,18 @@ class CoAController extends Controller
         /*if (!$coa->cashbank == 1) {
             return view('admin.accounts.showCashbank', compact(['coa', 'coa_detail']));
         } else {*/
-            if (request()->ajax()) {
-                return datatables()->of(coa_detail::where('coa_id', $id)->get())
-                    ->addColumn('action', function ($data) {
-                        $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
-                        $button .= '&nbsp;&nbsp;';
-                        $button .= '<button type="button" name="delete" id="' . $data->id . '" class="fa fa-trash delete btn btn-danger btn-sm"></button>';
-                        return $button;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-            }
-            return view('admin.accounts.show', compact(['coa', 'coa_detail']));
+        if (request()->ajax()) {
+            return datatables()->of(coa_detail::where('coa_id', $id)->get())
+                ->addColumn('action', function ($data) {
+                    $button = '<button type="button" name="edit" id="' . $data->id . '" class="fa fa-edit edit btn btn-primary btn-sm"></button>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" name="delete" id="' . $data->id . '" class="fa fa-trash delete btn btn-danger btn-sm"></button>';
+                    return $button;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('admin.accounts.show', compact(['coa', 'coa_detail']));
         /*}*/
     }
 
@@ -176,16 +236,16 @@ class CoAController extends Controller
         }
         DB::beginTransaction();
         try {
-            if($request->get('parent') == 1){
+            if ($request->get('parent') == 1) {
                 $parent             = 1;
                 $parent_account     = null;
-            }else{
+            } else {
                 $parent             = 0;
                 $parent_account     = $request->get('parent_account');
             }
-            if($request->get('coa_category_id') == 3){
+            if ($request->get('coa_category_id') == 3) {
                 $cashbank           = 1;
-            }else{
+            } else {
                 $cashbank           = null;
             }
             $form_data = array(

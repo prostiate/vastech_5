@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\other_transaction;
 use App\sale_return;
+use Carbon\Carbon;
 
 class sale_return_observer
 {

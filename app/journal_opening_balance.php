@@ -9,7 +9,7 @@ class journal_opening_balance extends Model
 {
     use SoftDeletes;
     protected $guarded = [];
-    protected $table = "journal_entries";
+    protected $table = "journal_opening_balances";
 
     public function journal_opening_balance_item()
     {

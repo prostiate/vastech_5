@@ -28,48 +28,48 @@ class JournalEntryController extends Controller
 
     public function create()
     {
-        $user               = User::find(Auth::id());
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = journal_entry::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
+                $misahy[1]      = 0;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            $trans_no           = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
             $number             = journal_entry::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 0;
+            $trans_no           = $number + 1;
         }
-        $today  = Carbon::today()->toDateString();
-        $coa    = coa::get();
+        $today                  = Carbon::today()->toDateString();
+        $coa                    = coa::get();
         return view('admin.journal_entries.create', compact(['today', 'trans_no', 'coa']));
     }
 
     public function store(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = journal_entry::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 10000;
+                $misahy[1]      = 1;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            $trans_no           = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
             $number             = journal_entry::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 1;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'account'           => 'required|array|min:1',
@@ -134,6 +134,8 @@ class JournalEntryController extends Controller
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
+                        'ref_id'                        => $header->id,
+                        'other_transaction_id'          => $transactions->id,
                         'coa_id'                        => $request->account[$key],
                         'date'                          => $request->trans_date,
                         'type'                          => 'journal entry',
@@ -145,6 +147,8 @@ class JournalEntryController extends Controller
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
+                        'ref_id'                        => $header->id,
+                        'other_transaction_id'          => $transactions->id,
                         'coa_id'                        => $request->account[$key],
                         'date'                          => $request->trans_date,
                         'type'                          => 'journal entry',
@@ -172,22 +176,19 @@ class JournalEntryController extends Controller
 
     public function edit()
     {
-        $number = journal_entry::latest()->first();
-        if ($number == 0)
-            $number = 10000;
-        $trans_no = $number + 1;
-        $today  = Carbon::today()->toDateString();
-        $coa    = coa::get();
-        return view('admin.journal_entries.edit', compact(['today', 'trans_no', 'coa']));
+        //
+    }
+
+    public function update(Request $request)
+    {
+        //
     }
 
 
-    public function update(Request $request)
-    { }
-
-
     public function destroy($id)
-    { }
+    {
+        //
+    }
 
     public function setup()
     {
@@ -253,7 +254,6 @@ class JournalEntryController extends Controller
         $balance            = $request->total_debit + $request->total_credit;
         DB::beginTransaction();
 
-        //dd($request);
         try {
             foreach ($request->coa_id as $i => $coa) {
                 if ($request->debit_opening_balance[$i] >= 0) {
@@ -429,11 +429,11 @@ class JournalEntryController extends Controller
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
                         'coa_id'                        => $coa_id,
-                        'type'                          => 'Opening Balance',
+                        'type'                          => 'opening balance',
                         'number'                        => 'Opening Balance #' . $trans_no,
                     ], [
                         'date'                          => $date,
-                        'debit'                         => $request->debit_opening_balance[$key]
+                        'debit'                         => $request->debit_opening_balance[$key],
                     ]);
                 }
                 if ($request->credit_opening_balance[$key] >= 0) {
@@ -441,7 +441,7 @@ class JournalEntryController extends Controller
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
                         'coa_id'                        => $coa_id,
-                        'type'                          => 'Opening Balance',
+                        'type'                          => 'opening balance',
                         'number'                        => 'Opening Balance #' . $trans_no,
                     ], [
                         'date'                          => $date,
@@ -452,7 +452,7 @@ class JournalEntryController extends Controller
                     coa_detail::where([
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
-                        'type'                          => 'Opening Balance',
+                        'type'                          => 'opening balance',
                         'number'                        => 'Opening Balance #' . $trans_no,
                         'coa_id'                        => $coa_id,
                     ])->forceDelete();

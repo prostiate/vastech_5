@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Offering Letter</h3>
+        <h3>Bill Quantity</h3>
     </div>
 </div>
 @endsection
@@ -13,10 +13,10 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>List of Offering Letter</h2>
+                <h2>List of Bill Quantity</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/construction/offering_letter/new';">New Offering Letter
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/construction/bill_quantities/new';">New Offering Letter
                         </button>
                     </li>
                 </ul>
@@ -28,7 +28,7 @@
                         <thead>
                             <tr class="headings">
                                 <th class="column-title">Name</th>
-                                <th class="column-title">Offering Letter</th>
+                                <th class="column-title">Bill Quantity</th>
                                 <th class="column-title">Total</th>
                                 <th class="column-title">Status</th>
                             </tr>
@@ -42,5 +42,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/construction/budget_plans/dataTable.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{ asset('js/construction/bill_quantities/dataTable.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

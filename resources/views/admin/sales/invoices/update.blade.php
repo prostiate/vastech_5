@@ -214,8 +214,8 @@
 @endsection
 
 @push('scripts')
-<script type="text/javascript" src="{{asset('js/sum.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script type="text/javascript" src="{{asset('js/add_field.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script type="text/javascript" src="{{asset('js/render_select2.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script type="text/javascript" src="{{asset('js/render_datepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/sum.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/add_field.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/render_select2.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/render_datepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

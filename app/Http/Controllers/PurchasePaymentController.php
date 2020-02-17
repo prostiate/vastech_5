@@ -134,6 +134,8 @@ class PurchasePaymentController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $pd->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'purchase payment',
@@ -157,8 +159,10 @@ class PurchasePaymentController extends Controller
                     $pd->purchase_payment_item()->save($pp[$i]);
                     // CREATE COA DETAIL YANG DARI CONTACT
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $contact_id->account_payable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'purchase payment',
@@ -237,6 +241,7 @@ class PurchasePaymentController extends Controller
             // AMBIL HEADER SESUAI DENGAN ID
             $pp                                 = purchase_payment::find($id);
             $contact_id                         = contact::find($pp->contact_id);
+            $transactions                       = other_transaction::where('type', 'purchase payment')->where('number', $pp->number)->first();
             // DELETE COA DETAIL PUNYA PAYMENT
             coa_detail::where('type', 'purchase payment')->where('number', 'Purchase Payment #' . $pp->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'purchase payment')->where('number', 'Purchase Payment #' . $pp->number)->where('credit', 0)->delete();
@@ -298,6 +303,8 @@ class PurchasePaymentController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'date'                          => $request->get('payment_date'),
                 'type'                          => 'purchase payment',
@@ -322,8 +329,10 @@ class PurchasePaymentController extends Controller
                     $ppp[$i]->save();
                     // CREATE COA DETAIL YANG DARI CONTACT
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $contact_id->account_payable_id,
                         'date'                  => $request->get('payment_date'),
                         'type'                  => 'purchase payment',

@@ -94,8 +94,9 @@ class ConBudgetPlanController extends Controller
         DB::beginTransaction();
         try {
 
-            dd($request->all() );
 
+
+            //dd($request->toArray() );
 
             $header = new budget_plan_con([
                 'tenant_id'             => $user->tenant_id,
@@ -109,37 +110,40 @@ class ConBudgetPlanController extends Controller
                 'grandtotal'            => $request->grandtotal,
                 'status'                => 1,
             ]);
-            $header->save();           
-         
-            foreach ($request->offering_letter_detail_id as $j => $ol_detail) {
-                //var_dump("aku item ke- ". $j);
-                foreach ($request->working_detail as $i => $detail) {
-                    //var_dump("barang ke- ". $i);
+            $header->save();
+            
+            foreach ($request->working_detail as $i => $detail) {
+                    //var_dump("aku item ke- ". $j);
+
+                    //var_dump("barang ke- ".  $i);
+
                     // INI FUNGSINYA BUAT NGECEK SUBTOTAL GABOLE LEBIH DI SETIAP WORKING DESCRIPTION
                     //if ($request->subtotal[$i] > $request->offering_letter_detail_price[$j]) {
                     //    DB::rollBack();
                     //    return response()->json(['errors' => 'Sub total cannot be more than the price that already assigned.']);
                     //}
 
-                    /**
-                    $item[$i] = new budget_plan_detail_con([
-                        'tenant_id'         => $user->tenant_id,
-                        'company_id'        => $user->company_id,
-                        'user_id'           => Auth::id(),
-                        'offering_letter_detail_id'           => $request->offering_letter_detail_id[$j],
-                        'name'              => $request->working_detail[$i],
-                        'duration'          => $request->duration[$i],
-                        'amount'            => $request->price[$i],
-                        //'amountsub'         => $request->subtotal[$i], //GA KEBACA KARENA BANYAKNYA subtotal TIDAK SEBANYAK working_detail
-                        'status'            => 1,
-                        ]);
-                        $header->budget_plan_detail()->save($item[$i]);
-                    }
                     
-                    */
-                }
-                }
-                
+                        //var_dump("barang ke- ".  $request->working_detail[$j][$i]);
+                        
+                        $item[$i] = new budget_plan_detail_con([
+                            'tenant_id'         => $user->tenant_id,
+                            'company_id'        => $user->company_id,
+                            'user_id'           => Auth::id(),
+                            'offering_letter_detail_id'           => $request->kon[$i],
+                            'name'              => $request->working_detail[$i],
+                            'duration'          => $request->duration[$i],
+                            'amount'            => $request->price[$i],
+                            //'amountsub'         => $request->subtotal[$i], //GA KEBACA KARENA BANYAKNYA subtotal TIDAK SEBANYAK working_detail
+                            'status'            => 1,
+                        ]);
+                $header->budget_plan_detail()->save($item[$i]);
+                        
+                    
+        }
+            
+
+
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $header->id]);
         } catch (\Exception $e) {
@@ -152,7 +156,27 @@ class ConBudgetPlanController extends Controller
     {
         $header                             = budget_plan_con::find($id);
         $item                               = budget_plan_detail_con::with('offering_letter_detail')->where('budget_plan_id', $id)->get();
-        return view('admin.construction.budget_plan.show', compact(['header', 'item']));
+        //$grouped                            = $item->groupBy('offering_letter_detail_id');
+
+        $grouped                            = collect($item)
+            ->groupBy('offering_letter_detail_id')
+            ->map(function ($item) {
+                return ($item);
+            });
+
+        //$grouped = $item->mapToGroups(function ($item, $key) {
+        //    return [$item['offering_letter_detail_id']];
+        //});
+        //$grouped = $item->groupBy([
+        //    'offering_letter_detail_id',
+        //    function ($item) {
+        //        return $item['offering_letter_detail_id'];
+        //    },
+        //], $preserveKeys = true);
+
+        //dd($grouped);
+
+        return view('admin.construction.budget_plan.show', compact(['header', 'item', 'grouped']));
     }
 
     public function edit()

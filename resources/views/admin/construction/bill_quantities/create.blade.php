@@ -79,7 +79,7 @@
                                     <th class="column-title" style="width: 100px"></th>
                                 </tr>
                                 <tbody class="neworderbody">
-                                    <tr>
+                                    <tr class="initialtr">
                                         <td>
                                             <div class="form-group">
                                                 <select class="select_product form-control product_id" name="product[]">
@@ -113,16 +113,16 @@
                                             <input type="button" class="btn btn-dark add" value="+">
                                         </td>
                                     </tr>
+                                    <tr class="outputbody">
+                                        <td colspan="3" style="text-align: right">
+                                            <h4><strong>Sub Total</strong></h4>
+                                        </td>
+                                        <td colspan="2">
+                                            <input type="text" class="form-control sub_display" value="0" readonly>
+                                            <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
+                                        </td>
+                                    </tr>
                                 </tbody>
-                                <tr>
-                                    <td colspan="3" style="text-align: right">
-                                        <h4><strong>Sub Total</strong></h4>
-                                    </td>
-                                    <td colspan="2">
-                                        <input type="text" class="form-control sub_display" value="0" readonly>
-                                        <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
-                                    </td>
-                                </tr>
                                 @endforeach
                             </tbody>
                             <tfoot hidden>
@@ -154,8 +154,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

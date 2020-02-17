@@ -78,15 +78,15 @@
                                 <tbody class="neworderbody">
                                     <tr class="initialtr">
                                         <td>
-                                            <input value="{{$k}}" class="kon" hidden>
-                                            <input onClick="this.select();" type="text" class="form-control" name="working_detail[][{{$k}}]">
+                                            <input value="{{$item->id}}" class="kon" name="kon[]" hidden>
+                                            <input onClick="this.select();" type="text" class="form-control" name="working_detail[]">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="number" class="form-control" name="duration[][]" value="0">
+                                            <input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="text" class="form-control price_display" value="0">
-                                            <input type="text" class="price_hidden" name="price[][]" value="0" hidden>
+                                            <input type="text" class="price_hidden" name="price[]" value="0" hidden>
                                         </td>
                                         <td>
                                             <input type="button" class="btn btn-dark add" value="+">
@@ -133,7 +133,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

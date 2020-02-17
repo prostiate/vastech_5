@@ -165,18 +165,6 @@ class PurchaseDeliveryController extends Controller
                 purchase_order::where('number', $id_number)->update($updatepdstatus);
                 other_transaction::where('number', $id_number)->where('type', 'purchase order')->update($updatepdstatus);
             }
-            $default_unbilled_account_payable   = default_account::find(13);
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'                        => $default_unbilled_account_payable->account_id,
-                'date'                          => $request->get('trans_date'),
-                'type'                          => 'purchase delivery',
-                'number'                        => 'Purchase Delivery #' . $trans_no,
-                'contact_id'                    => $request->get('vendor_name'),
-                'debit'                         => 0,
-                'credit'                        => $request->get('balance'),
-            ]);
 
             $transactions = other_transaction::create([
                 'company_id'                    => $user->company_id,
@@ -219,6 +207,21 @@ class PurchaseDeliveryController extends Controller
                 'ref_id'                        => $pd->id,
             ]);
 
+            $default_unbilled_account_payable   = default_account::find(13);
+            coa_detail::create([
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'ref_id'                        => $pd->id,
+                'other_transaction_id'          => $transactions->id,
+                'coa_id'                        => $default_unbilled_account_payable->account_id,
+                'date'                          => $request->get('trans_date'),
+                'type'                          => 'purchase delivery',
+                'number'                        => 'Purchase Delivery #' . $trans_no,
+                'contact_id'                    => $request->get('vendor_name'),
+                'debit'                         => 0,
+                'credit'                        => $request->get('balance'),
+            ]);
+
             foreach ($request->products as $i => $keys) {
                 $pp[$i] = new purchase_delivery_item([
                     'purchase_order_item_id'    => $request->poi_id[$i],
@@ -245,6 +248,8 @@ class PurchaseDeliveryController extends Controller
                     coa_detail::create([
                         'company_id'            => $user->company_id,
                         'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $default_product_account->default_inventory_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',
@@ -257,6 +262,8 @@ class PurchaseDeliveryController extends Controller
                     coa_detail::create([
                         'company_id'            => $user->company_id,
                         'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
                         'coa_id'                => $default_product_account->buy_account,
                         'date'                  => $request->get('trans_date'),
                         'type'                  => 'purchase delivery',

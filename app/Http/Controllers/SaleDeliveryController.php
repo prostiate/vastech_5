@@ -298,27 +298,31 @@ class SaleDeliveryController extends Controller
                 if ($default_product_account->is_track == 1) {
                     // BUY ACCOUNT BARANG
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'sales delivery',
-                        'number'            => 'Sales Delivery #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $total_avg,
-                        'credit'            => 0,
+                        'company_id'                => $user->company_id,
+                        'user_id'                   => Auth::id(),
+                        'ref_id'                    => $pd->id,
+                        'other_transaction_id'      => $transactions->id,
+                        'coa_id'                    => $default_product_account->buy_account,
+                        'date'                      => $request->get('trans_date'),
+                        'type'                      => 'sales delivery',
+                        'number'                    => 'Sales Delivery #' . $trans_no,
+                        'contact_id'                => $request->get('vendor_name'),
+                        'debit'                     => $total_avg,
+                        'credit'                    => 0,
                     ]);
                     // DEFAULT INVENTORY BARANG
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->default_inventory_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'sales delivery',
-                        'number'            => 'Sales Delivery #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => 0,
-                        'credit'            => $total_avg,
+                        'company_id'                => $user->company_id,
+                        'user_id'                   => Auth::id(),
+                        'ref_id'                    => $pd->id,
+                        'other_transaction_id'      => $transactions->id,
+                        'coa_id'                    => $default_product_account->default_inventory_account,
+                        'date'                      => $request->get('trans_date'),
+                        'type'                      => 'sales delivery',
+                        'number'                    => 'Sales Delivery #' . $trans_no,
+                        'contact_id'                => $request->get('vendor_name'),
+                        'debit'                     => 0,
+                        'credit'                    => $total_avg,
                     ]);
                 }
             };
@@ -340,8 +344,10 @@ class SaleDeliveryController extends Controller
             $default_unbilled_revenue       = default_account::find(6);
             // DEFAULT SETTING UNBILLED ACCOUNT RECEIVABLE
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
                 'coa_id'                    => $default_unbilled_receivable->account_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales delivery',
@@ -352,8 +358,10 @@ class SaleDeliveryController extends Controller
             ]);
             // DEFAULT SETTING UNBILLED REVENUE
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
                 'coa_id'                    => $default_unbilled_revenue->account_id,
                 'date'                      => $request->get('trans_date'),
                 'type'                      => 'sales delivery',

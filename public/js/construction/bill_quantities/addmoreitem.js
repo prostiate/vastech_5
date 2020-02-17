@@ -6,7 +6,7 @@ function selectProduct() {
         delay: 250,
         allowClear: true,
         ajax: {
-            url: "/construction/bill_quantities/select_product",
+            url: "/purchases_invoice/select_product",
             dataType: "json",
             data: function(params) {
                 return {
@@ -63,7 +63,7 @@ function selectProduct2() {
         delay: 250,
         allowClear: true,
         ajax: {
-            url: "/construction/bill_quantities/select_product",
+            url: "/purchases_invoice/select_product",
             dataType: "json",
             data: function(params) {
                 return {
@@ -124,12 +124,16 @@ function totalGrand() {
 
 function totalSub() {
     var t = 0;
-    $(".price_hidden").each(function(i, e) {
-        var amt = $(this).val() - 0;
-        t += amt;
+    $(".neworderbody").each(function(i, e) {
+        var newbody = $(this);
+        newbody.find(".price_hidden").each(function(i, e) {
+            var amt = $(this).val() - 0;
+            t += amt;
+        });
+        newbody.find(".sub_display").val(t);
+        newbody.find(".sub_hidden").val(t);
+        t = 0;
     });
-    $(".sub_display").val(t);
-    $(".sub_hidden").val(t);
 }
 
 function inputMasking() {
@@ -167,8 +171,13 @@ $(document).ready(function() {
     totalSub();
 
     //$(".add").click(function() {
-    var unit = $(".unit").html();
     $(".neworderbody").on("click", ".add", function() {
+        var unit = $(".unit").html();
+        var k = $(this)
+            .closest("tbody")
+            .find(".kon")
+            .val();
+
         tr =
             "<tr>" +
             "<td>" +
@@ -200,19 +209,17 @@ $(document).ready(function() {
             "</td>" +
             "</tr>";
 
-        $(".neworderbody").append(tr);
+        $(this)
+            .closest("tbody")
+            .find(".outputbody")
+            .before(tr);
         inputMasking();
         selectProduct2();
-        $(".unit").select2({
-            width: "100%",
-            placeholder: "Select Unit"
-        });
     });
 
     $(".neworderbody").on("click", ".delete", function() {
         $(this)
-            .parent()
-            .parent()
+            .closest("tr")
             .remove();
         totalGrand();
         totalSub();
@@ -225,20 +232,4 @@ $(document).ready(function() {
         totalGrand();
         totalSub();
     });
-
-    $(".neworderbody").on(
-        "keyup change select2-selecting",
-        ".product_id",
-        function() {
-            var tr = $(this).closest("tr");
-            var id = $(".selected_product_id").val();
-            var unit = $(".selected_product_unit").val();
-            tr.find(".tampungan_product_id").val(id);
-            tr.find(".tampungan_product_unit").val(unit);
-            var tampungan_unit = tr.find(".tampungan_product_unit").val();
-            tr.find(".unit")
-                .val(tampungan_unit)
-                .change();
-        }
-    );
 });

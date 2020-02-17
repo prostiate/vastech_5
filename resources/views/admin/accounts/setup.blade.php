@@ -1,17 +1,13 @@
 @extends('layouts.admin')
 
-@section('contentheader')
-<div class="page-title">
-    <div class="title_left">
-        <h3>Opening Balance</h3>
-    </div>
-</div>
-@endsection
-
 @section('content')
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
+                <div class="x_title">
+                    <h2>Opening Balance</h2>
+                    <div class="clearfix"></div>
+                </div>
             <div class="x_content">
                 <form id="formCreate" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="">
                     <div class="col-md-3 col-sm-2 col-xs-2">
@@ -21,8 +17,8 @@
                         <br>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Conversion Date</label>
-                                <div class="col-md-6 col-sm-7 col-xs-12">
+                                <label class="control-label col-md-3">Conversion Date</label>
+                                <div class="col-md-7" style="text-align:center">
                                     @if($ob)
                                     <input type="text" class="form-control date" name="date" id="datepicker1" value="{{$ob->opening_date}}">
                                     @else
@@ -34,7 +30,7 @@
                         <br>
                         <br>
                         <div class="form-group">
-                            <div class="col-md-9 col-sm-6 col-xs-12 col-md-offset-1">
+                            <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center">
                                 <p> How will conversion date affect your Vastechcloud account? <br>
                                     * You will still be able to enter transactions before conversion date and it will not
                                     affect
@@ -46,7 +42,7 @@
                         </div>
                         <div class="ln_solid"></div>
                         <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center">
                                 <button class="btn btn-primary" type="button" onclick="window.location.href = '/chart_of_accounts';">Cancel</button>
                                 <button id="click" type="submit" class="btn btn-success">View Conversion Balances</button>
                             </div>
@@ -60,9 +56,9 @@
 @endsection
 
 @push('scripts')
-<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200211-1624') }}" charset="utf-8"></script>-->
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/accounts/opening_balance/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js')}}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js')}}" charset="utf-8"></script>
+<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200217-1409') }}" charset="utf-8"></script>-->
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/opening_balance/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

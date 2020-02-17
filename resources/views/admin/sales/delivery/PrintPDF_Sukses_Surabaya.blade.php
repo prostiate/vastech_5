@@ -153,7 +153,7 @@
             </div>
             <div class="column-33">
                 <div class="card" style="text-align: right;">
-                    <a>Bekasi, {{$today}}</a><br>
+                    <a>Surabaya, <?php echo date_format($pp->transaction_date,"d F y"); ?></a><br>
                     <a>No. Sales Order @if($pp->selected_so_id){{$pp->sale_order->number}}@endif</a><br>
                     <!--<a>No. Purchase Order @if($pp->selected_so_id){{$pp->sale_order->vendor_ref_no}}@endif</a><br>
                     <a>POCust <span style="visibility: hidden;">@if($pp->selected_so_id){{$pp->sale_order->number}}@endif</a><br>-->

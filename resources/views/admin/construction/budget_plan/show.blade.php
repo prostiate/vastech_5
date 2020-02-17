@@ -95,13 +95,12 @@
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
                             <tbody>
-                                @foreach($item as $item)
-                                @if($item->budget_plan_id == $header->id)
+                                @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->offering_letter_detail->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->offering_letter_detail->pecification}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
+                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->offering_letter_detail->name}}</th>
+                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->offering_letter_detail->pecification}}</th>
+                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item[0]->amount, 2, ',', '.') ?></th>
                                     </tr>
                                 </thead>
                                 <tr class="headings">
@@ -109,6 +108,7 @@
                                     <th class="column-title" style="width: 150px">Duration</th>
                                     <th class="column-title" style="width: 350px">Price</th>
                                 </tr>      
+                                @foreach($item as $item)
                                 <tbody class="neworderbody">
                                     <tr>
                                         <td>
@@ -122,6 +122,7 @@
                                         </td>
                                     </tr>
                                 </tbody>
+                                @endforeach
                                 <tr>
                                     <td colspan="2" style="text-align: right">
                                         <strong>Sub Total</strong>
@@ -130,7 +131,6 @@
                                         <strong><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></strong>
                                     </td>
                                 </tr>
-                                @endif
                                 @endforeach
                             </tbody>
                             <tfoot hidden>
@@ -162,7 +162,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

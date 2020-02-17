@@ -130,5 +130,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

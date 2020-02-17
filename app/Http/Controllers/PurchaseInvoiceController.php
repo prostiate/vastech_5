@@ -458,17 +458,6 @@ class PurchaseInvoiceController extends Controller
         try {
             $id_contact                     = $request->vendor_name;
             $contact_account                = contact::find($id_contact);
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'                    => $contact_account->account_payable_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'purchase invoice',
-                'number'                    => 'Purchase Invoice #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => 0,
-                'credit'                    => $request->get('balance'),
-            ]);
 
             $transactions                   = other_transaction::create([
                 'company_id'                    => $user->company_id,
@@ -511,11 +500,27 @@ class PurchaseInvoiceController extends Controller
                 'ref_id'                    => $pi->id,
             ]);
 
+            coa_detail::create([
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pi->id,
+                'other_transaction_id'      => $transactions->id,
+                'coa_id'                    => $contact_account->account_payable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'purchase invoice',
+                'number'                    => 'Purchase Invoice #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => 0,
+                'credit'                    => $request->get('balance'),
+            ]);
+
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $pi->id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -547,27 +552,31 @@ class PurchaseInvoiceController extends Controller
                 // DEFAULT INVENTORY 17 dan yang di input di debit ini adalah total harga dari per barang
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->default_inventory_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pi->id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->default_inventory_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pi->id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->buy_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -664,36 +673,9 @@ class PurchaseInvoiceController extends Controller
             $id_no_po           = $request->hidden_id_no_po;
             $id_contact         = $request->vendor_name;
 
-            $default_unbilled_payable   = default_account::find(13);
-            // yang di input di debit disini adalah total dari keseluruhan
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'        => $default_unbilled_payable->account_id,
-                'date'          => $request->get('trans_date'),
-                'type'          => 'purchase invoice',
-                'number'        => 'Purchase Invoice #' . $trans_no,
-                'contact_id'    => $request->get('vendor_name'),
-                'debit'         => $request->get('subtotal'),
-                'credit'        => 0,
-            ]);
-
-            $contact_account = contact::find($id_contact);
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'        => $contact_account->account_payable_id,
-                'date'          => $request->get('trans_date'),
-                'type'          => 'purchase invoice',
-                'number'        => 'Purchase Invoice #' . $trans_no,
-                'contact_id'    => $request->get('vendor_name'),
-                'debit'         => 0,
-                'credit'        => $request->get('balance'),
-            ]);
-
             $transactions = other_transaction::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'number_complete'   => 'Purchase Invoice #' . $trans_no,
                 'type'              => 'purchase invoice',
@@ -707,8 +689,8 @@ class PurchaseInvoiceController extends Controller
             ]);
 
             $pd = new purchase_invoice([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'        => $user->company_id,
+                'user_id'           => Auth::id(),
                 'number'            => $trans_no,
                 'contact_id'        => $request->get('vendor_name'),
                 'email'             => $request->get('email'),
@@ -733,14 +715,47 @@ class PurchaseInvoiceController extends Controller
             //$pd->save();
             $transactions->purchase_invoice()->save($pd);
             other_transaction::find($transactions->id)->update([
-                'ref_id'                    => $pd->id,
+                'ref_id'                => $pd->id,
+            ]);
+
+            $default_unbilled_payable   = default_account::find(13);
+            // yang di input di debit disini adalah total dari keseluruhan
+            coa_detail::create([
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'ref_id'                => $pd->id,
+                'other_transaction_id'  => $transactions->id,
+                'coa_id'                => $default_unbilled_payable->account_id,
+                'date'                  => $request->get('trans_date'),
+                'type'                  => 'purchase invoice',
+                'number'                => 'Purchase Invoice #' . $trans_no,
+                'contact_id'            => $request->get('vendor_name'),
+                'debit'                 => $request->get('subtotal'),
+                'credit'                => 0,
+            ]);
+
+            $contact_account = contact::find($id_contact);
+            coa_detail::create([
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'ref_id'                => $pd->id,
+                'other_transaction_id'  => $transactions->id,
+                'coa_id'                => $contact_account->account_payable_id,
+                'date'                  => $request->get('trans_date'),
+                'type'                  => 'purchase invoice',
+                'number'                => 'Purchase Invoice #' . $trans_no,
+                'contact_id'            => $request->get('vendor_name'),
+                'debit'                 => 0,
+                'credit'                => $request->get('balance'),
             ]);
 
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $pd->id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -870,17 +885,6 @@ class PurchaseInvoiceController extends Controller
             }
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account                = contact::find($id_contact);
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'                    => $contact_account->account_payable_id,
-                'date'                      => $request->get('trans_date'),
-                'type'                      => 'purchase invoice',
-                'number'                    => 'Purchase Invoice #' . $trans_no,
-                'contact_id'                => $request->get('vendor_name'),
-                'debit'                     => 0,
-                'credit'                    => $request->get('balance'),
-            ]);
             // MENGUBAH STATUS SI PURCHASE ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                 = purchase_order::find($id);
             $check_total_po->update([
@@ -942,11 +946,27 @@ class PurchaseInvoiceController extends Controller
                 'ref_id'                    => $pd->id,
             ]);
 
+            coa_detail::create([
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
+                'coa_id'                    => $contact_account->account_payable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'purchase invoice',
+                'number'                    => 'Purchase Invoice #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => 0,
+                'credit'                    => $request->get('balance'),
+            ]);
+
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $pd->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'purchase invoice',
@@ -983,27 +1003,31 @@ class PurchaseInvoiceController extends Controller
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'                => $default_product_account->default_inventory_account,
-                        'date'                  => $request->get('trans_date'),
-                        'type'                  => 'purchase invoice',
-                        'number'                => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'            => $request->get('vendor_name'),
-                        'debit'                 => $request->total_price[$i],
-                        'credit'                => 0,
+                        'company_id'                => $user->company_id,
+                        'user_id'                   => Auth::id(),
+                        'ref_id'                    => $pd->id,
+                        'other_transaction_id'      => $transactions->id,
+                        'coa_id'                    => $default_product_account->default_inventory_account,
+                        'date'                      => $request->get('trans_date'),
+                        'type'                      => 'purchase invoice',
+                        'number'                    => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'                => $request->get('vendor_name'),
+                        'debit'                     => $request->total_price[$i],
+                        'credit'                    => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'                => $user->company_id,
+                        'user_id'                   => Auth::id(),
+                        'ref_id'                    => $pd->id,
+                        'other_transaction_id'      => $transactions->id,
+                        'coa_id'                    => $default_product_account->buy_account,
+                        'date'                      => $request->get('trans_date'),
+                        'type'                      => 'purchase invoice',
+                        'number'                    => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'                => $request->get('vendor_name'),
+                        'debit'                     => $request->total_price[$i],
+                        'credit'                    => 0,
                     ]);
                 }
 
@@ -1096,17 +1120,6 @@ class PurchaseInvoiceController extends Controller
             $id_contact         = $request->vendor_name;
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account = contact::find($id_contact);
-            coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'        => $contact_account->account_payable_id,
-                'date'          => $request->get('trans_date'),
-                'type'          => 'purchase invoice',
-                'number'        => 'Purchase Invoice #' . $trans_no,
-                'contact_id'    => $request->get('vendor_name'),
-                'debit'         => 0,
-                'credit'        => $request->get('balance'),
-            ]);
             // UPDATE STATUS ON PURCHASE QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus = array(
                 'status'        => 2,
@@ -1156,11 +1169,27 @@ class PurchaseInvoiceController extends Controller
                 'ref_id'                    => $pd->id,
             ]);
 
+            coa_detail::create([
+                'company_id'                => $user->company_id,
+                'user_id'                   => Auth::id(),
+                'ref_id'                    => $pd->id,
+                'other_transaction_id'      => $transactions->id,
+                'coa_id'                    => $contact_account->account_payable_id,
+                'date'                      => $request->get('trans_date'),
+                'type'                      => 'purchase invoice',
+                'number'                    => 'Purchase Invoice #' . $trans_no,
+                'contact_id'                => $request->get('vendor_name'),
+                'debit'                     => 0,
+                'credit'                    => $request->get('balance'),
+            ]);
+
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $pd->id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -1192,27 +1221,31 @@ class PurchaseInvoiceController extends Controller
                 $default_product_account = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->default_inventory_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->default_inventory_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $trans_no,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $pd->id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->buy_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $trans_no,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -1400,27 +1433,31 @@ class PurchaseInvoiceController extends Controller
                             $default_product_account = product::find($gpi->product_id);
                             if ($default_product_account->is_track == 1) {
                                 coa_detail::create([
-                                    'company_id'                    => $user->company_id,
-                                    'user_id'                       => Auth::id(),
-                                    'coa_id'        => $default_product_account->default_inventory_account,
-                                    'date'          => $request->get('trans_date'),
-                                    'type'          => 'purchase invoice',
-                                    'number'        => 'Purchase Invoice #' . $trans_no,
-                                    'contact_id'    => $request->get('vendor_name'),
-                                    'debit'         => $request->po_amount[$x],
-                                    'credit'        => 0,
+                                    'company_id'            => $user->company_id,
+                                    'user_id'               => Auth::id(),
+                                    'ref_id'                => $pd->id,
+                                    'other_transaction_id'  => $transactions->id,
+                                    'coa_id'                => $default_product_account->default_inventory_account,
+                                    'date'                  => $request->get('trans_date'),
+                                    'type'                  => 'purchase invoice',
+                                    'number'                => 'Purchase Invoice #' . $trans_no,
+                                    'contact_id'            => $request->get('vendor_name'),
+                                    'debit'                 => $request->po_amount[$x],
+                                    'credit'                => 0,
                                 ]);
                             } else {
                                 coa_detail::create([
-                                    'company_id'                    => $user->company_id,
-                                    'user_id'                       => Auth::id(),
-                                    'coa_id'            => $default_product_account->buy_account,
-                                    'date'              => $request->get('trans_date'),
-                                    'type'              => 'purchase invoice',
-                                    'number'            => 'Purchase Invoice #' . $trans_no,
-                                    'contact_id'        => $request->get('vendor_name'),
-                                    'debit'             => $request->po_amount[$x],
-                                    'credit'            => 0,
+                                    'company_id'            => $user->company_id,
+                                    'user_id'               => Auth::id(),
+                                    'ref_id'                => $pd->id,
+                                    'other_transaction_id'  => $transactions->id,
+                                    'coa_id'                => $default_product_account->buy_account,
+                                    'date'                  => $request->get('trans_date'),
+                                    'type'                  => 'purchase invoice',
+                                    'number'                => 'Purchase Invoice #' . $trans_no,
+                                    'contact_id'            => $request->get('vendor_name'),
+                                    'debit'                 => $request->po_amount[$x],
+                                    'credit'                => 0,
                                 ]);
                             }
 
@@ -1537,15 +1574,17 @@ class PurchaseInvoiceController extends Controller
                 // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
                 $contact_account = contact::find($request->vendor_name);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'        => $contact_account->account_payable_id,
-                    'date'          => $request->get('trans_date'),
-                    'type'          => 'purchase invoice',
-                    'number'        => 'Purchase Invoice #' . $trans_no,
-                    'contact_id'    => $request->get('vendor_name'),
-                    'debit'         => 0,
-                    'credit'        => $request->get('balance'),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $pd->id,
+                    'other_transaction_id'  => $transactions->id,
+                    'coa_id'                => $contact_account->account_payable_id,
+                    'date'                  => $request->get('trans_date'),
+                    'type'                  => 'purchase invoice',
+                    'number'                => 'Purchase Invoice #' . $trans_no,
+                    'contact_id'            => $request->get('vendor_name'),
+                    'debit'                 => 0,
+                    'credit'                => $request->get('balance'),
                 ]);
             }
             DB::commit();
@@ -1766,9 +1805,12 @@ class PurchaseInvoiceController extends Controller
             purchase_invoice_item::where('purchase_invoice_id', $id)->delete();
             // BIKIN BARU
             // yang diinput di credit adalah total dari keseluruhan
+            $transactions               = other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->first();
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'ref_id'                => $id,
+                'other_transaction_id'  => $transactions->id,
                 'coa_id'                => $contact_account->account_payable_id,
                 'date'                  => $request->get('trans_date'),
                 'type'                  => 'purchase invoice',
@@ -1806,8 +1848,10 @@ class PurchaseInvoiceController extends Controller
 
             if ($request->taxtotal > 0) {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -1839,27 +1883,31 @@ class PurchaseInvoiceController extends Controller
                 // DEFAULT INVENTORY 17 dan yang di input di debit ini adalah total harga dari per barang
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->default_inventory_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'        => $request->get('vendor_name2'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->default_inventory_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name2'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'        => $request->get('vendor_name2'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->buy_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name2'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 }
                 //menambahkan stok barang ke gudang
@@ -1970,7 +2018,8 @@ class PurchaseInvoiceController extends Controller
             $contact_id                         = contact::find($pi->contact_id);
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
-            $default_tax                            = default_account::find(14);
+            $default_tax                        = default_account::find(14);            
+            $transactions                       = other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->first();
             // BUAT NGECHECK INI QUANTITY YANG DIINPUT LEBIH DARI YANG DI ORDER ATAU TIDAK
             foreach ($request->products as $i => $keys) {
                 if ($request->qty[$i] < 0) {
@@ -2035,15 +2084,17 @@ class PurchaseInvoiceController extends Controller
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
             $contact_account = contact::find($id_contact);
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'        => $contact_account->account_payable_id,
-                'date'          => $request->get('trans_date'),
-                'type'          => 'purchase invoice',
-                'number'        => 'Purchase Invoice #' . $pi->number,
-                'contact_id'    => $request->get('vendor_name'),
-                'debit'         => 0,
-                'credit'        => $request->get('balance'),
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'ref_id'                => $id,
+                'other_transaction_id'  => $transactions->id,
+                'coa_id'                => $contact_account->account_payable_id,
+                'date'                  => $request->get('trans_date'),
+                'type'                  => 'purchase invoice',
+                'number'                => 'Purchase Invoice #' . $pi->number,
+                'contact_id'            => $request->get('vendor_name'),
+                'debit'                 => 0,
+                'credit'                => $request->get('balance'),
             ]);
             // MENGUBAH STATUS SI PURCHASE ORDER DAN OTHER TRANSACTION DARI OPEN KE CLOSED
             $check_total_po                 = purchase_order::find($id_po);
@@ -2082,8 +2133,8 @@ class PurchaseInvoiceController extends Controller
                 'term_id'           => $request->get('term'),
                 'vendor_ref_no'     => $request->get('vendor_no'),
                 'warehouse_id'      => $request->get('warehouse'),
-                'subtotal'                  => $request->get('subtotal'),
-                'taxtotal'                  => $request->get('taxtotal'),
+                'subtotal'          => $request->get('subtotal'),
+                'taxtotal'          => $request->get('taxtotal'),
                 'balance_due'       => $request->get('balance'),
                 'grandtotal'        => $request->get('balance'),
                 'message'           => $request->get('message'),
@@ -2093,8 +2144,10 @@ class PurchaseInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -2131,27 +2184,31 @@ class PurchaseInvoiceController extends Controller
                 $default_product_account = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'        => $default_product_account->default_inventory_account,
-                        'date'          => $request->get('trans_date'),
-                        'type'          => 'purchase invoice',
-                        'number'        => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'    => $request->get('vendor_name'),
-                        'debit'         => $request->total_price[$i],
-                        'credit'        => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->default_inventory_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->buy_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 }
 
@@ -2229,6 +2286,7 @@ class PurchaseInvoiceController extends Controller
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
             $default_tax                        = default_account::find(14);
+            $transactions                       = other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->first();
             // UPDATE STATUS ON PURCHASE QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus                     = array(
                 'status'                        => 1,
@@ -2294,15 +2352,17 @@ class PurchaseInvoiceController extends Controller
             // CREATE COA DETAIL BASED ON CONTACT SETTING ACCOUNT
             $contact_account = contact::find($id_contact);
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'        => $contact_account->account_payable_id,
-                'date'          => $request->get('trans_date'),
-                'type'          => 'purchase invoice',
-                'number'        => 'Purchase Invoice #' . $pi->number,
-                'contact_id'    => $request->get('vendor_name'),
-                'debit'         => 0,
-                'credit'        => $request->get('balance'),
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'ref_id'                => $id,
+                'other_transaction_id'  => $transactions->id,
+                'coa_id'                => $contact_account->account_payable_id,
+                'date'                  => $request->get('trans_date'),
+                'type'                  => 'purchase invoice',
+                'number'                => 'Purchase Invoice #' . $pi->number,
+                'contact_id'            => $request->get('vendor_name'),
+                'debit'                 => 0,
+                'credit'                => $request->get('balance'),
             ]);
             // UPDATE STATUS ON PURCHASE QUOTE & OTHER TRANSACTION QUOTE'S
             $updatepdstatus = array(
@@ -2340,8 +2400,10 @@ class PurchaseInvoiceController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'            => $user->company_id,
+                    'user_id'               => Auth::id(),
+                    'ref_id'                => $id,
+                    'other_transaction_id'  => $transactions->id,
                     'coa_id'                => $default_tax->account_id,
                     'date'                  => $request->get('trans_date'),
                     'type'                  => 'purchase invoice',
@@ -2373,27 +2435,31 @@ class PurchaseInvoiceController extends Controller
                 $default_product_account = product::find($request->products2[$i]);
                 if ($default_product_account->is_track == 1) {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->default_inventory_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->default_inventory_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 } else {
                     coa_detail::create([
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'            => $default_product_account->buy_account,
-                        'date'              => $request->get('trans_date'),
-                        'type'              => 'purchase invoice',
-                        'number'            => 'Purchase Invoice #' . $pi->number,
-                        'contact_id'        => $request->get('vendor_name'),
-                        'debit'             => $request->total_price[$i],
-                        'credit'            => 0,
+                        'company_id'            => $user->company_id,
+                        'user_id'               => Auth::id(),
+                        'ref_id'                => $id,
+                        'other_transaction_id'  => $transactions->id,
+                        'coa_id'                => $default_product_account->buy_account,
+                        'date'                  => $request->get('trans_date'),
+                        'type'                  => 'purchase invoice',
+                        'number'                => 'Purchase Invoice #' . $pi->number,
+                        'contact_id'            => $request->get('vendor_name'),
+                        'debit'                 => $request->total_price[$i],
+                        'credit'                => 0,
                     ]);
                 }
                 //menambahkan stok barang ke gudang

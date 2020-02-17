@@ -188,17 +188,19 @@ class ExpenseController extends Controller
             ]);
 
             if ($request->taxtotal > 0) {
-                $default_tax                = default_account::find(14);
+                $default_tax                    = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'type'                  => 'expense',
-                    'number'                => 'Expense #' . $trans_no,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => $request->get('taxtotal'),
-                    'credit'                => 0,
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $default_tax->account_id,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'expense',
+                    'number'                    => 'Expense #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => $request->get('taxtotal'),
+                    'credit'                    => 0,
                 ]);
             }
 
@@ -215,8 +217,10 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $request->expense_acc[$i],
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'expense',
@@ -231,27 +235,31 @@ class ExpenseController extends Controller
             //$get_current_contact_data           = contact::find($request->vendor_name);
             if ($request->pay_later == 1) {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'                        => $default_trade_payable->account_id,
-                    'date'                          => $request->get('trans_date'),
-                    'type'                          => 'expense',
-                    'number'                        => 'Expense #' . $trans_no,
-                    'contact_id'                    => $request->get('vendor_name'),
-                    'debit'                         => 0,
-                    'credit'                        => $request->get('balance'),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $default_trade_payable->account_id,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'expense',
+                    'number'                    => 'Expense #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => 0,
+                    'credit'                    => $request->get('balance'),
                 ]);
             } else {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'                        => $request->pay_from,
-                    'date'                          => $request->get('trans_date'),
-                    'type'                          => 'expense',
-                    'number'                        => 'Expense #' . $trans_no,
-                    'contact_id'                    => $request->get('vendor_name'),
-                    'debit'                         => 0,
-                    'credit'                        => $request->get('balance'),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $request->pay_from,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'expense',
+                    'number'                    => 'Expense #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => 0,
+                    'credit'                    => $request->get('balance'),
                 ]);
             }
             DB::commit();
@@ -317,6 +325,7 @@ class ExpenseController extends Controller
             expense_item::where('expense_id', $id)->delete();
 
             // BARU BIKIN BARU LAGI
+            $transactions                                       = other_transaction::where('type', 'expense')->where('number', $ex->number)->first();
             other_transaction::where('type', 'expense')->where('number', $ex->number)->update([
                 'transaction_date'                              => $request->get('trans_date'),
                 'memo'                                          => $request->get('memo'),
@@ -343,8 +352,10 @@ class ExpenseController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                                => $user->company_id,
+                    'user_id'                                   => Auth::id(),
+                    'ref_id'                                    => $ex->id,
+                    'other_transaction_id'                      => $transactions->id,
                     'coa_id'                                    => $default_tax->account_id,
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -369,8 +380,10 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                                => $user->company_id,
+                    'user_id'                                   => Auth::id(),
+                    'ref_id'                                    => $ex->id,
+                    'other_transaction_id'                      => $transactions->id,
                     'coa_id'                                    => $request->expense_acc[$i],
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -385,8 +398,10 @@ class ExpenseController extends Controller
             //$get_current_contact_data           = contact::find($request->vendor_name);
             $default_trade_payable                              = default_account::find(16);
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                                    => $user->company_id,
+                'user_id'                                       => Auth::id(),
+                'ref_id'                                        => $ex->id,
+                'other_transaction_id'                          => $transactions->id,
                 'coa_id'                                        => $default_trade_payable->account_id,
                 'date'                                          => $request->get('trans_date'),
                 'type'                                          => 'expense',
@@ -420,6 +435,7 @@ class ExpenseController extends Controller
             expense_item::where('expense_id', $id)->delete();
 
             // BARU BIKIN BARU LAGI
+            $transactions                                       = other_transaction::where('type', 'expense')->where('number', $ex->number)->first();
             other_transaction::where('type', 'expense')->where('number', $ex->number)->update([
                 'transaction_date'                              => $request->get('trans_date'),
                 'memo'                                          => $request->get('memo'),
@@ -446,8 +462,10 @@ class ExpenseController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                                    = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                                => $user->company_id,
+                    'user_id'                                   => Auth::id(),
+                    'ref_id'                                    => $ex->id,
+                    'other_transaction_id'                      => $transactions->id,
                     'coa_id'                                    => $default_tax->account_id,
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -472,8 +490,10 @@ class ExpenseController extends Controller
                 $ex->expense_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                                => $user->company_id,
+                    'user_id'                                   => Auth::id(),
+                    'ref_id'                                    => $ex->id,
+                    'other_transaction_id'                      => $transactions->id,
                     'coa_id'                                    => $request->expense_acc[$i],
                     'date'                                      => $request->get('trans_date'),
                     'type'                                      => 'expense',
@@ -487,8 +507,10 @@ class ExpenseController extends Controller
             // CREATE COA DETAIL YANG DARI PAY FROM
             //$get_current_contact_data           = contact::find($request->vendor_name);
             coa_detail::create([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
+                'company_id'                                    => $user->company_id,
+                'user_id'                                       => Auth::id(),
+                'ref_id'                                        => $ex->id,
+                'other_transaction_id'                          => $transactions->id,
                 'coa_id'                                        => $request->pay_from,
                 'date'                                          => $request->get('trans_date'),
                 'type'                                          => 'expense',

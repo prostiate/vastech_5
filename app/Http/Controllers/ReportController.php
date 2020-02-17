@@ -91,11 +91,24 @@ class ReportController extends Controller
                                                         ->join('coas', 'coa_details.id', '=', 'coas.id')
                                                         ->select('coa_details.*', 'coas.coa_category_id')
                                                         ->get();*/
-        $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
-            ->groupBy('coa_id')
-            ->get();
+        $cek_opening_balance                        = coa_detail::where('type', 'opening balance')->first();
+        if ($cek_opening_balance) {
+            $coa_detail                             = coa_detail::whereBetween('date', [$cek_opening_balance->date, $today])
+                ->orderBy('date', 'ASC')
+                ->selectRaw('SUM(debit - credit) as total, coa_id')
+                //->selectRaw('debit, credit, SUM(debit - credit) as total1, SUM(credit - debit) as total2, coa_id')
+                //->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')
+                ->groupBy('coa_id')
+                ->get();
+        } else {
+            $coa_detail                             = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
+                ->orderBy('date', 'ASC')
+                ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
+                //->selectRaw('debit, credit, SUM(debit - credit) as total1, SUM(credit - debit) as total2, coa_id')
+                //->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')
+                ->groupBy('coa_id')
+                ->get();
+        }
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
@@ -111,14 +124,14 @@ class ReportController extends Controller
         $total_depreciation                         = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 7) {
-                $total_depreciation                   += $cd->total;
+                $total_depreciation                 += $cd->total;
             }
         }
         $total_assets                               = $total_current_assets + $total_fixed_assets - $total_depreciation;
         $total_liability                            = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $total_liability                    += $cd->total;
+                $total_liability                    += $cd->total2;
             }
         }
         /*$total_equity                               = 0;
@@ -127,7 +140,9 @@ class ReportController extends Controller
                 $total_equity                       += $cd->total;
             }
         }*/
-        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$startyear_last_periode, $endyear_last_periode])
+        // CEK KLO ADA OPENING BALANCE KLO GADA PAKE FIRST COA DETAIL
+        // UNTUK LAST PERIODE, KITA PAKE PER BULAN YAITU PAKE BULAN KEMARIN DARI CURRENT
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$last_periode->startOfYear(), $last_periode->endOfYear()])
             ->orderBy('date')
             ->selectRaw('SUM(debit - credit) as total, coa_id')
             ->groupBy('coa_id')
@@ -135,32 +150,34 @@ class ReportController extends Controller
         $last_periode_total_current_assets                       = 0;
         foreach ($last_periode_coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
-                $last_periode_total_current_assets               += $cd->total;
+                $last_periode_total_current_assets  += $cd->total;
             }
         }
         $last_periode_total_fixed_assets                         = 0;
         foreach ($last_periode_coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 5 or $cd->coa->coa_category_id == 6) {
-                $last_periode_total_fixed_assets                 += $cd->total;
+                $last_periode_total_fixed_assets    += $cd->total;
             }
         }
         $last_periode_total_depreciation                         = 0;
         foreach ($last_periode_coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 7) {
-                $last_periode_total_depreciation                   += $cd->total;
+                $last_periode_total_depreciation    += $cd->total;
             }
         }
         $last_periode_total_assets                  = $last_periode_total_current_assets + $last_periode_total_fixed_assets - $last_periode_total_depreciation;
-        $last_periode_total_liability                            = 0;
+        $last_periode_total_liability               = 0;
         foreach ($last_periode_coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $last_periode_total_liability                    += $cd->total;
+                $last_periode_total_liability       += $cd->total;
             }
         }
         $last_periode_earning                       = $last_periode_total_assets - $last_periode_total_liability;
-        $current_period_earning                     = $total_assets - $total_liability;
+        //$current_period_earning                     = $total_assets - $total_liability; YANG KATANYA BENER (CUMA SALAH)
+        $current_period_earning                     = $total_liability - $total_assets;
         $total_equity2                              = $current_period_earning + $last_periode_earning;
-        $total_lia_eq                               = $total_liability + $total_equity2;
+        //$total_lia_eq                               = $total_liability + $total_equity2; YANG KATANYA BENER (CUMA SALAH)
+        $total_lia_eq                               = $total_liability - $total_equity2;
         return view('admin.reports.overview.balance_sheet', compact([
             'startyear_last_periode',
             'endyear_last_periode',
@@ -185,20 +202,21 @@ class ReportController extends Controller
         $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
         $current_periode                            = new Carbon('first day of January ' . date('Y'));
         $today                                      = Carbon::today()->toDateString();
-        $today2                                     = $mulaidari;
-        if (Carbon::parse($today)->gt(Carbon::now())) {
-            $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today2])
-                ->orderBy('coa_id')
-                ->selectRaw('SUM(debit - credit) as total, coa_id')
-                ->groupBy('coa_id')
-                ->get();
-        } else {
-            $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today2])
-                ->orderBy('coa_id')
-                ->selectRaw('SUM(debit - credit) as total, coa_id')
-                ->groupBy('coa_id')
-                ->get();
-        }
+        $today2                                     = Carbon::parse($mulaidari);
+        $mulaidariYear                              = new Carbon('first day of January ' . $today2->year);
+        //if (Carbon::parse($today)->gt(Carbon::now())) {
+        //    $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
+        //           ->orderBy('coa_id')
+        //       ->selectRaw('SUM(debit - credit) as total, coa_id')
+        //        ->groupBy('coa_id')
+        //        ->get();
+        //} else {
+        $coa_detail                                 = coa_detail::whereBetween('date', [$mulaidariYear, $today2])
+            ->orderBy('coa_id')
+            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        //}
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {

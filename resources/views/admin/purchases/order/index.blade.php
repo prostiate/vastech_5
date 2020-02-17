@@ -152,6 +152,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/order/dataTable.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{ asset('js/purchases/order/chartdiindex.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/dataTable.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/order/chartdiindex.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

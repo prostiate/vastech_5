@@ -179,8 +179,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/payment/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/select2.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/addmoreitem_payment.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/payment/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/select2.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/addmoreitem_payment.js?v=5-20200217-1409') }}" charset="utf-8"></script>
 @endpush

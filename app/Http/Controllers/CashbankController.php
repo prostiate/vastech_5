@@ -243,6 +243,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->deposit_to,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'banktransfer',
@@ -254,6 +256,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->transfer_from,
                 'date'                          => $request->get('trans_date'),
                 'type'                          => 'banktransfer',
@@ -341,6 +345,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->deposit_to,
                 'type'                          => 'bankdeposit',
                 'date'                          => $request->get('trans_date'),
@@ -353,8 +359,10 @@ class CashbankController extends Controller
             if ($request->taxtotal > 0) {
                 $default_tax                    = default_account::find(8);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_tax->account_id,
                     'date'                      => $request->get('trans_date'),
                     'type'                      => 'bankdeposit',
@@ -379,8 +387,10 @@ class CashbankController extends Controller
                 $ex->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankdeposit',
                     'date'                      => $request->get('trans_date'),
@@ -481,8 +491,10 @@ class CashbankController extends Controller
                 $ex->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankwithdrawalaccount',
                     'date'                      => $request->get('trans_date'),
@@ -493,23 +505,27 @@ class CashbankController extends Controller
                 ]);
             };
             if ($request->taxtotal > 0) {
-                $default_tax                = default_account::find(14);
+                $default_tax                    = default_account::find(14);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'type'                  => 'bankwithdrawalaccount',
-                    'number'                => 'Bank Withdrawal #' . $trans_no,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => $request->get('taxtotal'),
-                    'credit'                => 0,
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $ex->id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $default_tax->account_id,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'bankwithdrawalaccount',
+                    'number'                    => 'Bank Withdrawal #' . $trans_no,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => $request->get('taxtotal'),
+                    'credit'                    => 0,
                 ]);
             }
             // CREATE COA DETAIL YANG DEPOSIT TO (DEBIT)
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'type'                          => 'bankwithdrawalaccount',
                 'date'                          => $request->get('trans_date'),
@@ -624,6 +640,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $expense_account_coa_detail,
                 'type'                          => 'bankwithdrawalfromexpense',
                 'date'                          => $request->get('trans_date'),
@@ -636,6 +654,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $ex->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->pay_from,
                 'type'                          => 'bankwithdrawalfromexpense',
                 'date'                          => $request->get('trans_date'),
@@ -839,10 +859,10 @@ class CashbankController extends Controller
             $default_tax                        = default_account::find(8);
             $caba                               = cashbank::find($id);
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('debit', 0)->delete();
-            //$debit->delete();
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('credit', 0)->delete();
             cashbank_item::where('cashbank_id', $id)->delete();
             // BARU BIKIN LAGI
+            $transactions                       = other_transaction::where('type', 'bankdeposit')->where('number', $caba->number)->first();
             other_transaction::where('type', 'bankdeposit')->where('number', $caba->number)->update([
                 'transaction_date'              => $request->get('trans_date'),
                 'memo'                          => $request->get('memo'),
@@ -862,6 +882,8 @@ class CashbankController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $request->deposit_to,
                 'type'                          => 'bankdeposit',
                 'date'                          => $request->get('trans_date'),
@@ -872,17 +894,19 @@ class CashbankController extends Controller
             ]);
 
             if ($request->taxtotal > 0) {
-                $default_tax                = default_account::find(8);
+                $default_tax                    = default_account::find(8);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
-                    'coa_id'                => $default_tax->account_id,
-                    'date'                  => $request->get('trans_date'),
-                    'type'                  => 'bankdeposit',
-                    'number'                => 'Bank Deposit #' . $caba->number,
-                    'contact_id'            => $request->get('vendor_name'),
-                    'debit'                 => 0,
-                    'credit'                => $request->get('taxtotal'),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $id,
+                    'other_transaction_id'      => $transactions->id,
+                    'coa_id'                    => $default_tax->account_id,
+                    'date'                      => $request->get('trans_date'),
+                    'type'                      => 'bankdeposit',
+                    'number'                    => 'Bank Deposit #' . $caba->number,
+                    'contact_id'                => $request->get('vendor_name'),
+                    'debit'                     => 0,
+                    'credit'                    => $request->get('taxtotal'),
                 ]);
             }
             // CREATE CASH BANK DETAILS
@@ -899,8 +923,10 @@ class CashbankController extends Controller
                 $caba->cashbank_item()->save($pp[$i]);
 
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $request->expense_acc[$i],
                     'type'                      => 'bankdeposit',
                     'date'                      => $request->get('trans_date'),
@@ -940,7 +966,8 @@ class CashbankController extends Controller
             $ambil_amount_coa_detail_sebelumnya = cashbank::find($id);
             $pp                                 = cashbank_item::where('cashbank_id', $id)->get();
             $rp                                 = $request->expense_acc;
-            $default_tax                                        = default_account::find(14);
+            $default_tax                        = default_account::find(14);
+            $transactions                       = other_transaction::where('type', 'bankwithdrawalaccount')->where('number', $ambil_amount_coa_detail_sebelumnya->number)->first();
             other_transaction::where('type', 'bankwithdrawalaccount')->where('number', $ambil_amount_coa_detail_sebelumnya->number)->update([
                 'transaction_date'              => $request->get('trans_date'),
                 'memo'                          => $request->get('memo'),
@@ -1079,26 +1106,28 @@ class CashbankController extends Controller
                 //KEMUDIAN MEMBUAT DATA SEBANYAK INDEX BARU
                 for ($i = count($pp); $i < count($rp); $i++) {
                     $pp[$i] = new cashbank_item([
-                        'receive_from'              => $request->expense_acc[$i],
-                        'desc'                      => $request->desc_acc[$i],
-                        'tax_id'                    => $request->tax_acc[$i],
-                        'amountsub'                 => $request->total_amount_sub[$i],
-                        'amounttax'                 => $request->total_amount_tax[$i],
-                        'amountgrand'               => $request->total_amount_grand[$i],
-                        'amount'                    => $request->amount_acc[$i],
+                        'receive_from'                  => $request->expense_acc[$i],
+                        'desc'                          => $request->desc_acc[$i],
+                        'tax_id'                        => $request->tax_acc[$i],
+                        'amountsub'                     => $request->total_amount_sub[$i],
+                        'amounttax'                     => $request->total_amount_tax[$i],
+                        'amountgrand'                   => $request->total_amount_grand[$i],
+                        'amount'                        => $request->amount_acc[$i],
                     ]);
                     $ambil_amount_coa_detail_sebelumnya->cashbank_item()->save($pp[$i]);
 
                     coa_detail::create([
                         'company_id'                    => $user->company_id,
                         'user_id'                       => Auth::id(),
-                        'coa_id'                    => $request->expense_acc[$i],
-                        'type'                      => 'bankwithdrawalaccount',
-                        'date'                      => $request->get('trans_date'),
-                        'number'                    => 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number,
-                        'contact_id'                => $request->get('vendor_name'),
-                        'debit'                     => $request->amount_acc[$i],
-                        'credit'                    => 0,
+                        'ref_id'                        => $id,
+                        'other_transaction_id'          => $transactions->id,
+                        'coa_id'                        => $request->expense_acc[$i],
+                        'type'                          => 'bankwithdrawalaccount',
+                        'date'                          => $request->get('trans_date'),
+                        'number'                        => 'Bank Withdrawal #' . $ambil_amount_coa_detail_sebelumnya->number,
+                        'contact_id'                    => $request->get('vendor_name'),
+                        'debit'                         => $request->amount_acc[$i],
+                        'credit'                        => 0,
                     ]);
                 };
                 DB::commit();

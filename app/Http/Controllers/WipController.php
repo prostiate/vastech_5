@@ -305,6 +305,8 @@ class WipController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $header->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -318,6 +320,8 @@ class WipController extends Controller
                 coa_detail::create([
                     'company_id'                => $user->company_id,
                     'user_id'                   => Auth::id(),
+                    'ref_id'                    => $header->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -359,6 +363,8 @@ class WipController extends Controller
                 coa_detail::create([
                     'company_id'                => $user->company_id,
                     'user_id'                   => Auth::id(),
+                    'ref_id'                    => $header->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -532,6 +538,8 @@ class WipController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $header->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -543,8 +551,10 @@ class WipController extends Controller
             // BIKIN COA DETAIL DAN BALANCE BUAT MARGIN
             if ($request->margin_total_all > 0) {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $header->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -584,8 +594,10 @@ class WipController extends Controller
                 // BIKIN COA DETAIL DAN BALANCE BUAT PER BARANG RAW (MASUK KE INVENTORY CREDIT)
                 $default_product_account        = product::find($request->wip_product_id_all[$i]);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $header->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -796,6 +808,7 @@ class WipController extends Controller
             coa_detail::where('type', 'wip')->where('number', 'WIP #' . $wip->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'wip')->where('number', 'WIP #' . $wip->number)->where('credit', 0)->delete();
             // UPDATE OTHER TRANSACTION
+            $transactions                       = other_transaction::where('ref_id', $id)->where('type', 'wip')->where('number', $wip->number)->first();
             other_transaction::where('ref_id', $id)->where('type', 'wip')->where('number', $wip->number)
                 ->update([
                     'transaction_date'              => $request->get('trans_date'),
@@ -850,6 +863,8 @@ class WipController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $wip->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -861,8 +876,10 @@ class WipController extends Controller
             // BIKIN COA DETAIL DAN BALANCE BUAT MARGIN
             if ($request->margin_total_per > 0) {
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $wip->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -902,8 +919,10 @@ class WipController extends Controller
                 // BIKIN COA DETAIL DAN BALANCE BUAT PER BARANG RAW (MASUK KE INVENTORY CREDIT)
                 $default_product_account        = product::find($request->wip_product_id_per[$i]);
                 coa_detail::create([
-                    'company_id'                    => $user->company_id,
-                    'user_id'                       => Auth::id(),
+                    'company_id'                => $user->company_id,
+                    'user_id'                   => Auth::id(),
+                    'ref_id'                    => $wip->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -1040,6 +1059,7 @@ class WipController extends Controller
             coa_detail::where('type', 'wip')->where('number', 'WIP #' . $wip->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'wip')->where('number', 'WIP #' . $wip->number)->where('credit', 0)->delete();
             // UPDATE OTHER TRANSACTION
+            $transactions                       = other_transaction::where('ref_id', $id)->where('type', 'wip')->where('number', $wip->number)->first();
             other_transaction::where('ref_id', $id)->where('type', 'wip')->where('number', $wip->number)
                 ->update([
                     'transaction_date'              => $request->get('trans_date'),
@@ -1094,6 +1114,8 @@ class WipController extends Controller
             coa_detail::create([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $wip->id,
+                'other_transaction_id'          => $transactions->id,
                 'coa_id'                        => $produk->default_inventory_account,
                 'date'                          => $request->trans_date,
                 'type'                          => 'wip',
@@ -1107,6 +1129,8 @@ class WipController extends Controller
                 coa_detail::create([
                     'company_id'                => $user->company_id,
                     'user_id'                   => Auth::id(),
+                    'ref_id'                    => $wip->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => 74, // COST OF PRODUCTION LANGSUNG DARI COA
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
@@ -1148,6 +1172,8 @@ class WipController extends Controller
                 coa_detail::create([
                     'company_id'                => $user->company_id,
                     'user_id'                   => Auth::id(),
+                    'ref_id'                    => $wip->id,
+                    'other_transaction_id'      => $transactions->id,
                     'coa_id'                    => $default_product_account->default_inventory_account,
                     'date'                      => $request->trans_date,
                     'type'                      => 'wip',
