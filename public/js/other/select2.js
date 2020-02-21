@@ -19,6 +19,16 @@ $(document).ready(function() {
         placeholder: "Select Contact"
     });
 
+    $(".selectstatus").select2({
+        width: "100%",
+        placeholder: "Select Status"
+    });
+
+    $(".selecttype").select2({
+        width: "100%",
+        placeholder: "Select Type"
+    });
+
     $(".selectwarehouse").select2({
         width: "100%",
         placeholder: "Select Warehouse"

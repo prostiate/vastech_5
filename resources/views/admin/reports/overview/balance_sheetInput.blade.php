@@ -15,7 +15,7 @@
                     <li>
                         <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
                     </li>
-                    <li>
+                    <!--{{--<li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">More Filter
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
@@ -36,7 +36,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--{{--<div class="col-md-12">
+                                            <div class="col-md-12">
                                                 <div class="form-horizontal form-label-left">
                                                     <div class="form-group row">
                                                         <label>Filter by Period</label>
@@ -100,7 +100,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>--}}-->
+                                            </div>
                                             <br>
                                             <div class="col-md-1 center-margin">
                                                 <div class="form-horizontal">
@@ -118,7 +118,7 @@
                                 </form>
                             </div>
                         </div>
-                    </li>
+                    </li>--}}-->
                     <li>
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
                         </button>
@@ -516,7 +516,7 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->total != 0)
+                                                @if($a->total2 != 0)
                                                     @if($a->coa->coa_category_id == 8)
                                                         @if($a->coa->is_parent == 1)
                                                             @if($stop == 0)
@@ -526,7 +526,7 @@
                                                                 <td></td>
                                                                 <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                                 <td></td>
-                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                                             </tr>
                                                             @endif
                                                         @endif
@@ -535,7 +535,7 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->total != 0)
+                                                @if($a->total2 != 0)
                                                     @if($a->coa->coa_category_id == 8)
                                                         @if($a->coa->is_parent == 0)
                                                             @if($stop == 0)
@@ -553,7 +553,7 @@
                                                                 <td></td>
                                                                 <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                                 <td></td>
-                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                                             </tr>
                                                         @endif
                                                     @endif
@@ -561,7 +561,7 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->total != 0)
+                                                @if($a->total2 != 0)
                                                     @if($a->coa->coa_category_id == 10)
                                                         @if($a->coa->is_parent == 1)
                                                             @if($stop == 0)
@@ -571,7 +571,7 @@
                                                                 <td></td>
                                                                 <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                                 <td></td>
-                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                                             </tr>
                                                             @endif
                                                         @endif
@@ -580,7 +580,7 @@
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->total != 0)
+                                                @if($a->total2 != 0)
                                                     @if($a->coa->coa_category_id == 10)
                                                         @if($a->coa->is_parent == 0)
                                                             @if($stop == 0)
@@ -598,7 +598,7 @@
                                                                 <td></td>
                                                                 <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
                                                                 <td></td>
-                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                                                <td class="text-right">@if($a->total2 < 0) ( @number(abs($a->total2)) ) @else @number($a->total2) @endif</td>
                                                             </tr>
                                                         @endif
                                                     @endif
@@ -741,7 +741,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1 = document.getElementById('datepicker1');
@@ -755,19 +755,19 @@
         var date1 = document.getElementById('datepicker1');
         var startyear_last_periode = document.getElementById('startyear_last_periode');
         var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.location.href = "/reports/balance_sheet/excel/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value;
+        window.location.href = "/reports/balance_sheet/excel/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value;
     }
     function csv() {
         var date1 = document.getElementById('datepicker1');
         var startyear_last_periode = document.getElementById('startyear_last_periode');
         var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.location.href = "/reports/balance_sheet/csv/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value;
+        window.location.href = "/reports/balance_sheet/csv/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value;
     }
     function pdf() {
         var date1 = document.getElementById('datepicker1');
         var startyear_last_periode = document.getElementById('startyear_last_periode');
         var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.open("/reports/balance_sheet/pdf/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value, '_blank');
+        window.open("/reports/balance_sheet/pdf/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value, '_blank');
     }
 </script>
 @endpush

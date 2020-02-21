@@ -7,6 +7,7 @@ use Validator;
 use App\closing_book;
 use App\coa;
 use App\coa_detail;
+use App\company_setting;
 use App\journal_entry;
 use App\journal_entry_item;
 use App\other_transaction;
@@ -76,9 +77,9 @@ class ClosingBookController extends Controller
 
     public function setup_update($id)
     {
-        $ob                     = closing_book::find($id); //nanti ditambah company_id
-        $start_period           = $ob->start_period;
-        $end_period             = $ob->end_period;
+        $ob                             = closing_book::find($id); //nanti ditambah company_id
+        $start_period                   = $ob->start_period;
+        $end_period                     = $ob->end_period;
 
         return view('admin.accounts.closing_book.setup', compact(['start_period', 'end_period', 'id']));
     }
@@ -101,7 +102,7 @@ class ClosingBookController extends Controller
             $trans_no               = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
         } else {
             $number                 = closing_book::max('number');
-            $last_closing_book      = closing_book::get()->last()->first();
+            $last_closing_book      = closing_book::latest()->first();
             if ($last_closing_book && $request->hidden_id == $last_closing_book->id) {
                 $trans_no = $last_closing_book->number;
             } else {
@@ -127,7 +128,7 @@ class ClosingBookController extends Controller
                 'company_id'            => $user->company_id,
                 'user_id'               => Auth::id(),
                 'number'                => $trans_no,
-                'number_complete'       => 'Journal Entry #' . $trans_no,
+                'number_complete'       => 'Closing Book #' . $trans_no,
                 'type'                  => 'closing book',
             ], [
                 'transaction_date'      => $request->end_period,
@@ -148,7 +149,7 @@ class ClosingBookController extends Controller
                 'memo'                  => $request->memo,
                 'status'                => 7
             ]);
-
+            other_transaction::find($transactions->id)->update(['ref_id' => $header->id]);
 
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $header->id]);
@@ -242,8 +243,8 @@ class ClosingBookController extends Controller
             $trans_noje             = now()->format('m') . '/' . now()->format('y') . '.' . $number1je;
         } else {
             $numberje               = journal_entry::max('number');
-            $last_closing_bookje    = journal_entry::get()->last()->first();
-            if ($request->hidden_id == $last_closing_bookje->id && $last_closing_bookje != null) {
+            $last_closing_bookje    = journal_entry::latest()->first();
+            if ($last_closing_bookje && $request->hidden_id == $last_closing_bookje->id) {
                 $trans_noje         = $last_closing_bookje->number;
             } else {
                 if ($numberje == 0)
@@ -254,12 +255,12 @@ class ClosingBookController extends Controller
 
         DB::beginTransaction();
         try {
-
+            /*
             $transactions               = other_transaction::updateOrCreate([
                 'company_id'            => $user->company_id,
                 'user_id'               => Auth::id(),
                 'number'                => $trans_no,
-                'number_complete'       => 'Journal Entry #' . $trans_no,
+                'number_complete'       => 'Closing Book #' . $trans_no,
                 'type'                  => 'closing book',
             ], [
                 'transaction_date'      => $request->end_period,
@@ -282,11 +283,7 @@ class ClosingBookController extends Controller
                 'total_credit'                  => 0,
             ]);
 
-            other_transaction::find($transactions->id)->update([
-                'ref_id'                        => $journal->id,
-            ]);
-
-            /*
+            
             foreach ($request->in_coa as $key => $coa_id) {
                 journal_entry_item::updateOrCreate([
                     'journal_entry_id'          => $journal->id,
@@ -353,12 +350,7 @@ class ClosingBookController extends Controller
             ]);
              */
 
-            $cb = closing_book::updateOrCreate([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'number'                        => $trans_no,
-                'other_transaction_id'          => $transactions->id
-            ], [
+            closing_book::find($request->hidden_id)->update([
                 'transaction_date'              => $request->end_period,
                 'start_period'                  => $request->start_period,
                 'end_period'                    => $request->end_period,
@@ -368,11 +360,15 @@ class ClosingBookController extends Controller
                 'net_profit'                    => $request->sub_net_credit - $request->sub_net_credit,
                 'status'                        => 7,
             ]);
+            /*
+            other_transaction::find($transactions->id)->update([
+                'ref_id'                        => $cb->id,
+            ]);
 
             closing_book::find($cb->id)->update([
                 'ref_id'                    => $transactions->id,
             ]);
-            /*
+            
             journal_entry::find($journal->id)->update([                
                 'total_debit'                   => $total_debit, 
                 'total_credit'                   => $total_credit 
@@ -380,16 +376,17 @@ class ClosingBookController extends Controller
              */
 
             DB::commit();
-            return response()->json(['success' => 'Data is successfully added', 'id' => $cb->id]);
+            return response()->json(['success' => 'Data is successfully added', 'id' => $request->hidden_id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
 
-    public function financial_statement()
+    public function financial_statement($id)
     {
-        return view('admin.accounts.closing_book.statement');
+        $cb                 = closing_book::find($id);
+        return view('admin.accounts.closing_book.statement', compact(['id', 'cb']));
     }
 
     public function confirm_close_book(Request $request)
@@ -521,7 +518,7 @@ class ClosingBookController extends Controller
                 'retained_amt'                  => $request->sub_net_debit - $request->sub_net_credit,
                 'memo'                          => $request->memo,
                 'net_profit'                    => $request->sub_net_credit - $request->sub_net_credit,
-                'status'                        => 7,
+                'status'                        => 8,
             ]);
 
             closing_book::find($cb->id)->update([
@@ -605,5 +602,227 @@ class ClosingBookController extends Controller
     public function destroy(ClosingBook $closingBook)
     {
         //
+    }
+
+    public function balance_sheet($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $today                                      = Carbon::parse($start);
+        $current_periode                            = new Carbon('first day of ' . $today->format('F'));
+        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$start, $end])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+
+        return view('admin.accounts.closing_book.preview_report.balance_sheet_pdf', compact([
+            'coa_detail', 'last_periode_coa_detail', 'company', 'today', 'start', 'end'
+        ]));
+    }
+
+    public function cash_flow($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
+            ->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id, type')->groupBy('number')->groupBy('coa_id')
+            ->get();
+        $cash_received_from_cust                    = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'sales payment') {
+                if ($cd->coa->coa_category_id == 3) {
+                    $cash_received_from_cust        += ($cd->debit - $cd->credit);
+                }
+            }
+        }
+        $other_current_asset                        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 2) {
+                $other_current_asset                += $cd->debit - $cd->credit;
+            }
+        }
+        $cash_paid_to_supplier                      = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'purchase payment') {
+                if ($cd->coa->coa_category_id == 3) {
+                    $cash_paid_to_supplier          += $cd->credit - $cd->debit;
+                }
+            }
+        }
+        $cc_and_current_liability                   = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 9 or $cd->coa->coa_category_id == 10 && $cd->coa_id != 50 && $cd->coa_id != 51 && $cd->coa_id != 52 && $cd->coa_id != 53 && $cd->coa_id != 54 && $cd->coa_id != 55) {
+                $cc_and_current_liability        += $cd->debit - $cd->credit;
+            }
+        }
+        $other_income                               = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 14) {
+                $other_income                       += $cd->debit - $cd->credit;
+            }
+        }
+        $operating_expense                          = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->type == 'expense') {
+                $operating_expense                  += $cd->debit;
+            }
+        }
+        $net_cash_operating_acti    = $cash_received_from_cust + $other_current_asset - $cash_paid_to_supplier - $cc_and_current_liability + $other_income - $operating_expense;
+
+        $purchase_sale_asset        = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 5) {
+                $purchase_sale_asset                += $cd->debit - $cd->credit;
+            }
+        }
+        $other_investing_asset      = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 6) {
+                $other_investing_asset              += $cd->debit - $cd->credit;
+            }
+        }
+        $net_cash_by_investing      = $purchase_sale_asset + $other_investing_asset;
+
+        $repayment_proceed_loan     = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 49 or $cd->coa->coa_category_id == 56) {
+                $repayment_proceed_loan             += $cd->debit - $cd->credit;
+            }
+        }
+        $equity_capital             = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 12) {
+                $equity_capital             += $cd->debit - $cd->credit;
+            }
+        }
+        $net_cash_finan             = $repayment_proceed_loan + $equity_capital;
+
+        $increase_dec_in_cash       = $net_cash_operating_acti + $net_cash_by_investing + $net_cash_finan;
+        $beginning_cash             = 0;
+        $ending_cash                = $beginning_cash + $increase_dec_in_cash;
+        return view('admin.accounts.closing_book.preview_report.cashflow_pdf', compact([
+            'company', 'start',
+            'end',
+            'cash_received_from_cust',
+            'other_current_asset',
+            'cash_paid_to_supplier',
+            'cc_and_current_liability',
+            'other_income',
+            'operating_expense',
+            'net_cash_operating_acti',
+            'purchase_sale_asset',
+            'other_investing_asset',
+            'net_cash_by_investing',
+            'repayment_proceed_loan',
+            'equity_capital',
+            'net_cash_finan',
+            'increase_dec_in_cash',
+            'beginning_cash',
+            'ending_cash',
+        ]));
+    }
+
+    public function profit_loss($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+
+        $total_primary_income               = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 13) {
+                $total_primary_income       += $cd->total2;
+            }
+        }
+        $total_cost_of_sales                = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 15) {
+                $total_cost_of_sales        += $cd->total;
+            }
+        }
+        $gross_profit                       = $total_primary_income - $total_cost_of_sales;
+
+        $total_operational_expense          = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 16) {
+                $total_operational_expense  += $cd->total;
+            }
+        }
+        $net_operating_income               = $gross_profit - $total_operational_expense;
+
+        $total_other_income                 = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 14) {
+                $total_other_income         += $cd->total2;
+            }
+        }
+
+        $total_other_expense                = 0;
+        foreach ($coa_detail as $cd) {
+            if ($cd->coa->coa_category_id == 17) {
+                $total_other_expense        += $cd->total;
+            }
+        }
+        $net_income                 = $net_operating_income + $total_other_income - $total_other_expense;
+        return view('admin.reports.overview_export.profit_loss_pdf', compact([
+            'company', 'start',
+            'end',
+            'coa_detail',
+            'total_primary_income',
+            'total_cost_of_sales',
+            'gross_profit',
+            'total_operational_expense',
+            'net_operating_income',
+            'total_other_income',
+            'total_other_expense',
+            'net_income',
+        ]));
+    }
+
+    public function trial_balance($start, $end)
+    {
+        $user                                       = User::find(Auth::id());
+        $company                                    = company_setting::where('company_id', $user->company_id)->first();
+        $coa_detail2                 = coa_detail::whereBetween('date', [$start, $end])
+            ->select('coa_details.*')->groupBy('coa_id')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(debit)');
+            }, 'debit')
+            ->selectSub(function ($query) {
+                return $query->selectRaw('SUM(credit)');
+            }, 'credit')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('coa_id');
+        //dd($coa_detail2);
+        $asset                          = coa::whereIn('coa_category_id', [3, 1, 4, 2, 5, 6, 7])->get();
+        $liability                      = coa::whereIn('coa_category_id', [8, 9, 10, 11])->get();
+        $equity                         = coa::whereIn('coa_category_id', [12])->get();
+        $income                         = coa::whereIn('coa_category_id', [13, 14])->get();
+        $expense                        = coa::whereIn('coa_category_id', [15, 16, 17])->get();
+        $coa_detail                     = coa_detail::orderBy('coa_id', 'asc')->get()->groupBy('coa_id');
+        $coa                            = coa::get();
+        return view('admin.reports.overview_export.trial_balance_pdf', compact([
+            'company', 'start',
+            'end',
+            'asset',
+            'liability',
+            'equity',
+            'income',
+            'expense',
+            'coa',
+            'coa_detail',
+            'coa_detail2'
+        ]));
     }
 }

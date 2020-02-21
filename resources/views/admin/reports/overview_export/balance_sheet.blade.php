@@ -14,7 +14,7 @@
     <?php $total_depreciation += $a->total ?>
     @endif
     @if($a->coa->coa_category_id == 8 or $a->coa->coa_category_id == 10 or $a->coa->coa_category_id == 17)
-    <?php $total_liability += $a->total ?>
+    <?php $total_liability += $a->total2 ?>
     @endif
 @endforeach
 <?php $total_assets = $total_current_assets + $total_fixed_assets - $total_depreciation ?>
@@ -34,11 +34,11 @@
     <?php $last_periode_total_depreciation += $a->total ?>
     @endif
     @if($a->coa->coa_category_id == 8 or $a->coa->coa_category_id == 10 or $a->coa->coa_category_id == 17)
-    <?php $last_periode_total_liability += $a->total ?>
+    <?php $last_periode_total_liability += $a->total2 ?>
     @endif
 @endforeach
 <?php $last_periode_total_assets    = $last_periode_total_current_assets + $last_periode_total_fixed_assets - $last_periode_total_depreciation ?>
-<?php $last_periode_earning         = $last_periode_total_assets - $last_periode_total_liability; ?>
+<?php $last_periode_earning         = 0;//$last_periode_total_assets - $last_periode_total_liability; ?>
 <?php $current_period_earning       = $total_assets - $total_liability; ?>
 <?php $total_equity2                = $current_period_earning + $last_periode_earning; ?>
 <?php $total_lia_eq                 = $total_liability + $total_equity2; ?>

@@ -257,7 +257,7 @@
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Sales Invoice')
                             @can('Create')
-                            @if($pi->status == 1 or $pi->status == 4)
+                            @if($pi->status == 1 or $pi->status == 4 or $pi->status == 5)
                             <li><a href="#">Clone Transaction</a></li>
                             @hasrole('Owner|Ultimate|Sales Payment')
                             <li><a href="/sales_payment/new/from/{{$pi->id}}">Receive Payment</a></li>
@@ -267,7 +267,7 @@
                             @endrole
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
-                            @elseif($pi->status == 3 && $pi->total_return != $pi->balance_due or $pi->total_return == null)
+                            @elseif($pi->status == 3 && $pi->total_return != $pi->grandtotal or $pi->total_return == null)
                             <li><a href="#">Clone Transaction</a></li>
                             @hasrole('Owner|Ultimate|Sales Return')
                             <li><a href="/sales_return/new/{{$pi->id}}">Sales Return</a></li>
@@ -603,17 +603,17 @@
                         <div class="form-group">
                             <a href="{{ url('/sales_invoice') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Sales Invoice')
-                            @if($pi->status == 1)
-                            @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            @endcan
-                            @can('Edit')
-                            <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_invoice/edit/' + {{$pi->id}};">Edit
-                                </button>
-                            </div>
-                            @endcan
-                            @endif
+                                @if($pi->status == 1 or $pi->status == 5 && $check_pi_history == null && $check_pr_history == null)
+                                    @can('Delete')
+                                        <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                    @endcan
+                                    @can('Edit')
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_invoice/edit/{{$pi->id}}';">Edit
+                                            </button>
+                                        </div>
+                                    @endcan
+                                @endif
                             @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
@@ -626,33 +626,33 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();
         var get_id = document.getElementById("form_id").value;
         if (get_type == '1') {
-            window.open('/sales_invoice/print/PDF/1/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/1/' + get_id, '_blank');
         } else if (get_type == '2') {
-            window.open('/sales_invoice/print/PDF/2/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/2/' + get_id, '_blank');
         } else if (get_type == '3') {
-            window.open('/sales_invoice/print/PDF/3/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/3/' + get_id, '_blank');
         } else if (get_type == '51') {
-            window.open('/sales_invoice/print/PDF/sukses_surabaya/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/sukses_surabaya/' + get_id, '_blank');
         } else if (get_type == '52') {
-            window.open('/sales_invoice/print/PDF/sukses_surabaya_sj/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/sukses_surabaya_sj/' + get_id, '_blank');
         } else if (get_type == '21') {
-            window.open('/sales_invoice/print/PDF/sukses/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/sukses/' + get_id, '_blank');
         } else if (get_type == '211') {
-            window.open('/sales_invoice/print/PDF/sukses_sj/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/sukses_sj/' + get_id, '_blank');
         } else if (get_type == '22') {
-            window.open('/sales_invoice/print/PDF/gelora/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/gelora/' + get_id, '_blank');
         } else if (get_type == '221') {
-            window.open('/sales_invoice/print/PDF/gelora_sj/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/gelora_sj/' + get_id, '_blank');
         } else if (get_type == '23') {
-            window.open('/sales_invoice/print/PDF/fas/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/fas/' + get_id, '_blank');
         } else if (get_type == '231') {
-            window.open('/sales_invoice/print/PDF/fas_sj/' + get_id , '_blank');
+            window.open('/sales_invoice/print/PDF/fas_sj/' + get_id, '_blank');
         }
     });
 </script>

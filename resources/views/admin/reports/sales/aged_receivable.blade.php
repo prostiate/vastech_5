@@ -15,6 +15,18 @@
                     <li>
                         <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
                     </li>
+                    <li>
+                        <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a onclick="excel()">Excel</a>
+                            </li>
+                            <li><a onclick="csv()">CSV</a>
+                            </li>
+                            <li><a onclick="pdf()">PDF</a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -39,29 +51,27 @@
                                             <?php $total = 0 ?>
                                             <?php $total_satutiga = 0 ?>
                                             @foreach($contact as $c)
-                                                @foreach($si as $sii)
-                                                    @if($c->id == $sii->contact_id)
-                                                        <tr>
-                                                            <td>{{$c->display_name}}</td>
-                                                            <?php $total += $sii->balance_due ?>
-                                                            <td class="text-center">@number($total)</td>
-                                                            <?php $satutiga_awal = date('Y-m-01', strtotime($sii->transaction_date)) ?>
-                                                            <?php $satutiga_akhir = date('Y-m-t', strtotime($sii->transaction_date)) ?>
-                                                            @if($sii->transaction_date >= $satutiga_awal && $sii->transaction_date <= $satutiga_akhir)
-                                                                <?php $total_satutiga += $sii->balance_due ?>
-                                                                <td class="text-center">@number($total_satutiga)</td>
-                                                            @endif
-                                                            <td class="text-center">0.00</td>
-                                                            <td class="text-center">0.00</td>
-                                                            <td class="text-center">0.00</td>
-                                                        </tr>
+                                            @foreach($si as $sii)
+                                            @if($c->id == $sii->contact_id)
+                                            <tr>
+                                                <td>{{$c->display_name}}</td>
+                                                <?php $total += $sii->balance_due ?>
+                                                <td class="text-center">@number($total)</td>
+                                                <?php $satutiga_awal = date('Y-m-01', strtotime($sii->transaction_date)) ?>
+                                                <?php $satutiga_akhir = date('Y-m-t', strtotime($sii->transaction_date)) ?>
+                                                @if($sii->transaction_date >= $satutiga_awal && $sii->transaction_date <= $satutiga_akhir) <?php $total_satutiga += $sii->balance_due ?> <td class="text-center">@number($total_satutiga)</td>
                                                     @endif
-                                                @endforeach
+                                                    <td class="text-center">0.00</td>
+                                                    <td class="text-center">0.00</td>
+                                                    <td class="text-center">0.00</td>
+                                            </tr>
+                                            @endif
+                                            @endforeach
                                             <?php $total_satutiga = 0 ?>
                                             <?php $total = 0 ?>
                                             @endforeach
                                             <tr>
-                                                <td class="text-left" ><b>Total Receivable</b></td>
+                                                <td class="text-left"><b>Total Receivable</b></td>
                                                 <td class="text-center"><b></b></td>
                                                 <td class="text-center"><b></b></td>
                                                 <td class="text-center"><b>0.00</b></td>
@@ -84,11 +94,26 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     function next() {
-        var start   = document.getElementById('datepicker1');
-        window.location.href = "/reports/aged_receivable/" + start.value;
+        var start = document.getElementById('datepicker1');
+        window.location.href = "/reports/aged_receivable/start_date=" + start.value;
+    }
+
+    function excel() {
+        var start = document.getElementById('datepicker1');
+        window.location.href = "/reports/aged_receivable/excel/start_date=" + start.value;
+    }
+
+    function csv() {
+        var start = document.getElementById('datepicker1');
+        window.location.href = "/reports/aged_receivable/csv/start_date=" + start.value;
+    }
+
+    function pdf() {
+        var start = document.getElementById('datepicker1');
+        window.open("/reports/aged_receivable/pdf/start_date=" + start.value);
     }
 </script>
 @endpush

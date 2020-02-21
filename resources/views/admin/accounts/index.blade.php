@@ -35,7 +35,7 @@
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/chart_of_accounts/new';">New Account
                         </button>
                     </li>
-                    <!--<li>
+                    <li>
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
@@ -51,11 +51,11 @@
                             <li>
                                 <a href="/closing_book">Closing Book</a>
                             </li>
-                            <li class="divider"></li>
+                            <!--<li class="divider"></li>
                             <li><a data-toggle="modal" data-target="#setupAccounts">Setup Accounts</a>
                             </li>
                             <li><a data-toggle="modal" data-target="#importExcel">Import Journal Entry</a>
-                            <li><a data-toggle="modal" data-target="#exportExcel">Export Accounts</a>
+                            <li><a data-toggle="modal" data-target="#exportExcel">Export Accounts</a>-->
                         </ul>
                         <div class="modal fade" id="setupAccounts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -126,7 +126,7 @@
                                 </form>
                             </div>
                         </div>
-                    </li>-->
+                    </li>
                     @endcan
                     @endrole
                 </ul>
@@ -199,5 +199,5 @@
 @endsection
 
 @push('scripts')
-<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200217-1409') }}" charset="utf-8"></script>-->
+<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200221-1431') }}" charset="utf-8"></script>-->
 @endpush

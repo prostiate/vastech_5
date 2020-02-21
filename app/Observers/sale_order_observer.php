@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\closing_book;
 use App\sale_order;
 use App\other_transaction;
 use Carbon\Carbon;

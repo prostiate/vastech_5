@@ -8,17 +8,22 @@ use App\company_setting;
 use App\contact;
 use App\expense;
 use App\expense_item;
+use App\Exports\aged_receivable;
 use App\Exports\balance_sheet;
 use App\Exports\cashflow;
+use App\Exports\customer_balance;
 use App\Exports\expenses_details;
 use App\Exports\expenses_list;
 use App\Exports\general_ledger;
 use App\Exports\inventory_summary;
 use App\Exports\journal_report;
 use App\Exports\profit_loss;
+use App\Exports\sales_by_customer;
+use App\Exports\sales_list;
 use App\Exports\spk_details;
 use App\Exports\spk_list;
 use App\Exports\trial_balance;
+use App\other_status;
 use App\other_transaction;
 use App\product;
 use App\purchase_delivery;
@@ -79,36 +84,36 @@ class ReportController extends Controller
     // OVERVIEW
     public function balanceSheet()
     {
-        $last_periode                               = new Carbon('first day of last year');
-        $startyear_last_periode                     = $last_periode->startOfYear()->toDateString();
-        $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
-        $current_periode                            = new Carbon('first day of January ' . date('Y'));
-        //dd($last_periode);
+        $last_periode                               = new Carbon('first day of last month');
+        $start_last_periode                         = $last_periode->toDateString();
+        $endmonth_last_periode                      = new Carbon('last day of last month');
+        $end_last_periode                           = $endmonth_last_periode->toDateString();
+        $current_periode                            = new Carbon('first day of this month');
+        //dd($current_periode);
         $today                                      = Carbon::today()->toDateString();
+        $today2                                     = $current_periode->toDateString();
         /*
          INI CONTOH UNTUK JOIN COA DETAIL DENGAN COA YANG BENAR
         $view_current_assets4                        = DB::table('coa_details')
                                                         ->join('coas', 'coa_details.id', '=', 'coas.id')
                                                         ->select('coa_details.*', 'coas.coa_category_id')
                                                         ->get();*/
-        $cek_opening_balance                        = coa_detail::where('type', 'opening balance')->first();
+        /*$cek_opening_balance                        = coa_detail::where('type', 'opening balance')->first();
         if ($cek_opening_balance) {
             $coa_detail                             = coa_detail::whereBetween('date', [$cek_opening_balance->date, $today])
-                ->orderBy('date', 'ASC')
-                ->selectRaw('SUM(debit - credit) as total, coa_id')
-                //->selectRaw('debit, credit, SUM(debit - credit) as total1, SUM(credit - debit) as total2, coa_id')
-                //->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')
-                ->groupBy('coa_id')
-                ->get();
-        } else {
-            $coa_detail                             = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
                 ->orderBy('date', 'ASC')
                 ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
                 //->selectRaw('debit, credit, SUM(debit - credit) as total1, SUM(credit - debit) as total2, coa_id')
                 //->selectRaw('SUM(debit) as debit, SUM(credit) as credit, coa_id')
                 ->groupBy('coa_id')
                 ->get();
-        }
+        } else {*/
+        $coa_detail                             = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
+            ->groupBy('coa_id')
+            ->get();
+        //}
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
@@ -142,46 +147,47 @@ class ReportController extends Controller
         }*/
         // CEK KLO ADA OPENING BALANCE KLO GADA PAKE FIRST COA DETAIL
         // UNTUK LAST PERIODE, KITA PAKE PER BULAN YAITU PAKE BULAN KEMARIN DARI CURRENT
-        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$last_periode->startOfYear(), $last_periode->endOfYear()])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+        $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$start_last_periode, $end_last_periode])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
         $last_periode_total_current_assets                       = 0;
-        foreach ($last_periode_coa_detail as $cd) {
-            if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
-                $last_periode_total_current_assets  += $cd->total;
+        foreach ($last_periode_coa_detail as $cd2) {
+            if ($cd2->coa->coa_category_id == 1 or $cd2->coa->coa_category_id == 2 or $cd2->coa->coa_category_id == 3 or $cd2->coa->coa_category_id == 4) {
+                $last_periode_total_current_assets  += $cd2->total;
             }
         }
         $last_periode_total_fixed_assets                         = 0;
-        foreach ($last_periode_coa_detail as $cd) {
-            if ($cd->coa->coa_category_id == 5 or $cd->coa->coa_category_id == 6) {
-                $last_periode_total_fixed_assets    += $cd->total;
+        foreach ($last_periode_coa_detail as $cd2) {
+            if ($cd2->coa->coa_category_id == 5 or $cd2->coa->coa_category_id == 6) {
+                $last_periode_total_fixed_assets    += $cd2->total;
             }
         }
         $last_periode_total_depreciation                         = 0;
-        foreach ($last_periode_coa_detail as $cd) {
-            if ($cd->coa->coa_category_id == 7) {
-                $last_periode_total_depreciation    += $cd->total;
+        foreach ($last_periode_coa_detail as $cd2) {
+            if ($cd2->coa->coa_category_id == 7) {
+                $last_periode_total_depreciation    += $cd2->total;
             }
         }
         $last_periode_total_assets                  = $last_periode_total_current_assets + $last_periode_total_fixed_assets - $last_periode_total_depreciation;
         $last_periode_total_liability               = 0;
-        foreach ($last_periode_coa_detail as $cd) {
-            if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $last_periode_total_liability       += $cd->total;
+        foreach ($last_periode_coa_detail as $cd2) {
+            if ($cd2->coa->coa_category_id == 8 or $cd2->coa->coa_category_id == 10 or $cd2->coa->coa_category_id == 17) {
+                $last_periode_total_liability       += $cd2->total2;
             }
         }
-        $last_periode_earning                       = $last_periode_total_assets - $last_periode_total_liability;
+        $last_periode_earning                       = 0; //$last_periode_total_assets - $last_periode_total_liability;
         //$current_period_earning                     = $total_assets - $total_liability; YANG KATANYA BENER (CUMA SALAH)
-        $current_period_earning                     = $total_liability - $total_assets;
+        $current_period_earning                     = $total_assets - $total_liability;
         $total_equity2                              = $current_period_earning + $last_periode_earning;
         //$total_lia_eq                               = $total_liability + $total_equity2; YANG KATANYA BENER (CUMA SALAH)
-        $total_lia_eq                               = $total_liability - $total_equity2;
+        $total_lia_eq                               = $total_equity2 + $total_liability;
         return view('admin.reports.overview.balance_sheet', compact([
-            'startyear_last_periode',
-            'endyear_last_periode',
+            'start_last_periode',
+            'end_last_periode',
             'today',
+            'today2',
             'coa_detail',
             'total_current_assets',
             'total_fixed_assets',
@@ -202,8 +208,9 @@ class ReportController extends Controller
         $endyear_last_periode                       = $last_periode->endOfYear()->toDateString();
         $current_periode                            = new Carbon('first day of January ' . date('Y'));
         $today                                      = Carbon::today()->toDateString();
-        $today2                                     = Carbon::parse($mulaidari);
-        $mulaidariYear                              = new Carbon('first day of January ' . $today2->year);
+        $today2                                     = $mulaidari;
+        $today3                                     = Carbon::parse($mulaidari);
+        $mulaidariYear                              = new Carbon('first day of ' . $today3->format('F'));
         //if (Carbon::parse($today)->gt(Carbon::now())) {
         //    $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
         //           ->orderBy('coa_id')
@@ -211,16 +218,16 @@ class ReportController extends Controller
         //        ->groupBy('coa_id')
         //        ->get();
         //} else {
-        $coa_detail                                 = coa_detail::whereBetween('date', [$mulaidariYear, $today2])
-            ->orderBy('coa_id')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+        $coa_detail                                 = coa_detail::whereBetween('date', [$mulaidariYear, $today3])
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
         //}
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
-                $total_current_assets                   += $cd->total;
+                $total_current_assets               += $cd->total;
             }
         }
         $total_fixed_assets                         = 0;
@@ -239,7 +246,7 @@ class ReportController extends Controller
         $total_liability                            = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $total_liability                   += $cd->total;
+                $total_liability                   += $cd->total2;
             }
         }
         /*$total_equity                               = 0;
@@ -250,7 +257,7 @@ class ReportController extends Controller
         }*/
         $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$last_periode->startOfYear(), $last_periode->endOfYear()])
             ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
         $last_periode_total_current_assets                       = 0;
@@ -275,10 +282,10 @@ class ReportController extends Controller
         $last_periode_total_liability                            = 0;
         foreach ($last_periode_coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 8 or $cd->coa->coa_category_id == 10 or $cd->coa->coa_category_id == 17) {
-                $last_periode_total_liability                    += $cd->total;
+                $last_periode_total_liability                    += $cd->total2;
             }
         }
-        $last_periode_earning                       = $last_periode_total_assets - $last_periode_total_liability;
+        $last_periode_earning                       = 0; //$last_periode_total_assets - $last_periode_total_liability;
         $current_period_earning                     = $total_assets - $total_liability;
         $total_equity2                              = $current_period_earning + $last_periode_earning;
         $total_lia_eq                               = $total_liability + $total_equity2;
@@ -317,15 +324,16 @@ class ReportController extends Controller
     {
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
-        $current_periode                            = new Carbon('first day of January ' . date('Y', strtotime($today)));
+        $today2                                     = Carbon::parse($today);
+        $current_periode                            = new Carbon('first day of ' . $today2->format('F'));
         $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
         $last_periode_coa_detail                    = coa_detail::whereBetween('date', [$startyear, $endyear])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
         $view = view('admin.reports.overview_export.balance_sheet_pdf')->with(compact(['coa_detail', 'last_periode_coa_detail', 'company', 'today']));
@@ -414,47 +422,47 @@ class ReportController extends Controller
     {
         $today                                      = Carbon::today()->toDateString();
         $coa_detail                                 = coa_detail::whereBetween('date', [$today, $today])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
 
-        $total_primary_income       = 0;
+        $total_primary_income               = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 13) {
-                $total_primary_income                   += abs($cd->total);
+                $total_primary_income       += $cd->total2;
             }
         }
-        $total_cost_of_sales        = 0;
+        $total_cost_of_sales                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 15) {
-                $total_cost_of_sales                   += $cd->total;
+                $total_cost_of_sales        += $cd->total;
             }
         }
-        $gross_profit               = $total_primary_income - $total_cost_of_sales;
+        $gross_profit                       = $total_primary_income - $total_cost_of_sales;
 
-        $total_operational_expense  = 0;
+        $total_operational_expense          = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 16) {
-                $total_operational_expense                   += $cd->total;
+                $total_operational_expense  += $cd->total;
             }
         }
-        $net_operating_income       = $gross_profit - $total_operational_expense;
+        $net_operating_income               = $gross_profit - $total_operational_expense;
 
-        $total_other_income         = 0;
+        $total_other_income                 = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 14) {
-                $total_other_income                   += $cd->total;
+                $total_other_income         += $cd->total2;
             }
         }
 
-        $total_other_expense        = 0;
+        $total_other_expense                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 17) {
-                $total_other_expense                   += $cd->total;
+                $total_other_expense        += $cd->total;
             }
         }
-        $net_income                 = $net_operating_income + $total_other_income - $total_other_expense;
+        $net_income                         = $net_operating_income + $total_other_income - $total_other_expense;
 
         return view('admin.reports.overview.profit_loss', compact([
             'today',
@@ -473,47 +481,47 @@ class ReportController extends Controller
     public function profitLossInput($start, $end)
     {
         $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
 
-        $total_primary_income       = 0;
+        $total_primary_income               = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 13) {
-                $total_primary_income                   += abs($cd->total);
+                $total_primary_income       += $cd->total2;
             }
         }
-        $total_cost_of_sales        = 0;
+        $total_cost_of_sales                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 15) {
-                $total_cost_of_sales                   += $cd->total;
+                $total_cost_of_sales        += $cd->total;
             }
         }
-        $gross_profit               = $total_primary_income - $total_cost_of_sales;
+        $gross_profit                       = $total_primary_income - $total_cost_of_sales;
 
-        $total_operational_expense  = 0;
+        $total_operational_expense          = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 16) {
-                $total_operational_expense                   += $cd->total;
+                $total_operational_expense  += $cd->total;
             }
         }
-        $net_operating_income       = $gross_profit - $total_operational_expense;
+        $net_operating_income               = $gross_profit - $total_operational_expense;
 
-        $total_other_income         = 0;
+        $total_other_income                 = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 14) {
-                $total_other_income                   += $cd->total;
+                $total_other_income         += $cd->total2;
             }
         }
 
-        $total_other_expense        = 0;
+        $total_other_expense                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 17) {
-                $total_other_expense                   += $cd->total;
+                $total_other_expense        += $cd->total;
             }
         }
-        $net_income                 = $net_operating_income + $total_other_income - $total_other_expense;
+        $net_income                         = $net_operating_income + $total_other_income - $total_other_expense;
 
         return view('admin.reports.overview.profit_lossInput', compact([
             'start',
@@ -545,44 +553,44 @@ class ReportController extends Controller
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
         $coa_detail                                 = coa_detail::whereBetween('date', [$start, $end])
-            ->orderBy('date')
-            ->selectRaw('SUM(debit - credit) as total, coa_id')
+            ->orderBy('date', 'ASC')
+            ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')
             ->groupBy('coa_id')
             ->get();
 
-        $total_primary_income       = 0;
+        $total_primary_income               = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 13) {
-                $total_primary_income                   += abs($cd->total);
+                $total_primary_income       += $cd->total2;
             }
         }
-        $total_cost_of_sales        = 0;
+        $total_cost_of_sales                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 15) {
-                $total_cost_of_sales                   += $cd->total;
+                $total_cost_of_sales        += $cd->total;
             }
         }
-        $gross_profit               = $total_primary_income - $total_cost_of_sales;
+        $gross_profit                       = $total_primary_income - $total_cost_of_sales;
 
-        $total_operational_expense  = 0;
+        $total_operational_expense          = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 16) {
-                $total_operational_expense                   += $cd->total;
+                $total_operational_expense  += $cd->total;
             }
         }
-        $net_operating_income       = $gross_profit - $total_operational_expense;
+        $net_operating_income               = $gross_profit - $total_operational_expense;
 
-        $total_other_income         = 0;
+        $total_other_income                 = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 14) {
-                $total_other_income                   += $cd->total;
+                $total_other_income         += $cd->total2;
             }
         }
 
-        $total_other_expense        = 0;
+        $total_other_expense                = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 17) {
-                $total_other_expense                   += $cd->total;
+                $total_other_expense        += $cd->total;
             }
         }
         $net_income                 = $net_operating_income + $total_other_income - $total_other_expense;
@@ -1749,39 +1757,209 @@ class ReportController extends Controller
     // SALES
     public function sales_list()
     {
-        $today                                      = Carbon::today()->toDateString();
-        $other_transaction                          = other_transaction::with('ot_contact', 'ot_status')
+        $today              = Carbon::today()->toDateString();
+        $status             = other_status::get()->except(array(6, 7, 8, 9));
+        $contact            = contact::where('type_customer', 1)->get();
+        $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+            ->orderBy('transaction_date', 'ASC')
             ->whereBetween('transaction_date', [$today, $today])
             ->get();
         return view(
             'admin.reports.sales.sales_list',
             compact([
                 'today',
-                'other_transaction'
+                'other_transaction',
+                'status',
+                'contact',
             ])
         );
     }
 
-    public function sales_listInput($start, $end)
+    public function sales_listInput($start, $end, $type, $con, $stat)
     {
-        $other_transaction                          = other_transaction::with('ot_contact', 'ot_status')
-            ->whereBetween('transaction_date', [$start, $end])
-            ->get();
+        $contact2                   = explode(',', $con);
+        $status2                    = explode(',', $stat);
+        $type2                      = explode(',', $type);
+        $status                     = other_status::get()->except(array(6, 7, 8, 9));
+        $contact                    = contact::where('type_customer', 1)->get();
+        if ($con == 'null') {
+            if ($stat == 'null') {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            } else {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            }
+        } else {
+            if ($stat == 'null') {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('contact', $contact2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('contact', $contact2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            } else {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('contact', $contact2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('contact', $contact2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            }
+        }
         return view(
             'admin.reports.sales.sales_listInput',
             compact([
                 'start',
                 'end',
-                'other_transaction'
+                'type',
+                'con',
+                'stat',
+                'other_transaction',
+                'status',
+                'contact',
             ])
         );
+    }
+
+    public function sales_list_excel($start, $end, $type, $con, $stat)
+    {
+        return Excel::download(new sales_list($start, $end, $type, $con, $stat), 'sales_list_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function sales_list_csv($start, $end, $type, $con, $stat)
+    {
+        return Excel::download(new sales_list($start, $end, $type, $con, $stat), 'sales_list_' . $start . '_' . $end . '.csv');
+    }
+
+    public function sales_list_pdf($start, $end, $type, $con, $stat)
+    {
+        $user                           = User::find(Auth::id());
+        $company                        = company_setting::where('company_id', $user->company_id)->first();
+        $contact2                       = explode(',', $con);
+        $status2                        = explode(',', $stat);
+        $type2                          = explode(',', $type);
+        if ($con == 'null') {
+            if ($stat == 'null') {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            } else {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            }
+        } else {
+            if ($stat == 'null') {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('contact', $contact2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('contact', $contact2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            } else {
+                if ($type == 'null') {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('contact', $contact2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                } else {
+                    $other_transaction  = other_transaction::with('ot_contact', 'ot_status')
+                        ->orderBy('transaction_date', 'ASC')
+                        ->whereIn('type', $type2)
+                        ->whereIn('contact', $contact2)
+                        ->whereIn('status', $status2)
+                        ->whereBetween('transaction_date', [$start, $end])
+                        ->get();
+                }
+            }
+        }
+        $view = view('admin.reports.sales_export.sales_list_pdf')->with(compact([
+            'company',
+            'start',
+            'end',
+            'other_transaction',
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html)->setPaper('a4', 'landscape');
+        return $pdf->download('sales_list_' . $start . '_' . $end . '.pdf');
     }
 
     public function sales_by_customer()
     {
         $today                      = Carbon::today()->toDateString();
         $contact                    = contact::get();
-        $si                         = sale_invoice::whereBetween('transaction_date', [$today, $today])->get();
+        $si                         = sale_invoice::orderBy('transaction_date')->whereBetween('transaction_date', [$today, $today])->get();
         $sid                        = sale_invoice_item::get();
         return view(
             'admin.reports.sales.sales_by_customer',
@@ -1794,10 +1972,20 @@ class ReportController extends Controller
         );
     }
 
-    public function sales_by_customerInput($start, $end)
+    public function sales_by_customerInput($start, $end, $con)
     {
+        $contact2                   = explode(',', $con);
         $contact                    = contact::get();
-        $si                         = sale_invoice::whereBetween('transaction_date', [$start, $end])->get();
+        if ($con == 'null') {
+            $si                     = sale_invoice::orderBy('transaction_date')
+                ->whereBetween('transaction_date', [$start, $end])
+                ->get();
+        } else {
+            $si                     = sale_invoice::orderBy('transaction_date')
+                ->whereIn('contact_id', $contact2)
+                ->whereBetween('transaction_date', [$start, $end])
+                ->get();
+        }
         $sid                        = sale_invoice_item::get();
         return view(
             'admin.reports.sales.sales_by_customerInput',
@@ -1806,16 +1994,62 @@ class ReportController extends Controller
                 'end',
                 'contact',
                 'si',
-                'sid'
+                'sid',
+                'con'
             ])
         );
     }
 
+    public function sales_by_customer_excel($start, $end, $con)
+    {
+        return Excel::download(new sales_by_customer($start, $end, $con), 'sales_by_customer_' . $start . '_' . $end . '.xlsx');
+    }
+
+    public function sales_by_customer_csv($start, $end, $con)
+    {
+        return Excel::download(new sales_by_customer($start, $end, $con), 'sales_by_customer_' . $start . '_' . $end . '.csv');
+    }
+
+    public function sales_by_customer_pdf($start, $end, $con)
+    {
+        $user                       = User::find(Auth::id());
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $contact2                   = explode(',', $con);
+        $contact                    = contact::get();
+        if ($con == 'null') {
+            $si                     = sale_invoice::orderBy('transaction_date')
+                ->whereBetween('transaction_date', [$start, $end])
+                ->get();
+        } else {
+            $si                     = sale_invoice::orderBy('transaction_date')
+                ->whereIn('contact_id', $contact2)
+                ->whereBetween('transaction_date', [$start, $end])
+                ->get();
+        }
+        $sid                        = sale_invoice_item::get();
+        $view = view('admin.reports.sales_export.sales_by_customer_pdf')->with(compact([
+            'company',
+            'start',
+            'end',
+            'contact',
+            'si',
+            'sid',
+            'con'
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html)->setPaper('a4', 'landscape');
+        return $pdf->download('sales_by_customer_' . $start . '_' . $end . '.pdf');
+    }
+
     public function customer_balance()
     {
+        $this_month                 = new Carbon('first day of this month');
+        $get_this_month             = $this_month->toDateString();
         $today                      = Carbon::today()->toDateString();
         $contact                    = contact::get();
-        $si                         = sale_invoice::whereBetween('transaction_date', [$today, $today])->get();
+        $si                         = sale_invoice::orderBy('transaction_date')
+            ->whereBetween('transaction_date', [$get_this_month, $today])
+            ->get();
         $sid                        = sale_invoice_item::get();
         return view(
             'admin.reports.sales.customer_balance',
@@ -1825,30 +2059,81 @@ class ReportController extends Controller
         );
     }
 
-    public function customer_balanceInput($mulaidari)
+    public function customer_balanceInput($mulaidari, $con)
     {
-        $today                      = Carbon::today()->toDateString();
+        $contact2                   = explode(',', $con);
+        $mulaidar_parse             = Carbon::parse($mulaidari);
+        $get_this_month             = new Carbon('first day of ' . $mulaidar_parse->format('F'));
+        $today                      = $get_this_month->toDateString();
         $today2                     = $mulaidari;
-        if (Carbon::parse($today2)->gt(Carbon::now())) {
-            $si                         = sale_invoice::whereBetween('transaction_date', [$today, $today2])->get();
+        if ($con == 'null') {
+            $si                         = sale_invoice::orderBy('transaction_date')
+                ->whereBetween('transaction_date', [$get_this_month, $today2])
+                ->get();
         } else {
-            $si                         = sale_invoice::whereBetween('transaction_date', [$today2, $today])->get();
+            $si                         = sale_invoice::orderBy('transaction_date')
+                ->whereIn('contact_id', $contact2)
+                ->whereBetween('transaction_date', [$get_this_month, $today2])
+                ->get();
         }
         $contact                    = contact::get();
         $sid                        = sale_invoice_item::get();
         return view(
             'admin.reports.sales.customer_balanceInput',
             compact([
-                'today', 'today2', 'contact', 'si', 'sid'
+                'today', 'today2', 'contact', 'si', 'sid', 'con'
             ])
         );
     }
 
+    public function customer_balance_excel($mulaidari, $con)
+    {
+        return Excel::download(new customer_balance($mulaidari, $con), 'customer_balance_' . $mulaidari . '.xlsx');
+    }
+
+    public function customer_balance_csv($mulaidari, $con)
+    {
+        return Excel::download(new customer_balance($mulaidari, $con), 'customer_balance_' . $mulaidari . '.csv');
+    }
+
+    public function customer_balance_pdf($mulaidari, $con)
+    {
+        $user                       = User::find(Auth::id());
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $contact2                   = explode(',', $con);
+        $mulaidar_parse             = Carbon::parse($mulaidari);
+        $get_this_month             = new Carbon('first day of ' . $mulaidar_parse->format('F'));
+        $today                      = $get_this_month->toDateString();
+        $today2                     = $mulaidari;
+        if ($con == 'null') {
+            $si                         = sale_invoice::orderBy('transaction_date')
+                ->whereBetween('transaction_date', [$get_this_month, $today2])
+                ->get();
+        } else {
+            $si                         = sale_invoice::orderBy('transaction_date')
+                ->whereIn('contact_id', $contact2)
+                ->whereBetween('transaction_date', [$get_this_month, $today2])
+                ->get();
+        }
+        $contact                    = contact::get();
+        $sid                        = sale_invoice_item::get();
+        $view = view('admin.reports.sales_export.customer_balance_pdf')->with(compact([
+            'company',
+            'today', 'today2', 'contact', 'si', 'sid', 'con'
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html)->setPaper('a4', 'landscape');
+        return $pdf->download('customer_balance_' . $mulaidari . '.pdf');
+    }
+
     public function aged_receivable()
     {
+        $this_month                 = new Carbon('first day of this month');
+        $get_this_month             = $this_month->toDateString();
         $today                      = Carbon::today()->toDateString();
         $contact                    = contact::get();
-        $si                         = sale_invoice::whereBetween('transaction_date', [$today, $today])
+        $si                         = sale_invoice::orderBy('transaction_date')
+            ->whereBetween('transaction_date', [$get_this_month, $today])
             ->selectRaw('SUM(balance_due) as balance_due, transaction_date, contact_id')
             ->groupBy('contact_id')
             ->get();
@@ -1864,19 +2149,15 @@ class ReportController extends Controller
 
     public function aged_receivableInput($mulaidari)
     {
-        $today                      = Carbon::today()->toDateString();
+        $mulaidar_parse             = Carbon::parse($mulaidari);
+        $get_this_month             = new Carbon('first day of ' . $mulaidar_parse->format('F'));
+        $today                      = $get_this_month->toDateString();
         $today2                     = $mulaidari;
-        if (Carbon::parse($today)->gt(Carbon::now())) {
-            $si                         = sale_invoice::whereBetween('transaction_date', [$today, $today2])
-                ->selectRaw('SUM(balance_due) as balance_due, transaction_date, contact_id')
-                ->groupBy('contact_id')
-                ->get();
-        } else {
-            $si                         = sale_invoice::whereBetween('transaction_date', [$today2, $today])
-                ->selectRaw('SUM(balance_due) as balance_due, transaction_date, contact_id')
-                ->groupBy('contact_id')
-                ->get();
-        }
+        $si                         = sale_invoice::orderBy('transaction_date')
+            ->whereBetween('transaction_date', [$today, $today2])
+            ->selectRaw('SUM(balance_due) as balance_due, transaction_date, contact_id')
+            ->groupBy('contact_id')
+            ->get();
         $contact                    = contact::get();
         return view(
             'admin.reports.sales.aged_receivableInput',
@@ -1887,6 +2168,42 @@ class ReportController extends Controller
                 'si'
             ])
         );
+    }
+
+    public function aged_receivable_excel($mulaidari)
+    {
+        return Excel::download(new aged_receivable($mulaidari), 'aged_receivable_' . $mulaidari . '.xlsx');
+    }
+
+    public function aged_receivable_csv($mulaidari)
+    {
+        return Excel::download(new aged_receivable($mulaidari), 'aged_receivable_' . $mulaidari . '.csv');
+    }
+
+    public function aged_receivable_pdf($mulaidari)
+    {
+        $user                       = User::find(Auth::id());
+        $company                    = company_setting::where('company_id', $user->company_id)->first();
+        $mulaidar_parse             = Carbon::parse($mulaidari);
+        $get_this_month             = new Carbon('first day of ' . $mulaidar_parse->format('F'));
+        $today                      = $get_this_month->toDateString();
+        $today2                     = $mulaidari;
+        $si                         = sale_invoice::orderBy('transaction_date')
+            ->whereBetween('transaction_date', [$today, $today2])
+            ->selectRaw('SUM(balance_due) as balance_due, transaction_date, contact_id')
+            ->groupBy('contact_id')
+            ->get();
+        $contact                    = contact::get();
+        $view = view('admin.reports.sales_export.aged_receivable_pdf')->with(compact([
+            'company',
+            'today',
+            'today2',
+            'contact',
+            'si'
+        ]));
+        $html = $view->render();
+        $pdf = PDF::loadHTML($html)->setPaper('a4', 'landscape');
+        return $pdf->download('aged_receivable_' . $mulaidari . '.pdf');
     }
 
     public function sales_delivery()

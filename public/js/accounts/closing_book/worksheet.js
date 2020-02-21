@@ -9,11 +9,15 @@ function checkNetProfit() {
     if (income_debit >= income_credit) {
         $(".net_credit").val(total)
         $(".sub_net_credit").val(total)
-        $("#net_credit").html(total)
+        $("#net_credit").html(total.toFixed(2))
+        var test1 = $('#net_credit').html();
+        $('#net_credit').html(test1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     } else { 
         $(".net_debit").val(total)        
         $(".sub_net_debit").val(total)        
-        $("#net_debit").html(total)
+        $("#net_debit").html(total.toFixed(2))
+        var test1 = $('#net_debit').html();
+        $('#net_debit').html(test1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     }
 
     if (retained_data != 0) {
@@ -92,8 +96,12 @@ function totalBalanceSheet() {
         c += amt;
     });
     //$('.subtotal').html(t);
-    $('#balance_debit').html(d);
-    $('#balance_credit').html(c);
+    $('#balance_debit').html(d.toFixed(2));
+    var test1 = $('#balance_debit').html();
+    $('#balance_debit').html(test1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+    $('#balance_credit').html(c.toFixed(2));
+    var test2 = $('#balance_credit').html();
+    $('#balance_credit').html(test2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     $('.net_debit').val(d);
     $('.net_credit').val(c);
     //$('.total').html(t);

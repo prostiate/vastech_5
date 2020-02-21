@@ -7,16 +7,15 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button"                        
                         @if($closing_book && $closing_book->status == 7)
-                            onclick="window.location.href = '/closing_book/{{$closing_book->id }}/setup';">Start Closing Book
-                        @else
-                            onclick="window.location.href = '/closing_book/setup';">Start Closing Book
-                        @endif
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/closing_book/{{$closing_book->id }}/setup';">Start Closing Book
                         </button>
+                        @else
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/closing_book/setup';">Start Closing Book
+                        </button>
+                        @endif
                     </li>
                 </ul>
-                <small>Other Lists </small>
                 <h3>Closing Book</h3>
                 <div class="clearfix"></div>
             </div>
@@ -40,5 +39,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/accounts/closing_book/dataTable.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/accounts/closing_book/dataTable.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

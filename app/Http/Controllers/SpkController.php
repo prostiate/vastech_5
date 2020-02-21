@@ -98,27 +98,48 @@ class SpkController extends Controller
 
     public function create()
     {
-        $products           = product::where('is_track', 1)->where('is_bundle', 1)->get();
-        $warehouses         = warehouse::get();
-        $contacts           = contact::get();
-        $today              = Carbon::today()->toDateString();
-        $user               = User::find(Auth::id());
+        $products               = product::where('is_track', 1)->where('is_bundle', 1)->get();
+        $warehouses             = warehouse::get();
+        $contacts               = contact::get();
+        $today                  = Carbon::today()->toDateString();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = spk::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.SPK';
+                } else {
+                    $check_number   = spk::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.SPK';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.SPK';
+                    }
+                }
+            } else {
+                $check_number   = spk::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.SPK';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.SPK';
+                }
+            }
         } else {
             $number             = spk::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.request.sukses.spk.create', compact(['products', 'trans_no', 'today', 'warehouses', 'contacts']));
@@ -126,23 +147,56 @@ class SpkController extends Controller
 
     public function store(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = spk::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                    $check_number   = spk::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                    if ($check_number) {
+                        if ($check_number != null) {
+                            $misahm = explode("/", $check_number->number);
+                            $misahy = explode(".", $misahm[1]);
+                        }
+                        if (isset($misahy[1]) == 0) {
+                            $misahy[1]      = 10000;
+                        }
+                        $number2    = $misahy[1] + 1;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SPK';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SPK';
+                    }
+            } else {
+                $check_number   = spk::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SPK';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SPK';
+                }
+            }
         } else {
             $number             = spk::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'contact'           => 'required',

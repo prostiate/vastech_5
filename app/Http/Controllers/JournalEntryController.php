@@ -28,6 +28,7 @@ class JournalEntryController extends Controller
 
     public function create()
     {
+        $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = journal_entry::latest()->first();
@@ -36,14 +37,34 @@ class JournalEntryController extends Controller
                 $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 0;
+                $misahy[1]      = 10000;
             }
             $number1            = $misahy[1] + 1;
-            $trans_no           = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.JE';
+                } else {
+                    $check_number   = journal_entry::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.JE';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.JE';
+                    }
+                }
+            } else {
+                $check_number   = journal_entry::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.JE';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.JE';
+                }
+            }
         } else {
             $number             = journal_entry::max('number');
             if ($number == 0)
-                $number         = 0;
+                $number         = 10000;
             $trans_no           = $number + 1;
         }
         $today                  = Carbon::today()->toDateString();
@@ -53,6 +74,7 @@ class JournalEntryController extends Controller
 
     public function store(Request $request)
     {
+        $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = journal_entry::latest()->first();
@@ -61,14 +83,46 @@ class JournalEntryController extends Controller
                 $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]      = 1;
+                $misahy[1]      = 10000;
             }
             $number1            = $misahy[1] + 1;
-            $trans_no           = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            if (isset($number)) {
+                $check_number   = journal_entry::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.JE';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.JE';
+                }
+            } else {
+                $check_number   = journal_entry::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.JE';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.JE';
+                }
+            }
         } else {
             $number             = journal_entry::max('number');
             if ($number == 0)
-                $number         = 1;
+                $number         = 10000;
             $trans_no           = $number + 1;
         }
         $rules = array(

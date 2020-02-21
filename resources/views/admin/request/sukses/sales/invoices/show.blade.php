@@ -213,7 +213,7 @@
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Sales Invoice')
                             @can('Create')
-                            @if($pi->status == 1 or $pi->status == 4)
+                            @if($pi->status == 1 or $pi->status == 4 or $pi->status == 5)
                             <li><a href="#">Clone Transaction</a></li>
                             @hasrole('Owner|Ultimate|Sales Payment')
                             <li><a href="/sales_payment/new/from/{{$pi->id}}">Receive Payment</a></li>
@@ -223,7 +223,7 @@
                             @endrole
                             <li><a href="#">Set as Recurring</a></li>
                             <li class="divider"></li>
-                            @elseif($pi->status == 3 && $pi->total_return != $pi->balance_due or $pi->total_return == null)
+                            @elseif($pi->status == 3 && $pi->total_return != $pi->grandtotal or $pi->total_return == null)
                             <li><a href="#">Clone Transaction</a></li>
                             @hasrole('Owner|Ultimate|Sales Return')
                             <li><a href="/sales_return/new/{{$pi->id}}">Sales Return</a></li>
@@ -522,15 +522,17 @@
                         <div class="form-group">
                             <a href="{{ url('/sales_invoice') }}" class="btn btn-dark">Cancel</a>
                             @hasrole('Owner|Ultimate|Sales Invoice')
-                            @if($pi->status == 1)
-                            @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
-                            @endcan
-                            <!--<div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_invoice/edit/' + {{$pi->id}};">Edit
-                                </button>
-                            </div>-->
-                            @endif
+                                @if($pi->status == 1 or $pi->status == 5 && $check_pi_history == null && $check_pr_history == null)
+                                    @can('Delete')
+                                        <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                    @endcan
+                                    @can('Edit')
+                                        <div class="btn-group">
+                                            <button class="btn btn-success" type="button" onclick="window.location.href = '/sales_invoice/edit/' + {{$pi->id}};">Edit
+                                            </button>
+                                        </div>
+                                    @endcan
+                                @endif
                             @endrole
                             <input type="text" value="{{$pi->id}}" id="form_id" hidden>
                         </div>
@@ -543,7 +545,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

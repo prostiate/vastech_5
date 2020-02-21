@@ -287,7 +287,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/quote/deleteForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/quote/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

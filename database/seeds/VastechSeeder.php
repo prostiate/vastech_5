@@ -162,6 +162,12 @@ class VastechSeeder extends Seeder
             [
                 'name'                              => 'Disposed',
             ],
+            [
+                'name'                              => 'Draft',
+            ],
+            [
+                'name'                              => 'Approved',
+            ],
         ]);
 
         DB::table('coas')->insert([

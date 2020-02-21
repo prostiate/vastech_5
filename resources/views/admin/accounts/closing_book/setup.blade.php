@@ -1,17 +1,13 @@
 @extends('layouts.admin')
 
-@section('contentheader')
-<div class="page-title">
-    <div class="title_left">
-        <h3>Closing Book</h3>
-    </div>
-</div>
-@endsection
-
 @section('content')
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
+            <div class="x_title">
+                <h3>Closing Book</h3>
+                <div class="clearfix"></div>
+            </div>
             <div class="x_content">
                 <form id="formCreate" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="">
                     <div class="col-md-3 col-sm-2 col-xs-2">
@@ -41,7 +37,7 @@
                         <br>
                         <div class="form-group">
                             <div class="col-md-12 col-sm-6 col-xs-12">
-                                <h4 style="text-align: center"> After closing the book, you cannot make changes to your book on BEFORE 31/12/2019
+                                <h4 style="text-align: center"> After closing the book, you cannot make changes to your book on BEFORE the following dates
                                 </h4>
                             </div>
                         </div>
@@ -64,9 +60,9 @@
 @endsection
 
 @push('scripts')
-<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200211-1624') }}" charset="utf-8"></script>-->
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/accounts/closing_book/createForm.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200211-1624') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js?v=5-20200211-1624') }}" charset="utf-8"></script>
+<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200221-1431') }}" charset="utf-8"></script>-->
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/closing_book/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

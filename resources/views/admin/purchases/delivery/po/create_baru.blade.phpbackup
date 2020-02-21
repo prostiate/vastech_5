@@ -157,7 +157,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/delivery/createForm.js?v=5-20200217-1409') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/qty_remaining.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/delivery/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/qty_remaining.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

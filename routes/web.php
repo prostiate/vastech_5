@@ -31,9 +31,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/select_product',                                                                       'ReportController@select_product');
     // OVERVIEW
     Route::get('/reports/balance_sheet',                                                                        'ReportController@balanceSheet');
-    Route::get('/reports/balance_sheet/excel/as_of={today}/start_year={startyear}&end_year={endyear}',          'ReportController@balanceSheet_excel');
-    Route::get('/reports/balance_sheet/csv/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@balanceSheet_csv');
-    Route::get('/reports/balance_sheet/pdf/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@balanceSheet_pdf');
+    Route::get('/reports/balance_sheet/excel/as_of={today}/start={startyear}&end={endyear}',                    'ReportController@balanceSheet_excel');
+    Route::get('/reports/balance_sheet/csv/as_of={today}/start={startyear}&end={endyear}',                      'ReportController@balanceSheet_csv');
+    Route::get('/reports/balance_sheet/pdf/as_of={today}/start={startyear}&end={endyear}',                      'ReportController@balanceSheet_pdf');
     Route::get('/reports/balance_sheet/as_of={mulaidari}',                                                      'ReportController@balanceSheetInput');
     Route::get('/reports/general_ledger',                                                                       'ReportController@generalLedger');
     Route::get('/reports/general_ledger/start_date={start}&end_date={end}&account_id={id}',                     'ReportController@generalLedgerInput');
@@ -60,18 +60,30 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/cashflow/excel/start_date={start}&end_date={end}',                                     'ReportController@cashflow_excel');
     Route::get('/reports/cashflow/csv/start_date={start}&end_date={end}',                                       'ReportController@cashflow_csv');
     Route::get('/reports/cashflow/pdf/start_date={start}&end_date={end}',                                       'ReportController@cashflow_pdf');
-    Route::get('/reports/executive_summary',                                'ReportController@executive_summary');
-    Route::get('/reports/executive_summary/{start}&{end}',                  'ReportController@executive_summaryInput');
+    Route::get('/reports/executive_summary',                                                                    'ReportController@executive_summary');
+    Route::get('/reports/executive_summary/{start}&{end}',                                                      'ReportController@executive_summaryInput');
     //OVERVIEW
     //SALES
-    Route::get('/reports/sales_list',                                       'ReportController@sales_list');
-    Route::get('/reports/sales_list/{start}&{end}',                         'ReportController@sales_listInput');
-    Route::get('/reports/sales_by_customer',                                'ReportController@sales_by_customer');
-    Route::get('/reports/sales_by_customer/{start}&{end}',                  'ReportController@sales_by_customerInput');
-    Route::get('/reports/customer_balance',                                 'ReportController@customer_balance');
-    Route::get('/reports/customer_balance/{mulaidari}',                     'ReportController@customer_balanceInput');
-    Route::get('/reports/aged_receivable',                                  'ReportController@aged_receivable');
-    Route::get('/reports/aged_receivable/{mulaidari}',                      'ReportController@aged_receivableInput');
+    Route::get('/reports/sales_list',                                                                                   'ReportController@sales_list');
+    Route::get('/reports/sales_list/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',        'ReportController@sales_listInput');
+    Route::get('/reports/sales_list/excel/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',  'ReportController@sales_list_excel');
+    Route::get('/reports/sales_list/csv/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',    'ReportController@sales_list_csv');
+    Route::get('/reports/sales_list/pdf/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',    'ReportController@sales_list_pdf');
+    Route::get('/reports/sales_by_customer',                                                                            'ReportController@sales_by_customer');
+    Route::get('/reports/sales_by_customer/start_date={start}&end_date={end}&customer={con}',                           'ReportController@sales_by_customerInput');
+    Route::get('/reports/sales_by_customer/excel/start_date={start}&end_date={end}&customer={con}',                     'ReportController@sales_by_customer_excel');
+    Route::get('/reports/sales_by_customer/csv/start_date={start}&end_date={end}&customer={con}',                       'ReportController@sales_by_customer_csv');
+    Route::get('/reports/sales_by_customer/pdf/start_date={start}&end_date={end}&customer={con}',                       'ReportController@sales_by_customer_pdf');
+    Route::get('/reports/customer_balance',                                                                             'ReportController@customer_balance');
+    Route::get('/reports/customer_balance/as_of={mulaidari}&customer={con}',                                            'ReportController@customer_balanceInput');
+    Route::get('/reports/customer_balance/excel/as_of={mulaidari}&customer={con}',                                      'ReportController@customer_balance_excel');
+    Route::get('/reports/customer_balance/csv/as_of={mulaidari}&customer={con}',                                        'ReportController@customer_balance_csv');
+    Route::get('/reports/customer_balance/pdf/as_of={mulaidari}&customer={con}',                                        'ReportController@customer_balance_pdf');
+    Route::get('/reports/aged_receivable',                                                                              'ReportController@aged_receivable');
+    Route::get('/reports/aged_receivable/start_date={mulaidari}',                                                       'ReportController@aged_receivableInput');
+    Route::get('/reports/aged_receivable/excel/start_date={mulaidari}',                                                 'ReportController@aged_receivable_excel');
+    Route::get('/reports/aged_receivable/csv/start_date={mulaidari}',                                                   'ReportController@aged_receivable_csv');
+    Route::get('/reports/aged_receivable/pdf/start_date={mulaidari}',                                                   'ReportController@aged_receivable_pdf');
     Route::get('/reports/sales_delivery',                                   'ReportController@sales_delivery');
     Route::get('/reports/sales_delivery/{start}&{end}',                     'ReportController@sales_deliveryInput');
     Route::get('/reports/sales_by_product',                                 'ReportController@sales_by_product');
@@ -537,9 +549,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/closing_book/setup',                                      'ClosingBookController@setup_store');
     Route::get('/closing_book/{id}/worksheet',                              'ClosingBookController@worksheet');
     Route::post('/closing_book/worksheetStore',                             'ClosingBookController@worksheet_store');
-    Route::get('/closing_book/{id}/financial_periode',                      'ClosingBookController@edit_balance');
-    Route::get('/closing_book/{id}/reconsilation',                          'ClosingBookController@edit_balance');
-    Route::get('/closing_book/{id}/financial_statements',                   'ClosingBookController@financial_statement');
+    Route::get('/closing_book/{id}/financial_periode',                      'ClosingBookController@financial_statement');
+    Route::get('/closing_book/trial_balance/start_date={start}&end_date={end}',     'ClosingBookController@trial_balance');
+    Route::get('/closing_book/profit_loss/start_date={start}&end_date={end}',       'ClosingBookController@profit_loss');
+    Route::get('/closing_book/balance_sheet/start_date={start}&end_date={end}',     'ClosingBookController@balance_sheet');
+    Route::get('/closing_book/cash_flow/start_date={start}&end_date={end}',         'ClosingBookController@cash_flow');
+    //Route::get('/closing_book/{id}/reconsilation',                          'ClosingBookController@edit_balance');
+    //Route::get('/closing_book/{id}/financial_statements',                   'ClosingBookController@financial_statement');
     Route::post('/closing_book/update',                                     'ClosingBookController@update_balance_drafted');
     Route::post('/closing_book/publish',                                    'ClosingBookController@update_balance_published');
     Route::post('/closing_book/delete',                                     'ClosingBookController@destroy');
@@ -694,7 +710,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/construction/offering_letter/updateOL',                               'ConOfferingLetterController@update');
     Route::get('/construction/offering_letter/delete/{id}',                             'ConOfferingLetterController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConOfferingLetterController@cetak_pdf');
-    
+
     Route::get('/construction/budget_plan',                                             'ConBudgetPlanController@index');
     Route::get('/construction/budget_plan/new/offering_letter={ol}',                    'ConBudgetPlanController@create');
     Route::post('/construction/budget_plan/newBP/offering_letter={ol}',                 'ConBudgetPlanController@store');
@@ -703,7 +719,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/construction/budget_plan/updateOL',                                   'ConBudgetPlanController@update');
     Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
-    
+
     //Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
     Route::get('/construction/bill_quantities',                                         'ConBillQuantitiesController@index');
     Route::get('/construction/bill_quantities/new/budget_plan={bp}',                    'ConBillQuantitiesController@create');
@@ -713,7 +729,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/construction/bill_quantities/updateOL',                               'ConBillQuantitiesController@update');
     Route::get('/construction/bill_quantities/delete/{id}',                             'ConBillQuantitiesController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConBillQuantitiesController@cetak_pdf');
-    
+
     Route::get('/construction/form_order',                                              'ConFormOrderController@index');
     Route::get('/construction/form_order/new/bill_quantities={bq}',                     'ConBillQuantitiesController@create');
     Route::post('/construction/form_order/newFO/bill_quantities={bq}',                  'ConBillQuantitiesController@store');
@@ -722,7 +738,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/construction/form_order/updateOL',                                    'ConFormOrderController@update');
     Route::get('/construction/form_order/delete/{id}',                                  'ConFormOrderController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConFormOrderController@cetak_pdf');
-    
+
     Route::get('/construction/progress',                                                'ConProgressController@index');
     Route::get('/construction/progress/new',                                            'ConProgressController@create');
     Route::post('/construction/progress/newOL',                                         'ConProgressController@store');

@@ -102,6 +102,7 @@
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
                         </button>
                         <ul role="menu" class="dropdown-menu">
+                            <input value="{{$id}}" type="text" id="id" hidden>
                             <li><a onclick="excel()">Excel</a>
                             </li>
                             <li><a onclick="csv()">CSV</a>
@@ -137,6 +138,7 @@
                                             <?php $total_balance = 0 ?>
                                             <?php $total_balance2 = 0 ?>
                                             <?php $category = 0 ?>
+                                        @if(count($coa_detail) >= 1)
                                             @foreach($coa_detail as $cdb => $cdb2)
                                                 @if($cdb2->sum('credit') != 0 or $cdb2->sum('debit') != 0)
                                                 <?php $total_debit = 0 ?>
@@ -222,7 +224,13 @@
                                                 <?php $total_balance2 = 0 ?>
                                                 @endif
                                             @endforeach
+                                            @else
+                                            <tr>
+                                                <td colspan="5" class="text-center">Data is not found</td>
+                                            </tr>
+                                            @endif
                                         </tbody>
+                                        @if(count($coa_detail) >= 1)
                                         <tfoot>
                                             <tr>
                                                 <td colspan="1" class="text-center"></td>
@@ -232,6 +240,7 @@
                                                 <td></td>
                                             </tr>
                                         </tfoot>
+                                        @endif
                                     </table>
                                 </div>
                             </div>
@@ -245,8 +254,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1   = document.getElementById('datepicker1');
@@ -268,19 +277,19 @@
     function excel() {
         var date1   = document.getElementById('datepicker1');
         var date2   = document.getElementById('datepicker2');
-        var acc     = $('#filter_by_acc').val();
+        var acc     = $('#id').val();
         window.location.href = "/reports/general_ledger/excel/start_date=" + date1.value + '&end_date=' + date2.value + '&account_id=' + acc;
     }
     function csv() {
         var date1   = document.getElementById('datepicker1');
         var date2   = document.getElementById('datepicker2');
-        var acc     = $('#filter_by_acc').val();
+        var acc     = $('#id').val();
         window.location.href = "/reports/general_ledger/csv/start_date=" + date1.value + '&end_date=' + date2.value + '&account_id=' + acc;
     }
     function pdf() {
         var date1   = document.getElementById('datepicker1');
         var date2   = document.getElementById('datepicker2');
-        var acc     = $('#filter_by_acc').val();
+        var acc     = $('#id').val();
         window.open("/reports/general_ledger/pdf/start_date=" + date1.value + '&end_date=' + date2.value + '&account_id=' + acc, '_blank');
     }
 </script>

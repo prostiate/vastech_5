@@ -41,46 +41,100 @@ class PurchaseReturnController extends Controller
         $po_item            = purchase_invoice_item::where('purchase_invoice_id', $id)->get();
         $today              = Carbon::today()->toDateString();
         $warehouses         = warehouse::all();
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_return::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PR';
+                } else {
+                    $check_number   = purchase_return::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PR';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PR';
+                    }
+                }
+            } else {
+                $check_number   = purchase_return::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PR';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PR';
+                }
+            }
         } else {
             $number             = purchase_return::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         return view('admin.purchases.return.create', compact(['today', 'trans_no', 'warehouses', 'po', 'po_item']));
     }
 
     public function store(Request $request)
     {
-        $user                               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number                         = purchase_return::latest()->first();
+            $number             = purchase_return::latest()->first();
             if ($number != null) {
-                $misahm                     = explode("/", $number->number);
-                $misahy                     = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]                  = 10000;
+                $misahy[1]      = 10000;
             }
-            $number1                        = $misahy[1] + 1;
-            $trans_no                       = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                    $check_number   = purchase_return::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                    if ($check_number) {
+                        if ($check_number != null) {
+                            $misahm = explode("/", $check_number->number);
+                            $misahy = explode(".", $misahm[1]);
+                        }
+                        if (isset($misahy[1]) == 0) {
+                            $misahy[1]      = 10000;
+                        }
+                        $number2    = $misahy[1] + 1;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PR';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PR';
+                    }
+            } else {
+                $check_number   = purchase_return::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PR';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PR';
+                }
+            }
         } else {
-            $number                         = purchase_return::max('number');
+            $number             = purchase_return::max('number');
             if ($number == 0)
-                $number                     = 10000;
-            $trans_no                       = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         DB::beginTransaction();
         try {

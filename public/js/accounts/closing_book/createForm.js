@@ -11,7 +11,7 @@ $(document).ready(function () {
         $('#click').html('Processing');
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/closing_book/worksheetStore",
+            url: "/closing_book/setup",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -36,7 +36,7 @@ $(document).ready(function () {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/chart_of_accounts";
+                    window.location.href = "/closing_book/" + data.id + "/worksheet";
                 }
                 Swal.fire({
                     type: typeswal,

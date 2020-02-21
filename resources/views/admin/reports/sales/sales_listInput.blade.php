@@ -17,6 +17,112 @@
                     <li>
                         <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
                     </li>
+                    <li>
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">More Filter
+                        </button>
+                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-sm">
+                                <form method="post" id="formCreate">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                            </button>
+                                            <h3 class="modal-title" id="myModalLabel"><strong>Reports Filter</strong></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="form-group row">
+                                                        <label>Start Date</label>
+                                                        <input value="{{$start}}" type="date" id="datepicker3" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="form-group row">
+                                                        <label>End Date</label>
+                                                        <input value="{{$end}}" type="date" id="datepicker4" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="form-group row">
+                                                        <label>Filter by Sales Type</label>
+                                                        <select name="filter_by_type" id="filter_by_type" class="form-control selecttype" multiple>
+                                                            <option></option>
+                                                            <option value="sales quote">Sales Quote</option>
+                                                            <option value="sales order">Sales Order</option>
+                                                            <option value="sales delivery">Sales Delivery</option>
+                                                            <option value="sales invoice">Sales Invoice</option>
+                                                            <option value="sales payment">Sales Payment</option>
+                                                            <option value="sales return">Sales Return</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="form-group row">
+                                                        <label>Filter by Customer</label>
+                                                        <select name="filter_by_con" id="filter_by_con" class="form-control selectcontact" multiple>
+                                                            <option></option>
+                                                            @foreach($contact as $a)
+                                                            <option value="{{$a->id}}">{{$a->display_name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-horizontal form-label-left">
+                                                    <div class="form-group row">
+                                                        <label>Filter by Status</label>
+                                                        <select name="filter_by_stat" id="filter_by_stat" class="form-control selectstatus" multiple>
+                                                            <option></option>
+                                                            @foreach($status as $a)
+                                                            <option value="{{$a->id}}">{{$a->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="col-md-1 center-margin">
+                                                <div class="form-horizontal">
+                                                    <div class="form-group row">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                            <button type="button" id="click" class="btn btn-dark" onclick="nextMoreFilter()">Filter</button>
+                                            <input type="text" name="hidden_id" id="hidden_id" hidden>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
+                        </button>
+                        <ul role="menu" class="dropdown-menu">
+                            <input value="{{$start}}" type="date" id="start_date" hidden>
+                            <input value="{{$end}}" type="date" id="end_date" hidden>
+                            <input value="{{$type}}" type="text" id="type" hidden>
+                            <input value="{{$con}}" type="text" id="con" hidden>
+                            <input value="{{$stat}}" type="text" id="stat" hidden>
+                            <li><a onclick="excel()">Excel</a>
+                            </li>
+                            <li><a onclick="csv()">CSV</a>
+                            </li>
+                            <li><a onclick="pdf()">PDF</a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -42,23 +148,32 @@
                                         <tbody>
                                             <?php $total_total = 0 ?>
                                             <?php $total_balance_due = 0 ?>
+                                            @if(count($other_transaction) >= 1)
                                             @foreach($other_transaction as $ot)
-                                            @if($ot->type == 'sales invoice')
                                             <?php $total_total += $ot->total ?>
                                             <?php $total_balance_due += $ot->balance_due ?>
                                             <tr>
                                                 <td>{{$ot->transaction_date}}</td>
-                                                <td><a href="#">Sales Invoice</a></td>
+                                                <td><a href="#"><?php echo ucwords($ot->type) ?></a></td>
                                                 <td><a href="#">{{$ot->number}}</a></td>
+                                                @if($ot->type == 'closing book')
+                                                <td><a href="#">-</a></td>
+                                                @else
                                                 <td><a href="#">{{$ot->ot_contact->display_name}}</a></td>
+                                                @endif
                                                 <td><a href="#">{{$ot->ot_status->name}}</a></td>
                                                 <td><a href="#">{{$ot->memo}}</a></td>
                                                 <td class="text-right">@number($ot->total)</td>
                                                 <td class="text-right">@number($ot->balance_due)</td>
                                             </tr>
-                                            @endif
                                             @endforeach
+                                            @else
+                                            <tr>
+                                                <td colspan="8" class="text-center">Data is not found</td>
+                                            </tr>
+                                            @endif
                                         </tbody>
+                                        @if(count($other_transaction) >= 1)
                                         <tfoot>
                                             <tr>
                                                 <td colspan="5" class="text-center"></td>
@@ -67,6 +182,7 @@
                                                 <td class="text-right"><b>@number($total_balance_due)</b></td>
                                             </tr>
                                         </tfoot>
+                                        @endif
                                     </table>
                                 </div>
                             </div>
@@ -82,12 +198,52 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     function next() {
-        var start   = document.getElementById('datepicker1');
-        var end     = document.getElementById('datepicker2');
-        window.location.href = "/reports/sales_list/" + start.value + '&' + end.value;
+        var start = document.getElementById('datepicker1');
+        var end = document.getElementById('datepicker2');
+        var contact = $('#filter_by_con').val();
+        var status = $('#filter_by_stat').val();
+        var type = $('#filter_by_type').val();
+        window.location.href = "/reports/sales_list/start_date=" + start.value + '&end_date=' + end.value + '&type=' + type + '&customer=' + contact + '&status=' + status;
+    }
+
+    function nextMoreFilter() {
+        var start = document.getElementById('datepicker3');
+        var end = document.getElementById('datepicker4');
+        var contact = $('#filter_by_con').val();
+        var status = $('#filter_by_stat').val();
+        var type = $('#filter_by_type').val();
+        window.location.href = "/reports/sales_list/start_date=" + start.value + '&end_date=' + end.value + '&type=' + type + '&customer=' + contact + '&status=' + status;
+    }
+
+    function excel() {
+        var start = document.getElementById('datepicker3');
+        var end = document.getElementById('datepicker4');
+        var contact = $('#con').val();
+        var status = $('#stat').val();
+        var type = $('#type').val();
+        window.location.href = "/reports/sales_list/excel/start_date=" + start.value + '&end_date=' + end.value + '&type=' + type + '&customer=' + contact + '&status=' + status;
+    }
+
+    function csv() {
+        var start = document.getElementById('datepicker3');
+        var end = document.getElementById('datepicker4');
+        var contact = $('#con').val();
+        var status = $('#stat').val();
+        var type = $('#type').val();
+        window.location.href = "/reports/sales_list/csv/start_date=" + start.value + '&end_date=' + end.value + '&type=' + type + '&customer=' + contact + '&status=' + status;
+    }
+
+    function pdf() {
+        var start = document.getElementById('datepicker3');
+        var end = document.getElementById('datepicker4');
+        var contact = $('#con').val();
+        var status = $('#stat').val();
+        var type = $('#type').val();
+        window.open("/reports/sales_list/pdf/start_date=" + start.value + '&end_date=' + end.value + '&type=' + type + '&customer=' + contact + '&status=' + status);
     }
 </script>
 @endpush

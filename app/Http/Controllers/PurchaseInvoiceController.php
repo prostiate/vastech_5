@@ -223,31 +223,52 @@ class PurchaseInvoiceController extends Controller
 
     public function create()
     {
-        $vendors            = contact::where('type_vendor', true)->get();
-        $warehouses         = warehouse::where('id', '>', 0)->get();
-        $terms              = other_term::all();
-        $products           = product::where('is_buy', 1)->get();
-        $units              = other_unit::all();
-        $today              = Carbon::today()->toDateString();
-        $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
-        $taxes              = other_tax::all();
-        $user               = User::find(Auth::id());
+        $vendors                = contact::where('type_vendor', true)->get();
+        $warehouses             = warehouse::where('id', '>', 0)->get();
+        $terms                  = other_term::all();
+        $products               = product::where('is_buy', 1)->get();
+        $units                  = other_unit::all();
+        $today                  = Carbon::today()->toDateString();
+        $todaytambahtiga        = Carbon::today()->addDays(30)->toDateString();
+        $taxes                  = other_tax::all();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    }
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.purchases.invoices.create', compact([
@@ -272,30 +293,51 @@ class PurchaseInvoiceController extends Controller
 
     public function createRequestSuksesPartTwo($contact, $warehouse)
     {
-        $all_po             = purchase_order::where('contact_id', $contact)->where('warehouse_id', $warehouse)->get();
-        $all_po_item        = purchase_order_item::get();
-        $vendors            = contact::find($contact);
-        $warehouses         = warehouse::find($warehouse);
-        $terms              = other_term::all();
-        $today              = Carbon::today()->toDateString();
-        $todaytambahtiga    = Carbon::today()->addDays(30)->toDateString();
-        $user               = User::find(Auth::id());
+        $all_po                 = purchase_order::where('contact_id', $contact)->where('warehouse_id', $warehouse)->get();
+        $all_po_item            = purchase_order_item::get();
+        $vendors                = contact::find($contact);
+        $warehouses             = warehouse::find($warehouse);
+        $terms                  = other_term::all();
+        $today                  = Carbon::today()->toDateString();
+        $todaytambahtiga        = Carbon::today()->addDays(30)->toDateString();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    }
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.request.sukses.purchases.invoices.createRequestSuksesPartTwo', compact([
@@ -312,27 +354,48 @@ class PurchaseInvoiceController extends Controller
 
     public function createFromDelivery($id)
     {
-        $po                 = purchase_delivery::find($id);
-        $po_item            = purchase_delivery_item::where('purchase_delivery_id', $id)->get();
-        $today              = Carbon::today()->toDateString();
-        $terms              = other_term::all();
-        $user               = User::find(Auth::id());
+        $po                     = purchase_delivery::find($id);
+        $po_item                = purchase_delivery_item::where('purchase_delivery_id', $id)->get();
+        $today                  = Carbon::today()->toDateString();
+        $terms                  = other_term::all();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    }
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.purchases.invoices.createFromDelivery', compact(['today', 'trans_no', 'terms', 'po', 'po_item']));
@@ -340,28 +403,49 @@ class PurchaseInvoiceController extends Controller
 
     public function createFromOrder($id)
     {
-        $po                 = purchase_order::find($id);
-        $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
-        $today              = Carbon::today()->toDateString();
-        $terms              = other_term::all();
-        $warehouses         = warehouse::all();
-        $user               = User::find(Auth::id());
+        $po                     = purchase_order::find($id);
+        $po_item                = purchase_order_item::where('purchase_order_id', $id)->get();
+        $today                  = Carbon::today()->toDateString();
+        $terms                  = other_term::all();
+        $warehouses             = warehouse::all();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    }
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.purchases.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
@@ -369,31 +453,52 @@ class PurchaseInvoiceController extends Controller
 
     public function createFromQuote($id)
     {
-        $po                 = purchase_quote::find($id);
-        $po_item            = purchase_quote_item::where('purchase_quote_id', $id)->get();
-        $today              = Carbon::today()->toDateString();
-        $terms              = other_term::all();
-        $warehouses         = warehouse::all();
-        $products           = product::all();
-        $units              = other_unit::all();
-        $taxes              = other_tax::all();
-        $user               = User::find(Auth::id());
+        $po                     = purchase_quote::find($id);
+        $po_item                = purchase_quote_item::where('purchase_quote_id', $id)->get();
+        $today                  = Carbon::today()->toDateString();
+        $terms                  = other_term::all();
+        $warehouses             = warehouse::all();
+        $products               = product::all();
+        $units                  = other_unit::all();
+        $taxes                  = other_tax::all();
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                if ($dt->isSameMonth($number->transaction_date)) {
+                    $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                    }
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                if ($check_number) {
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
 
         return view('admin.purchases.invoices.createFromQuote', compact([
@@ -411,23 +516,56 @@ class PurchaseInvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'vendor_name'   => 'required',
@@ -622,23 +760,56 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromDelivery(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'vendor_name'   => 'required',
@@ -820,23 +991,56 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromOrder(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'vendor_name'   => 'required',
@@ -1068,23 +1272,56 @@ class PurchaseInvoiceController extends Controller
 
     public function storeFromQuote(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'vendor_name'   => 'required',
@@ -1289,23 +1526,56 @@ class PurchaseInvoiceController extends Controller
 
     public function storeRequestSukses(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_invoice::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            } else {
+                $check_number   = purchase_invoice::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.PI';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.PI';
+                }
+            }
         } else {
             $number             = purchase_invoice::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         DB::beginTransaction();
         try {
@@ -2018,7 +2288,7 @@ class PurchaseInvoiceController extends Controller
             $contact_id                         = contact::find($pi->contact_id);
             $id_contact                         = $request->vendor_name;
             $contact_account                    = contact::find($id_contact);
-            $default_tax                        = default_account::find(14);            
+            $default_tax                        = default_account::find(14);
             $transactions                       = other_transaction::where('type', 'purchase invoice')->where('number', $pi->number)->first();
             // BUAT NGECHECK INI QUANTITY YANG DIINPUT LEBIH DARI YANG DI ORDER ATAU TIDAK
             foreach ($request->products as $i => $keys) {

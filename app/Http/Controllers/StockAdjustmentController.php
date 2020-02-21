@@ -135,24 +135,57 @@ class StockAdjustmentController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
         // GET MAX NUMBER TRANSACTION
-        $user               = User::find(Auth::id());
         $total_semua                = 0;
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number                     = stock_adjustment::latest()->first();
+            $number             = stock_adjustment::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                    $check_number   = stock_adjustment::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                    if ($check_number) {
+                        if ($check_number != null) {
+                            $misahm = explode("/", $check_number->number);
+                            $misahy = explode(".", $misahm[1]);
+                        }
+                        if (isset($misahy[1]) == 0) {
+                            $misahy[1]      = 10000;
+                        }
+                        $number2    = $misahy[1] + 1;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SA';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SA';
+                    }
+            } else {
+                $check_number   = stock_adjustment::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SA';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SA';
+                }
+            }
         } else {
-            $number                     = stock_adjustment::max('number');
+            $number             = stock_adjustment::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         // CREATE LIST TRANSACTION OF STOCK ADJUSTMENT
         $transactions = other_transaction::create([
@@ -315,23 +348,56 @@ class StockAdjustmentController extends Controller
 
     public function storeStockCount(Request $request)
     {
-        $user                           = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
-            $number                     = stock_adjustment::latest()->first();
+            $number             = stock_adjustment::latest()->first();
             if ($number != null) {
-                $misahm                 = explode("/", $number->number);
-                $misahy                 = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
-                $misahy[1]              = 10000;
+                $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                    $check_number   = stock_adjustment::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                    if ($check_number) {
+                        if ($check_number != null) {
+                            $misahm = explode("/", $check_number->number);
+                            $misahy = explode(".", $misahm[1]);
+                        }
+                        if (isset($misahy[1]) == 0) {
+                            $misahy[1]      = 10000;
+                        }
+                        $number2    = $misahy[1] + 1;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SA';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SA';
+                    }
+            } else {
+                $check_number   = stock_adjustment::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SA';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SA';
+                }
+            }
         } else {
-            $number                     = stock_adjustment::max('number');
+            $number             = stock_adjustment::max('number');
             if ($number == 0)
-                $number                 = 10000;
-            $trans_no                   = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'adjustment_category'       => 'required',

@@ -151,6 +151,21 @@ class VastechConstruction extends Migration
 
         Schema::create('coa_categories', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
@@ -202,6 +217,21 @@ class VastechConstruction extends Migration
 
         Schema::create('other_statuses', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
@@ -1684,7 +1714,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_transactions')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->integer('transaction_no_pq')->nullable();
+            $table->string('transaction_no_pq')->nullable();
             $table->string('vendor_ref_no')->nullable();
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')
@@ -1917,9 +1947,9 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_terms')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->integer('transaction_no_pq')->nullable();
-            $table->integer('transaction_no_po')->nullable();
-            $table->integer('transaction_no_pd')->nullable();
+            $table->string('transaction_no_pq')->nullable();
+            $table->string('transaction_no_po')->nullable();
+            $table->string('transaction_no_pd')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -2220,7 +2250,7 @@ class VastechConstruction extends Migration
             $table->date('transaction_date');
             $table->date('due_date');
             $table->date('return_date');
-            $table->integer('transaction_no_pi')->nullable();
+            $table->string('transaction_no_pi')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -2453,7 +2483,7 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_transactions')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->integer('transaction_no_sq')->nullable();
+            $table->string('transaction_no_sq')->nullable();
             $table->string('vendor_ref_no')->nullable();
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')
@@ -2687,10 +2717,10 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_terms')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->integer('transaction_no_sq')->nullable();
-            $table->integer('transaction_no_so')->nullable();
-            $table->integer('transaction_no_sd')->nullable();
-            $table->integer('transaction_no_spk')->nullable();
+            $table->string('transaction_no_sq')->nullable();
+            $table->string('transaction_no_so')->nullable();
+            $table->string('transaction_no_sd')->nullable();
+            $table->string('transaction_no_spk')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -2961,7 +2991,7 @@ class VastechConstruction extends Migration
             $table->date('transaction_date');
             $table->date('due_date');
             $table->date('return_date');
-            $table->integer('transaction_no_si')->nullable();
+            $table->string('transaction_no_si')->nullable();
             $table->unsignedBigInteger('other_transaction_id');
             $table->foreign('other_transaction_id')
                 ->references('id')->on('other_transactions')
@@ -3387,6 +3417,11 @@ class VastechConstruction extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+            $table->unsignedBigInteger('offering_letter_detail_id');
+            $table->foreign('offering_letter_detail_id', 'old_bq_id_foreign')
+                ->references('id')->on('offering_letter_detail_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->unsignedBigInteger('bill_quantities_id');
             $table->foreign('bill_quantities_id')
                 ->references('id')->on('bill_quantities_cons')
@@ -3481,11 +3516,11 @@ class VastechConstruction extends Migration
                 ->references('id')->on('budget_plan_detail_cons')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+            $table->boolean('is_late')->default('0');
             $table->integer('progress_current_in_month');
             $table->decimal('progress_current_in_percent', 5, 3)->default('0');
             $table->integer('progress_lateness_in_month');
             $table->decimal('progress_lateness_in_percent', 5, 3)->default('0');
-            $table->decimal('amount', 17, 2)->default('0');
             $table->unsignedBigInteger('status');
             $table->foreign('status')
                 ->references('id')->on('other_statuses')

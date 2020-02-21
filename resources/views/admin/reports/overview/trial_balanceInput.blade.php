@@ -17,7 +17,7 @@
                     <li>
                         <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
                     </li>
-                    <li>
+                    <!--{{--<li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">More Filter
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
@@ -46,7 +46,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--{{--
+                                            
                                             <div class="col-md-12">
                                                 <div class="form-horizontal form-label-left">
                                                     <div class="form-group row">
@@ -65,7 +65,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            --}}-->
+                                            
                                             <br>
                                             <div class="col-md-1 center-margin">
                                                 <div class="form-horizontal">
@@ -83,7 +83,7 @@
                                 </form>
                             </div>
                         </div>
-                    </li>
+                    </li>--}}-->
                     <li>
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
                         </button>
@@ -478,7 +478,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1   = document.getElementById('datepicker1');

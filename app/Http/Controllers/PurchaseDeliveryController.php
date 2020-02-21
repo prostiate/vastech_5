@@ -41,52 +41,94 @@ class PurchaseDeliveryController extends Controller
 
     public function createFromPO($id)
     {
-        $check                  = purchase_delivery::where('selected_po_id', $id)->latest()->first();
+        $check                      = purchase_delivery::where('selected_po_id', $id)->latest()->first();
         if (!$check) {
-            $po                 = purchase_order::find($id);
-            $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
-            $today              = Carbon::today()->toDateString();
-            $user               = User::find(Auth::id());
+            $po                     = purchase_order::find($id);
+            $po_item                = purchase_order_item::where('purchase_order_id', $id)->get();
+            $today                  = Carbon::today()->toDateString();
+            $dt                     = Carbon::now();
+            $user                   = User::find(Auth::id());
             if ($user->company_id == 5) {
                 $number             = purchase_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number->number);
-                    $misahy             = explode(".", $misahm[1]);
+                    $misahm         = explode("/", $number->number);
+                    $misahy         = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
                     $misahy[1]      = 10000;
                 }
-                $number1                    = $misahy[1] + 1;
-                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+                $number1            = $misahy[1] + 1;
+                if (isset($number)) {
+                    if ($dt->isSameMonth($number->transaction_date)) {
+                        $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    } else {
+                        $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                        if ($check_number) {
+                            $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                        } else {
+                            $number1    = 10001;
+                            $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                        }
+                    }
+                } else {
+                    $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    }
+                }
             } else {
                 $number             = purchase_delivery::max('number');
                 if ($number == 0)
-                    $number = 10000;
-                $trans_no = $number + 1;
+                    $number         = 10000;
+                $trans_no           = $number + 1;
             }
 
             return view('admin.purchases.delivery.po.create_baru', compact(['today', 'trans_no', 'po', 'po_item']));
         } else {
-            $po                 = purchase_order::find($id);
-            $po_item            = purchase_order_item::where('purchase_order_id', $id)->get();
-            $today              = Carbon::today()->toDateString();
-            $user               = User::find(Auth::id());
+            $po                     = purchase_order::find($id);
+            $po_item                = purchase_order_item::where('purchase_order_id', $id)->get();
+            $today                  = Carbon::today()->toDateString();
+            $dt                     = Carbon::now();
+            $user                   = User::find(Auth::id());
             if ($user->company_id == 5) {
                 $number             = purchase_delivery::latest()->first();
                 if ($number != null) {
-                    $misahm             = explode("/", $number->number);
-                    $misahy             = explode(".", $misahm[1]);
+                    $misahm         = explode("/", $number->number);
+                    $misahy         = explode(".", $misahm[1]);
                 }
                 if (isset($misahy[1]) == 0) {
                     $misahy[1]      = 10000;
                 }
-                $number1                    = $misahy[1] + 1;
-                $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+                $number1            = $misahy[1] + 1;
+                if (isset($number)) {
+                    if ($dt->isSameMonth($number->transaction_date)) {
+                        $trans_no       = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    } else {
+                        $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                        if ($check_number) {
+                            $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                        } else {
+                            $number1    = 10001;
+                            $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                        }
+                    }
+                } else {
+                    $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($dt))->latest()->first();
+                    if ($check_number) {
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    } else {
+                        $number1    = 10001;
+                        $trans_no   = now()->format('m') . '/' . now()->format('y') . '.' . $number1 . '.PD';
+                    }
+                }
             } else {
                 $number             = purchase_delivery::max('number');
                 if ($number == 0)
-                    $number = 10000;
-                $trans_no = $number + 1;
+                    $number         = 10000;
+                $trans_no           = $number + 1;
             }
 
             return view('admin.purchases.delivery.po.create_lama', compact(['today', 'trans_no', 'po', 'po_item']));
@@ -95,23 +137,56 @@ class PurchaseDeliveryController extends Controller
 
     public function storeFromPO(Request $request)
     {
-        $user               = User::find(Auth::id());
+        $dt                     = Carbon::now();
+        $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
             $number             = purchase_delivery::latest()->first();
             if ($number != null) {
-                $misahm             = explode("/", $number->number);
-                $misahy             = explode(".", $misahm[1]);
+                $misahm         = explode("/", $number->number);
+                $misahy         = explode(".", $misahm[1]);
             }
             if (isset($misahy[1]) == 0) {
                 $misahy[1]      = 10000;
             }
-            $number1                    = $misahy[1] + 1;
-            $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
+            $number1            = $misahy[1] + 1;
+            if (isset($number)) {
+                $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($request->shipping_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number2 . '.PD';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number1 . '.PD';
+                }
+            } else {
+                $check_number   = purchase_delivery::whereMonth('transaction_date', Carbon::parse($request->shipping_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
+                    }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number2 . '.PD';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number1 . '.PD';
+                }
+            }
         } else {
             $number             = purchase_delivery::max('number');
             if ($number == 0)
-                $number = 10000;
-            $trans_no = $number + 1;
+                $number         = 10000;
+            $trans_no           = $number + 1;
         }
         $rules = array(
             'vendor_name'   => 'required',

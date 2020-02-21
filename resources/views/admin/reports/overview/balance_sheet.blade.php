@@ -15,7 +15,7 @@
                     <li>
                         <button type="button" id="click" class="btn btn-dark" onclick="next()">Filter</button>
                     </li>
-                    <li>
+                    <!--{{--<li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">More Filter
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
@@ -36,7 +36,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--{{--<div class="col-md-12">
+                                            <div class="col-md-12">
                                                 <div class="form-horizontal form-label-left">
                                                     <div class="form-group row">
                                                         <label>Filter by Period</label>
@@ -100,7 +100,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>--}}-->
+                                            </div>
                                             <br>
                                             <div class="col-md-1 center-margin">
                                                 <div class="form-horizontal">
@@ -118,13 +118,13 @@
                                 </form>
                             </div>
                         </div>
-                    </li>
+                    </li>--}}-->
                     <li>
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false">Export
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <input value="{{$startyear_last_periode}}" type="date" id="startyear_last_periode" hidden>
-                            <input value="{{$endyear_last_periode}}" type="date" id="endyear_last_periode" hidden>
+                            <input value="{{$today}}" type="date" id="startyear_last_periode" hidden>
+                            <input value="{{$today2}}" type="date" id="endyear_last_periode" hidden>
                             <li><a onclick="excel()">Excel</a>
                             </li>
                             <li><a onclick="csv()">CSV</a>
@@ -154,48 +154,48 @@
                                             </tr>
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->coa->coa_category_id == 1)
-                                                    @if($a->total != 0)
-                                                        @if($a->coa->is_parent == 1)
-                                                            @if($stop == 0)
-                                                                <?php $stop += 1 ?>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
-                                                                    <td></td>
-                                                                    <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
-                                                                </tr>
-                                                            @endif
-                                                        @endif
-                                                    @endif
-                                                @endif
+                                            @if($a->coa->coa_category_id == 1)
+                                            @if($a->total != 0)
+                                            @if($a->coa->is_parent == 1)
+                                            @if($stop == 0)
+                                            <?php $stop += 1 ?>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
+                                                <td></td>
+                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                            </tr>
+                                            @endif
+                                            @endif
+                                            @endif
+                                            @endif
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
-                                                @if($a->coa->coa_category_id == 1)
-                                                    @if($a->total != 0)
-                                                        @if($a->coa->is_parent == 0)
-                                                            @if($stop == 0)
-                                                                <?php $stop += 1 ?>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td><a href="/chart_of_accounts/{{$a->coa_id}}">1-10100 - Account Receivable (A/R)</a></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                            @endif
-                                                            <tr>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
-                                                                <td></td>
-                                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
-                                                            </tr>
-                                                        @endif
-                                                    @endif
-                                                @endif
+                                            @if($a->coa->coa_category_id == 1)
+                                            @if($a->total != 0)
+                                            @if($a->coa->is_parent == 0)
+                                            @if($stop == 0)
+                                            <?php $stop += 1 ?>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td><a href="/chart_of_accounts/{{$a->coa_id}}">1-10100 - Account Receivable (A/R)</a></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            @endif
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
+                                                <td></td>
+                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                            </tr>
+                                            @endif
+                                            @endif
+                                            @endif
                                             @endforeach
                                             <?php $stop = 0 ?>
                                             @foreach($coa_detail as $a)
@@ -662,11 +662,11 @@
                                             @endif
                                             @if($a->coa->is_parent == 0)
                                             <tr></tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
-                                                <td></td>
-                                                <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td style="padding-left:30px"><a href="/chart_of_accounts/{{$a->coa_id}}">{{$a->coa->code}} - {{$a->coa->name}}</a></td>
+                                            <td></td>
+                                            <td class="text-right">@if($a->total < 0) ( @number(abs($a->total)) ) @else @number($a->total) @endif</td>
                                             </tr>
                                             @endif
                                             @endif
@@ -695,49 +695,38 @@
                                                 <td colspan="3"><b>Total Equity</b></td>
                                                 <td class="text-right"><b>@if($total_equity2 < 0) ( @number(abs($total_equity2)) ) @else @number($total_equity2) @endif</b> </td> </tr> <tr>
                                                 <td colspan="4"><b>Total Liability & Equity</b></td>
-                                                <td class="text-right"><b>@if($total_lia_eq < 0) ( @number(abs($total_lia_eq)) ) @else @number($total_lia_eq) @endif</b>
-                                                </td> 
-                                            </tr>
-                                        </tbody>
-                                    </table> 
-                                </div>
-                            </div> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-        </div> 
-    </div> 
-</div> 
-@endsection 
-@push('scripts') 
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200217-1409') }}" charset="utf-8"></script>
-<script>
-    function next() {
-        var date1 = document.getElementById('datepicker1');
-        window.location.href = "/reports/balance_sheet/as_of=" + date1.value;
-    }
-    function nextMoreFilter() {
-        var date2 = document.getElementById('datepicker2');
-        window.location.href = "/reports/balance_sheet/as_of=" + date2.value;
-    }
-    function excel() {
-        var date1 = document.getElementById('datepicker1');
-        var startyear_last_periode = document.getElementById('startyear_last_periode');
-        var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.location.href = "/reports/balance_sheet/excel/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value;
-    }
-    function csv() {
-        var date1 = document.getElementById('datepicker1');
-        var startyear_last_periode = document.getElementById('startyear_last_periode');
-        var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.location.href = "/reports/balance_sheet/csv/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value;
-    }
-    function pdf() {
-        var date1 = document.getElementById('datepicker1');
-        var startyear_last_periode = document.getElementById('startyear_last_periode');
-        var endyear_last_periode = document.getElementById('endyear_last_periode');
-        window.open("/reports/balance_sheet/pdf/as_of=" + date1.value + "/start_year=" + startyear_last_periode.value + "&end_year=" + endyear_last_periode.value, '_blank');
-    }
-</script>
-@endpush
+                                                <td class="text-right"><b>@if($total_lia_eq < 0) ( @number(abs($total_lia_eq)) ) @else @number($total_lia_eq) @endif</b> </td> </tr> </tbody> </table> </div> </div> </div> </div> </div> </div> </div> </div> </div> @endsection @push('scripts') <script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8">
+                                                            </script>
+                                                            <script>
+                                                                function next() {
+                                                                    var date1 = document.getElementById('datepicker1');
+                                                                    window.location.href = "/reports/balance_sheet/as_of=" + date1.value;
+                                                                }
+
+                                                                function nextMoreFilter() {
+                                                                    var date2 = document.getElementById('datepicker2');
+                                                                    window.location.href = "/reports/balance_sheet/as_of=" + date2.value;
+                                                                }
+
+                                                                function excel() {
+                                                                    var date1 = document.getElementById('datepicker1');
+                                                                    var startyear_last_periode = document.getElementById('startyear_last_periode');
+                                                                    var endyear_last_periode = document.getElementById('endyear_last_periode');
+                                                                    window.location.href = "/reports/balance_sheet/excel/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value;
+                                                                }
+
+                                                                function csv() {
+                                                                    var date1 = document.getElementById('datepicker1');
+                                                                    var startyear_last_periode = document.getElementById('startyear_last_periode');
+                                                                    var endyear_last_periode = document.getElementById('endyear_last_periode');
+                                                                    window.location.href = "/reports/balance_sheet/csv/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value;
+                                                                }
+
+                                                                function pdf() {
+                                                                    var date1 = document.getElementById('datepicker1');
+                                                                    var startyear_last_periode = document.getElementById('startyear_last_periode');
+                                                                    var endyear_last_periode = document.getElementById('endyear_last_periode');
+                                                                    window.open("/reports/balance_sheet/pdf/as_of=" + date1.value + "/start=" + startyear_last_periode.value + "&end=" + endyear_last_periode.value, '_blank');
+                                                                }
+                                                            </script>
+                                                            @endpush
