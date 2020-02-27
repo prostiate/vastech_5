@@ -64,11 +64,11 @@
                                         <input onClick="this.select();" type="text" class="form-control" name="specification[]">
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" type="text" class="form-control price_display" value="0">
+                                        <input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">
                                         <input type="text" class="price_hidden" name="price[]" value="0" hidden>
                                     </td>
                                     <td>
-                                        <input type="button" class="btn btn-danger delete" value="x">
+                                        <input type="button" class="btn btn-dark add" value="+">
                                     </td>
                                 </tr>
                             </tbody>
@@ -84,7 +84,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-                        <input type="button" class="btn btn-dark add" value="+ Add More Item">
                     </div>
                     <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">

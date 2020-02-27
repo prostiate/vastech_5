@@ -49,7 +49,7 @@ $(document).ready(function() {
             '<input onClick="this.select();" type="text" class="form-control" name="specification[]">' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control price_display" value="0">' +
+            '<input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">' +
             '<input type="text" class="price_hidden" name="price[]" value="0" hidden>' +
             "</td>" +
             "<td>" +

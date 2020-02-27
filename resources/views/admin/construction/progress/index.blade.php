@@ -37,9 +37,10 @@
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">Name Tax </th>
-                                <th class="column-title">Length </th>
-                                <th class="column-title">Action </th>
+                                <th class="column-title">Name </th>
+                                <th class="column-title">Bill Quantitiy </th>
+                                <th class="column-title">Total </th>
+                                <th class="column-title">Status </th>
                             </tr>
                         </thead>
                     </table>
@@ -51,5 +52,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/otherlists/terms/dataTable.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/construction/form_order/dataTable.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

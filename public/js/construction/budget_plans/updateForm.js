@@ -10,7 +10,7 @@ $(document).ready(function() {
         $('#click').html('Processing');
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/other/product_categories/updateCategory",
+            url: "/construction/budget_plan/updateBP",
             method: "POST",
             data: new FormData(form),
             contentType: false,
@@ -35,7 +35,7 @@ $(document).ready(function() {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href = "/other/product_categories/" + data.id;
+                    window.location.href = "/construction/budget_plan/" + data.id;
                 }
                 Swal.fire({
                     type: typeswal,

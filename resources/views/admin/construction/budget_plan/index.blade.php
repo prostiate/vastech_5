@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Offering Letter</h3>
+        <h3>Budget Plan</h3>
     </div>
 </div>
 @endsection
@@ -13,7 +13,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>List of Offering Letter</h2>
+                <h2>List of Budget Plan</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/construction/offering_letter/new';">New Offering Letter

@@ -34,4 +34,9 @@ class bill_quantities_con extends Model
     {
         return $this->belongsTo('App\budget_plan_con', 'budget_plan_id');
     }
+
+    public function form_order()
+    {
+        return $this->hasMany('App\form_order_con');
+    }
 }

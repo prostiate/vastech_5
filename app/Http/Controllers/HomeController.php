@@ -6,6 +6,7 @@ use App\coa;
 use App\coa_detail;
 use App\other_transaction;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class HomeController extends Controller
 {
@@ -312,5 +313,11 @@ class HomeController extends Controller
             'total_pay', 'total_sales_invoice', 'total_purchase_invoice', 'sales_invoice', 'purchase_invoice',
             'last_year', 'year', 'net_income', 'total_cash_flow', 'ending_cash', 'total_profit'
         ]));
+    }
+
+    public function bahasa()
+    {
+        App::setLocale('id');
+        return redirect()->back();
     }
 }

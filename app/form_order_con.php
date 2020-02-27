@@ -24,4 +24,14 @@ class form_order_con extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function form_order_detail()
+    {
+        return $this->hasMany('App\form_order_detail_con', 'form_order_id');
+    }
+
+    public function bill_quantities()
+    {
+        return $this->belongsTo('App\bill_quantities_con', 'bill_quantities_id');
+    }
 }

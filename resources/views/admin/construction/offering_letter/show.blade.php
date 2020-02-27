@@ -10,8 +10,20 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a href="/construction/budget_plan/new/offering_letter={{$header->id}}">Create Budget Plan</a></li>
+                            @if($header->is_approved == 1)
+                                @if($check_budget_plan)
+                                    @if($check_budget_plan->is_approved == 0)
+                                    <li><a href="/construction/budget_plan/edit/offering_letter={{$header->id}}">Edit Draft Budget Plan</a></li>
+                                    <li class="divider"></li>
+                                    @endif
+                                @else
+                                    <li><a href="/construction/budget_plan/new/offering_letter={{$header->id}}">Create Budget Plan</a></li>
+                                    <li class="divider"></li>
+                                @endif
+                            @else
+                            <li><a id="click" href="">Approve this</a></li>
                             <li class="divider"></li>
+                            @endif
                             <li><a href="#">Archive</a></li>
                         </ul>
                     </li>
@@ -21,7 +33,7 @@
                     - @if($header->is_approved == 1)
                     <span class="label label-success" style="color:white;">Approved</span>
                     @else
-                    <span class="label label-warning" style="color:white;">Not Approved</span>
+                    <span class="label label-warning" style="color:white;">Waiting to Approval</span>
                     @endif
                 </h3>
                 <a>Status: </a>
@@ -48,6 +60,7 @@
             </div>
             <div class="x_content">
                 <form method="post" id="formCreate" class="form-horizontal">
+                    <input type="text" value="{{$header->id}}" id="hidden_id" hidden>
                     <br>
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
@@ -128,18 +141,26 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
+                    @if($header->is_approved == 0)
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <input value="{{$header->id}}" type="text" id="form_id" hidden>
+                            <button type="button" class="btn btn-danger" id="clickDelete">Delete</button>
                             <div class="btn-group">
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/construction/offering_letter/edit/' + {{$header->id}};">Edit
                                 </button>
                             </div>
                         </div>
                     </div>
+                    @endif
                 </form>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="{{asset('js/construction/offering_letters/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/offering_letters/approval.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+@endpush

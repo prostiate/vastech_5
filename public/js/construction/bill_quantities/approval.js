@@ -4,11 +4,10 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function() {
-    $("#clickDelete").click(function() {
+    $("#click").click(function() {
         event.preventDefault();
-        $('#clickDelete').prop('disabled', true);
-        $('#clickDelete').html('Processing');
-        var user_id = document.getElementById("form_id").value;
+        var id = document.getElementById("hidden_id").value;
+        var form = document.getElementById("formCreate");
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -16,11 +15,17 @@ $(document).ready(function() {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Yes, approve it!"
         }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/construction/offering_letter/delete/" + user_id,
+                    url: "/construction/bill_quantities/approval=" + id,
+                    method: "POST",
+                    data: new FormData(form),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    dataType: "json",
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -28,17 +33,20 @@ $(document).ready(function() {
                         if (data.errors) {
                             typeswal = "error";
                             titleswal = "Oops...";
-                            for (var count = 0; count < data.errors.length; count++) {
+                            for (
+                                var count = 0;
+                                count < data.errors.length;
+                                count++
+                            ) {
                                 html += data.errors[count];
                             }
-                            $('#clickDelete').prop('disabled', false);
-                            $('#clickDelete').html('Delete');
                         }
                         if (data.success) {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            window.location.href = "/construction/offering_letter";
+                            window.location.href =
+                                "/construction/bill_quantities/" + data.id;
                         }
                         Swal.fire({
                             type: typeswal,
@@ -47,10 +55,6 @@ $(document).ready(function() {
                         });
                     }
                 });
-                //Swal.fire("Deleted!", "Your file has been deleted.", "success");
-            } else {
-                $("#clickDelete").prop("disabled", false);
-                $("#clickDelete").html("Delete");
             }
         });
     });

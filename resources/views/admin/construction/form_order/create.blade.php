@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bill of Quantities Name *</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order Name *</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input class="form-control" type="text" name="name">
                                 </div>
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bill of Quantities No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bill Quantities No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/construction/bill_quantities/{{$header_bq->id}}">{{$header_bq->number}}</a></h5>
                                     <input value="{{$header_bq->id}}" type="text" name="bill_quantities_id" id="bill_quantities_id" hidden>
@@ -58,79 +58,56 @@
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
                             <tbody>
-                                @foreach($item_bq as $item)
+                            @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->duration}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
+                                        <th colspan="2" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">{{$item[0]->offering_letter_detail->name}}</th>
+                                        <!--{{--<th class="column-title" style="width: 350px; text-align: center"></th>
+                                        <th class="column-title" style="width: 350px; text-align: center"></th>
                                         <th class="column-title" style="width: 50px"></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
-                                        <input value="{{$item->duration}}" type="text" name="budget_plan_detail_duration[]" hidden>
-                                        <input value="{{$item->amount}}" type="text" name="budget_plan_detail_price[]" hidden>
+                                        <th class="column-title" style="width: 50px"></th>--}}-->
                                     </tr>
                                 </thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Product</th>
-                                    <th class="column-title" style="width: 150px">Unit</th>
-                                    <th class="column-title" style="width: 150px">Quantity</th>
-                                    <th class="column-title" style="width: 350px">Price</th>
-                                    <th class="column-title" style="width: 100px"></th>
+                                    <th class="column-title" style="width: 350px">Working Detail</th>
+                                    <th class="column-title" style="width: 150px">Duration (month)</th>
+                                    <!--{{--<th class="column-title" style="width: 150px">Waktu (bulan)</th>
+                                    <th class="column-title" style="width: 350px">Progress Real (%)</th>
+                                    <th class="column-title" style="width: 350px">Keterlambatan (%)</th>--}}-->
                                 </tr>
+                                <?php $subtotal = 0; ?>
+                                @foreach($item as $item)
+                                <?php $subtotal += $item->amount; ?>
                                 <tbody class="neworderbody">
                                     <tr>
                                         <td>
-                                            <div class="form-group">
-                                                <select class="select_product form-control product_id" name="product[]">
-                                                    <option></option>
-                                                </select>
-                                                <input class="selected_product_id" hidden>
-                                                <input class="selected_product_unit" hidden>
-                                                <input class="tampungan_product_id" hidden>
-                                                <input class="tampungan_product_unit" hidden>
-                                            </div>
+                                            {{$item->name}}
+                                            <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
                                         </td>
                                         <td>
-                                            <div class="form-group">
-                                                <select class="selectunit form-control unit" name="unit[]">
-                                                    @foreach($unit as $a)
-                                                    <option value="{{$a->id}}">
-                                                        {{$a->name}}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            {{$item->duration}}
+                                        </td>
+                                        <!--{{--<td>
+                                            <input onClick="this.select();" type="number" min="0" class="form-control order_days" name="days[]" value="0"
+                                            data-toggle="tooltip" data-placement="left" data-original-title="Progress : 0 %">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="form-control" name="quantity[]" value="0">
+                                            <input onClick="this.select();" type="number" min="0" max="100" class="form-control order_progress" name="progress[]" value="0">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="form-control price_display" value="0">
-                                            <input type="text" class="price_hidden" name="price[]" value="0" hidden>
-                                        </td>
-                                        <td>
-                                            <input type="button" class="btn btn-dark add" value="+">
-                                        </td>
+                                            <input onClick="this.select();" type="text" class="form-control order_late" name="late[]" value="0" readonly>
+                                        </td>--}}-->
                                     </tr>
                                 </tbody>
-                                <tr>
-                                    <td colspan="3" style="text-align: right">
-                                        <h4><strong>Sub Total</strong></h4>
-                                    </td>
-                                    <td colspan="2">
-                                        <input type="text" class="form-control sub_display" value="0" readonly>
-                                        <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
-                                    </td>
-                                </tr>
+                                @endforeach
                                 @endforeach
                             </tbody>
                             <tfoot hidden>
                                 <tr>
-                                    <td colspan="3" style="text-align: right">
+                                    <td colspan="1" style="text-align: right">
                                         <h4><strong>Grand Total</strong></h4>
                                     </td>
-                                    <td colspan="2">
+                                    <td colspan="1">
                                         <input type="text" class="form-control grandtotal_display" value="0" readonly>
                                         <input type="text" class="grandtotal_hidden" name="grandtotal" value="0" hidden>
                                     </td>
@@ -138,9 +115,9 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan/{{$header_bq->id}}';">Cancel</button>
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header_bq->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>
                             </div>
@@ -154,8 +131,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/form_order/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script src="{{asset('js/construction/form_order/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

@@ -50,6 +50,7 @@
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/construction/budget_plan/{{$header_bp->id}}">{{$header_bp->number}}</a></h5>
                                     <input value="{{$header_bp->id}}" type="text" name="budget_plan_id" id="budget_plan_id" hidden>
+                                    <input value="{{$header_bp->offering_letter_id}}" type="text" name="offering_letter_id" id="offering_letter_id" hidden>
                                 </div>
                             </div>
                         </div>
@@ -61,14 +62,9 @@
                                 @foreach($item_bp as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->duration}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
-                                        <input value="{{$item->duration}}" type="text" name="budget_plan_detail_duration[]" hidden>
-                                        <input value="{{$item->amount}}" type="text" name="budget_plan_detail_price[]" hidden>
+                                        <th colspan="2" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Detail">{{$item->name}}</th>
+                                        <th colspan="2" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Duration">{{$item->duration}}</th>
+                                        <th colspan="2" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Budget Plan Total Price"><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
                                     </tr>
                                 </thead>
                                 <tr class="headings">
@@ -76,9 +72,17 @@
                                     <th class="column-title" style="width: 150px">Unit</th>
                                     <th class="column-title" style="width: 150px">Quantity</th>
                                     <th class="column-title" style="width: 350px">Price</th>
-                                    <th class="column-title" style="width: 100px"></th>
+                                    <th class="column-title" style="width: 350px">Total Price</th>
+                                    <th class="column-title" style="width: 50px"></th>
                                 </tr>
                                 <tbody class="neworderbody">
+                                    <tr class="head" hidden>
+                                        <td>
+                                        <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
+                                        <input value="{{$item->duration}}" type="text" name="budget_plan_detail_duration[]" hidden>
+                                        <input class="budget_plan_detail_price" value="{{$item->amount}}" type="text" name="budget_plan_detail_price[]" hidden>
+                                        <td>
+                                    </tr>
                                     <tr class="initialtr">
                                         <td>
                                             <div class="form-group">
@@ -90,6 +94,8 @@
                                                 <input class="tampungan_product_id" hidden>
                                                 <input class="tampungan_product_unit" hidden>
                                             </div>
+                                            <input value="{{$item->id}}" type="text" name="item_budget_plan_id[]" class="item_budget_plan_id" hidden>
+                                            <input value="{{$item->offering_letter_detail_id}}" type="text" name="item_offering_letter_id[]" class="item_offering_letter_id" hidden>
                                         </td>
                                         <td>
                                             <div class="form-group">
@@ -103,18 +109,27 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="form-control" name="quantity[]" value="0">
+                                            <input onClick="this.select();" type="text" class="form-control qty" name="quantity[]" value="0">
                                         </td>
                                         <td>
-                                            <input onClick="this.select();" type="text" class="form-control price_display" value="0">
+                                            <input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">
                                             <input type="text" class="price_hidden" name="price[]" value="0" hidden>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control total_price_display" value="0" readonly>
+                                            <input type="text" class="total_price_hidden" name="total_price[]" value="0" hidden>
                                         </td>
                                         <td>
                                             <input type="button" class="btn btn-dark add" value="+">
                                         </td>
                                     </tr>
+                                    <tr class="warning" hidden>
+                                        <td colspan="6" style="text-align: right">
+                                            <small><strong>Sub total cannot be more than the price that already assigned.</strong></small>
+                                        </td>
+                                    </tr>
                                     <tr class="outputbody">
-                                        <td colspan="3" style="text-align: right">
+                                        <td colspan="4" style="text-align: right">
                                             <h4><strong>Sub Total</strong></h4>
                                         </td>
                                         <td colspan="2">
@@ -127,7 +142,7 @@
                             </tbody>
                             <tfoot hidden>
                                 <tr>
-                                    <td colspan="3" style="text-align: right">
+                                    <td colspan="4" style="text-align: right">
                                         <h4><strong>Grand Total</strong></h4>
                                     </td>
                                     <td colspan="2">

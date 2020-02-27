@@ -160,54 +160,12 @@ function inputMasking() {
     $(".price_display").inputmask("IDR");
 }
 
+
 $(document).ready(function() {
     selectProduct();
     inputMasking();
     totalGrand();
     totalSub();
-
-    //$(".add").click(function() {
-    var unit = $(".unit").html();
-    $(".neworderbody").on("click", ".add", function() {
-        tr =
-            "<tr>" +
-            "<td>" +
-            '<div class="form-group" >' +
-            '<select class="form-control product_id" name="product[]">' +
-            "</select>" +
-            '<input class="selected_product_id" hidden>' +
-            '<input class="selected_product_unit" hidden>' +
-            '<input class="tampungan_product_id" name="product2[]" hidden>' +
-            '<input class="tampungan_product_unit" hidden>' +
-            "</div>" +
-            "</td>" +
-            "<td>" +
-            '<div class="form-group">' +
-            '<select class="form-control unit" name="unit[]">' +
-            unit +
-            "</select>" +
-            "</div>" +
-            "</td>" +
-            "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control" name="quantity[]" value="0">' +
-            "</td>" +
-            "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control price_display" value="0">' +
-            '<input type="text" class="price_hidden" name="price[]" value="0" hidden>' +
-            "</td>" +
-            "<td>" +
-            '<input type="button" class="btn btn-danger delete" value="x">' +
-            "</td>" +
-            "</tr>";
-
-        $(".neworderbody").append(tr);
-        inputMasking();
-        selectProduct2();
-        $(".unit").select2({
-            width: "100%",
-            placeholder: "Select Unit"
-        });
-    });
 
     $(".neworderbody").on("click", ".delete", function() {
         $(this)
@@ -218,12 +176,54 @@ $(document).ready(function() {
         totalSub();
     });
 
-    $(".neworderbody").on("keyup change", ".price_display", function() {
+    /**
+    $(".neworderbody").on("keyup change", ".order_progress", function() {
         var tr = $(this).closest("tr");
-        var price = tr.find(".price_display").val() - 0;
-        tr.find(".price_hidden").val(price);
-        totalGrand();
-        totalSub();
+        var t = tr.find('.order_duration').val() - 0;
+        var d = tr.find('.order_days').val() - 0;
+        var p = tr.find('.order_progress').val() - 0;
+
+        //kalau hitung progress real otomatis
+        var bulan = ((p / 100) * t).toFixed(2);
+        tr.find('.order_days').val(bulan - 0);
+    });
+
+    $(".neworderbody").on("keyup change", ".order_days", function() {
+        var tr = $(this).closest("tr");
+        var t = tr.find('.order_duration').val() - 0;
+        var d = tr.find('.order_days').val() - 0;
+        var p = tr.find('.order_progress').val() - 0;
+
+        //kalau hitung progress real otomatis
+        var persen = ((d / t) * 100).toFixed(2);
+        if (persen > 100) {
+            persen = 100;
+        };
+        tr.find('.order_progress').val(persen - 0);
+
+        //hitung keterlambatan
+    });
+    */
+    $(".neworderbody").on("keyup change", ".order_days, .order_progress", function() {
+        var tr = $(this).closest("tr");
+        var t = tr.find('.order_duration').val() - 0;
+        var d = tr.find('.order_days').val() - 0;
+        var p = tr.find('.order_progress').val() - 0;
+
+        //kalau hitung progress real otomatis
+        var persen = ((d / t) * 100).toFixed(2);
+        if (persen > 100) {
+            persen = 100;
+        };
+        var persen = persen - 0;
+        tr.find('.order_days').attr("data-original-title", "Progress : " + persen + " %");
+
+        //hitung keterlambatan
+        var k = persen - p - 0;
+        if (k < 0) {
+            k = 0;
+        };
+        tr.find('.order_late').val(k);
     });
 
     $(".neworderbody").on(

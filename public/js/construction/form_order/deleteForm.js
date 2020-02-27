@@ -20,7 +20,7 @@ $(document).ready(function() {
         }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/construction/offering_letter/delete/" + user_id,
+                    url: "/construction/form_order/delete/" + user_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -38,7 +38,7 @@ $(document).ready(function() {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            window.location.href = "/construction/offering_letter";
+                            window.location.href = "/construction/bill_quantities/" + data.id;
                         }
                         Swal.fire({
                             type: typeswal,

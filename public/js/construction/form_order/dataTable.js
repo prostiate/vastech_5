@@ -2,62 +2,54 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[0, 'asc']],
+        aaSorting: [[0, "asc"]],
         ajax: {
-            url: "/other/taxes"
+            url: "/construction/form_order"
         },
         columns: [
             {
                 data: "name",
-                name: "name",
-                render:function(data, type, row){
-                    return '<a href="/other/taxes/' + row.id + '">' + row.name + '</a>'
-                },
+                render: function(data, type, row) {
+                    return (
+                        '<a href="/construction/form_order/' +
+                        row.id +
+                        '">' +
+                        row.name +
+                        "</a>"
+                    );
+                }
             },
             {
-                data: "rate",
-                name: "rate",
-                searchable: false
+                data: "bill_quantities_id",
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "sell_tax_account",
-                name: "sell_tax_account",
-                render:function(data, type, row){
-                    return '<a href="/chart_of_accounts/' + row.sell_tax_account + '">' + row.coa_sell.name + '</a>'
-                },
+                data: "status",
+                render: $.fn.dataTable.render.text()
             },
             {
-                data: "buy_tax_account",
-                name: "buy_tax_account",
-                render:function(data, type, row){
-                    return '<a href="/chart_of_accounts/' + row.buy_tax_account + '">' + row.coa_buy.name + '</a>'
-                },
-            },
-            {
-                data: "action",
-                name: "action",
-                orderable: false,
-                searchable: false
+                data: "grandtotal",
+                render: $.fn.dataTable.render.number(".", ",", 2, "Rp ")
             }
         ]
     });
 
     var user_id;
 
-    $(document).on('click', '.delete', function() {
-        user_id = $(this).attr('id');
+    $(document).on("click", ".delete", function() {
+        user_id = $(this).attr("id");
         Swal.fire({
-            title: 'Are you sure?',
+            title: "Are you sure?",
             text: "You won't be able to revert this!",
-            type: 'warning',
+            type: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/other/taxes/delete/" + user_id,
+                    url: "/construction/form_order/delete/" + user_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -71,7 +63,9 @@ $(document).ready(function() {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            $('#dataTable').DataTable().ajax.reload();
+                            $("#dataTable")
+                                .DataTable()
+                                .ajax.reload();
                         }
                         Swal.fire({
                             type: typeswal,
@@ -79,18 +73,14 @@ $(document).ready(function() {
                             html: html
                         });
                     }
-                })
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
+                });
+                Swal.fire("Deleted!", "Your file has been deleted.", "success");
             }
-        })
+        });
     });
 
-    $(document).on('click', '.edit', function() {
-        user_id = $(this).attr('id');
-        window.location.href = '/other/taxes/edit/' + user_id;
+    $(document).on("click", ".edit", function() {
+        user_id = $(this).attr("id");
+        window.location.href = "/construction/form_order/edit/" + user_id;
     });
 });

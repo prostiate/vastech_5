@@ -20,7 +20,8 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Date *</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Date
+                                    *</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$today}}" type="text" class="form-control" name="date" id="datepicker1">
                                 </div>
@@ -48,8 +49,9 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Offering Letter No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5><a href="/construction/offering_letter/{{$header_ol->id}}">{{$header_ol->number}}</a></h5>
-                                    <input value="{{$header_ol->id}}"type="text" name="offering_letter_id" id="offering_letter_id" hidden>
+                                    <h5><a href="/construction/offering_letter/{{$header_ol->id}}">{{$header_ol->number}}</a>
+                                    </h5>
+                                    <input value="{{$header_ol->id}}" type="text" name="offering_letter_id" id="offering_letter_id" hidden>
                                 </div>
                             </div>
                         </div>
@@ -57,53 +59,57 @@
                     <div class="ln_solid"></div>
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
-                            <tbody class="newbody">
-                                @foreach($item_ol as $k => $item)
-                            
-                                <thead>
-                                    <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item->specification}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <input value="{{$item->id}}" type="text" name="offering_letter_detail_id[]" hidden>
-                                        <input value="{{$item->amount}}" type="text" name="offering_letter_detail_price[]" hidden>
-                                    </tr>
-                                </thead>
+                            @foreach($item_ol as $k => $item)
+                            <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Working Detail</th>
-                                    <th class="column-title" style="width: 150px">Duration</th>
-                                    <th colspan="2" class="column-title" style="width: 350px">Price</th>
+                                    <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">
+                                        {{$item->name}}</th>
+                                    <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Specification">
+                                        {{$item->specification}}</th>
+                                    <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Offering Total Price">
+                                        <?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></th>
+                                    <th class="column-title" style="width: 50px"></th>
                                 </tr>
-                                <tbody class="neworderbody">
-                                    <tr class="initialtr">
-                                        <td>
-                                            <input value="{{$item->id}}" class="kon" name="kon[]" hidden>
-                                            <input onClick="this.select();" type="text" class="form-control" name="working_detail[]">
-                                        </td>
-                                        <td>
-                                            <input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">
-                                        </td>
-                                        <td>
-                                            <input onClick="this.select();" type="text" class="form-control price_display" value="0">
-                                            <input type="text" class="price_hidden" name="price[]" value="0" hidden>
-                                        </td>
-                                        <td>
-                                            <input type="button" class="btn btn-dark add" value="+">
-                                        </td>
-                                    </tr>
-                                    <tr class="outputbody">
-                                        <td colspan="2" style="text-align: right">
-                                            <h4><strong>Sub Total</strong></h4>
-                                        </td>
-                                        <td colspan="2">
-                                            <input type="text" class="form-control sub_display" value="0" readonly>
-                                            <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                @endforeach
+                            </thead>
+                            <tr class="headings">
+                                <th class="column-title" style="width: 350px">Working Detail</th>
+                                <th class="column-title" style="width: 150px">Duration (month)</th>
+                                <th colspan="2" class="column-title" style="width: 350px">Price</th>
+                            </tr>
+                            <tbody class="neworderbody">
+                                <tr class="initialtr">
+                                    <td>
+                                        <input class="offering_letter_amount" value="{{$item->amount}}" type="text" name="offering_letter_detail_price[]" hidden>
+                                        <input value="{{$item->id}}" class="kon" name="offering_letter_detail_id[]" hidden>
+                                        <input onClick="this.select();" type="text" class="form-control" name="working_detail[]">
+                                    </td>
+                                    <td>
+                                        <input onClick="this.select();" type="number" class="form-control" name="duration[]" value="0">
+                                    </td>
+                                    <td>
+                                        <input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">
+                                        <input type="text" class="price_hidden" name="price[]" value="0" hidden>
+                                    </td>
+                                    <td>
+                                        <input type="button" class="btn btn-dark add" value="+">
+                                    </td>
+                                </tr>
+                                <tr class="warning" hidden>
+                                    <td colspan="4" style="text-align: right">
+                                        <small class="red"><strong>Sub total cannot be more than the price that already assigned.</strong></small>
+                                    </td>
+                                </tr>
+                                <tr class="outputbody">
+                                    <td colspan="2" style="text-align: right">
+                                        <h4><strong>Sub Total</strong></h4>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="text" class="form-control sub_display" value="0" readonly>
+                                        <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
+                                    </td>
+                                </tr>
                             </tbody>
+                            @endforeach
                             <tfoot hidden>
                                 <tr>
                                     <td colspan="2" style="text-align: right">
@@ -117,8 +123,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/offering_letter/{{$header_ol->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>

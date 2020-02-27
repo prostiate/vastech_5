@@ -35,6 +35,11 @@ class bill_quantities_detail_con extends Model
         return $this->belongsTo('App\budget_plan_detail_con', 'budget_plan_detail_id');
     }
 
+    public function offering_letter_detail()
+    {
+        return $this->belongsTo('App\offering_letter_detail_con', 'offering_letter_detail_id');
+    }
+
     public function product()
     {
         return $this->belongsTo('App\product');

@@ -3352,7 +3352,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('name');
-            $table->integer('duration');
+            $table->integer('duration')->default('0');
             $table->decimal('amount', 17, 2)->default('0');
             $table->decimal('amountsub', 17, 2)->default('0');
             $table->unsignedBigInteger('status');
@@ -3387,6 +3387,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('number');
+            $table->string('address')->nullable();
             $table->string('name');
             $table->string('date');
             $table->boolean('is_approved')->default('0');
@@ -3442,8 +3443,9 @@ class VastechConstruction extends Migration
                 ->references('id')->on('other_units')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->double('qty', 20, 6);
+            $table->double('qty', 20, 6)->default('0');
             $table->decimal('amount', 17, 2)->default('0');
+            $table->decimal('amounttotal', 17, 2)->default('0');
             $table->unsignedBigInteger('status');
             $table->foreign('status')
                 ->references('id')->on('other_statuses')
@@ -3476,6 +3478,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('number');
+            $table->string('address')->nullable();
             $table->string('name');
             $table->string('date');
             $table->boolean('is_approved')->default('0');
@@ -3516,11 +3519,11 @@ class VastechConstruction extends Migration
                 ->references('id')->on('budget_plan_detail_cons')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->boolean('is_late')->default('0');
-            $table->integer('progress_current_in_month');
-            $table->decimal('progress_current_in_percent', 5, 3)->default('0');
-            $table->integer('progress_lateness_in_month');
-            $table->decimal('progress_lateness_in_percent', 5, 3)->default('0');
+            //$table->boolean('is_late')->default('0');
+            //$table->integer('progress_current_in_month');
+            //$table->decimal('progress_current_in_percent', 5, 3)->default('0');
+            //$table->integer('progress_lateness_in_month');
+            //$table->decimal('progress_lateness_in_percent', 5, 3)->default('0');
             $table->unsignedBigInteger('status');
             $table->foreign('status')
                 ->references('id')->on('other_statuses')
@@ -3552,8 +3555,15 @@ class VastechConstruction extends Migration
                 ->references('id')->on('form_order_cons')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+            $table->unsignedBigInteger('bill_quantities_id');
+            $table->foreign('bill_quantities_id')
+                ->references('id')->on('bill_quantities_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->string('number');
+            $table->string('name');
             $table->string('date');
+            $table->boolean('is_approved')->default('0');
             $table->decimal('grandtotal', 17, 2)->default('0');
             $table->unsignedBigInteger('status');
             $table->foreign('status')
@@ -3586,8 +3596,16 @@ class VastechConstruction extends Migration
                 ->references('id')->on('progress_cons')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->string('name');
-            $table->decimal('amount', 17, 2)->default('0');
+            $table->unsignedBigInteger('budget_plan_detail_id');
+            $table->foreign('budget_plan_detail_id')
+                ->references('id')->on('budget_plan_detail_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->boolean('is_late')->default('0');
+            $table->integer('progress_current_in_month');
+            $table->decimal('progress_current_in_percent', 5, 3)->default('0');
+            $table->integer('progress_lateness_in_month');
+            $table->decimal('progress_lateness_in_percent', 5, 3)->default('0');
             $table->unsignedBigInteger('status');
             $table->foreign('status')
                 ->references('id')->on('other_statuses')

@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function () {
         Artisan::call('cache:clear');
         return "Cache is cleared";
     });
+    Route::get('lang/{language}',                                                                               'LocalizationController@switch')->name('localization.switch');
     Route::get('/testing',                                                                                      'PurchaseInvoiceController@benerin_avg_price');
 
     /*---------REPORTS --------------*/
@@ -706,18 +707,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/offering_letter/new',                                     'ConOfferingLetterController@create');
     Route::post('/construction/offering_letter/newOL',                                  'ConOfferingLetterController@store');
     Route::get('/construction/offering_letter/{id}',                                    'ConOfferingLetterController@show');
-    Route::get('/construction/offering_letter/edit/',                                   'ConOfferingLetterController@edit');
+    Route::get('/construction/offering_letter/edit/{id}',                               'ConOfferingLetterController@edit');
     Route::post('/construction/offering_letter/updateOL',                               'ConOfferingLetterController@update');
     Route::get('/construction/offering_letter/delete/{id}',                             'ConOfferingLetterController@destroy');
+    Route::post('/construction/offering_letter/approval={id}',                          'ConOfferingLetterController@approval');
     Route::get('/construction/print/PDF/{id}',                                          'ConOfferingLetterController@cetak_pdf');
 
     Route::get('/construction/budget_plan',                                             'ConBudgetPlanController@index');
     Route::get('/construction/budget_plan/new/offering_letter={ol}',                    'ConBudgetPlanController@create');
     Route::post('/construction/budget_plan/newBP/offering_letter={ol}',                 'ConBudgetPlanController@store');
     Route::get('/construction/budget_plan/{bp}',                                        'ConBudgetPlanController@show');
-    Route::get('/construction/budget_plan/edit/',                                       'ConBudgetPlanController@edit');
-    Route::post('/construction/budget_plan/updateOL',                                   'ConBudgetPlanController@update');
+    Route::get('/construction/budget_plan/edit/offering_letter={ol}',                   'ConBudgetPlanController@edit');
+    Route::post('/construction/budget_plan/updateBP',                                   'ConBudgetPlanController@update');
     Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
+    Route::post('/construction/budget_plan/approval={id}',                              'ConBudgetPlanController@approval');
     Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
 
     //Route::get('/construction/bill_quantities/select_product',                          'ConBillQuantitiesController@select_product');
@@ -725,16 +728,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/bill_quantities/new/budget_plan={bp}',                    'ConBillQuantitiesController@create');
     Route::post('/construction/bill_quantities/newBQ/budget_plan={bp}',                 'ConBillQuantitiesController@store');
     Route::get('/construction/bill_quantities/{bq}',                                    'ConBillQuantitiesController@show');
-    Route::get('/construction/bill_quantities/edit/',                                   'ConBillQuantitiesController@edit');
-    Route::post('/construction/bill_quantities/updateOL',                               'ConBillQuantitiesController@update');
+    Route::get('/construction/bill_quantities/edit/budget_plan={bp}',                   'ConBillQuantitiesController@edit');
+    Route::post('/construction/bill_quantities/updateBQ',                               'ConBillQuantitiesController@update');
     Route::get('/construction/bill_quantities/delete/{id}',                             'ConBillQuantitiesController@destroy');
+    Route::post('/construction/bill_quantities/approval={id}',                          'ConBillQuantitiesController@approval');
     Route::get('/construction/print/PDF/{id}',                                          'ConBillQuantitiesController@cetak_pdf');
 
     Route::get('/construction/form_order',                                              'ConFormOrderController@index');
-    Route::get('/construction/form_order/new/bill_quantities={bq}',                     'ConBillQuantitiesController@create');
-    Route::post('/construction/form_order/newFO/bill_quantities={bq}',                  'ConBillQuantitiesController@store');
-    Route::get('/construction/form_order/show',                                         'ConFormOrderController@show');
-    Route::get('/construction/form_order/edit/',                                        'ConFormOrderController@edit');
+    Route::get('/construction/form_order/new/bill_quantities={bq}',                     'ConFormOrderController@create');
+    Route::post('/construction/form_order/newFO/bill_quantities={bq}',                  'ConFormOrderController@store');
+    Route::get('/construction/form_order/{fo}',                                         'ConFormOrderController@show');
+    Route::get('/construction/form_order/edit/bill_quantities={bq}',                    'ConFormOrderController@edit');
     Route::post('/construction/form_order/updateOL',                                    'ConFormOrderController@update');
     Route::get('/construction/form_order/delete/{id}',                                  'ConFormOrderController@destroy');
     Route::get('/construction/print/PDF/{id}',                                          'ConFormOrderController@cetak_pdf');

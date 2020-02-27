@@ -6,8 +6,8 @@ $.ajaxSetup({
 $(document).ready(function() {
     $("#clickDelete").click(function() {
         event.preventDefault();
-        $('#clickDelete').prop('disabled', true);
-        $('#clickDelete').html('Processing');
+        $("#clickDelete").prop("disabled", true);
+        $("#clickDelete").html("Processing");
         var user_id = document.getElementById("form_id").value;
         Swal.fire({
             title: "Are you sure?",
@@ -20,7 +20,7 @@ $(document).ready(function() {
         }).then(result => {
             if (result.value) {
                 $.ajax({
-                    url: "/construction/offering_letter/delete/" + user_id,
+                    url: "/construction/bill_quantities/delete/" + user_id,
                     success: function(data) {
                         var html = "";
                         var typeswal = "";
@@ -28,17 +28,22 @@ $(document).ready(function() {
                         if (data.errors) {
                             typeswal = "error";
                             titleswal = "Oops...";
-                            for (var count = 0; count < data.errors.length; count++) {
+                            for (
+                                var count = 0;
+                                count < data.errors.length;
+                                count++
+                            ) {
                                 html += data.errors[count];
                             }
-                            $('#clickDelete').prop('disabled', false);
-                            $('#clickDelete').html('Delete');
+                            $("#clickDelete").prop("disabled", false);
+                            $("#clickDelete").html("Delete");
                         }
                         if (data.success) {
                             typeswal = "success";
                             titleswal = "Success...";
                             html = data.success;
-                            window.location.href = "/construction/offering_letter";
+                            window.location.href =
+                                "/construction/budget_plan/" + data.id;
                         }
                         Swal.fire({
                             type: typeswal,

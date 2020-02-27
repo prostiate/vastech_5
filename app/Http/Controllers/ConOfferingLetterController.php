@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\other_tax;
+use App\budget_plan_con;
 use Illuminate\Http\Request;
 use Validator;
-use App\coa;
 use App\offering_letter_con;
 use App\offering_letter_detail_con;
 use Illuminate\Support\Facades\DB;
@@ -51,7 +50,7 @@ class ConOfferingLetterController extends Controller
                 $number                 = 10000;
             $trans_no                   = $number + 1;
         }
-        $today              = Carbon::today()->toDateString();
+        $today                          = Carbon::today()->toDateString();
         return view('admin.construction.offering_letter.create', compact(['today', 'trans_no']));
     }
 
@@ -79,6 +78,9 @@ class ConOfferingLetterController extends Controller
             'name'                      => 'required',
             'date'                      => 'required',
             'address'                   => 'required',
+            'working_description.*'     => 'required',
+            'specification.*'           => 'required',
+            'price_display.*'           => 'required',
         );
 
         $error = Validator::make($request->all(), $rules);
@@ -124,22 +126,89 @@ class ConOfferingLetterController extends Controller
     {
         $header                             = offering_letter_con::find($id);
         $item                               = offering_letter_detail_con::with('other_status')->where('offering_letter_id', $id)->get();
-        //dd($item);
-        return view('admin.construction.offering_letter.show', compact(['header', 'item']));
+        $check_budget_plan                  = budget_plan_con::where('offering_letter_id', $id)->first();
+        return view('admin.construction.offering_letter.show', compact(['header', 'item', 'check_budget_plan']));
     }
 
-    public function edit()
+    public function edit($id)
     {
-        //
+        $header                             = offering_letter_con::find($id);
+        $item                               = offering_letter_detail_con::with('other_status')->where('offering_letter_id', $id)->get();
+        return view('admin.construction.offering_letter.edit', compact(['header', 'item']));
     }
 
     public function update(Request $request)
     {
-        //
+        $user                           = User::find(Auth::id());
+        $rules = array(
+            'name'                      => 'required',
+            'date'                      => 'required',
+            'address'                   => 'required',
+            'working_description.*'     => 'required',
+            'specification.*'           => 'required',
+            'price_display.*'           => 'required',
+        );
+
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        DB::beginTransaction();
+        try {
+            $id                         = $request->hidden_id;
+            offering_letter_con::findOrFail($id)->update([
+                'name'                  => $request->name,
+                'date'                  => $request->date,
+                'address'               => $request->address,
+            ]);
+            offering_letter_detail_con::where('offering_letter_id', $id)->delete();
+            foreach ($request->working_description as $i => $detail) {
+                offering_letter_detail_con::create([
+                    'tenant_id'         => $user->tenant_id,
+                    'company_id'        => $user->company_id,
+                    'user_id'           => Auth::id(),
+                    'offering_letter_id'           => $id,
+                    'name'              => $request->working_description[$i],
+                    'specification'     => $request->specification[$i],
+                    'amount'            => $request->price[$i],
+                    'status'            => 1,
+                ]);
+            }
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $header = offering_letter_con::find($id);
+            offering_letter_detail_con::where('offering_letter_id', $id)->delete();
+            $header->delete();
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully deleted']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function approval($id)
+    {
+        DB::beginTransaction();
+        try {
+            $header                             = offering_letter_con::find($id);
+            $header->update(['is_approved' => 1]);
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully approved', 'id' => $header->id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
     }
 }

@@ -10,8 +10,20 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a href="/construction/bill_quantities/new/budget_plan={{$header->id}}">Create Bill Quantities</a></li>
+                            @if($header->is_approved == 1)
+                                @if($check_bill_quantities)
+                                    @if($check_bill_quantities->is_approved == 0)
+                                    <li><a href="/construction/bill_quantities/edit/budget_plan={{$header->id}}">Edit Draft Bill Quantities</a></li>
+                                    <li class="divider"></li>
+                                    @endif
+                                @else
+                                    <li><a href="/construction/bill_quantities/new/budget_plan={{$header->id}}">Create Bill Quantities</a></li>
+                                    <li class="divider"></li>
+                                @endif
+                            @else
+                            <li><a id="click" href="">Approve this</a></li>
                             <li class="divider"></li>
+                            @endif
                             <li><a href="#">Archive</a></li>
                         </ul>
                     </li>
@@ -48,6 +60,7 @@
             </div>
             <div class="x_content">
                 <form method="post" id="formCreate" class="form-horizontal">
+                    <input type="text" value="{{$header->id}}" id="hidden_id" hidden>
                     <br>
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
@@ -98,40 +111,42 @@
                                 @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->offering_letter_detail->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->offering_letter_detail->pecification}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"><?php echo 'Rp ' . number_format($item[0]->amount, 2, ',', '.') ?></th>
+                                        <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">{{$item[0]->offering_letter_detail->name}}</th>
+                                        <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Specification">{{$item[0]->offering_letter_detail->specification}}</th>
+                                        <th class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Offering Total Price"><?php echo 'Rp ' . number_format($item[0]->offering_letter_detail->amount, 2, ',', '.') ?></th>
                                     </tr>
                                 </thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Working Detail</th>
-                                    <th class="column-title" style="width: 150px">Duration</th>
-                                    <th class="column-title" style="width: 350px">Price</th>
-                                </tr>      
+                                    <th class="column-title" style="width: 350px; text-align: center">Working Detail</th>
+                                    <th class="column-title" style="width: 150px; text-align: center">Duration (bulan)</th>
+                                    <th class="column-title" style="width: 350px; text-align: center">Price</th>
+                                </tr>
+                                <?php $subtotal = 0; ?>
                                 @foreach($item as $item)
-                                <tbody class="neworderbody">
-                                    <tr>
-                                        <td>
-                                            {{$item->name}}
-                                        </td>
-                                        <td>
-                                            {{$item->duration}}
-                                        </td>
-                                        <td>
-                                            <strong><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></strong>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                @endforeach
+                                <?php $subtotal += $item->amount; ?>
+                            <tbody class="neworderbody">
                                 <tr>
-                                    <td colspan="2" style="text-align: right">
-                                        <strong>Sub Total</strong>
+                                    <td>
+                                        {{$item->name}}
                                     </td>
                                     <td style="text-align: center">
+                                        {{$item->duration}}
+                                    </td>
+                                    <td style="text-align: right">
                                         <strong><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></strong>
                                     </td>
                                 </tr>
-                                @endforeach
+                            </tbody>
+                            @endforeach
+                            <tr>
+                                <td colspan="2" style="text-align: right">
+                                    <strong>Sub Total</strong>
+                                </td>
+                                <td style="text-align: right">
+                                    <strong><?php echo 'Rp ' . number_format($subtotal, 2, ',', '.') ?></strong>
+                                </td>
+                            </tr>
+                            @endforeach
                             </tbody>
                             <tfoot hidden>
                                 <tr>
@@ -145,15 +160,18 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
+                    @if($header->is_approved == 0)
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <input value="{{$header->id}}" type="text" id="form_id" hidden>
+                            <button type="button" class="btn btn-danger" id="clickDelete">Delete</button>
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/offering_letter/{{$header->offering_letter->id}}';">Cancel</button>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Edit</button>
+                                <button class="btn btn-success" type="button" onclick="window.location.href = '/construction/budget_plan/edit/offering_letter={{$header->offering_letter->id}}';">Edit</button>
                             </div>
                         </div>
                     </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -162,7 +180,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/approval.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

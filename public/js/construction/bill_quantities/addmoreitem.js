@@ -8,13 +8,13 @@ function selectProduct() {
         ajax: {
             url: "/purchases_invoice/select_product",
             dataType: "json",
-            data: function(params) {
+            data: function (params) {
                 return {
                     term: params.term || "",
                     page: params.page || 1
                 };
             },
-            processResults: function(data, params) {
+            processResults: function (data, params) {
                 params.page = params.page || 1;
 
                 return {
@@ -65,13 +65,13 @@ function selectProduct2() {
         ajax: {
             url: "/purchases_invoice/select_product",
             dataType: "json",
-            data: function(params) {
+            data: function (params) {
                 return {
                     term: params.term || "",
                     page: params.page || 1
                 };
             },
-            processResults: function(data, params) {
+            processResults: function (data, params) {
                 params.page = params.page || 1;
 
                 return {
@@ -112,9 +112,23 @@ function selectProduct2() {
     }
 }
 
+function totalAmount() {
+    var t = 0;
+    $(".neworderbody").each(function (i, e) {
+        var newbody = $(this);
+        newbody.find(".total_price_hidden").each(function (i, e) {
+            var amt = $(this).val() - 0;
+            t += amt;
+        });
+        newbody.find(".sub_display").val(t);
+        newbody.find(".sub_hidden").val(t);
+        t = 0;
+    });
+}
+
 function totalGrand() {
     var t = 0;
-    $(".price_hidden").each(function(i, e) {
+    $(".price_hidden").each(function (i, e) {
         var amt = $(this).val() - 0;
         t += amt;
     });
@@ -124,15 +138,31 @@ function totalGrand() {
 
 function totalSub() {
     var t = 0;
-    $(".neworderbody").each(function(i, e) {
+    $(".neworderbody").each(function (i, e) {
         var newbody = $(this);
-        newbody.find(".price_hidden").each(function(i, e) {
+        newbody.find(".total_price_hidden").each(function (i, e) {
             var amt = $(this).val() - 0;
             t += amt;
         });
         newbody.find(".sub_display").val(t);
         newbody.find(".sub_hidden").val(t);
         t = 0;
+    });
+}
+
+function warnAmount() {
+    $(".neworderbody").each(function (i, e) {
+        var body = $(this);
+        var subtotal = body.find(".sub_hidden").val() - 0;
+        var amount = body.find(".budget_plan_detail_price").val() - 0;
+
+        if (subtotal > amount) {
+            body.find("tr.warning").prop('hidden', false);
+        } else {
+            body.find("tr.warning").prop('hidden', true);
+        }
+       //console.log('sub_total = '+subtotal+' amount = '+amount);
+       //('sub_total = '+subtotal+' amount = '+amount);
     });
 }
 
@@ -162,20 +192,26 @@ function inputMasking() {
     $(".grandtotal_display").inputmask("IDR");
     $(".sub_display").inputmask("IDR");
     $(".price_display").inputmask("IDR");
+    $(".total_price_display").inputmask("IDR");
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     selectProduct();
     inputMasking();
+    totalAmount();
     totalGrand();
     totalSub();
 
     //$(".add").click(function() {
-    $(".neworderbody").on("click", ".add", function() {
+    $(".neworderbody").on("click", ".add", function () {
         var unit = $(".unit").html();
         var k = $(this)
             .closest("tbody")
-            .find(".kon")
+            .find(".item_budget_plan_id")
+            .val();
+        var l = $(this)
+            .closest("tbody")
+            .find(".item_offering_letter_id")
             .val();
 
         tr =
@@ -189,6 +225,8 @@ $(document).ready(function() {
             '<input class="tampungan_product_id" name="product2[]" hidden>' +
             '<input class="tampungan_product_unit" hidden>' +
             "</div>" +
+            '<input value="' + k + '" type="text" name="item_budget_plan_id[]" hidden>' +
+            '<input value="' + l + '" type="text" name="item_offering_letter_id[]" hidden> ' +
             "</td>" +
             "<td>" +
             '<div class="form-group">' +
@@ -198,11 +236,15 @@ $(document).ready(function() {
             "</div>" +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control" name="quantity[]" value="0">' +
+            '<input onClick="this.select();" type="text" class="form-control qty" name="quantity[]" value="0">' +
             "</td>" +
             "<td>" +
-            '<input onClick="this.select();" type="text" class="form-control price_display" value="0">' +
+            '<input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">' +
             '<input type="text" class="price_hidden" name="price[]" value="0" hidden>' +
+            "</td>" +
+            "<td>" +
+            '<input type="text" class="form-control total_price_display" value="0" readonly>' +
+            '<input type="text" class="total_price_hidden" name="total_price[]" value="0" hidden>' +
             "</td>" +
             "<td>" +
             '<input type="button" class="btn btn-danger delete" value="x">' +
@@ -211,25 +253,52 @@ $(document).ready(function() {
 
         $(this)
             .closest("tbody")
-            .find(".outputbody")
+            .find(".warning")
             .before(tr);
         inputMasking();
         selectProduct2();
+        $(".unit").select2({
+            width: "100%",
+            placeholder: "Select Unit"
+        });
     });
 
-    $(".neworderbody").on("click", ".delete", function() {
+    $(".neworderbody").on("click", ".delete", function () {
         $(this)
             .closest("tr")
             .remove();
         totalGrand();
         totalSub();
+        warnAmount();
     });
 
-    $(".neworderbody").on("keyup change", ".price_display", function() {
+    $(".neworderbody").on(
+        "change select2-selecting",
+        ".product_id",
+        function() {
+            var tr = $(this).closest("tr");
+            var id = $(".selected_product_id").val();
+            var unit = $(".selected_product_unit").val();
+            tr.find(".tampungan_product_id").val(id);
+            tr.find(".tampungan_product_unit").val(unit);
+            var tampungan_unit = tr.find(".tampungan_product_unit").val();
+            tr.find(".unit")
+                .val(tampungan_unit)
+                .change();
+        }
+    );
+
+    $(".neworderbody").on("keyup change", ".price_display, .qty", function () {
         var tr = $(this).closest("tr");
+        var qty = tr.find(".qty").val() - 0;
         var price = tr.find(".price_display").val() - 0;
+        var total = qty * price;
         tr.find(".price_hidden").val(price);
+        tr.find(".total_price_display").val(total);
+        tr.find(".total_price_hidden").val(total);
+        totalAmount();
         totalGrand();
         totalSub();
+        warnAmount();
     });
 });
