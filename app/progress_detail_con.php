@@ -24,4 +24,14 @@ class progress_detail_con extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function progress()
+    {
+        return $this->belongsTo('App\progress_con', 'progress_id');
+    }
+
+    public function budget_plan_detail()
+    {
+        return $this->belongsTo('App\budget_plan_detail_con', 'budget_plan_detail_id');
+    }
 }

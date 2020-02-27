@@ -10,14 +10,12 @@
                         <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a href="#">Create Bill Quantities</a></li>
-                            <li class="divider"></li>
                             <li><a href="#">Archive</a></li>
                         </ul>
                     </li>
                 </ul>
                 <h3>
-                    <b>Form Order #{{$header->number}}</b>
+                    <b>Progress #{{$header->number}}</b>
                     - @if($header->is_approved == 1)
                     <span class="label label-success" style="color:white;">Approved</span>
                     @else
@@ -68,7 +66,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order Name</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Progress Name</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$header->name}}" class="form-control" type="text" name="name" readonly>
                                 </div>
@@ -84,9 +82,9 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Budget Plan No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5><a href="/construction/budget_plan/{{$header->id}}">{{$header->number}}</a></h5>
+                                    <h5><a href="/construction/form_order/{{$header->form_order_id}}">{{$header->form_order->number}}</a></h5>
                                 </div>
                             </div>
                         </div>
@@ -95,66 +93,65 @@
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
                             <tbody>
-                            @foreach($grouped as $item)
+                                @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->budget_plan_detail->offering_letter_detail->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"></th>
-                                        <th class="column-title" style="width: 350px; text-align: center"></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <th class="column-title" style="width: 50px"></th>
+                                        <th colspan="5" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">{{$item[0]->budget_plan_detail->offering_letter_detail->name}}</th>
                                     </tr>
                                 </thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Pekerjaan</th>
-                                    <th class="column-title" style="width: 150px">Durasi (bulan)</th>
-                                    <th class="column-title" style="width: 150px">Waktu (bulan)</th>
-                                    <th class="column-title" style="width: 350px">Progress Real (%)</th>
-                                    <th class="column-title" style="width: 350px">Keterlambatan (%)</th>
+                                    <th class="column-title" style="width: 350px">Working Detail</th>
+                                    <th class="column-title" style="width: 150px">Duration (month)</th>
+                                    <th class="column-title" style="width: 150px">Current Progress (month)</th>
+                                    <th class="column-title" style="width: 150px">Progress Real (%)</th>
+                                    <th class="column-title" style="width: 150px">Lateness (%)</th>
                                 </tr>
                                 @foreach($item as $item)
-                                <tbody class="neworderbody">
-                                    <tr>
-                                        <td>
-                                            {{$item->budget_plan_detail->name}}
-                                        </td>
-                                        <td>
-                                            {{$item->budget_plan_detail->duration}}
-                                        </td>
-                                        <td>
-                                            {{$item->progress_current_in_month}}
-                                        </td>
-                                        <td>
-                                            {{$item->progress_current_in_percent}}
-                                        </td>
-                                        <td>
-                                            {{$item->progress_lateness_in_percent}}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                @endforeach
+                            <tbody class="neworderbody">
                                 <tr>
-                                    <td colspan="3" style="text-align: right">
-
+                                    <td>
+                                        {{$item->budget_plan_detail->name}}
                                     </td>
-                                    <td colspan="2">
-
+                                    <td>
+                                        {{$item->budget_plan_detail->duration}}
+                                    </td>
+                                    <td>
+                                        {{$item->progress_current_in_month}}
+                                    </td>
+                                    <td>
+                                        {{$item->progress_current_in_percent}}
+                                    </td>
+                                    <td>
+                                        {{$item->progress_lateness_in_percent}}
                                     </td>
                                 </tr>
-                                @endforeach
+                            </tbody>
+                            @endforeach
+                            <tr>
+                                <td colspan="3" style="text-align: right">
+
+                                </td>
+                                <td colspan="2">
+
+                                </td>
+                            </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
-                    {{--
-                        <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                                <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header->id}}';">Cancel</button>
-                                <div class="btn-group">
-                                    <button id="click" type="button" class="btn btn-success">Create</button>
-                                </div>
+                    @if($header->is_approved == 0)
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <input value="{{$header->id}}" type="text" id="form_id" hidden>
+                            <input value="{{$header->id}}" type="text" id="hidden_id" hidden>
+                            <button type="button" class="btn btn-danger" id="clickDelete">Delete</button>
+                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/form_order/{{$header->form_order_id}}';">Cancel</button>
+                            <div class="btn-group">
+                                <button class="btn btn-success" type="button" onclick="window.location.href = '/construction/progress/edit/{{$header->id}}';">Edit</button>
                             </div>
                         </div>
-                    --}}
+                    </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -163,7 +160,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/progress/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

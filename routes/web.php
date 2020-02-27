@@ -741,15 +741,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/form_order/edit/bill_quantities={bq}',                    'ConFormOrderController@edit');
     Route::post('/construction/form_order/updateOL',                                    'ConFormOrderController@update');
     Route::get('/construction/form_order/delete/{id}',                                  'ConFormOrderController@destroy');
+    Route::post('/construction/form_order/approval={id}',                               'ConFormOrderController@approval');
     Route::get('/construction/print/PDF/{id}',                                          'ConFormOrderController@cetak_pdf');
 
     Route::get('/construction/progress',                                                'ConProgressController@index');
-    Route::get('/construction/progress/new',                                            'ConProgressController@create');
-    Route::post('/construction/progress/newOL',                                         'ConProgressController@store');
-    Route::get('/construction/progress/show',                                           'ConProgressController@show');
-    Route::get('/construction/progress/edit/',                                          'ConProgressController@edit');
-    Route::post('/construction/progress/updateOL',                                      'ConProgressController@update');
+    Route::get('/construction/progress/new/form_order={fo}',                            'ConProgressController@create');
+    Route::post('/construction/progress/newPR',                                         'ConProgressController@store');
+    Route::get('/construction/progress/{id}',                                           'ConProgressController@show');
+    Route::get('/construction/progress/edit/{id}',                                      'ConProgressController@edit');
+    Route::post('/construction/progress/updatePR',                                      'ConProgressController@update');
     Route::get('/construction/progress/delete/{id}',                                    'ConProgressController@destroy');
+    Route::post('/construction/progress/approval={id}',                                 'ConProgressController@approval');
     Route::get('/construction/print/PDF/{id}',                                          'ConProgressController@cetak_pdf');
     ##############################################################
     ######################## CONSTRUCTION ########################

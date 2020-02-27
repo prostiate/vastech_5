@@ -87,6 +87,7 @@
                     </div>
                     <div class="form-group" style="text-align: center">
                         <div class="col-md-12 col-sm-12 col-xs-12">
+                            <input value="{{$header->id}}" type="text" name="hidden_id" hidden>
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/form_order/{{$header->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Update</button>

@@ -182,15 +182,10 @@ class ConFormOrderController extends Controller
 
     public function update(Request $request)
     {
-        $user                           = User::find(Auth::id());
         $rules = array(
             'name'                      => 'required',
             'date'                      => 'required',
             'address'                   => 'required',
-            'product.*'                 => 'required',
-            'unit.*'                    => 'required',
-            'quantity.*'                => 'required',
-            'price_display.*'           => 'required',
         );
 
         $error = Validator::make($request->all(), $rules);
@@ -198,35 +193,14 @@ class ConFormOrderController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
-        //CEK JIKA ADA SUBTOTAL YANG MELEBIHI OFFERING LETTER
-        foreach ($request->subtotal as $j => $subtotal) {
-            if ($subtotal > $request->budget_plan_detail_price[$j]) {
-                return response()->json(['errors' => 'Sub total cannot be more than the price that already assigned.']);
-            }
-        }
-
         DB::beginTransaction();
         try {
-            $id                                     = $request->hidden_id;
-            bill_quantities_detail_con::where('bill_quantities_id', $id)->delete();
-            foreach ($request->product2 as $i => $detail) {
-                $item[$i] = new bill_quantities_detail_con([
-                    'tenant_id'                 => $user->tenant_id,
-                    'company_id'                => $user->company_id,
-                    'user_id'                   => Auth::id(),
-                    'bill_quantities_id'        => $id,
-                    'budget_plan_detail_id'     => $request->item_budget_plan_id[$i],
-                    'offering_letter_detail_id' => $request->item_offering_letter_id[$i],
-                    'product_id'                => $request->product2[$i],
-                    'unit_id'                   => $request->unit[$i],
-                    'qty'                       => $request->quantity[$i],
-                    'amount'                    => $request->price[$i],
-                    'amounttotal'               => $request->total_price[$i],
-                    //'amountsub'         => $request->subtotal[$i], //GA KEBACA KARENA BANYAKNYA subtotal TIDAK SEBANYAK working_detail
-                    'status'                    => 1,
-                ]);
-                $item[$i]->save();
-            }
+            $id                         = $request->hidden_id;
+            form_order_con::findOrFail($id)->update([
+                'address'               => $request->address,
+                'name'                  => $request->name,
+                'date'                  => $request->date,
+            ]);
 
             DB::commit();
             return response()->json(['success' => 'Data is successfully updated', 'id' => $id]);
@@ -241,11 +215,11 @@ class ConFormOrderController extends Controller
         DB::beginTransaction();
         try {
             $header                 = form_order_con::find($id);
-            $id_budget_plan         = $header->budget_plan_id;
-            bill_quantities_detail_con::where('bill_quantities_id', $id)->delete();
+            $id_bill_quantities     = $header->bill_quantities_id;
+            form_order_detail_con::where('form_order_id', $id)->delete();
             $header->delete();
             DB::commit();
-            return response()->json(['success' => 'Data is successfully deleted', 'id' => $id_budget_plan]);
+            return response()->json(['success' => 'Data is successfully deleted', 'id' => $id_bill_quantities]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -256,7 +230,7 @@ class ConFormOrderController extends Controller
     {
         DB::beginTransaction();
         try {
-            $header                             = bill_quantities_con::find($id);
+            $header                             = form_order_con::find($id);
             $header->update(['is_approved' => 1]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully approved', 'id' => $header->id]);

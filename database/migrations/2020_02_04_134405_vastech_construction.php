@@ -3561,6 +3561,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('number');
+            $table->string('address')->nullable();
             $table->string('name');
             $table->string('date');
             $table->boolean('is_approved')->default('0');
@@ -3602,7 +3603,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->boolean('is_late')->default('0');
-            $table->integer('progress_current_in_month');
+            //$table->integer('progress_current_in_month');
             $table->decimal('progress_current_in_percent', 5, 3)->default('0');
             $table->integer('progress_lateness_in_month');
             $table->decimal('progress_lateness_in_percent', 5, 3)->default('0');

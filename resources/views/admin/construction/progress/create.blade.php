@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order Name *</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Progress Name *</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input class="form-control" type="text" name="name">
                                 </div>
@@ -48,7 +48,8 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5><a href="/construction/bill_quantities/{{$header_bq->id}}">{{$header_bq->number}}</a></h5>
+                                    <h5><a href="/construction/form_order/{{$header_fo->id}}">{{$header_fo->number}}</a></h5>
+                                    <input value="{{$header_fo->id}}" type="text" name="form_order_id" id="form_order_id" hidden>
                                     <input value="{{$header_bq->id}}" type="text" name="bill_quantities_id" id="bill_quantities_id" hidden>
                                 </div>
                             </div>
@@ -61,19 +62,15 @@
                             @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px; text-align: center">{{$item[0]->offering_letter_detail->name}}</th>
-                                        <th class="column-title" style="width: 350px; text-align: center"></th>
-                                        <th class="column-title" style="width: 350px; text-align: center"></th>
-                                        <th class="column-title" style="width: 50px"></th>
-                                        <th class="column-title" style="width: 50px"></th>
+                                        <th colspan="5" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">{{$item[0]->offering_letter_detail->name}}</th>
                                     </tr>
                                 </thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">Pekerjaan</th>
-                                    <th class="column-title" style="width: 150px">Durasi (bulan)</th>
-                                    <th class="column-title" style="width: 150px">Waktu (bulan)</th>
-                                    <th class="column-title" style="width: 350px">Progress Real (%)</th>
-                                    <th class="column-title" style="width: 350px">Keterlambatan (%)</th>
+                                    <th class="column-title" style="width: 350px">Working Detail</th>
+                                    <th class="column-title" style="width: 150px">Duration (month)</th>
+                                    <th class="column-title" style="width: 150px">Current Progress (month)</th>
+                                    <th class="column-title" style="width: 150px">Progress Real (%)</th>
+                                    <th class="column-title" style="width: 150px">Lateness (%)</th>
                                 </tr>
                                 <?php $subtotal = 0; ?>
                                 @foreach($item as $item)
@@ -126,9 +123,9 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header_bq->id}}';">Cancel</button>
+                    <div class="form-group" style="text-align: center">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/form_order/{{$header_fo->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>
                             </div>
@@ -142,8 +139,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/form_order/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/form_order/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/progress/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/progress/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 <script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush

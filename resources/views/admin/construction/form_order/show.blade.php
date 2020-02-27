@@ -11,13 +11,13 @@
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @if($header->is_approved == 1)
-                                @if($check_form_order)
-                                    @if($check_form_order->is_approved == 0)
-                                    <li><a href="/construction/form_order/edit/bill_quantities={{$header->bill_quantities->id}}">Edit Draft Bill Quantities</a></li>
+                                @if($check_progress)
+                                    @if($check_progress->is_approved == 0)
+                                    <li><a href="/construction/progress/edit/form_order={{$header->form_order->id}}">Edit Draft Progress</a></li>
                                     <li class="divider"></li>
                                     @endif
                                 @else
-                                    <li><a href="/construction/form_order/new/bill_quantities={{$header->id}}">Create Form Order</a></li>
+                                    <li><a href="/construction/progress/new/form_order={{$header->id}}">Create Progress</a></li>
                                     <li class="divider"></li>
                                 @endif
                             @else
@@ -137,6 +137,7 @@
                     <div class="form-group" style="text-align: center">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <input value="{{$header->id}}" type="text" id="form_id" hidden>
+                            <input value="{{$header->id}}" type="text" id="hidden_id" hidden>
                             <button type="button" class="btn btn-danger" id="clickDelete">Delete</button>
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header->bill_quantities_id}}';">Cancel</button>
                             <div class="btn-group">
@@ -153,5 +154,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/form_order/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/form_order/approval.js?v=5-20200221-1431') }}" charset="utf-8"></script>
 @endpush
