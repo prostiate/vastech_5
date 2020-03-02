@@ -12,7 +12,7 @@ class tenant extends Model
 
     public function company()
     {
-        return $this->hasMany('App\company');
+        return $this->hasMany('App\Model\company\company');
     }
 
     public function user()

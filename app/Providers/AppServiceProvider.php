@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\expense;
+use App\Model\expense\expense;
 use App\Observers\expense_observer;
 use App\Observers\purchase_invoice_observer;
 use App\Observers\purchase_order_observer;
@@ -12,14 +12,14 @@ use App\Observers\sale_invoice_observer;
 use App\Observers\sale_order_observer;
 use App\Observers\sale_quote_observer;
 use App\Observers\sale_return_observer;
-use App\purchase_invoice;
-use App\purchase_order;
-use App\purchase_quote;
-use App\purchase_return;
-use App\sale_invoice;
-use App\sale_order;
-use App\sale_quote;
-use App\sale_return;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_order;
+use App\Model\purchase\purchase_quote;
+use App\Model\purchase\purchase_return;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_quote;
+use App\Model\sales\sale_return;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;

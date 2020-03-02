@@ -26,66 +26,66 @@
             <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                    <li><a href="/dashboard"><i class="fa fa-home"></i> Dashboard </a></li>
-                    <li><a><i class="fa fa-tag"></i> Sales <span class="fa fa-chevron-down"></span></a>
+                    <li><a href="/dashboard"><i class="fa fa-home"></i> @lang("sidebar.dashboard") </a></li>
+                    <li><a><i class="fa fa-tag"></i> @lang("sidebar.sales") <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/sales_quote">Sales Quote</a></li>
-                            <li><a href="/sales_order">Sales Order</a></li>
-                            <li><a href="/sales_delivery">Sales Delivery</a></li>
-                            <li><a href="/sales_invoice">Sales Invoice</a></li>
-                            <li><a href="/sales_payment">Sales Payment</a></li>
-                            <li><a href="/sales_return">Sales Return</a></li>
+                            <li><a href="/sales_quote">@lang("sidebar.sq")</a></li>
+                            <li><a href="/sales_order">@lang("sidebar.so")</a></li>
+                            <li><a href="/sales_delivery">@lang("sidebar.sd")</a></li>
+                            <li><a href="/sales_invoice">@lang("sidebar.si")</a></li>
+                            <li><a href="/sales_payment">@lang("sidebar.sp")</a></li>
+                            <li><a href="/sales_return">@lang("sidebar.sr")</a></li>
                         </ul>
                     </li>
-                    <li><a><i class="fa fa-credit-card"></i> Purchases <span class="fa fa-chevron-down"></span></a>
+                    <li><a><i class="fa fa-credit-card"></i> @lang("sidebar.purchase") <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/purchases_quote">Purchases Quote</a></li>
-                            <li><a href="/purchases_order">Purchases Order</a></li>
-                            <li><a href="/purchases_delivery">Purchases Delivery</a></li>
-                            <li><a href="/purchases_invoice">Purchases Invoice</a></li>
-                            <li><a href="/purchases_payment">Purchases Payment</a></li>
-                            <li><a href="/purchases_return">Purchases Return</a></li>
+                            <li><a href="/purchases_quote">@lang("sidebar.pq")</a></li>
+                            <li><a href="/purchases_order">@lang("sidebar.po")</a></li>
+                            <li><a href="/purchases_delivery">@lang("sidebar.pd")</a></li>
+                            <li><a href="/purchases_invoice">@lang("sidebar.pi")</a></li>
+                            <li><a href="/purchases_payment">@lang("sidebar.pp")</a></li>
+                            <li><a href="/purchases_return">@lang("sidebar.pr")</a></li>
                         </ul>
                     </li>
-                    <li><a href="/expenses"><i class="fa fa-outdent"></i> Expenses </a></li>
-                    <li><a href="/spk"><i class="fa fa-pencil-square"></i> Surat Perintah Kerja </a></li>
-                    <li><a href="/wip"><i class="fa fa-cogs"></i> Work In Progress </a></li>
+                    <li><a href="/expenses"><i class="fa fa-outdent"></i> @lang("sidebar.ex") </a></li>
+                    <li><a href="/spk"><i class="fa fa-pencil-square"></i> @lang("sidebar.spk") </a></li>
+                    <li><a href="/wip"><i class="fa fa-cogs"></i> @lang("sidebar.wip") </a></li>
                 </ul>
             </div>
             <div class="menu_section">
                 <h3>Management</h3>
                 <ul class="nav side-menu">
-                    <li><a><i class="fa fa-users"></i> Contacts <span class="fa fa-chevron-down"></span></a>
+                    <li><a><i class="fa fa-users"></i> @lang("sidebar.con") <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/contacts_all">All Contact</a></li>
-                            <li><a href="/contacts_customer">Contact Customer</a></li>
-                            <li><a href="/contacts_vendor">Contact Vendor</a></li>
-                            <li><a href="/contacts_employee">Contact Employee</a></li>
-                            <li><a href="/contacts_other">Contact Other</a></li>
+                            <li><a href="/contacts_all">@lang("sidebar.all")</a></li>
+                            <li><a href="/contacts_customer">@lang("sidebar.cus")</a></li>
+                            <li><a href="/contacts_vendor">@lang("sidebar.ven")</a></li>
+                            <li><a href="/contacts_employee">@lang("sidebar.emp")</a></li>
+                            <li><a href="/contacts_other">@lang("sidebar.oth")</a></li>
                         </ul>
                     </li>
-                    <li><a><i class="fa fa-dropbox"></i> Products <span class="fa fa-chevron-down"></span></a>
+                    <li><a><i class="fa fa-dropbox"></i> @lang("sidebar.prod") <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="/products">Goods & Services</a></li>
-                            <li><a href="/stock_adjustment">Stock Adjustment</a></li>
-                            <li><a href="/warehouses">Warehouses</a></li>
-                            <li><a href="/warehouses_transfer">Warehouse Transfer List</a></li>
+                            <li><a href="/products">@lang("sidebar.gs")</a></li>
+                            <li><a href="/stock_adjustment">@lang("sidebar.sa")</a></li>
+                            <li><a href="/warehouses">@lang("sidebar.wh")</a></li>
+                            <li><a href="/warehouses_transfer">@lang("sidebar.wtl")</a></li>
                         </ul>
                     </li>
-                    <li><a href="/cashbank"><i class="fa fa-bank"></i> Cash & Bank </a></li>
-                    <li><a href="/asset_managements"><i class="fa fa-desktop"></i> Assets Management </a></li>
-                    <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> Chart of Accounts </a></li>
+                    <li><a href="/cashbank"><i class="fa fa-bank"></i> @lang("sidebar.caba") </a></li>
+                    <li><a href="/asset_managements"><i class="fa fa-desktop"></i> @lang("sidebar.asset") </a></li>
+                    <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> @lang("sidebar.coa") </a></li>
                 </ul>
             </div>
             @if(Auth::user()->name == 'user')
             <div class="menu_section">
                 <h3>Construction</h3>
                 <ul class="nav side-menu">
-                    <li><a href="/construction/offering_letter"><i class="fa fa-close"></i> Offering Letter </a></li>
-                    <li><a href="/construction/budget_plan"><i class="fa fa-close"></i> Budget Plan </a></li>
-                    <li><a href="/construction/bill_quantities"><i class="fa fa-close"></i> Bill of Quantities </a></li>
-                    <li><a href="/construction/form_order"><i class="fa fa-close"></i> Form Order </a></li>
-                    <li><a href="/construction/progress"><i class="fa fa-close"></i> Progress </a></li>
+                    <li><a href="/construction/offering_letter"><i class="fa fa-close"></i> @lang("sidebar.ofl") </a></li>
+                    <li><a href="/construction/budget_plan"><i class="fa fa-close"></i> @lang("sidebar.bp") </a></li>
+                    <li><a href="/construction/bill_quantities"><i class="fa fa-close"></i> @lang("sidebar.bq") </a></li>
+                    <li><a href="/construction/form_order"><i class="fa fa-close"></i> @lang("sidebar.fo") </a></li>
+                    <li><a href="/construction/progress"><i class="fa fa-close"></i> @lang("sidebar.pro") </a></li>
                 </ul>
             </div>
             @endif
@@ -95,14 +95,14 @@
                 <ul class="nav side-menu">
                     <!--<li><a href="#"><i class="fa fa-money"></i> Payroll </a></li>-->
                     @role('Owner|Ultimate|Other List')
-                    <li><a href="/other"><i class="fa fa-tasks"></i> Other Lists </a></li>
+                    <li><a href="/other"><i class="fa fa-tasks"></i> @lang("sidebar.ol") </a></li>
                     @endrole
                     <!--<li><a href="#"><i class="fa fa-qrcode"></i> Add-Ons </a></li>-->
                     @role('Owner|Ultimate|Reports')
-                    <li><a href="/reports"><i class="fa fa-area-chart"></i> Reports </a></li>
+                    <li><a href="/reports"><i class="fa fa-area-chart"></i> @lang("sidebar.rep") </a></li>
                     @endrole
                     @role('Owner|Ultimate|Setting')
-                    <li><a href="/settings/company"><i class="fa fa-cog"></i> Settings </a></li>
+                    <li><a href="/settings/company"><i class="fa fa-cog"></i> @lang("sidebar.set") </a></li>
                     @endrole
                 </ul>
             </div>

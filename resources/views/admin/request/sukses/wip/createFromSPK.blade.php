@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Create Work In Progress</h2>
+                <h2>@lang("wip.create.title")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -14,13 +14,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.trans_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$trans_no}}" type="text" class="form-control" readonly name="trans_no">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.trans_date")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$today}}" type="date" class="form-control" id="datepicker1" name="trans_date">
                                 </div>
@@ -30,14 +30,14 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.spk")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/spk/{{$spk->id}}">Surat Perintah Kerja #{{$spk->number}}</a></h5>
                                     <input value="{{$spk->number}}" name="spk_no" hidden>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Contact</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.contact")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/contacts/{{$spk->contact_id}}">{{$spk->contact->display_name}}</a></h5>
                                     <input value="{{$spk->contact_id}}" name="contact" hidden>
@@ -48,14 +48,14 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK Ref No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.ref_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/spk/{{$spk->id}}">{{$spk->vendor_ref_no}}</a></h5>
                                     <input value="{{$spk->vendor_ref_no}}" name="vendor_ref_no" hidden>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.warehouse")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$spk->warehouse_id}}">{{$spk->warehouse->name}}</a></h5>
                                     <input value="{{$spk->warehouse_id}}" name="warehouse" hidden>
@@ -66,14 +66,14 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Product Name</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("wip.create.product_name")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/products/{{$spk_item->product_id}}">{{$spk_item->product->name}}</a></h5>
                                     <input value="{{$spk_item->product_id}}" name="product_name" hidden>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Product Qty</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("wip.create.product_qty")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$spk_item->qty_remaining}}" onClick="this.select();" type="text" class="form-control product_qty" name="product_qty">
                                     <input value="{{$spk_item->qty_remaining}}" type="text" name="product_qty_to_make" hidden>
@@ -85,17 +85,17 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Note</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("wip.create.note")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea class="form-control" name="desc" rows="4"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Production Method</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("wip.create.method")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select name="production_method" class="form-control selectcategory production_method">
-                                        <option value="0" selected>Material Per Product Qty</option>
-                                        <option value="1">Material For All Product Qty</option>
+                                        <option value="0" selected>@lang("wip.create.product_method.method_1")</option>
+                                        <option value="1">@lang("wip.create.product_method.method_2")</option>
                                     </select>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Force Submit</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("wip.create.force")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input type="checkbox" id="force_submit" name="force_submit" value="1">
                                 </div>
@@ -116,18 +116,18 @@
                     <br>
                     <div id="material_per_product">
                         <div>
-                            <a>Note* : Below product material will be used to make <strong><span>1</span></strong> per <strong>{{$spk_item->product->name}}</strong></a>
+                            <a>@lang("wip.create.footnote.note_1")<strong><span>1</span></strong> @lang("wip.create.footnote.note_2") <strong>{{$spk_item->product->name}}</strong></a>
                         </div>
                         <br>
                         <div class="table-responsive my-5">
                             <table id="example" class="table table-striped jambo_table bulk_action">
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px">Product Name</th>
-                                        <th class="column-title" style="width: 250px">Quantity</th>
-                                        <th class="column-title" style="width: 150px">Unit</th>
-                                        <th class="column-title" style="width: 300px">Price</th>
-                                        <th class="column-title" style="width: 300px">Total Price</th>
+                                        <th class="column-title" style="width: 350px">@lang("wip.create.table.col_1")</th>
+                                        <th class="column-title" style="width: 250px">@lang("wip.create.table.col_2")</th>
+                                        <th class="column-title" style="width: 150px">@lang("wip.create.table.col_3")</th>
+                                        <th class="column-title" style="width: 300px">@lang("wip.create.table.col_4")</th>
+                                        <th class="column-title" style="width: 300px">@lang("wip.create.table.col_5")</th>
                                         <th class="column-title" style="width: 50px"></th>
                                     </tr>
                                 </thead>
@@ -152,7 +152,7 @@
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="number" class="wip_req_qty_display_per form-control qty" name="wip_product_req_qty_per[]" value="0">
-                                            <span class="red span_alert_qty_per" hidden><strong>Stock is not enough!</strong></span>
+                                            <span class="red span_alert_qty_per" hidden><strong>@lang("wip.create.stock")</strong></span>
                                             <input class="force_submit_per" name="force_submit_item_per[]" type="text" value="1" disabled hidden>
                                         </td>
                                         <td>
@@ -177,7 +177,7 @@
                                         <td></td>
                                         <td></td>
                                         <td class="text-right">
-                                            <h5><strong>Margin </strong>
+                                            <h5><strong>@lang("wip.create.margin")</strong>
                                                 <select class="form-control selectmargin" id="margin_per" style="width: 50px" name="margin_type_per">
                                                     <option value="rp" selected>Rp</option>
                                                     <option value="per">%</option>
@@ -192,7 +192,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="4" class="text-right">
-                                            <h5><strong>Cost of Goods Sold</strong></h5>
+                                            <h5><strong>@lang("wip.create.cogs")</strong></h5>
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_per" readonly>
@@ -203,14 +203,14 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            <input type="button" class="btn btn-dark add_per" value="+ Add More Item">
+                            <input type="button" class="btn btn-dark add_per" value="@lang('wip.create.more')">
                         </div>
                         <br>
-                        <div class="col-md-3 center-margin">
+                        <div class="col-md-12 text-center">
                             <div class="form-group">
-                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
+                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">@lang("wip.create.cancel")</a>
                                 <div class="btn-group">
-                                    <button id="click_per" type="button" class="btn btn-success">Create</button>
+                                    <button id="click_per" type="button" class="btn btn-success">@lang("wip.create.create")</button>
                                     <input value="{{$spk->id}}" name="spk_id" hidden>
                                     <input value="0" name="production_bundle" hidden>
                                 </div>
@@ -219,18 +219,18 @@
                     </div>
                     <div id="material_all_product" hidden>
                         <div>
-                            <a>Note* : Below product material will be used to make <strong><span class="text_product_qty">{{$spk_item->qty_remaining}}</span></strong> of <strong>{{$spk_item->product->name}}</strong></a>
+                            <a>@lang("wip.create.footnote.note_1")<strong><span class="text_product_qty">{{$spk_item->qty_remaining}}</span></strong> @lang("wip.create.footnote.note_3") <strong>{{$spk_item->product->name}}</strong></a>
                         </div>
                         <br>
                         <div class="table-responsive my-5">
                             <table id="example" class="table table-striped jambo_table bulk_action">
                                 <thead>
                                     <tr class="headings">
-                                        <th class="column-title" style="width: 350px">Product Name</th>
-                                        <th class="column-title" style="width: 250px">Quantity</th>
-                                        <th class="column-title" style="width: 150px">Unit</th>
-                                        <th class="column-title" style="width: 300px">Price</th>
-                                        <th class="column-title" style="width: 300px">Total Price</th>
+                                        <th class="column-title" style="width: 350px">@lang("wip.create.table.col_1")</th>
+                                        <th class="column-title" style="width: 250px">@lang("wip.create.table.col_2")</th>
+                                        <th class="column-title" style="width: 150px">@lang("wip.create.table.col_3")</th>
+                                        <th class="column-title" style="width: 300px">@lang("wip.create.table.col_4")</th>
+                                        <th class="column-title" style="width: 300px">@lang("wip.create.table.col_5")</th>
                                         <th class="column-title" style="width: 50px"></th>
                                     </tr>
                                 </thead>
@@ -255,7 +255,7 @@
                                         </td>
                                         <td>
                                             <input onClick="this.select();" type="number" class="wip_req_qty_display_all form-control qty" name="wip_product_req_qty_all[]" value="0">
-                                            <span class="red span_alert_qty_all" hidden><strong>Stock is not enough!</strong></span>
+                                            <span class="red span_alert_qty_all" hidden><strong>@lang("wip.create.stock")</strong></span>
                                             <input class="force_submit_all" name="force_submit_item_all[]" type="number" value="1" disabled hidden>
                                         </td>
                                         <td>
@@ -280,7 +280,7 @@
                                         <td></td>
                                         <td></td>
                                         <td class="text-right">
-                                            <h5><strong>Margin </strong>
+                                            <h5><strong>@lang("wip.create.margin")</strong>
                                                 <select class="form-control selectmargin" id="margin_all" style="width: 50px" name="margin_type_all">
                                                     <option value="rp" selected>Rp</option>
                                                     <option value="per">%</option>
@@ -295,7 +295,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="4" class="text-right">
-                                            <h5><strong>Cost of Goods Sold</strong></h5>
+                                            <h5><strong>@lang("wip.create.cogs")</strong></h5>
                                         </td>
                                         <td colspan="2">
                                             <input type="text" class="form-control wip_total_price_display_all" readonly>
@@ -306,14 +306,14 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            <input type="button" class="btn btn-dark add_all" value="+ Add More Item">
+                            <input type="button" class="btn btn-dark add_all" value="@lang('wip.create.more')">
                         </div>
                         <br>
-                        <div class="col-md-3 center-margin">
+                        <div class="col-md-12 text-center">
                             <div class="form-group">
-                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">Cancel</a>
+                                <a href="{{ url('/spk/'.$spk->id) }}" class="btn btn-danger">@lang("wip.create.cancel")</a>
                                 <div class="btn-group">
-                                    <button id="click_all" type="button" class="btn btn-success">Create</button>
+                                    <button id="click_all" type="button" class="btn btn-success">@lang("wip.create.create")</button>
                                     <input value="{{$spk->id}}" name="spk_id" hidden>
                                     <input value="0" name="production_bundle" hidden>
                                 </div>
@@ -328,12 +328,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_per_product.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/material_all_product.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_per.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/createForm_all.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('.production_method').change(function() {

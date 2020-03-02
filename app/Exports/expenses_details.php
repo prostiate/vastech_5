@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\company_setting;
-use App\expense;
+use App\Model\company\company_setting;
+use App\Model\expense\expense;
 use App\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;

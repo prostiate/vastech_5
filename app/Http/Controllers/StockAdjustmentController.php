@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\stock_adjustment;
-use App\stock_adjustment_detail;
+use App\Model\stock_adjustment\stock_adjustment;
+use App\Model\stock_adjustment\stock_adjustment_detail;
 use Illuminate\Http\Request;
-use App\product;
-use App\warehouse;
-use App\coa;
-use App\default_account;
+use App\Model\product\product;
+use App\Model\warehouse\warehouse;
+use App\Model\coa\coa;
+use App\Model\coa\default_account;
 use Carbon\Carbon;
-use App\other_transaction;
-use App\coa_detail;
-use App\warehouse_detail;
+use App\Model\other\other_transaction;
+use App\Model\coa\coa_detail;
+use App\Model\warehouse\warehouse_detail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;

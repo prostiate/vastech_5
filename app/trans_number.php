@@ -9,7 +9,7 @@ class trans_number extends Model
 {
     public function purchase_quote()
     {
-        return $this->hasMany('App\purchase_quote');
+        return $this->hasMany('App\Model\purchase\purchase_quote');
     } 
 }
 

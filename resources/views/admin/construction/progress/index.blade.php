@@ -52,5 +52,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/construction/form_order/dataTable.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/construction/form_order/dataTable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

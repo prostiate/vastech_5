@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\asset;
-use App\asset_detail;
+use App\Model\asset\asset;
+use App\Model\asset\asset_detail;
 use App\User;
-use App\coa;
-use App\coa_detail;
-use App\other_transaction;
-use App\journal_entry;
-use App\journal_entry_item;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\other\other_transaction;
+use App\Model\journal_opening_balance\journal_entry;
+use App\Model\journal_opening_balance\journal_entry_item;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;

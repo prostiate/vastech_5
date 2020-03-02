@@ -24,7 +24,7 @@
         </div>-->
         <div class="dashboard_graph x_panel">
             <div class="x_title">
-                <h2>Cash Flow</h2>
+                <h2>@lang("dashboard.cf")</h2>
                 <div class="clearfix"></div>
                 <!--
                 <div class="col-md-9">
@@ -54,7 +54,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Expenses</h2>
+                <h2>@lang("dashboard.ex")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -75,7 +75,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Account Receivable</h2>
+                <h2>@lang("dashboard.ar")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -95,7 +95,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Account Payable</h2>
+                <h2>@lang("dashboard.ap")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -117,7 +117,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Profit & Loss</h2>
+                <h2>@lang("dashboard.pl")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -135,7 +135,7 @@
     <div class="col-md-3 col-sm-3 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Sales Receivable</h2>
+                <h2>@lang("dashboard.sr")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -151,7 +151,7 @@
     <div class="col-md-3 col-sm-3 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Bills To Pay</h2>
+                <h2>@lang("dashboard.btp")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -169,12 +169,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboard/chartAP.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartAR.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartEX.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartCF.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartNP.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/chartTP2.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
-<script src="{{ asset('js/dashboard/all.js?v=5-20200221-1431') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAP.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartAR.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartEX.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartCF.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartNP.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/chartTP2.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
+<script src="{{ asset('js/dashboard/all.js?v=5-20200302-1755') }}" charset="utf-8"> </script>
 @endpush

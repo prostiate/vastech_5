@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
-use App\coa_detail;
-use App\journal_entry;
-use App\journal_entry_item;
-use App\journal_opening_balance;
-use App\journal_opening_balance_item;
-use App\opening_balance;
-use App\opening_balance_detail;
-use App\other_transaction;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\journal_opening_balance\journal_entry;
+use App\Model\journal_opening_balance\journal_entry_item;
+use App\Model\journal_opening_balance\journal_opening_balance;
+use App\Model\journal_opening_balance\journal_opening_balance_item;
+use App\Model\opening_balance\opening_balance;
+use App\Model\opening_balance\opening_balance_detail;
+use App\Model\other\other_transaction;
 use App\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -247,8 +247,8 @@ class JournalEntryController extends Controller
     public function setup()
     {
         $now            = new Carbon('first day of this year');
-        $ob             = opening_balance::where('status', 'draft')->first(); //nanti ditambah company_id 
-
+        $ob             = opening_balance::whereStatus('draft')->first(); //nanti ditambah company_id
+        //DD($ob);
         return view('admin.accounts.setup', compact(['now', 'ob']));
     }
 
@@ -395,9 +395,9 @@ class JournalEntryController extends Controller
                 }
             }
 
-            //dd('0');
             if ($user->company_id == 5) {
-                $number             = journal_opening_balance::latest()->first();
+                //dd('0');
+                $number                             = journal_opening_balance::latest()->first();
                 if ($number != null) {
                     //dd('1.2');
                     $misahm             = explode("/", $number->number);
@@ -411,10 +411,14 @@ class JournalEntryController extends Controller
                 $trans_no                   = now()->format('m') . '/' . now()->format('y') . '.' . $number1;
             } else {
                 //dd('1.4');
-                $number             = journal_opening_balance::max('number');
-                if ($number == 0)
-                    $number = 0;
-                $trans_no = $number + 1;
+                $number          = journal_opening_balance::latest()->first();
+                if ($number && $number->ref_id == $request->hidden_id) {
+                    $trans_no = $number->number;
+                } else {
+                    if ($number == 0)
+                        $number = 0;
+                    $trans_no = $number + 1;
+                }
             }
             //dd('1');
 
@@ -435,6 +439,7 @@ class JournalEntryController extends Controller
             $header                             = journal_opening_balance::updateOrCreate([
                 'company_id'                    => $user->company_id,
                 'user_id'                       => Auth::id(),
+                'ref_id'                        => $request->hidden_id,
                 'number'                        => $trans_no,
                 'other_transaction_id'          => $transactions->id
             ], [

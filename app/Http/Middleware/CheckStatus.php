@@ -2,18 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use App\expense;
-use App\purchase_quote;
-use App\purchase_order;
-use App\purchase_delivery;
-use App\purchase_invoice;
-use App\purchase_return;
-use App\sale_quote;
-use App\sale_order;
-use App\sale_delivery;
-use App\sale_invoice;
-use App\sale_return;
-use App\spk_item;
+use App\Model\expense\expense;
+use App\Model\purchase\purchase_quote;
+use App\Model\purchase\purchase_order;
+use App\Model\purchase\purchase_delivery;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_return;
+use App\Model\sales\sale_quote;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_delivery;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_return;
+use App\Model\spk\spk_item;
 use Closure;
 
 class CheckStatus

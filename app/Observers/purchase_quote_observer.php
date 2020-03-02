@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\purchase_quote;
-use App\other_transaction;
+use App\Model\purchase\purchase_quote;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class purchase_quote_observer
@@ -11,7 +11,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "creating" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function creating(purchase_quote $purchaseQuote)
@@ -36,7 +36,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "created" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function created(purchase_quote $purchaseQuote)
@@ -47,7 +47,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "updated" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function updated(purchase_quote $purchaseQuote)
@@ -58,7 +58,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "deleted" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function deleted(purchase_quote $purchaseQuote)
@@ -69,7 +69,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "restored" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function restored(purchase_quote $purchaseQuote)
@@ -80,7 +80,7 @@ class purchase_quote_observer
     /**
      * Handle the purchase_quote "force deleted" event.
      *
-     * @param  \App\purchase_quote  $purchaseQuote
+     * @param  \App\Model\purchase\purchase_quote  $purchaseQuote
      * @return void
      */
     public function forceDeleted(purchase_quote $purchaseQuote)

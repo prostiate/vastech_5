@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\purchase_invoice;
-use App\other_transaction;
+use App\Model\purchase\purchase_invoice;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

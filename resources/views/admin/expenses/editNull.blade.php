@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Update Expense</h2>
+                <h2>@lang("expense.edit.title")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -14,13 +14,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.trans_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$ex->number}}" type="text" class="form-control" readonly name="trans_no">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Pay From*</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.pay_from")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select type="select" class="form-control selectaccount" name="pay_from">
                                         @foreach ($accounts as $account)
@@ -36,7 +36,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Beneficiary</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.bene")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select type="text" class="form-control selectaccount" name="vendor_name">
                                         @foreach ($vendors as $vendor)
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Payment Method</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.payment_method")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select type="text" class="form-control selectaccount" name="payment_method">
                                         @foreach ($payment_method as $a)
@@ -64,13 +64,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.trans_date")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$ex->transaction_date}}" type="date" class="form-control" id="datepicker1" name="trans_date">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Billing Address</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.edit.address")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea rows="4" class="form-control" name="address">{{$ex->address}}</textarea>
                                 </div>
@@ -84,10 +84,10 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 400px">Expense Account</th>
-                                    <th class="column-title">Description</th>
-                                    <th class="column-title">Tax</th>
-                                    <th class="column-title">Amount</th>
+                                    <th class="column-title" style="width: 400px">@lang("expense.edit.table.col_1")</th>
+                                    <th class="column-title">@lang("expense.edit.table.col_2")</th>
+                                    <th class="column-title">@lang("expense.edit.table.col_3")</th>
+                                    <th class="column-title">@lang("expense.edit.table.col_4")</th>
                                     <th class="column-title" style="width: 50px"></th>
                                 </tr>
                             </thead>
@@ -133,13 +133,13 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <input type="button" class="btn btn-dark add" value="+ Add More Item">
+                        <input type="button" class="btn btn-dark add" value="@lang('expense.edit.title')">
                     </div>
                     <br>
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Memo</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("expense.edit.memo")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea class="form-control" name="memo" rows="4">{{$ex->memo}}</textarea>
                                 </div>
@@ -149,10 +149,10 @@
                                     <div class="col-md-4">
                                     </div>
                                     <div class="col-md-4">
-                                        <h5> Sub Total </h5>
-                                        <h5> Tax Total </h5>
+                                        <h5>@lang("expense.edit.sub")</h5>
+                                        <h5>@lang("expense.edit.tax")</h5>
                                         <br>
-                                        <h3><b> Total Amount </b></h3>
+                                        <h3><b>@lang("expense.edit.total")</b></h3>
                                     </div>
                                     <div class="col-md-4 float-right">
                                         <input class="subtotal form-control" readonly>
@@ -171,9 +171,9 @@
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="{{ url('/expenses/'.$ex->id) }}" class="btn btn-danger">Cancel</a>
+                            <a href="{{ url('/expenses/'.$ex->id) }}" class="btn btn-danger">@lang("expense.edit.cancel_btn")</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Update</button>
+                                <button id="click" type="button" class="btn btn-success">@lang("expense.edit.update_btn")</button>
                                 <input type="hidden" value="{{$ex->id}}" name="hidden_id">
                             </div>
                         </div>
@@ -186,8 +186,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/expenses/updateFormNull.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/addmoreitem_expenses.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/expenses/updateFormNull.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/expenses/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

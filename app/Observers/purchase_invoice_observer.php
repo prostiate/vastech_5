@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\purchase_invoice;
-use App\other_transaction;
+use App\Model\purchase\purchase_invoice;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class purchase_invoice_observer
@@ -11,7 +11,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "creating" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function creating(purchase_invoice $purchaseInvoice)
@@ -40,7 +40,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "created" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function created(purchase_invoice $purchaseInvoice)
@@ -51,7 +51,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "updated" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function updated(purchase_invoice $purchaseInvoice)
@@ -62,7 +62,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "deleted" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function deleted(purchase_invoice $purchaseInvoice)
@@ -73,7 +73,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "restored" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function restored(purchase_invoice $purchaseInvoice)
@@ -84,7 +84,7 @@ class purchase_invoice_observer
     /**
      * Handle the purchase_invoice "force deleted" event.
      *
-     * @param  \App\purchase_invoice  $purchaseInvoice
+     * @param  \App\Model\purchase\purchase_invoice  $purchaseInvoice
      * @return void
      */
     public function forceDeleted(purchase_invoice $purchaseInvoice)

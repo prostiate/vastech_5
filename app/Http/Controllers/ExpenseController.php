@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\cashbank_item;
-use App\expense;
-use App\coa;
-use App\coa_detail;
-use App\contact;
-use App\other_payment_method;
+use App\Model\cashbank\cashbank_item;
+use App\Model\expense\expense;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\contact\contact;
+use App\Model\other\other_payment_method;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
-use App\other_tax;
-use App\other_transaction;
-use App\expense_item;
-use App\other_term;
+use App\Model\other\other_tax;
+use App\Model\other\other_transaction;
+use App\Model\expense\expense_item;
+use App\Model\other\other_term;
 use App\User;
 use PDF;
-use App\default_account;
+use App\Model\coa\default_account;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 

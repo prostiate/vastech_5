@@ -2,10 +2,10 @@
 
 namespace App\Exports;
 
-use App\company_setting;
-use App\contact;
-use App\sale_invoice;
-use App\sale_invoice_item;
+use App\Model\company\company_setting;
+use App\Model\contact\contact;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_invoice_item;
 use App\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;

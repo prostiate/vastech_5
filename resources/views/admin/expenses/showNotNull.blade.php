@@ -7,7 +7,7 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">Payment History
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">@lang("expense.show.pay_his")
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -15,10 +15,10 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Payment History</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Expense #{{$pi->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang("expense.show.pay_his")</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang("expense.show.title"){{$pi->number}}</strong></h3>
                                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Payment History</a>
+                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">@lang("expense.show.pay_his")</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -30,18 +30,18 @@
                                                         <table id="example" class="table table-striped jambo_table bulk_action">
                                                             <thead>
                                                                 <tr class="headings">
-                                                                    <th class="column-title" style="width:250px">Transaction Number</th>
-                                                                    <th class="column-title" style="width:200px">Transaction Date</th>
-                                                                    <th class="column-title" style="width:150px">Pay From</th>
-                                                                    <th class="column-title" style="width:150px">Payment Status</th>
-                                                                    <th class="column-title" style="width:150px">Amount</th>
+                                                                    <th class="column-title" style="width:250px">@lang("expense.show.table_pay_his.col_1")</th>
+                                                                    <th class="column-title" style="width:200px">@lang("expense.show.table_pay_his.col_2")</th>
+                                                                    <th class="column-title" style="width:150px">@lang("expense.show.table_pay_his.col_3")</th>
+                                                                    <th class="column-title" style="width:150px">@lang("expense.show.table_pay_his.col_4")</th>
+                                                                    <th class="column-title" style="width:150px">@lang("expense.show.table_pay_his.col_5")</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="neworderbody">
                                                                 @foreach ($bank_withdrawal as $a)
                                                                 <tr>
                                                                     <td>
-                                                                        <a href="{{ url('/cashbank/bank_withdrawal/'.$a->id) }}">Bank Withdrawal #{{$a->cashbank->number}}</a>
+                                                                        <a href="{{ url('/cashbank/bank_withdrawal/'.$a->id) }}">@lang("expense.show.bw_no"){{$a->cashbank->number}}</a>
                                                                     </td>
                                                                     <td>
                                                                         <a>{{$a->cashbank->date}}</a>
@@ -75,14 +75,14 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang("expense.show.close")</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">View Journal Entry
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">@lang("expense.show.vje")
                         </button>
                         <div class="modal fade bs-example-modal-lg-2" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -90,18 +90,18 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Journal Report</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Expense #{{$pi->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang("expense.show.jr")</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang("expense.show.vje"){{$pi->number}}</strong></h3>
                                     </div>
                                     <div class="modal-body">
                                         <div class="table-responsive my-5">
                                             <table id="example" class="table table-striped jambo_table bulk_action">
                                                 <thead>
                                                     <tr class="headings">
-                                                        <th class="column-title" style="width:200px">Account Number</th>
-                                                        <th class="column-title" style="width:250px">Account</th>
-                                                        <th class="column-title" style="width:150px">Debit</th>
-                                                        <th class="column-title" style="width:150px">Credit</th>
+                                                        <th class="column-title" style="width:200px">@lang("expense.show.table_vje.col_1")</th>
+                                                        <th class="column-title" style="width:250px">@lang("expense.show.table_vje.col_2")</th>
+                                                        <th class="column-title" style="width:150px">@lang("expense.show.table_vje.col_3")</th>
+                                                        <th class="column-title" style="width:150px">@lang("expense.show.table_vje.col_4")</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="neworderbody">
@@ -129,7 +129,7 @@
                                                     @endforeach
                                                     <tr class="headings">
                                                         <td>
-                                                            <strong><b>Total</b></strong>
+                                                            <strong><b>@lang("expense.show.total")</b></strong>
                                                         </td>
                                                         <td>
                                                         </td>
@@ -146,52 +146,52 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang("expense.show.close")</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">@lang("expense.show.action.action_1")
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Expense')
                             @can('Delete')
                             @if($pi->status == 1 or $pi->status == 4)
                             @hasrole('Owner|Ultimate|Cash & Bank')
-                            <li><a href="/cashbank/bank_withdrawal/expense/new/{{$pi->id}}">Pay Bill</a></li>
+                            <li><a href="/cashbank/bank_withdrawal/expense/new/{{$pi->id}}">@lang("expense.show.action.action_2")</a></li>
                             @endrole
                             @endif
-                            <li><a href="#">Clone Transaction</a></li>
-                            <li><a href="#">Set as Recurring</a></li>
+                            <li><a href="#">@lang("expense.show.action.action_3")</a></li>
+                            <li><a href="#">@lang("expense.show.action.action_4")</a></li>
                             <li class="divider"></li>
                             @endcan
                             @endrole
-                            <li><a target="_blank" href="/expenses/print/PDF1/{{$pi->id}}">Print & Preview</a></li>
+                            <li><a target="_blank" href="/expenses/print/PDF1/{{$pi->id}}">@lang("expense.show.action.action_5")</a></li>
                         </ul>
                     </li>
                 </ul>
                 <h3><b>Expense #{{$pi->number}}</b></h3>
                 <a>Status: </a>
                 @if($pi->status == 1)
-                <span class="label label-warning" style="color:white;">Open</span>
+                <span class="label label-warning" style="color:white;">@lang("status.open")</span>
                 @elseif($pi->status == 2)
-                <span class="label label-success" style="color:white;">Closed</span>
+                <span class="label label-success" style="color:white;">@lang("status.closed")</span>
                 @elseif($pi->status == 3)
-                <span class="label label-success" style="color:white;">Paid</span>
+                <span class="label label-success" style="color:white;">@lang("status.paid")</span>
                 @elseif($pi->status == 4)
-                <span class="label label-warning" style="color:white;">Partial</span>
+                <span class="label label-warning" style="color:white;">@lang("status.part")</span>
                 @elseif($pi->status == 5)
-                <span class="label label-danger" style="color:white;">Overdue</span>
+                <span class="label label-danger" style="color:white;">@lang("status.over")</span>
                 @elseif($pi->status == 6)
-                <span class="label label-success" style="color:white;">Sent</span>
+                <span class="label label-success" style="color:white;">@lang("status.sent")</span>
                 @elseif($pi->status == 7)
-                <span class="label label-success" style="color:white;">Active</span>
+                <span class="label label-success" style="color:white;">@lang("status.act")</span>
                 @elseif($pi->status == 8)
-                <span class="label label-success" style="color:white;">Sold</span>
+                <span class="label label-success" style="color:white;">@lang("status.sold")</span>
                 @elseif($pi->status == 9)
-                <span class="label label-success" style="color:white;">Disposed</span>
+                <span class="label label-success" style="color:white;">@lang("status.dis")</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -362,5 +362,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expenses/deleteFormNotNull.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/expenses/deleteFormNotNull.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

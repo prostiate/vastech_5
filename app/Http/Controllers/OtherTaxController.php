@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\other_tax;
+use App\Model\other\other_tax;
 use Illuminate\Http\Request;
 use Validator;
-use App\coa;
+use App\Model\coa\coa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\User;

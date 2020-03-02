@@ -6,14 +6,14 @@ use Validator;
 use Illuminate\Support\Facades\DB as IlluminateDB;
 
 use App\User;
-use App\asset;
-use App\asset_detail;
-use App\other_transaction;
+use App\Model\asset\asset;
+use App\Model\asset\asset_detail;
+use App\Model\other\other_transaction;
 use Illuminate\Http\Request;
-use App\coa;
-use App\coa_detail;
-use App\journal_entry;
-use App\journal_entry_item;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\journal_opening_balance\journal_entry;
+use App\Model\journal_opening_balance\journal_entry_item;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 

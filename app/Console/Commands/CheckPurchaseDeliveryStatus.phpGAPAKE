@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\purchase_delivery;
+use App\Model\purchase\purchase_delivery;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

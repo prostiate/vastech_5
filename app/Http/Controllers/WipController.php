@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\contact;
-use App\product;
+use App\Model\contact\contact;
+use App\Model\product\product;
 use Illuminate\Http\Request;
 use Validator;
-use App\warehouse;
+use App\Model\warehouse\warehouse;
 use Illuminate\Support\Carbon;
-use App\wip;
-use App\wip_item;
-use App\other_transaction;
-use App\product_bundle_item;
-use App\spk;
-use App\spk_item;
-use App\warehouse_detail;
-use App\coa_detail;
-use App\product_production_item;
+use App\Model\wip\wip;
+use App\Model\wip\wip_item;
+use App\Model\other\other_transaction;
+use App\Model\product\product_bundle_item;
+use App\Model\spk\spk;
+use App\Model\spk\spk_item;
+use App\Model\warehouse\warehouse_detail;
+use App\Model\coa\coa_detail;
+use App\Model\product\product_production_item;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
-use App\company_logo;
-use App\company_setting;
-use App\default_account;
+use App\Model\coa\coa;
+use App\Model\company\company_logo;
+use App\Model\company\company_setting;
+use App\Model\coa\default_account;
 use App\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;

@@ -140,7 +140,7 @@
                                 <th class="column-title">Account Number </th>
                                 <th class="column-title">Account Name </th>
                                 <th class="column-title">Category </th>
-                                <th class="column-title">Default Tax </th>
+                                <!--<th class="column-title">Default Tax </th>-->
                                 <th class="column-title" style="text-align: right">Balance </th>
                                 <!--<th class="column-title no-link last"><span class="nobr">Action</span>
                                 </th>
@@ -170,9 +170,9 @@
                                 <td>
                                     <a>{{$a->coa_category->name}}</a>
                                 </td>
-                                <td>
+                                <!--<td>
                                     <a>{{$a->default_tax}}</a>
-                                </td>
+                                </td>-->
                                 <td style="text-align: right">
                                     @if($a->coa_category_id == 8 or $a->coa_category_id == 10 or $a->coa_category_id == 11 or $a->coa_category_id == 12 or $a->coa_category_id == 13 or $a->coa_category_id == 14)
                                     <?php $total = $credit - $debit ?>
@@ -199,5 +199,5 @@
 @endsection
 
 @push('scripts')
-<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200221-1431') }}" charset="utf-8"></script>-->
+<!--<script src="{{ asset('js/accounts/dataTableindex.js?v=5-20200302-1755') }}" charset="utf-8"></script>-->
 @endpush

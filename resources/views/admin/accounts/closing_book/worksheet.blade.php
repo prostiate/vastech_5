@@ -18,20 +18,24 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <form id="formCreate" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="">
+                                <form id="formCreate" data-parsley-validate="" class="form-horizontal form-label-left"
+                                    novalidate="">
                                     <input name="end_period" value="{{$end_period}}" hidden>
                                     <input name="start_period" value="{{$start_period}}" hidden>
                                     <div class="col-12 table-responsive">
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr class="btn-dark">
-                                                    <th colspan="2" rowspan="2" style="width: 250px; text-align: center">
+                                                    <th colspan="2" rowspan="2"
+                                                        style="width: 250px; text-align: center">
                                                         Daftar Akun</th>
-                                                    <th colspan="2" style="width: 100px; text-align: center">Trial Balance
+                                                    <th colspan="2" style="width: 100px; text-align: center">Trial
+                                                        Balance
                                                     </th>
                                                     <th colspan="2" style="width: 100px; text-align: center">Income
                                                         Statement</th>
-                                                    <th colspan="2" style="width: 100px; text-align: center">Balance Sheet
+                                                    <th colspan="2" style="width: 100px; text-align: center">Balance
+                                                        Sheet
                                                     </th>
                                                 </tr>
                                                 <tr class="btn-dark">
@@ -50,24 +54,28 @@
                                                 <?php $asset_debit = 0 ?>
                                                 <?php $asset_credit = 0 ?>
                                                 @foreach($coa_assets as $j => $coa)
-                                                @if($coa->coa_category_id == 7)
-                                                @foreach($coa_detail_credit as $i => $detail)
-                                                @if($coa->id == $detail->coa_id)
-                                                @if($detail->total < 0) <?php $debit = $detail->total; ?> <?php $credit = 0 ?> @else <?php $debit = 0 ?> <?php $credit = $detail->total; ?> @endif @break @else <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach @else @foreach($coa_detail_debit as $i=> $detail)
-                                                    @if($coa->id == $detail->coa_id)
-                                                    @if($detail->total > 0)
-                                                    <?php $debit = $detail->total; ?>
-                                                    <?php $credit = 0 ?>
-                                                    @else
-                                                    <?php $debit = 0 ?>
-                                                    <?php $credit = $detail->total; ?>
-                                                    @endif
-                                                    @break
-                                                    @else
-                                                    <?php $debit = 0 ?>
-                                                    <?php $credit = 0 ?>
-                                                    @endif
-                                                    @endforeach
+                                                    @if($coa->coa_category_id == 7)
+                                                        @foreach($coa_detail_credit as $i => $detail)
+                                                            @if($coa->id == $detail->coa_id)
+                                                            @if($detail->total < 0) <?php $debit = $detail->total; ?>
+                                                            <?php $credit = 0 ?> @else <?php $debit = 0 ?>
+                                                            <?php $credit = $detail->total; ?> @endif @break @else
+                                                            <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach @else
+                                                            @foreach($coa_detail_debit as $i=> $detail)
+                                                            @if($coa->id == $detail->coa_id)
+                                                            @if($detail->total > 0)
+                                                            <?php $debit = $detail->total; ?>
+                                                            <?php $credit = 0 ?>
+                                                            @else
+                                                            <?php $debit = 0 ?>
+                                                            <?php $credit = $detail->total; ?>
+                                                            @endif
+                                                            @break
+                                                            @else
+                                                            <?php $debit = 0 ?>
+                                                            <?php $credit = 0 ?>
+                                                            @endif
+                                                        @endforeach
                                                     @endif
                                                     <?php $debit = abs($debit) ?>
                                                     <?php $credit = abs($credit) ?>
@@ -77,15 +85,20 @@
                                                         <td colspan="2">
                                                             <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
                                                                 {{$coa->name}}</a>
-                                                            <input hidden class="tb_coa" name="tb_coa[]" value="{{$coa->id}}">
+                                                            <input hidden class="tb_coa" name="tb_coa[]"
+                                                                value="{{$coa->id}}">
                                                         </td>
                                                         <td class="text-right">
-                                                            <a class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                            <input hidden class="tb_debit" name="tb_debit[]" value="{{$debit}}">
+                                                            <a
+                                                                class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                            <input hidden class="tb_debit" name="tb_debit[]"
+                                                                value="{{$debit}}">
                                                         </td>
                                                         <td class="text-right">
-                                                            <a class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                            <input hidden class="tb_credit" name="tb_credit[]" value="{{$credit}}">
+                                                            <a
+                                                                class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                            <input hidden class="tb_credit" name="tb_credit[]"
+                                                                value="{{$credit}}">
                                                         </td>
                                                         <td>
                                                             <a></a>
@@ -94,54 +107,73 @@
                                                             <a></a>
                                                         </td>
                                                         <td class="text-right">
-                                                            <a class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                            <input hidden class="bs_debit" name="bs_debit[]" value="{{$debit}}">
+                                                            <a
+                                                                class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                            <input hidden class="bs_debit" name="bs_debit[]"
+                                                                value="{{$debit}}">
                                                         </td>
                                                         <td class="text-right">
-                                                            <a class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                            <input hidden class="bs_credit" name="bs_credit[]" value="{{$credit}}">
+                                                            <a
+                                                                class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                            <input hidden class="bs_credit" name="bs_credit[]"
+                                                                value="{{$credit}}">
                                                         </td>
+                                                    </tr>
+                                                @endforeach
+
+                                                <tr>
+                                                    <td colspan="8">Liability</td>
+                                                </tr>
+                                                <?php $liability_debit = 0 ?>
+                                                <?php $liability_credit = 0 ?>
+                                                @foreach($coa_liabilities as $j => $coa)
+                                                @foreach($coa_detail_credit as $i => $detail)
+                                                @if($coa->id == $detail->coa_id)
+                                                @if($detail->total < 0) <?php $debit = $detail->total; ?>
+                                                    <?php $credit = 0 ?> @else <?php $debit = 0 ?>
+                                                    <?php $credit = $detail->total; ?> @endif @break @else
+                                                    <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach
+                                                    <?php $debit = abs($debit) ?> <?php $credit = abs($credit) ?>
+                                                    <?php $liability_debit += $debit ?>
+                                                    <?php $liability_credit += $credit ?> <tr>
+                                                    <td colspan="2">
+                                                        <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
+                                                            {{$coa->name}}</a>
+                                                        <input hidden class="tb_coa" name="tb_coa[]"
+                                                            value="{{$coa->id}}">
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <a
+                                                            class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                        <input hidden class="tb_debit" name="tb_debit[]"
+                                                            value="{{$debit}}">
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <a
+                                                            class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                        <input hidden class="tb_credit" name="tb_credit[]"
+                                                            value="{{$credit}}">
+                                                    </td>
+                                                    <td>
+                                                        <a></a>
+                                                    </td>
+                                                    <td>
+                                                        <a></a>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <a
+                                                            class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                        <input hidden class="bs_debit" name="bs_debit[]"
+                                                            value="{{$debit}}">
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <a
+                                                            class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                        <input hidden class="bs_credit" name="bs_credit[]"
+                                                            value="{{$credit}}">
+                                                    </td>
                                                     </tr>
                                                     @endforeach
-
-                                                    <tr>
-                                                        <td colspan="8">Liability</td>
-                                                    </tr>
-                                                    <?php $liability_debit = 0 ?>
-                                                    <?php $liability_credit = 0 ?>
-                                                    @foreach($coa_liabilities as $j => $coa)
-                                                    @foreach($coa_detail_credit as $i => $detail)
-                                                    @if($coa->id == $detail->coa_id)
-                                                    @if($detail->total < 0) <?php $debit = $detail->total; ?> <?php $credit = 0 ?> @else <?php $debit = 0 ?> <?php $credit = $detail->total; ?> @endif @break @else <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach <?php $debit = abs($debit) ?> <?php $credit = abs($credit) ?> <?php $liability_debit += $debit ?> <?php $liability_credit += $credit ?> <tr>
-                                                        <td colspan="2">
-                                                            <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
-                                                                {{$coa->name}}</a>
-                                                            <input hidden class="tb_coa" name="tb_coa[]" value="{{$coa->id}}">
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <a class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                            <input hidden class="tb_debit" name="tb_debit[]" value="{{$debit}}">
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <a class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                            <input hidden class="tb_credit" name="tb_credit[]" value="{{$credit}}">
-                                                        </td>
-                                                        <td>
-                                                            <a></a>
-                                                        </td>
-                                                        <td>
-                                                            <a></a>
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <a class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                            <input hidden class="bs_debit" name="bs_debit[]" value="{{$debit}}">
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <a class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                            <input hidden class="bs_credit" name="bs_credit[]" value="{{$credit}}">
-                                                        </td>
-                                                        </tr>
-                                                        @endforeach
 
                                                         <tr>
                                                             <td colspan="8">Equity</td>
@@ -151,19 +183,31 @@
                                                         @foreach($coa_equities as $j => $coa)
                                                         @foreach($coa_detail_credit as $i => $detail)
                                                         @if($coa->id == $detail->coa_id)
-                                                        @if($detail->total < 0) <?php $debit = $detail->total; ?> <?php $credit = 0 ?> @else <?php $debit = 0 ?> <?php $credit = $detail->total; ?> @endif @break @else <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach <?php $debit = abs($debit) ?> <?php $credit = abs($credit) ?> <?php $equity_debit += $debit ?> <?php $equity_credit += $credit ?> <tr>
+                                                        @if($detail->total < 0) <?php $debit = $detail->total; ?>
+                                                            <?php $credit = 0 ?> @else <?php $debit = 0 ?>
+                                                            <?php $credit = $detail->total; ?> @endif @break @else
+                                                            <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach
+                                                            <?php $debit = abs($debit) ?>
+                                                            <?php $credit = abs($credit) ?>
+                                                            <?php $equity_debit += $debit ?>
+                                                            <?php $equity_credit += $credit ?> <tr>
                                                             <td colspan="2">
                                                                 <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
                                                                     {{$coa->name}}</a>
-                                                                <input hidden class="tb_coa" name="tb_coa[]" value="{{$coa->id}}">
+                                                                <input hidden class="tb_coa" name="tb_coa[]"
+                                                                    value="{{$coa->id}}">
                                                             </td>
                                                             <td class="text-right">
-                                                                <a class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                <input hidden class="tb_debit" name="tb_debit[]" value="{{$debit}}">
+                                                                <a
+                                                                    class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                                <input hidden class="tb_debit" name="tb_debit[]"
+                                                                    value="{{$debit}}">
                                                             </td>
                                                             <td class="text-right">
-                                                                <a class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                <input hidden class="tb_credit" name="tb_credit[]" value="{{$credit}}">
+                                                                <a
+                                                                    class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                                <input hidden class="tb_credit" name="tb_credit[]"
+                                                                    value="{{$credit}}">
                                                             </td>
                                                             <td>
                                                                 <a></a>
@@ -172,12 +216,16 @@
                                                                 <a></a>
                                                             </td>
                                                             <td class="text-right">
-                                                                <a class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                <input hidden class="bs_debit" name="bs_debit[]" value="{{$debit}}">
+                                                                <a
+                                                                    class="bs_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                                <input hidden class="bs_debit" name="bs_debit[]"
+                                                                    value="{{$debit}}">
                                                             </td>
                                                             <td class="text-right">
-                                                                <a class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                <input hidden class="bs_credit" name="bs_credit[]" value="{{$credit}}">
+                                                                <a
+                                                                    class="bs_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                                <input hidden class="bs_credit" name="bs_credit[]"
+                                                                    value="{{$credit}}">
                                                             </td>
                                                             </tr>
                                                             @endforeach
@@ -190,28 +238,43 @@
                                                             @foreach($coa_incomes as $j => $coa)
                                                             @foreach($coa_detail_credit as $i => $detail)
                                                             @if($coa->id == $detail->coa_id)
-                                                            @if($detail->total < 0) <?php $debit = $detail->total; ?> <?php $credit = 0 ?> @else <?php $debit = 0 ?> <?php $credit = $detail->total; ?> @endif @break @else <?php $debit = 0 ?> <?php $credit = 0 ?> @endif @endforeach <?php $debit = abs($debit) ?> <?php $credit = abs($credit) ?> <?php $income_debit += $debit ?> <?php $income_credit += $credit ?> <tr>
+                                                            @if($detail->total < 0) <?php $debit = $detail->total; ?>
+                                                                <?php $credit = 0 ?> @else <?php $debit = 0 ?>
+                                                                <?php $credit = $detail->total; ?> @endif @break @else
+                                                                <?php $debit = 0 ?> <?php $credit = 0 ?> @endif
+                                                                @endforeach <?php $debit = abs($debit) ?>
+                                                                <?php $credit = abs($credit) ?>
+                                                                <?php $income_debit += $debit ?>
+                                                                <?php $income_credit += $credit ?> <tr>
                                                                 <td colspan="2">
                                                                     <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
                                                                         {{$coa->name}}</a>
-                                                                    <input hidden class="tb_coa" name="tb_coa[]" value="{{$coa->id}}">
-                                                                    <input hidden class="in_coa" name="in_coa[]" value="{{$coa->id}}">
+                                                                    <input hidden class="tb_coa" name="tb_coa[]"
+                                                                        value="{{$coa->id}}">
+                                                                    <input hidden class="in_coa" name="in_coa[]"
+                                                                        value="{{$coa->id}}">
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <a class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                    <input hidden class="tb_debit" name="tb_debit[]" value="{{$debit}}">
+                                                                    <a
+                                                                        class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                                    <input hidden class="tb_debit" name="tb_debit[]"
+                                                                        value="{{$debit}}">
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <a class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                    <input hidden class="tb_credit" name="tb_credit[]" value="{{$credit}}">
+                                                                    <a
+                                                                        class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                                    <input hidden class="tb_credit" name="tb_credit[]"
+                                                                        value="{{$credit}}">
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <a><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                    <input hidden class="in_debit" name="in_debit[]" value="{{$debit}}">
+                                                                    <input hidden class="in_debit" name="in_debit[]"
+                                                                        value="{{$debit}}">
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <a><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                    <input hidden class="in_credit" name="in_credit[]" value="{{$credit}}">
+                                                                    <input hidden class="in_credit" name="in_credit[]"
+                                                                        value="{{$credit}}">
                                                                 </td>
                                                                 <td>
                                                                     <a></a>
@@ -250,26 +313,35 @@
 
                                                                 <tr>
                                                                     <td colspan="2">
-                                                                        <a href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
+                                                                        <a
+                                                                            href="{{route('coa.show', ['id' => $coa->id])}}">({{$coa->code}})
                                                                             {{$coa->name}}</a>
-                                                                        <input hidden class="tb_coa" name="tb_coa[]" value="{{$coa->id}}">
-                                                                        <input hidden class="in_coa" name="in_coa[]" value="{{$coa->id}}">
+                                                                        <input hidden class="tb_coa" name="tb_coa[]"
+                                                                            value="{{$coa->id}}">
+                                                                        <input hidden class="in_coa" name="in_coa[]"
+                                                                            value="{{$coa->id}}">
                                                                     </td>
                                                                     <td class="text-right">
-                                                                        <a class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                        <input hidden class="tb_debit" name="tb_debit[]" value="{{$debit}}">
+                                                                        <a
+                                                                            class="tb_debit_display"><?php echo number_format($debit, 2, ',', '.') ?></a>
+                                                                        <input hidden class="tb_debit" name="tb_debit[]"
+                                                                            value="{{$debit}}">
                                                                     </td>
                                                                     <td class="text-right">
-                                                                        <a class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                        <input hidden class="tb_credit" name="tb_credit[]" value="{{$credit}}">
+                                                                        <a
+                                                                            class="tb_credit_display"><?php echo number_format($credit, 2, ',', '.') ?></a>
+                                                                        <input hidden class="tb_credit"
+                                                                            name="tb_credit[]" value="{{$credit}}">
                                                                     </td>
                                                                     <td class="text-right">
                                                                         <a><?php echo number_format($debit, 2, ',', '.') ?></a>
-                                                                        <input hidden class="in_debit" name="in_debit[]" value="{{$debit}}">
+                                                                        <input hidden class="in_debit" name="in_debit[]"
+                                                                            value="{{$debit}}">
                                                                     </td>
                                                                     <td class="text-right">
                                                                         <a><?php echo number_format($credit, 2, ',', '.') ?></a>
-                                                                        <input hidden class="in_credit" name="in_credit[]" value="{{$credit}}">
+                                                                        <input hidden class="in_credit"
+                                                                            name="in_credit[]" value="{{$credit}}">
                                                                     </td>
                                                                     <td>
                                                                         <a></a>
@@ -289,21 +361,33 @@
                                                 <?php $bs_credit    = $asset_credit + $liability_credit + $equity_credit ?>
                                                 <tr>
                                                     <td colspan="2" class="text-left"><strong>Total</strong></td>
-                                                    <th class="text-right" style="width: 120px"><?php echo number_format($tb_debit, 2, ',', '.') ?></th>
-                                                    <th class="text-right" style="width: 120px"><?php echo number_format($tb_credit, 2, ',', '.') ?></th>
-                                                    <th class="text-right" style="width: 120px" id="income_debit"><?php echo number_format($in_debit, 2, ',', '.') ?></th>
-                                                    <th class="text-right" style="width: 120px" id="income_credit"><?php echo number_format($in_credit, 2, ',', '.') ?></th>
-                                                    <th class="text-right" style="width: 120px" id="balance_debit"><?php echo number_format($bs_debit, 2, ',', '.') ?></th>
-                                                    <th class="text-right" style="width: 120px" id="balance_credit"><?php echo number_format($bs_credit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px">
+                                                        <?php echo number_format($tb_debit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px">
+                                                        <?php echo number_format($tb_credit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px" id="income_debit">
+                                                        <?php echo number_format($in_debit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px" id="income_credit">
+                                                        <?php echo number_format($in_credit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px" id="balance_debit">
+                                                        <?php echo number_format($bs_debit, 2, ',', '.') ?></th>
+                                                    <th class="text-right" style="width: 120px" id="balance_credit">
+                                                        <?php echo number_format($bs_credit, 2, ',', '.') ?></th>
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <input hidden class="tb_debit_total" name="tb_debit_total" value="{{$tb_debit}}">
-                                                        <input hidden class="tb_credit_total" name="tb_credit_total" value="{{$tb_credit}}">
-                                                        <input hidden class="in_debit_total" name="in_debit_total" value="{{$in_debit}}">
-                                                        <input hidden class="in_credit_total" name="in_credit_total" value="{{$in_credit}}">
-                                                        <input hidden class="balance_debit_total" name="balance_debit_total" value="{{$bs_debit}}">
-                                                        <input hidden class="balance_credit_total" name="balance_credit_total" value="{{$bs_credit}}">
+                                                        <input hidden class="tb_debit_total" name="tb_debit_total"
+                                                            value="{{$tb_debit}}">
+                                                        <input hidden class="tb_credit_total" name="tb_credit_total"
+                                                            value="{{$tb_credit}}">
+                                                        <input hidden class="in_debit_total" name="in_debit_total"
+                                                            value="{{$in_debit}}">
+                                                        <input hidden class="in_credit_total" name="in_credit_total"
+                                                            value="{{$in_credit}}">
+                                                        <input hidden class="balance_debit_total"
+                                                            name="balance_debit_total" value="{{$bs_debit}}">
+                                                        <input hidden class="balance_credit_total"
+                                                            name="balance_credit_total" value="{{$bs_credit}}">
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -311,9 +395,11 @@
                                                             Loss</strong></td>
                                                     <td class="btn-success text-right" style="width: 120px"></td>
                                                     <td class="btn-success text-right" style="width: 120px"></td>
-                                                    <td class="btn-success text-right" style="width: 120px" id="net_debit">
+                                                    <td class="btn-success text-right" style="width: 120px"
+                                                        id="net_debit">
                                                     </td>
-                                                    <td class="btn-success text-right" style="width: 120px" id="net_credit">
+                                                    <td class="btn-success text-right" style="width: 120px"
+                                                        id="net_credit">
                                                     </td>
                                                     <td class="btn-success text-right" style="width: 120px"></td>
                                                     <td class="btn-success text-right" style="width: 120px"></td>
@@ -322,8 +408,10 @@
                                                     <td>
                                                         <input class="net_debit" name="net_debit" value="0" hidden>
                                                         <input class="net_credit" name="net_credit" value="0" hidden>
-                                                        <input class="sub_net_debit" name="sub_net_debit" value="0" hidden>
-                                                        <input class="sub_net_credit" name="sub_net_credit" value="0" hidden>
+                                                        <input class="sub_net_debit" name="sub_net_debit" value="0"
+                                                            hidden>
+                                                        <input class="sub_net_credit" name="sub_net_credit" value="0"
+                                                            hidden>
                                                     </td>
                                                 </tr>
                                                 <!--{{--
@@ -359,13 +447,22 @@
                                                 </tr>
                                                 --}}-->
                                                 <tr>
-                                                    <td colspan="2" class="text-center" style="padding-top:35px; margin: 0 auto"><strong>Net Profit Loss</strong></td>
+                                                    <td colspan="2" class="text-center"
+                                                        style="padding-top:35px; margin: 0 auto"><strong>Net Profit
+                                                            Loss</strong></td>
                                                     <td colspan="2" class="text-right" style="width: 120px">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Retained Earnings Account</label>
-                                                            <select type="select" class="form-control selectaccount" id="retained_earning_acc" name="retained_earning_acc" @if($closing_book->retained_acc) data-last={{$closing_book->retained_acc}} @else data-last="0" @endif>
+                                                            <label class="control-label col-md-12 col-sm-12 col-xs-12"
+                                                                style="text-align: center;">Retained Earnings
+                                                                Account</label>
+                                                            <select type="select" class="form-control selectaccount"
+                                                                id="retained_earning_acc" name="retained_earning_acc"
+                                                                @if($closing_book->retained_acc)
+                                                                data-last={{$closing_book->retained_acc}} @else
+                                                                data-last="0" @endif>
                                                                 @foreach ($coa_equities as $account)
-                                                                <option value="{{$account->id}}" @if($closing_book->retained_acc == $account->id) selected @endif>
+                                                                <option value="{{$account->id}}" @if($closing_book->
+                                                                    retained_acc == $account->id) selected @endif>
                                                                     ({{$account->code}}) - {{$account->name}}
                                                                     ({{$account->coa_category->name}})
                                                                 </option>
@@ -380,15 +477,17 @@
                                             </tfoot>
                                         </table>
                                     </div>
-                                        <input  type="text" name="hidden_id" id="hidden_id" value="{{$closing_book->id}}">
+                                    <input type="text" name="hidden_id" id="hidden_id" value="{{$closing_book->id}}" hidden>
                                 </form>
                             </div>
                             <br>
                             <div class="col-md-3 center-margin">
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                                        <button class="btn btn-primary" type="button" onclick="window.location.href = '/chart_of_accounts';">Cancel</button>
-                                        <button id="click" type="submit" class="btn btn-success">Save and Continue</button>
+                                        <button class="btn btn-primary" type="button"
+                                            onclick="window.location.href = '/chart_of_accounts';">Cancel</button>
+                                        <button id="click" type="submit" class="btn btn-success">Save and
+                                            Continue</button>
                                     </div>
                                     <br>
                                     <br>
@@ -404,7 +503,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/accounts/closing_book/worksheet.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/accounts/closing_book/createForm_worksheet.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/accounts/closing_book/worksheet.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/accounts/closing_book/createForm_worksheet.js?v=5-20200302-1755') }}" charset="utf-8">
+</script>
+<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

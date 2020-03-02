@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\company_setting;
-use App\other_transaction;
+use App\Model\company\company_setting;
+use App\Model\other\other_transaction;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;

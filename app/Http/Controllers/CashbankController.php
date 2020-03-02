@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\coa;
-use App\coa_detail;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
 use Illuminate\Support\Carbon;
-use App\expense;
-use App\cashbank;
-use App\cashbank_item;
-use App\contact;
-use App\other_tax;
+use App\Model\expense\expense;
+use App\Model\cashbank\cashbank;
+use App\Model\cashbank\cashbank_item;
+use App\Model\contact\contact;
+use App\Model\other\other_tax;
 use Validator;
-use App\other_transaction;
+use App\Model\other\other_transaction;
 use PDF;
-use App\default_account;
+use App\Model\coa\default_account;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

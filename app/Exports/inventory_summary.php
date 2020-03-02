@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\product;
+use App\Model\product\product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Concerns\FromView;

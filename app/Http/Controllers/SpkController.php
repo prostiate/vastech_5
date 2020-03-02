@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\contact;
-use App\product;
+use App\Model\contact\contact;
+use App\Model\product\product;
 use Illuminate\Http\Request;
 use Validator;
-use App\warehouse;
+use App\Model\warehouse\warehouse;
 use Illuminate\Support\Carbon;
-use App\spk;
-use App\spk_item;
-use App\other_transaction;
-use App\sale_invoice_item;
-use App\warehouse_detail;
+use App\Model\spk\spk;
+use App\Model\spk\spk_item;
+use App\Model\other\other_transaction;
+use App\Model\sales\sale_invoice_item;
+use App\Model\warehouse\warehouse_detail;
 use PDF;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use App\User;
-use App\wip_item;
+use App\Model\wip\wip_item;
 
 class SpkController extends Controller
 {

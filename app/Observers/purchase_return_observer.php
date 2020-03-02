@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\purchase_return;
-use App\other_transaction;
+use App\Model\purchase\purchase_return;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class purchase_return_observer
@@ -11,7 +11,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "creating" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function creating(purchase_return $purchaseReturn)
@@ -36,7 +36,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "created" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function created(purchase_return $purchaseReturn)
@@ -47,7 +47,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "updated" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function updated(purchase_return $purchaseReturn)
@@ -58,7 +58,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "deleted" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function deleted(purchase_return $purchaseReturn)
@@ -69,7 +69,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "restored" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function restored(purchase_return $purchaseReturn)
@@ -80,7 +80,7 @@ class purchase_return_observer
     /**
      * Handle the purchase_return "force deleted" event.
      *
-     * @param  \App\purchase_return  $purchaseReturn
+     * @param  \App\Model\purchase\purchase_return  $purchaseReturn
      * @return void
      */
     public function forceDeleted(purchase_return $purchaseReturn)

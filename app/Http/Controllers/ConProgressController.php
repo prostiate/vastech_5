@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\bill_quantities_con;
-use App\bill_quantities_detail_con;
-use App\budget_plan_con;
-use App\budget_plan_detail_con;
-use App\other_tax;
+use App\Model\construction\bill_quantities_con;
+use App\Model\construction\bill_quantities_detail_con;
+use App\Model\construction\budget_plan_con;
+use App\Model\construction\budget_plan_detail_con;
+use App\Model\other\other_tax;
 use Illuminate\Http\Request;
 use Validator;
-use App\coa;
-use App\form_order_con;
-use App\form_order_detail_con;
-use App\offering_letter_con;
-use App\offering_letter_detail_con;
-use App\progress_con;
-use App\progress_detail_con;
+use App\Model\coa\coa;
+use App\Model\construction\form_order_con;
+use App\Model\construction\form_order_detail_con;
+use App\Model\construction\offering_letter_con;
+use App\Model\construction\offering_letter_detail_con;
+use App\Model\construction\progress_con;
+use App\Model\construction\progress_detail_con;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\User;

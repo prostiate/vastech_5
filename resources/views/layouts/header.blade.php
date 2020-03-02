@@ -11,7 +11,7 @@
                         <!-- {{--<img src="/assets/img/defaultlogo.png" alt="">{{Auth::user()->name}} --}}-->
                         <?php
 
-                        use App\company_logo;
+                        use App\Model\company\company_logo;
                         use Illuminate\Support\Facades\Auth;
 
                         $logo = company_logo::where('company_id', Auth::user()->company_id)->latest()->first();
@@ -38,12 +38,23 @@
                     </ul>
                 </li>
 
+                <li>
+                    <div class="form-group" style="margin: auto; padding: 20px">
+                        <ul class="">
+                            <li>
+                                <a style="{{ app()->getLocale() == 'id' ? 'text-decoration: underline;font-weight: bold;' : '' }}" href="{{ route('localization.switch', 'id') }}">Indonesia</a>
+                                <a> | </a>
+                                <a style="{{ app()->getLocale() == 'en' ? 'text-decoration: underline;font-weight: bold;' : '' }}" href="{{ route('localization.switch', 'en') }}">English</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <!--<li role="presentation" class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
                         aria-expanded="false">
                         <i class="fa fa-envelope-o"></i>
                         <span class="badge bg-green">6</span>
-                    </a>
+                    </i>
                     <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
                         <li>
                             <a>

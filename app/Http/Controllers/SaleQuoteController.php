@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\company_logo;
-use App\sale_quote;
-use App\contact;
-use App\company_setting;
-use App\product;
+use App\Model\company\company_logo;
+use App\Model\sales\sale_quote;
+use App\Model\contact\contact;
+use App\Model\company\company_setting;
+use App\Model\product\product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\warehouse;
+use App\Model\warehouse\warehouse;
 use Validator;
-use App\other_term;
-use App\other_unit;
-use App\other_tax;
-use App\other_transaction;
-use App\product_discount_item;
-use App\sale_quote_item;
-use App\sale_order;
+use App\Model\other\other_term;
+use App\Model\other\other_unit;
+use App\Model\other\other_tax;
+use App\Model\other\other_transaction;
+use App\Model\product\product_discount_item;
+use App\Model\sales\sale_quote_item;
+use App\Model\sales\sale_order;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;

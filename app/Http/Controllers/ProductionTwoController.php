@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
-use App\contact;
-use App\default_account;
-use App\other_tax;
-use App\product;
-use App\other_product_category;
-use App\other_unit;
-use App\warehouse_detail;
+use App\Model\coa\coa;
+use App\Model\contact\contact;
+use App\Model\coa\default_account;
+use App\Model\other\other_tax;
+use App\Model\product\product;
+use App\Model\other\other_product_category;
+use App\Model\other\other_unit;
+use App\Model\warehouse\warehouse_detail;
 use Illuminate\Http\Request;
 use Validator;
-use App\production_two;
-use App\production_two_item;
-use App\warehouse;
+use App\Model\production\production_two;
+use App\Model\production\production_two_item;
+use App\Model\warehouse\warehouse;
 use Illuminate\Support\Carbon;
 
 class ProductionTwoController extends Controller
@@ -129,7 +129,7 @@ class ProductionTwoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\product  $product
+     * @param  \App\Model\product\product  $product
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -142,7 +142,7 @@ class ProductionTwoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\product  $product
+     * @param  \App\Model\product\product  $product
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -184,7 +184,7 @@ class ProductionTwoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\product  $product
+     * @param  \App\Model\product\product  $product
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
@@ -252,7 +252,7 @@ class ProductionTwoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\product  $product
+     * @param  \App\Model\product\product  $product
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

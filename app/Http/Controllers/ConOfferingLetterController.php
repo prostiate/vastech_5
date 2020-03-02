@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\budget_plan_con;
+use App\Model\construction\budget_plan_con;
 use Illuminate\Http\Request;
 use Validator;
-use App\offering_letter_con;
-use App\offering_letter_detail_con;
+use App\Model\construction\offering_letter_con;
+use App\Model\construction\offering_letter_detail_con;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\User;

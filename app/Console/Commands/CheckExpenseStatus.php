@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\expense;
-use App\other_transaction;
+use App\Model\expense\expense;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

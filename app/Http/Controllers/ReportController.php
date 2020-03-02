@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
-use App\coa_detail;
-use App\company_setting;
-use App\contact;
-use App\expense;
-use App\expense_item;
+use App\Model\closing_book\closing_book;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\company\company_setting;
+use App\Model\contact\contact;
+use App\Model\expense\expense;
+use App\Model\expense\expense_item;
 use App\Exports\aged_receivable;
 use App\Exports\balance_sheet;
 use App\Exports\cashflow;
@@ -23,26 +24,28 @@ use App\Exports\sales_list;
 use App\Exports\spk_details;
 use App\Exports\spk_list;
 use App\Exports\trial_balance;
-use App\other_status;
-use App\other_transaction;
-use App\product;
-use App\purchase_delivery;
-use App\purchase_delivery_item;
-use App\purchase_invoice;
-use App\purchase_invoice_item;
-use App\purchase_return_item;
-use App\sale_delivery;
-use App\sale_delivery_item;
-use App\sale_invoice;
-use App\sale_invoice_item;
-use App\sale_order;
-use App\sale_payment_item;
-use App\sale_return_item;
-use App\spk;
-use App\spk_item;
+use App\Model\opening_balance\opening_balance;
+use App\Model\opening_balance\opening_balance_detail;
+use App\Model\other\other_status;
+use App\Model\other\other_transaction;
+use App\Model\product\product;
+use App\Model\purchase\purchase_delivery;
+use App\Model\purchase\purchase_delivery_item;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_invoice_item;
+use App\Model\purchase\purchase_return_item;
+use App\Model\sales\sale_delivery;
+use App\Model\sales\sale_delivery_item;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_invoice_item;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_payment_item;
+use App\Model\sales\sale_return_item;
+use App\Model\spk\spk;
+use App\Model\spk\spk_item;
 use App\User;
-use App\warehouse;
-use App\warehouse_detail;
+use App\Model\warehouse\warehouse;
+use App\Model\warehouse\warehouse_detail;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -345,6 +348,7 @@ class ReportController extends Controller
     public function generalLedger()
     {
         $today                                      = Carbon::today()->toDateString();
+        $as_of                                      = coa_detail::where('id','999999')->pluck('date');
         $coa                                        = coa::get();
         $coa_detail                                 = coa_detail::orderBy('date')->whereBetween('date', [$today, $today])
             ->orderBy('coa_id', 'asc')
@@ -677,6 +681,7 @@ class ReportController extends Controller
     public function trial_balance()
     {
         $today                          = Carbon::today()->toDateString();
+        $opening_balance                = opening_balance::latest()->first();
         $coa_detail2                    = coa_detail::whereBetween('date', [$today, $today])
             ->select('coa_details.*')->groupBy('coa_id')
             ->selectSub(function ($query) {
@@ -711,7 +716,62 @@ class ReportController extends Controller
 
     public function trial_balanceInput($start, $end)
     {
-        $coa_detail2                 = coa_detail::whereBetween('date', [$start, $end])
+        $opening_balance                = opening_balance::latest()->first();
+        $last_periode                   = Carbon::parse($start)->subMonth(1)->lastOfMonth()->toDateString();
+        if($opening_balance){
+            if(Carbon::parse($start)->month == Carbon::parse($opening_balance->opening_date)->month){
+            $opening_date                       = $opening_balance->opening_date;
+                //COA OPENING BALANCE
+                $coa_detail3                    = coa_detail::whereDate('date',$opening_date)
+                ->where('type','opening balance')
+                ->select('coa_details.*')->groupBy('coa_id')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(debit)');
+                }, 'debit')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(credit)');
+                }, 'credit')
+                ->orderBy('date')
+                ->orderBy('coa_id')
+                ->get()
+                ->groupBy('coa_id');
+            }
+            else{
+                $start_opening                  = $opening_balance->opening_date;
+                $end_opening                    = $last_periode;
+                $coa_detail3                    = coa_detail::whereBetween('date',[$start_opening, $end_opening])
+                ->select('coa_details.*')->groupBy('coa_id')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(debit)');
+                }, 'debit')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(credit)');
+                }, 'credit')
+                ->orderBy('date')
+                ->orderBy('coa_id')
+                ->get()
+                ->groupBy('coa_id');
+            }
+        }else{
+                $start_opening                  = coa_detail::first();
+                $end_opening                    = $last_periode;
+                $coa_detail3                    = coa_detail::whereBetween('date',[$start_opening, $end_opening])
+                ->select('coa_details.*')->groupBy('coa_id')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(debit)');
+                }, 'debit')
+                ->selectSub(function ($query) {
+                    return $query->selectRaw('SUM(credit)');
+                }, 'credit')
+                ->orderBy('date')
+                ->orderBy('coa_id')
+                ->get()
+                ->groupBy('coa_id');
+        }
+
+        //COA MOVEMENT BALANCE
+        $coa_detail2                    = coa_detail::whereBetween('date', [$start, $end])
+            ->where('type','!=','opening balance')
             ->select('coa_details.*')->groupBy('coa_id')
             ->selectSub(function ($query) {
                 return $query->selectRaw('SUM(debit)');
@@ -720,16 +780,18 @@ class ReportController extends Controller
                 return $query->selectRaw('SUM(credit)');
             }, 'credit')
             ->orderBy('date')
+            ->orderBy('coa_id')
             ->get()
             ->groupBy('coa_id');
-        //dd($coa_detail2);
+
+
+        //dd($coa_detail3);
         $asset                          = coa::whereIn('coa_category_id', [3, 1, 4, 2, 5, 6, 7])->get();
         $liability                      = coa::whereIn('coa_category_id', [8, 9, 10, 11])->get();
         $equity                         = coa::whereIn('coa_category_id', [12])->get();
         $income                         = coa::whereIn('coa_category_id', [13, 14])->get();
         $expense                        = coa::whereIn('coa_category_id', [15, 16, 17])->get();
-        $coa_detail                     = coa_detail::orderBy('coa_id', 'asc')->get()->groupBy('coa_id');
-        $coa                            = coa::get();
+
         return view('admin.reports.overview.trial_balanceInput', compact([
             'start',
             'end',
@@ -738,9 +800,8 @@ class ReportController extends Controller
             'equity',
             'income',
             'expense',
-            'coa',
-            'coa_detail',
-            'coa_detail2'
+            'coa_detail2',
+            'coa_detail3',
         ]));
     }
 

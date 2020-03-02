@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\contact;
-use App\expense;
-use App\other_term;
-use App\purchase_delivery;
-use App\purchase_invoice;
-use App\purchase_order;
-use App\purchase_quote;
-use App\sale_delivery;
-use App\sale_invoice;
-use App\sale_order;
-use App\sale_quote;
+use App\Model\contact\contact;
+use App\Model\expense\expense;
+use App\Model\other\other_term;
+use App\Model\purchase\purchase_delivery;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_order;
+use App\Model\purchase\purchase_quote;
+use App\Model\sales\sale_delivery;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_quote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

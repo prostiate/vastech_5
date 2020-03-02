@@ -29,20 +29,6 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>Total Balance</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">New Transaction <span class="caret"></span>
-                        </button>
-                        <ul role="menu" class="dropdown-menu">
-                            <li><a href="/cashbank/bank_transfer/new">Transfer Funds</a>
-                            </li>
-                            <li><a href="/cashbank/bank_deposit/new">Receive Money</a>
-                            </li>
-                            <li><a href="/cashbank/bank_withdrawal/account/new">Pay Money</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -208,6 +194,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/cashbank/chartdiindex.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/cashbank/dataTable.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/cashbank/chartdiindex.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/cashbank/dataTable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

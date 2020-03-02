@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\sale_payment;
+use App\Model\sales\sale_payment;
 use Illuminate\Http\Request;
-use App\sale_invoice;
-use App\sale_payment_item;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_payment_item;
 use Carbon\Carbon;
-use App\other_payment_method;
-use App\other_transaction;
-use App\coa;
-use App\coa_detail;
-use App\company_logo;
-use App\company_setting;
-use App\contact;
+use App\Model\other\other_payment_method;
+use App\Model\other\other_transaction;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\company\company_logo;
+use App\Model\company\company_setting;
+use App\Model\contact\contact;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PDF;

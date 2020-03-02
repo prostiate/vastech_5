@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Create Surat Perintah Kerja</h2>
+                <h2>@lang("spk.create.title")</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -14,13 +14,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.create.trans_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$trans_no}}" type="text" class="form-control" readonly name="trans_no">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.create.trans_date")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$today}}" type="date" class="form-control" id="datepicker1" name="trans_date">
                                 </div>
@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Contact</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.create.contact")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select class="form-control select_contact contact_id" name="contact">
                                         <option></option>
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.create.warehouse")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select class="form-control selectwarehouse" name="warehouse">
                                         <option></option>
@@ -57,13 +57,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK Ref No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.create.ref_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input type="text" class="form-control" name="vendor_ref_no">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Note</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("spk.create.note")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea class="form-control" name="desc" rows="4"></textarea>
                                 </div>
@@ -77,8 +77,8 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 600px">Product Name</th>
-                                    <th class="column-title">Quantity</th>
+                                    <th class="column-title" style="width: 600px">@lang("spk.create.table.col_1")</th>
+                                    <th class="column-title">@lang("spk.create.table.col_2")</th>
                                     <th class="column-title" style="width: 50px"></th>
                                 </tr>
                             </thead>
@@ -103,22 +103,22 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <input type="button" class="btn btn-dark add" value="+ Add More Item">
+                        <input type="button" class="btn btn-dark add" value="@lang('spk.create.more')">
                     </div>
                     <br>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
-                            <a href="{{ url('/spk') }}" class="btn btn-danger">Cancel</a>
+                            <a href="{{ url('/spk') }}" class="btn btn-danger">@lang("spk.create.cancel")</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Create </button>
+                                <button id="click" type="button" class="btn btn-success">@lang("spk.create.create")</button>
                                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a id="clicknew">Create & New </a>
+                                    <li><a id="clicknew">@lang("spk.create.create_new")</a>
                                     </li>
-                                    <li><a id="click">Create </a>
+                                    <li><a id="click">@lang("spk.create.create")</a>
                                     </li>
                                 </ul>
                             </div>
@@ -132,8 +132,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/spk/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{ asset('js/request/sukses/spk/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

@@ -46,7 +46,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="col-md-12">
                                                 <div class="form-horizontal form-label-left">
                                                     <div class="form-group row">
@@ -65,7 +65,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <br>
                                             <div class="col-md-1 center-margin">
                                                 <div class="form-horizontal">
@@ -123,327 +123,303 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="8">
                                                     <a><strong>Asset</strong></a>
                                                 </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
                                             </tr>
-                                            <?php $move_debit = 0 ?>
-                                            <?php $move_credit = 0 ?>
-                                            <?php $total_asset_move_debit = 0 ?>
-                                            <?php $total_asset_move_credit = 0 ?>
-                                            <?php $end_debit = 0 ?>
-                                            <?php $end_credit = 0 ?>
-                                            <?php $total_asset_end_debit = 0 ?>
-                                            <?php $total_asset_end_credit = 0 ?>
-                                            @foreach($coa_detail2 as $cd => $cdd)
-                                                @if($cdd->sum('debit') != 0 or $cdd->sum('credit') != 0)
+                                            <?php $total_init_debit = 0 ?>
+                                            <?php $total_init_credit = 0 ?>
+                                            <?php $total_move_debit = 0 ?>
+                                            <?php $total_move_credit = 0 ?>
+                                            <?php $total_end_debit = 0 ?>
+                                            <?php $total_end_credit = 0 ?>
+                                            @foreach($asset as $i => $coa)
+                                                @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
-                                                    @foreach($asset as $c)
-                                                    <?php $move_debit = 0 ?>
-                                                    <?php $move_credit = 0 ?>
-                                                        @if($c->id == $cd)
-                                                            <td colspan="2"><a>@foreach($coa as $coaa) @if($coaa->id == $cd) ({{$coaa->code}}) - {{$coaa->name}} @endif @endforeach</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            @foreach($cdd as $cddd)
-                                                            <?php $move_debit += $cddd->debit?>
-                                                            <?php $move_credit += $cddd->credit?>
-                                                            <?php $total_asset_move_debit += $cddd->debit ?>
-                                                            <?php $total_asset_move_credit += $cddd->credit ?>
-                                                            <?php $end_debit = $move_debit - $move_credit?>
-                                                            <?php $end_credit = $move_debit - $move_credit?>
-                                                            @endforeach
-                                                            <td class="text-right"><a>@number($move_debit)</a></td>
-                                                            <td class="text-right"><a>@number($move_credit)</a></td>
-                                                            @if($end_debit < 0)
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>@number(abs($end_credit))</a></td>
-                                                            <?php $total_asset_end_credit += $end_credit ?>
-                                                            @else
-                                                            <td class="text-right"><a>@number($end_debit)</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <?php $total_asset_end_debit += $end_debit ?>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
+                                                    @if(isset($coa_detail3[$coa->id])){
+                                                        <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
+                                                              $init_credit = $coa_detail3[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $init_debit = 0; $init_credit = 0?>
+                                                    }@endif
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
+                                                    @if(isset($coa_detail2[$coa->id])){
+                                                        <?php $debit = $coa_detail2[$coa->id]->first()->debit;
+                                                              $credit = $coa_detail2[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $debit = 0; $credit = 0;?>
+                                                    }@endif
+                                                    <?php
+                                                     $init_balance = ($init_debit - $init_credit);
+                                                     $move_balance = ($debit - $credit);
+                                                     $end_balance = ($init_debit - $init_credit) + $move_balance;
+                                                    ?>
+
+                                                    <td colspan="2">({{$coa->code}}) - {{$coa->name}} </a></td>
+                                                    @if($init_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($init_balance))</a></td>
+                                                    <?php $total_init_credit += $init_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($init_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_init_debit += $init_balance ?>
+                                                    @endif
+                                                    @if($move_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($move_balance))</a></td>
+                                                    <?php $total_move_credit += $move_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($move_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_move_debit += $move_balance ?>
+                                                    @endif
+                                                    @if($end_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($end_balance))</a></td>
+                                                    <?php $total_end_credit += $end_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($end_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_end_debit += $end_balance ?>
+                                                    @endif
                                                 </tr>
                                                 @endif
                                             @endforeach
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="8">
                                                     <a><strong>Liability</strong></a>
                                                 </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
                                             </tr>
-                                            <?php $move_debit = 0 ?>
-                                            <?php $move_credit = 0 ?>
-                                            <?php $total_liability_move_debit = 0 ?>
-                                            <?php $total_liability_move_credit = 0 ?>
-                                            <?php $end_debit = 0 ?>
-                                            <?php $end_credit = 0 ?>
-                                            <?php $total_liability_end_debit = 0 ?>
-                                            <?php $total_liability_end_credit = 0 ?>
-                                            @foreach($coa_detail2 as $cd => $cdd)
-                                                @if($cdd->sum('debit') != 0 or $cdd->sum('credit') != 0)
+                                            @foreach($liability as $i => $coa)
+                                                @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
-                                                    @foreach($liability as $c)
-                                                    <?php $move_debit = 0 ?>
-                                                    <?php $move_credit = 0 ?>
-                                                        @if($c->id == $cd)
-                                                            <td colspan="2"><a>@foreach($coa as $coaa) @if($coaa->id == $cd) ({{$coaa->code}}) - {{$coaa->name}} @endif @endforeach</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            @foreach($cdd as $cddd)
-                                                            <?php $move_debit += $cddd->debit?>
-                                                            <?php $move_credit += $cddd->credit?>
-                                                            <?php $total_liability_move_debit += $cddd->debit ?>
-                                                            <?php $total_liability_move_credit += $cddd->credit ?>
-                                                            <?php $end_debit = $move_debit - $move_credit?>
-                                                            <?php $end_credit = $move_debit - $move_credit?>
-                                                            @endforeach
-                                                            <td class="text-right"><a>@number($move_debit)</a></td>
-                                                            <td class="text-right"><a>@number($move_credit)</a></td>
-                                                            @if($end_debit < 0)
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>@number(abs($end_credit))</a></td>
-                                                            <?php $total_liability_end_credit += $end_credit ?>
-                                                            @else
-                                                            <td class="text-right"><a>@number($end_debit)</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <?php $total_liability_end_debit += $end_debit ?>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
+                                                    @if(isset($coa_detail3[$coa->id])){
+                                                        <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
+                                                              $init_credit = $coa_detail3[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $init_debit = 0; $init_credit = 0?>
+                                                    }@endif
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
+                                                    @if(isset($coa_detail2[$coa->id])){
+                                                        <?php $debit = $coa_detail2[$coa->id]->first()->debit;
+                                                              $credit = $coa_detail2[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $debit = 0; $credit = 0;?>
+                                                    }@endif
+                                                    <?php
+                                                     $init_balance = ($init_debit - $init_credit);
+                                                     $move_balance = ($debit - $credit);
+                                                     $end_balance = ($init_debit - $init_credit) + $move_balance;
+                                                    ?>
+
+                                                    <td colspan="2">({{$coa->code}}) - {{$coa->name}} </a></td>
+                                                    @if($init_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($init_balance))</a></td>
+                                                    <?php $total_init_credit += $init_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($init_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_init_debit += $init_balance ?>
+                                                    @endif
+                                                    @if($move_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($move_balance))</a></td>
+                                                    <?php $total_move_credit += $move_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($move_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_move_debit += $move_balance ?>
+                                                    @endif
+                                                    @if($end_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($end_balance))</a></td>
+                                                    <?php $total_end_credit += $end_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($end_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_end_debit += $end_balance ?>
+                                                    @endif
                                                 </tr>
                                                 @endif
                                             @endforeach
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="8">
                                                     <a><strong>Equity</strong></a>
                                                 </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
                                             </tr>
-                                            <?php $move_debit = 0 ?>
-                                            <?php $move_credit = 0 ?>
-                                            <?php $total_equity_move_debit = 0 ?>
-                                            <?php $total_equity_move_credit = 0 ?>
-                                            <?php $end_debit = 0 ?>
-                                            <?php $end_credit = 0 ?>
-                                            <?php $total_equity_end_debit = 0 ?>
-                                            <?php $total_equity_end_credit = 0 ?>
-                                            @foreach($coa_detail2 as $cd => $cdd)
-                                                @if($cdd->sum('debit') != 0 or $cdd->sum('credit') != 0)
+                                            @foreach($equity as $i => $coa)
+                                                @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
-                                                    @foreach($equity as $c)
-                                                    <?php $move_debit = 0 ?>
-                                                    <?php $move_credit = 0 ?>
-                                                        @if($c->id == $cd)
-                                                            <td colspan="2"><a>@foreach($coa as $coaa) @if($coaa->id == $cd) ({{$coaa->code}}) - {{$coaa->name}} @endif @endforeach</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            @foreach($cdd as $cddd)
-                                                            <?php $move_debit += $cddd->debit?>
-                                                            <?php $move_credit += $cddd->credit?>
-                                                            <?php $total_equity_move_debit += $cddd->debit ?>
-                                                            <?php $total_equity_move_credit += $cddd->credit ?>
-                                                            <?php $end_debit = $move_debit - $move_credit?>
-                                                            <?php $end_credit = $move_debit - $move_credit?>
-                                                            @endforeach
-                                                            <td class="text-right"><a>@number($move_debit)</a></td>
-                                                            <td class="text-right"><a>@number($move_credit)</a></td>
-                                                            @if($end_debit < 0)
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>@number(abs($end_credit))</a></td>
-                                                            <?php $total_equity_end_credit += $end_credit ?>
-                                                            @else
-                                                            <td class="text-right"><a>@number($end_debit)</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <?php $total_equity_end_debit += $end_debit ?>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
+                                                    @if(isset($coa_detail3[$coa->id])){
+                                                        <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
+                                                              $init_credit = $coa_detail3[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $init_debit = 0; $init_credit = 0?>
+                                                    }@endif
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
+                                                    @if(isset($coa_detail2[$coa->id])){
+                                                        <?php $debit = $coa_detail2[$coa->id]->first()->debit;
+                                                              $credit = $coa_detail2[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $debit = 0; $credit = 0;?>
+                                                    }@endif
+                                                    <?php
+                                                     $init_balance = ($init_debit - $init_credit);
+                                                     $move_balance = ($debit - $credit);
+                                                     $end_balance = ($init_debit - $init_credit) + $move_balance;
+                                                    ?>
+
+                                                    <td colspan="2">({{$coa->code}}) - {{$coa->name}} </a></td>
+                                                    @if($init_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($init_balance))</a></td>
+                                                    <?php $total_init_credit += $init_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($init_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_init_debit += $init_balance ?>
+                                                    @endif
+                                                    @if($move_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($move_balance))</a></td>
+                                                    <?php $total_move_credit += $move_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($move_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_move_debit += $move_balance ?>
+                                                    @endif
+                                                    @if($end_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($end_balance))</a></td>
+                                                    <?php $total_end_credit += $end_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($end_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_end_debit += $end_balance ?>
+                                                    @endif
                                                 </tr>
                                                 @endif
                                             @endforeach
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="8">
                                                     <a><strong>Income</strong></a>
                                                 </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
                                             </tr>
-                                            <?php $move_debit = 0 ?>
-                                            <?php $move_credit = 0 ?>
-                                            <?php $total_income_move_debit = 0 ?>
-                                            <?php $total_income_move_credit = 0 ?>
-                                            <?php $end_debit = 0 ?>
-                                            <?php $end_credit = 0 ?>
-                                            <?php $total_income_end_debit = 0 ?>
-                                            <?php $total_income_end_credit = 0 ?>
-                                            @foreach($coa_detail2 as $cd => $cdd)
-                                                @if($cdd->sum('debit') != 0 or $cdd->sum('credit') != 0)
+                                            @foreach($income as $i => $coa)
+                                                @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
-                                                    @foreach($income as $c)
-                                                    <?php $move_debit = 0 ?>
-                                                    <?php $move_credit = 0 ?>
-                                                        @if($c->id == $cd)
-                                                            <td colspan="2"><a>@foreach($coa as $coaa) @if($coaa->id == $cd) ({{$coaa->code}}) - {{$coaa->name}} @endif @endforeach</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            @foreach($cdd as $cddd)
-                                                            <?php $move_debit += $cddd->debit?>
-                                                            <?php $move_credit += $cddd->credit?>
-                                                            <?php $total_income_move_debit += $cddd->debit ?>
-                                                            <?php $total_income_move_credit += $cddd->credit ?>
-                                                            <?php $end_debit = $move_debit - $move_credit?>
-                                                            <?php $end_credit = $move_debit - $move_credit?>
-                                                            @endforeach
-                                                            <td class="text-right"><a>@number($move_debit)</a></td>
-                                                            <td class="text-right"><a>@number($move_credit)</a></td>
-                                                            @if($end_debit < 0)
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>@number(abs($end_credit))</a></td>
-                                                            <?php $total_income_end_credit += $end_credit ?>
-                                                            @else
-                                                            <td class="text-right"><a>@number($end_debit)</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <?php $total_income_end_debit += $end_debit ?>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
+                                                    @if(isset($coa_detail3[$coa->id])){
+                                                        <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
+                                                              $init_credit = $coa_detail3[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $init_debit = 0; $init_credit = 0?>
+                                                    }@endif
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
+                                                    @if(isset($coa_detail2[$coa->id])){
+                                                        <?php $debit = $coa_detail2[$coa->id]->first()->debit;
+                                                              $credit = $coa_detail2[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $debit = 0; $credit = 0;?>
+                                                    }@endif
+                                                    <?php
+                                                     $init_balance = ($init_debit - $init_credit);
+                                                     $move_balance = ($debit - $credit);
+                                                     $end_balance = ($init_debit - $init_credit) + $move_balance;
+                                                    ?>
+
+                                                    <td colspan="2">({{$coa->code}}) - {{$coa->name}} </a></td>
+                                                    @if($init_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($init_balance))</a></td>
+                                                    <?php $total_init_credit += $init_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($init_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_init_debit += $init_balance ?>
+                                                    @endif
+                                                    @if($move_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($move_balance))</a></td>
+                                                    <?php $total_move_credit += $move_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($move_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_move_debit += $move_balance ?>
+                                                    @endif
+                                                    @if($end_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($end_balance))</a></td>
+                                                    <?php $total_end_credit += $end_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($end_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_end_debit += $end_balance ?>
+                                                    @endif
                                                 </tr>
                                                 @endif
                                             @endforeach
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="8">
                                                     <a><strong>Expense</strong></a>
                                                 </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
-                                                <td>
-                                                    <a><strong></strong></a>
-                                                </td>
                                             </tr>
-                                            <?php $move_debit = 0 ?>
-                                            <?php $move_credit = 0 ?>
-                                            <?php $total_expense_move_debit = 0 ?>
-                                            <?php $total_expense_move_credit = 0 ?>
-                                            <?php $end_debit = 0 ?>
-                                            <?php $end_credit = 0 ?>
-                                            <?php $total_expense_end_debit = 0 ?>
-                                            <?php $total_expense_end_credit = 0 ?>
-                                            @foreach($coa_detail2 as $cd => $cdd)
-                                                @if($cdd->sum('debit') != 0 or $cdd->sum('credit') != 0)
+                                            @foreach($expense as $i => $coa)
+                                                @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
-                                                    @foreach($expense as $c)
-                                                    <?php $move_debit = 0 ?>
-                                                    <?php $move_credit = 0 ?>
-                                                        @if($c->id == $cd)
-                                                            <td colspan="2"><a>@foreach($coa as $coaa) @if($coaa->id == $cd) ({{$coaa->code}}) - {{$coaa->name}} @endif @endforeach</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            @foreach($cdd as $cddd)
-                                                            <?php $move_debit += $cddd->debit?>
-                                                            <?php $move_credit += $cddd->credit?>
-                                                            <?php $total_expense_move_debit += $cddd->debit ?>
-                                                            <?php $total_expense_move_credit += $cddd->credit ?>
-                                                            <?php $end_debit = $move_debit - $move_credit?>
-                                                            <?php $end_credit = $move_debit - $move_credit?>
-                                                            @endforeach
-                                                            <td class="text-right"><a>@number($move_debit)</a></td>
-                                                            <td class="text-right"><a>@number($move_credit)</a></td>
-                                                            @if($end_debit < 0)
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <td class="text-right"><a>@number(abs($end_credit))</a></td>
-                                                            <?php $total_expense_end_credit += $end_credit ?>
-                                                            @else
-                                                            <td class="text-right"><a>@number($end_debit)</a></td>
-                                                            <td class="text-right"><a>0.00</a></td>
-                                                            <?php $total_expense_end_debit += $end_debit ?>
-                                                            @endif
-                                                        @endif
-                                                    @endforeach
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
+                                                    @if(isset($coa_detail3[$coa->id])){
+                                                        <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
+                                                              $init_credit = $coa_detail3[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $init_debit = 0; $init_credit = 0?>
+                                                    }@endif
+                                                    <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
+                                                    @if(isset($coa_detail2[$coa->id])){
+                                                        <?php $debit = $coa_detail2[$coa->id]->first()->debit;
+                                                              $credit = $coa_detail2[$coa->id]->first()->credit?>
+                                                    }@else{
+                                                        <?php $debit = 0; $credit = 0;?>
+                                                    }@endif
+                                                    <?php
+                                                     $init_balance = ($init_debit - $init_credit);
+                                                     $move_balance = ($debit - $credit);
+                                                     $end_balance = ($init_debit - $init_credit) + $move_balance;
+                                                    ?>
+
+                                                    <td colspan="2">({{$coa->code}}) - {{$coa->name}} </a></td>
+                                                    @if($init_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($init_balance))</a></td>
+                                                    <?php $total_init_credit += $init_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($init_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_init_debit += $init_balance ?>
+                                                    @endif
+                                                    @if($move_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($move_balance))</a></td>
+                                                    <?php $total_move_credit += $move_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($move_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_move_debit += $move_balance ?>
+                                                    @endif
+                                                    @if($end_balance < 0)
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <td class="text-right"><a>@number(abs($end_balance))</a></td>
+                                                    <?php $total_end_credit += $end_balance ?>
+                                                    @else
+                                                    <td class="text-right"><a>@number($end_balance)</a></td>
+                                                    <td class="text-right"><a>0.00</a></td>
+                                                    <?php $total_end_debit += $end_balance ?>
+                                                    @endif
                                                 </tr>
                                                 @endif
                                             @endforeach
@@ -451,16 +427,12 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="2" class="text-left btn-dark"><strong>Total</strong></td>
-                                                <?php $grand_move_debit = $total_asset_move_debit + $total_liability_move_debit + $total_equity_move_debit + $total_income_move_debit + $total_expense_move_debit?>
-                                                <?php $grand_move_credit = $total_asset_move_credit + $total_liability_move_credit + $total_equity_move_credit + $total_income_move_credit + $total_expense_move_credit?>
-                                                <?php $grand_end_debit = $total_asset_end_debit + $total_liability_end_debit + $total_equity_end_debit + $total_income_end_debit + $total_expense_end_debit?>
-                                                <?php $grand_end_credit = $total_asset_end_credit + $total_liability_end_credit + $total_equity_end_credit + $total_income_end_credit + $total_expense_end_credit?>
-                                                <th class="btn-dark text-right" style="width: 120px">0.00</th>
-                                                <th class="btn-dark text-right" style="width: 120px">0.00</th>
-                                                <th class="btn-dark text-right" style="width: 120px">@number($grand_move_debit)</th>
-                                                <th class="btn-dark text-right" style="width: 120px">@number($grand_move_credit)</th>
-                                                <th class="btn-dark text-right" style="width: 120px">@number($grand_end_debit)</th>
-                                                <th class="btn-dark text-right" style="width: 120px">@number(abs($grand_end_credit))</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number($total_init_debit)</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number(abs($total_init_credit))</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number($total_move_debit)</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number(abs($total_move_credit))</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number($total_end_debit)</th>
+                                                <th class="btn-dark text-right" style="width: 120px">@number(abs($total_end_credit))</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -478,7 +450,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1   = document.getElementById('datepicker1');

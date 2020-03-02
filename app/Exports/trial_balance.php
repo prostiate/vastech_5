@@ -2,9 +2,9 @@
 
 namespace App\Exports;
 
-use App\coa;
-use App\coa_detail;
-use App\company_setting;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\company\company_setting;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;

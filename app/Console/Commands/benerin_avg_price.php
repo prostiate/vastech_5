@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\product;
-use App\purchase_invoice;
-use App\purchase_invoice_item;
-use App\sale_invoice;
-use App\sale_invoice_item;
+use App\Model\product\product;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_invoice_item;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_invoice_item;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

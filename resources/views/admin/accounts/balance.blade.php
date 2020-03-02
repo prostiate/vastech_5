@@ -159,7 +159,7 @@
                                     @if($ob->status == "Draft")
                                     <button class="btn btn-primary" id="modal_draft_btn">Draft</button>
                                     @endif
-                                    <button class="btn btn-success" id="publish_btn">Publish Now</button>
+                                    <button class="btn btn-success" id="publish_btn" onclick="confirm()">Publish Now</button>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/accounts/opening_balance/draftForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/accounts/opening_balance/publishForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/accounts/opening_balance/totalBalance.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/opening_balance/draftForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/opening_balance/publishForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/opening_balance/totalBalance.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

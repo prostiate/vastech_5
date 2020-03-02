@@ -110,4 +110,30 @@ class UserController extends Controller
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
+
+    public function company()
+    {
+        return view('admin.landing_page.index');
+    }
+
+    public function setCompany(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $user           = User::findOrFail($id);
+            //menggunakan syncRoles agar terlebih dahulu menghapus semua role yang dimiliki
+            //kemudian di-set kembali agar tidak terjadi duplicate
+            if (!$request->role) {
+                DB::rollback();
+                return response()->json(['errors' => 'Roles must be filled at least one!']);
+            }
+            $user->syncRoles($request->role);
+            $user->syncPermissions($request->permission);
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully added']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
 }

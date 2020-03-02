@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\purchase_order;
-use App\other_transaction;
+use App\Model\purchase\purchase_order;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class purchase_order_observer
@@ -11,7 +11,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "creating" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function creating(purchase_order $purchaseOrder)
@@ -36,7 +36,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "created" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function created(purchase_order $purchaseOrder)
@@ -47,7 +47,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "updated" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function updated(purchase_order $purchaseOrder)
@@ -58,7 +58,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "deleted" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function deleted(purchase_order $purchaseOrder)
@@ -69,7 +69,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "restored" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function restored(purchase_order $purchaseOrder)
@@ -80,7 +80,7 @@ class purchase_order_observer
     /**
      * Handle the purchase_order "force deleted" event.
      *
-     * @param  \App\purchase_order  $purchaseOrder
+     * @param  \App\Model\purchase\purchase_order  $purchaseOrder
      * @return void
      */
     public function forceDeleted(purchase_order $purchaseOrder)

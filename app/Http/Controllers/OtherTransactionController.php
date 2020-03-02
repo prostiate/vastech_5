@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\other_transaction;
+use App\Model\other\other_transaction;
 use Illuminate\Http\Request;
 
 class OtherTransactionController extends Controller

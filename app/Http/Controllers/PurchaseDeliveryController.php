@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\purchase_delivery;
-use App\purchase_order;
-use App\purchase_order_item;
+use App\Model\purchase\purchase_delivery;
+use App\Model\purchase\purchase_order;
+use App\Model\purchase\purchase_order_item;
 use Validator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\purchase_delivery_item;
-use App\default_account;
-use App\other_transaction;
-use App\coa_detail;
-use App\product;
-use App\coa;
-use App\purchase_invoice;
+use App\Model\purchase\purchase_delivery_item;
+use App\Model\coa\default_account;
+use App\Model\other\other_transaction;
+use App\Model\coa\coa_detail;
+use App\Model\product\product;
+use App\Model\coa\coa;
+use App\Model\purchase\purchase_invoice;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

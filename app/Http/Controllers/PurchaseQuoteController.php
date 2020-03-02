@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\company_logo;
-use App\company_setting;
-use App\purchase_quote;
-use App\purchase_quote_item;
-use App\contact;
-use App\other_term;
-use App\product;
-use App\other_unit;
-use App\other_tax;
-use App\other_transaction;
-use App\warehouse;
+use App\Model\company\company_logo;
+use App\Model\company\company_setting;
+use App\Model\purchase\purchase_quote;
+use App\Model\purchase\purchase_quote_item;
+use App\Model\contact\contact;
+use App\Model\other\other_term;
+use App\Model\product\product;
+use App\Model\other\other_unit;
+use App\Model\other\other_tax;
+use App\Model\other\other_transaction;
+use App\Model\warehouse\warehouse;
 use Illuminate\Http\Request;
 use Validator;
 use Carbon\Carbon;
-use App\purchase_order;
+use App\Model\purchase\purchase_order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;

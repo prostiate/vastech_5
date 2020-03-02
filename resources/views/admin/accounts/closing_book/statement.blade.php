@@ -12,6 +12,7 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
+                <form id="formCreate" data-parsley-validate="" class="form-horizontal form-label-left">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Trial Balance</a>
@@ -28,7 +29,7 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <div class="media-body">
-                                        <iframe src="/closing_book/trial_balance/start_date={{$cb->start_period}}&end_date={{$cb->end_period}}" width="100%" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                        <iframe src="/closing_book/trial_balance/start_date={{$cb->start_period}}&end_date={{$cb->end_period}}" width="100%" height="500" frameborder="1" allowfullscreen></iframe>
                                     </div>
                                 </div>
                             </div>
@@ -72,8 +73,14 @@
                         </div>
                     </div>
                 </div>
+            </form>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/accounts/closing_book/createForm_statement.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+@endpush
+

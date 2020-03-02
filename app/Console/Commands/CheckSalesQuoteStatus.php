@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\sale_quote;
-use App\other_transaction;
+use App\Model\sales\sale_quote;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

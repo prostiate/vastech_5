@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
-use App\product;
+use App\Model\product\product;
 use App\User;
-use App\warehouse;
-use App\warehouse_detail;
+use App\Model\warehouse\warehouse;
+use App\Model\warehouse\warehouse_detail;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToCollection;

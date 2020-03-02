@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\expense;
-use App\other_transaction;
+use App\Model\expense\expense;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class expense_observer
@@ -11,7 +11,7 @@ class expense_observer
     /**
      * Handle the expense "creating" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function creating(expense $expense)
@@ -38,7 +38,7 @@ class expense_observer
     /**
      * Handle the expense "created" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function created(expense $expense)
@@ -49,7 +49,7 @@ class expense_observer
     /**
      * Handle the expense "updated" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function updated(expense $expense)
@@ -60,7 +60,7 @@ class expense_observer
     /**
      * Handle the expense "deleted" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function deleted(expense $expense)
@@ -71,7 +71,7 @@ class expense_observer
     /**
      * Handle the expense "restored" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function restored(expense $expense)
@@ -82,7 +82,7 @@ class expense_observer
     /**
      * Handle the expense "force deleted" event.
      *
-     * @param  \App\expense  $expense
+     * @param  \App\Model\expense\expense  $expense
      * @return void
      */
     public function forceDeleted(expense $expense)

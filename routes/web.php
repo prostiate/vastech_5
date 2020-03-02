@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function () {
         Artisan::call('cache:clear');
         return "Cache is cleared";
     });
+    Route::get('/error_notif_email','MailController@error_notif_email');
     Route::get('lang/{language}',                                                                               'LocalizationController@switch')->name('localization.switch');
     Route::get('/testing',                                                                                      'PurchaseInvoiceController@benerin_avg_price');
 
@@ -558,12 +559,13 @@ Route::group(['middleware' => 'auth'], function () {
     //Route::get('/closing_book/{id}/reconsilation',                          'ClosingBookController@edit_balance');
     //Route::get('/closing_book/{id}/financial_statements',                   'ClosingBookController@financial_statement');
     Route::post('/closing_book/update',                                     'ClosingBookController@update_balance_drafted');
-    Route::post('/closing_book/publish',                                    'ClosingBookController@update_balance_published');
+    Route::post('/closing_book/publish',                                    'ClosingBookController@confirm_close_book');
     Route::post('/closing_book/delete',                                     'ClosingBookController@destroy');
     /*---------Other List--------------*/
     Route::get('/other', function () {
         return view('admin.other.index');
     })->name('otherindex');
+    Route::get('/other/audits',                                             'OtherAuditController@index');
 
     Route::get('/other/taxes',                                              'OtherTaxController@index');
     Route::get('/other/taxes/new',                                          'OtherTaxController@create');

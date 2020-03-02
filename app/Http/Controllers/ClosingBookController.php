@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Validator;
-use App\closing_book;
-use App\coa;
-use App\coa_detail;
-use App\company_setting;
-use App\journal_entry;
-use App\journal_entry_item;
-use App\other_transaction;
+use App\Model\closing_book\closing_book;
+use App\Model\closing_book\closing_book_item;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\company\company_setting;
+use App\Model\journal_opening_balance\journal_entry;
+use App\Model\journal_opening_balance\journal_entry_item;
+use App\Model\other\other_transaction;
 use App\User;
-use App\expense;
+use App\Model\expense\expense;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +22,13 @@ class ClosingBookController extends Controller
 {
     public function index()
     {
+        $last_closing_book      = closing_book::orderBy('end_period', 'desc')->first();
+
         if (request()->ajax()) {
             return datatables()->of(closing_book::get())
                 ->addColumn('action', function ($data) {
                     $select = '<select class="pilih">
-                    <option value="/closing_book/setup"> Change Period </option>
+                    <option value="/closing_book/'. $data->id .'/setup"> Change Period </option>
                     <option value="/closing_book/' . $data->id . '/worksheet"> Worksheet </option>
                     <option value="/closing_book/delete"> Delete Draft</option>
                     </select>
@@ -35,8 +38,6 @@ class ClosingBookController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        $last_closing_book      = closing_book::orderBy('end_period', 'desc')->first();
 
         return view('admin.accounts.closing_book.index')->with(['closing_book' => $last_closing_book]);
     }
@@ -66,7 +67,7 @@ class ClosingBookController extends Controller
         } else {
             if ($opening_balance) {
                 $start_period           = $opening_balance->transaction_date;
-                $end_period             = $last_month->toDateString();
+                $end_period             = Carbon::parse($opening_balance->transaction_date)->endOfMonth()->toDateString();
             } else {
                 $start_period           = $first_transaction->transaction_date;
                 $end_period             = $last_month->toDateString();
@@ -283,161 +284,6 @@ class ClosingBookController extends Controller
                 'total_credit'                  => 0,
             ]);
 
-            
-            foreach ($request->in_coa as $key => $coa_id) {
-                journal_entry_item::updateOrCreate([
-                    'journal_entry_id'          => $journal->id,
-                    'coa_id'                    => $coa_id,
-                ], [
-                    'debit'                     => $request->in_credit[$key],
-                    'credit'                    => $request->in_debit[$key],
-                ]);
-
-                if ($request->in_debit[$key] > 0) {
-                    coa_detail::updateOrCreate([
-                        'other_transaction_id'          => $transactions->id,
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'                        => $coa_id,
-                        'type'                          => 'journal entry',
-                        'number'                        => 'Journal Entry #' . $trans_no,
-                    ], [
-                        'date'                          => $request->end_period,
-                        'debit'                         => 0,
-                        'credit'                        => $request->in_debit[$key],
-                    ]);
-                }
-                if ($request->in_credit[$key] > 0) {
-                    coa_detail::updateOrCreate([
-                        'other_transaction_id'          => $transactions->id,
-                        'company_id'                    => $user->company_id,
-                        'user_id'                       => Auth::id(),
-                        'coa_id'                        => $coa_id,
-                        'type'                          => 'journal entry',
-                        'number'                        => 'Journal Entry #' . $trans_no,
-                    ], [
-                        'date'                          => $request->end_period,
-                        'debit'                         => $request->in_credit[$key],
-                        'credit'                        => 0,
-                    ]);
-                }
-
-                $total_debit                         += $request->in_debit[$key];
-                $total_credit                        += $request->in_credit[$key];
-            }
-                         
-            journal_entry_item::updateOrCreate([
-                'journal_entry_id'          => $journal->id,
-                'coa_id'                    => $request->retained_earning_acc,
-            ], [
-                'debit'                    => $request->sub_net_debit,
-                'credit'                     => $request->sub_net_credit,
-            ]);
-            $total_credit                       += $request->sub_net_credit;
-            $total_debit                        += $request->sub_net_debit;            
-           
-            coa_detail::updateOrCreate([
-                'other_transaction_id'          => $transactions->id,
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'coa_id'                        => $request->retained_earning_acc,
-                'type'                          => 'journal entry',
-                'number'                        => 'Journal Entry #' . $trans_no,
-            ], [
-                'date'                          => $request->end_period,
-                'debit'                         => $request->sub_net_credit,
-                'credit'                         => $request->sub_net_debit,
-            ]);
-             */
-
-            closing_book::find($request->hidden_id)->update([
-                'transaction_date'              => $request->end_period,
-                'start_period'                  => $request->start_period,
-                'end_period'                    => $request->end_period,
-                'retained_acc'                  => $request->retained_earning_acc,
-                'retained_amt'                  => $request->sub_net_debit - $request->sub_net_credit,
-                'memo'                          => $request->memo,
-                'net_profit'                    => $request->sub_net_credit - $request->sub_net_credit,
-                'status'                        => 7,
-            ]);
-            /*
-            other_transaction::find($transactions->id)->update([
-                'ref_id'                        => $cb->id,
-            ]);
-
-            closing_book::find($cb->id)->update([
-                'ref_id'                    => $transactions->id,
-            ]);
-            
-            journal_entry::find($journal->id)->update([                
-                'total_debit'                   => $total_debit, 
-                'total_credit'                   => $total_credit 
-            ]);
-             */
-
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully added', 'id' => $request->hidden_id]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()]);
-        }
-    }
-
-    public function financial_statement($id)
-    {
-        $cb                 = closing_book::find($id);
-        return view('admin.accounts.closing_book.statement', compact(['id', 'cb']));
-    }
-
-    public function confirm_close_book(Request $request)
-    {
-        $user               = User::find(Auth::id());
-        $number             = journal_entry::max('number');
-        $last_closing_book  = closing_book::get()->last()->first();
-        $total_credit       = 0;
-        $total_debit        = 0;
-
-        if ($request->hidden_id == $last_closing_book->id) {
-            $trans_no = $last_closing_book->number;
-        } else {
-            if ($number == 0)
-                $number = 1;
-            $trans_no = $number + 1;
-        }
-
-        DB::beginTransaction();
-        try {
-
-            $transactions               = other_transaction::updateOrCreate([
-                'company_id'            => $user->company_id,
-                'user_id'               => Auth::id(),
-                'number'                => $trans_no,
-                'number_complete'       => 'Journal Entry #' . $trans_no,
-                'type'                  => 'closing book',
-            ], [
-                'transaction_date'      => $request->end_period,
-                'status'                => 2,
-                'balance_due'           => 0,
-                'total'                 => 0,
-            ]);
-
-            $journal                             = journal_entry::updateOrCreate([
-                'other_transaction_id'          => $transactions->id,
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'number'                        => $trans_no,
-            ], [
-                'memo'                          => $request->memo,
-                'transaction_date'              => $request->end_period,
-                'other_transaction_id'          => $transactions->id,
-                'status'                        => 2,
-                'total_debit'                   => 0,
-                'total_credit'                  => 0,
-            ]);
-
-            other_transaction::find($transactions->id)->update([
-                'ref_id'                        => $journal->id,
-            ]);
 
             foreach ($request->in_coa as $key => $coa_id) {
                 journal_entry_item::updateOrCreate([
@@ -503,14 +349,9 @@ class ClosingBookController extends Controller
                 'debit'                         => $request->sub_net_credit,
                 'credit'                         => $request->sub_net_debit,
             ]);
+             */
 
-
-            $cb = closing_book::updateOrCreate([
-                'company_id'                    => $user->company_id,
-                'user_id'                       => Auth::id(),
-                'number'                        => $trans_no,
-                'other_transaction_id'          => $transactions->id
-            ], [
+            closing_book::find($request->hidden_id)->update([
                 'transaction_date'              => $request->end_period,
                 'start_period'                  => $request->start_period,
                 'end_period'                    => $request->end_period,
@@ -518,7 +359,47 @@ class ClosingBookController extends Controller
                 'retained_amt'                  => $request->sub_net_debit - $request->sub_net_credit,
                 'memo'                          => $request->memo,
                 'net_profit'                    => $request->sub_net_credit - $request->sub_net_credit,
-                'status'                        => 8,
+                'status'                        => 7,
+            ]);
+
+            foreach ($request->in_coa as $i => $coa) {
+                if ($request->in_debit[$i] > 0) {
+                    closing_book_item::updateOrCreate(
+                        [
+                            'company_id'                => $user->company_id,
+                            'closing_book_id'           => $request->hidden_id,
+                            'coa_id'                    => $coa,
+                        ],
+                        [
+                            'credit'                    => 0,
+                            'debit'                     => $request->in_debit[$i],
+                        ]
+                    );
+                }
+                if ($request->in_credit[$i] > 0) {
+                    closing_book_item::updateOrCreate(
+                        [
+                            'company_id'                => $user->company_id,
+                            'closing_book_id'           => $request->hidden_id,
+                            'coa_id'                    => $coa,
+                        ],
+                        [
+                            'credit'                    => $request->in_credit[$i],
+                            'debit'                     => 0,
+                        ]
+                    );
+                }
+                if ($request->in_debit[$i] == 0 && $request->in_credit[$i] == 0) {
+                    closing_book_item::where([
+                        'company_id'                  => $user->company_id,
+                        'closing_book_id'             => $request->hidden_id,
+                        'coa_id'                      => $coa
+                    ])->delete();
+                }
+            }
+            /*
+            other_transaction::find($transactions->id)->update([
+                'ref_id'                        => $cb->id,
             ]);
 
             closing_book::find($cb->id)->update([
@@ -528,6 +409,156 @@ class ClosingBookController extends Controller
             journal_entry::find($journal->id)->update([
                 'total_debit'                   => $total_debit,
                 'total_credit'                   => $total_credit
+            ]);
+             */
+
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully added', 'id' => $request->hidden_id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function financial_statement($id)
+    {
+        $cb                 = closing_book::find($id);
+        return view('admin.accounts.closing_book.statement', compact(['id', 'cb']));
+    }
+
+    public function confirm_close_book(Request $request)
+    {
+        //dd($request);
+        $user               = User::find(Auth::id());
+        $number             = journal_entry::max('number');
+        $cb                 = closing_book::find($request->hidden_id);
+        $last_closing_book  = closing_book::get()->last()->first();
+        $last_closing_book_item     = closing_book_item::whereClosing_book_id($request->hidden_id)->get();
+        //dd($last_closing_book_item);
+        $total_credit       = 0;
+        $total_debit        = 0;
+
+        if ($cb->id == $last_closing_book->id) {
+            $trans_no = $last_closing_book->number;
+        } else {
+            if ($number == 0)
+                $number = 1;
+            $trans_no = $number + 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $transactions               = other_transaction::updateOrCreate([
+                'company_id'            => $user->company_id,
+                'user_id'               => Auth::id(),
+                'number'                => $trans_no,
+                'number_complete'       => 'Journal Entry #' . $trans_no,
+                'type'                  => 'closing book',
+            ], [
+                'transaction_date'      => $cb->end_period,
+                'status'                => 2,
+                'balance_due'           => 0,
+                'total'                 => 0,
+            ]);
+
+            $journal                             = journal_entry::updateOrCreate([
+                'other_transaction_id'          => $transactions->id,
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'number'                        => $trans_no,
+            ], [
+                'memo'                          => $cb->memo,
+                'transaction_date'              => $cb->end_period,
+                'other_transaction_id'          => $transactions->id,
+                'status'                        => 2,
+                'total_debit'                   => 0,
+                'total_credit'                  => 0,
+            ]);
+
+            other_transaction::find($transactions->id)->update([
+                'ref_id'                        => $journal->id,
+            ]);
+
+            foreach ($last_closing_book_item as $key => $lcb) {
+                journal_entry_item::updateOrCreate([
+                    'journal_entry_id'          => $journal->id,
+                    'coa_id'                    => $lcb->coa_id,
+                ], [
+                    'debit'                     => $lcb->debit,
+                    'credit'                    => $lcb->credit,
+                ]);
+
+                if ($lcb->debit > 0) {
+                    coa_detail::updateOrCreate([
+                        'other_transaction_id'          => $transactions->id,
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
+                        'coa_id'                        => $lcb->coa_id,
+                        'type'                          => 'journal entry',
+                        'number'                        => 'Journal Entry #' . $trans_no,
+                    ], [
+                        'date'                          => $cb->end_period,
+                        'debit'                         => 0,
+                        'credit'                        => $lcb->debit,
+                    ]);
+                }
+                if ($lcb->credit > 0) {
+                    coa_detail::updateOrCreate([
+                        'other_transaction_id'          => $transactions->id,
+                        'company_id'                    => $user->company_id,
+                        'user_id'                       => Auth::id(),
+                        'coa_id'                        => $lcb->coa_id,
+                        'type'                          => 'journal entry',
+                        'number'                        => 'Journal Entry #' . $trans_no,
+                    ], [
+                        'date'                          => $cb->end_period,
+                        'debit'                         => $lcb->credit,
+                        'credit'                        => 0,
+                    ]);
+                }
+
+                $total_debit                         += $lcb->debit;
+                $total_credit                        += $lcb->credit;
+            }
+
+            if($cb->retained_amt < 0){
+                $debit                     = $cb->retained_amt;
+                $credit                    = 0;
+                $total_debit               += $cb->retained_amt;
+            }elseif($cb->retained_amt > 0){
+                $debit                     = 0;
+                $credit                    = $cb->retained_amt;
+                $total_credit              += $cb->retained_amt;
+            }else{
+                $debit                     = 0;
+                $credit                    = 0;
+            }
+
+            journal_entry_item::updateOrCreate([
+                'journal_entry_id'          => $journal->id,
+                'coa_id'                    => $cb->retained_acc,
+            ], [
+                'debit'                     => abs($credit),
+                'credit'                    => abs($debit),
+            ]);
+
+            coa_detail::updateOrCreate([
+                'other_transaction_id'          => $transactions->id,
+                'company_id'                    => $user->company_id,
+                'user_id'                       => Auth::id(),
+                'coa_id'                        => $cb->retained_acc,
+                'type'                          => 'journal entry',
+                'number'                        => 'Journal Entry #' . $trans_no,
+            ], [
+                'date'                          => $cb->end_period,
+                'debit'                         => abs($debit),
+                'credit'                        => abs($credit),
+            ]);
+
+            journal_entry::find($journal->id)->update([
+                'total_debit'                   => $total_debit,
+                'total_credit'                  => $total_credit
             ]);
 
 

@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\sale_invoice;
-use App\sale_invoice_item;
-use App\contact;
-use App\warehouse;
-use App\product;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_invoice_item;
+use App\Model\contact\contact;
+use App\Model\warehouse\warehouse;
+use App\Model\product\product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\coa_detail;
-use App\default_account;
-use App\warehouse_detail;
-use App\other_transaction;
+use App\Model\coa\coa_detail;
+use App\Model\coa\default_account;
+use App\Model\warehouse\warehouse_detail;
+use App\Model\other\other_transaction;
 use PDF;
-use App\coa;
-use App\company_logo;
-use App\company_setting;
-use App\sale_return;
-use App\sale_return_item;
+use App\Model\coa\coa;
+use App\Model\company\company_logo;
+use App\Model\company\company_setting;
+use App\Model\sales\sale_return;
+use App\Model\sales\sale_return_item;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\User;

@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\other_transaction;
-use App\product;
-use App\purchase_delivery;
-use App\purchase_invoice;
-use App\purchase_order;
-use App\purchase_quote;
-use App\sale_delivery;
-use App\sale_invoice;
-use App\sale_order;
-use App\sale_quote;
-use App\stock_adjustment;
-use App\warehouse;
-use App\warehouse_detail;
-use App\warehouse_transfer;
-use App\warehouse_transfer_item;
+use App\Model\other\other_transaction;
+use App\Model\product\product;
+use App\Model\purchase\purchase_delivery;
+use App\Model\purchase\purchase_invoice;
+use App\Model\purchase\purchase_order;
+use App\Model\purchase\purchase_quote;
+use App\Model\sales\sale_delivery;
+use App\Model\sales\sale_invoice;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_quote;
+use App\Model\stock_adjustment\stock_adjustment;
+use App\Model\warehouse\warehouse;
+use App\Model\warehouse\warehouse_detail;
+use App\Model\warehouse\warehouse_transfer;
+use App\Model\warehouse\warehouse_transfer_item;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;
 use App\User;
-use App\wip;
+use App\Model\wip\wip;
 
 class WarehouseController extends Controller
 {

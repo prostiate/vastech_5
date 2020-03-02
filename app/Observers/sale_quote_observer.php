@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\sale_quote;
-use App\other_transaction;
+use App\Model\sales\sale_quote;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class sale_quote_observer
@@ -11,7 +11,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "creating" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function creating(sale_quote $saleQuote)
@@ -36,7 +36,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "created" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function created(sale_quote $saleQuote)
@@ -47,7 +47,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "updated" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function updated(sale_quote $saleQuote)
@@ -58,7 +58,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "deleted" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function deleted(sale_quote $saleQuote)
@@ -69,7 +69,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "restored" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function restored(sale_quote $saleQuote)
@@ -80,7 +80,7 @@ class sale_quote_observer
     /**
      * Handle the sale_quote "force deleted" event.
      *
-     * @param  \App\sale_quote  $saleQuote
+     * @param  \App\Model\sales\sale_quote  $saleQuote
      * @return void
      */
     public function forceDeleted(sale_quote $saleQuote)

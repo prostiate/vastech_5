@@ -30,14 +30,18 @@ function inputMasking() {
 }
 
 function notNull() {
-    $(".debit").each(function (i, e) {
+    $(".debit").each(function(i, e) {
         var amt = $(this).val() - 0;
-        $(".debit_display").eq(i).val(amt);
+        $(".debit_display")
+            .eq(i)
+            .val(amt);
     });
-    $(".credit").each(function (i, e) {
+    $(".credit").each(function(i, e) {
         var amt = $(this).val() - 0;
-        $(".credit_display").eq(i).val(amt);
-    });    
+        $(".credit_display")
+            .eq(i)
+            .val(amt);
+    });
 }
 
 //READ DEBIT AND CREDIT, SUM IT
@@ -45,11 +49,11 @@ function count() {
     var t = 0;
     var u = 0;
 
-    $(".debit").each(function (i, e) {
+    $(".debit").each(function(i, e) {
         var amt = $(this).val() - 0;
         t += amt;
     });
-    $(".credit").each(function (i, e) {
+    $(".credit").each(function(i, e) {
         var amt = $(this).val() - 0;
         u += amt;
     });
@@ -61,7 +65,7 @@ function count() {
 }
 
 //CHECK BALANCE BETWEEN DEBIT AND CREDIT
- /** 
+/** 
 function publish() {
     var debit = $(".total-debit").val() - 0;
     var credit = $(".total-credit").val() - 0;
@@ -88,29 +92,28 @@ function confirm() {
     var selisih_view = selisih.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
     if (debit < credit) {
-        $("#type").html('<strong>debit</strong>');
-        $("#selisih").html('<strong>' + selisih_view + '<strong>');
+        $("#type").html("<strong>debit</strong>");
+        $("#selisih").html("<strong>" + selisih_view + "<strong>");
     }
     if (debit > credit) {
-        $("#type").html('<strong>credit</strong>');
-        $("#selisih").html('<strong>Rp ' + selisih_view + '<strong>');
+        $("#type").html("<strong>credit</strong>");
+        $("#selisih").html("<strong>Rp " + selisih_view + "<strong>");
     }
-
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     inputMasking();
     count();
     notNull();
     confirm();
 
-    $(".row").on("keyup change", ".debit_display, .credit_display", function () {
-        var tr = $(this).closest('tr');
+    $(".row").on("keyup change", ".debit_display, .credit_display", function() {
+        var tr = $(this).closest("tr");
         var debit_display = tr.find(".debit_display").val();
         var credit_display = tr.find(".credit_display").val();
         tr.find(".debit").val(debit_display);
         tr.find(".credit").val(credit_display);
-        
+        confirm();
         count();
     });
 });

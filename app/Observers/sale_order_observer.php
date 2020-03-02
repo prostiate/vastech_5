@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
-use App\closing_book;
-use App\sale_order;
-use App\other_transaction;
+use App\Model\closing_book\closing_book;
+use App\Model\sales\sale_order;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 
 class sale_order_observer
@@ -12,7 +12,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "creating" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function creating(sale_order $saleOrder)
@@ -37,7 +37,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "created" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function created(sale_order $saleOrder)
@@ -48,7 +48,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "updated" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function updated(sale_order $saleOrder)
@@ -59,7 +59,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "deleted" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function deleted(sale_order $saleOrder)
@@ -70,7 +70,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "restored" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function restored(sale_order $saleOrder)
@@ -81,7 +81,7 @@ class sale_order_observer
     /**
      * Handle the sale_order "force deleted" event.
      *
-     * @param  \App\sale_order  $saleOrder
+     * @param  \App\Model\sales\sale_order  $saleOrder
      * @return void
      */
     public function forceDeleted(sale_order $saleOrder)

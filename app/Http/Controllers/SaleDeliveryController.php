@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\sale_delivery;
-use App\sale_order;
-use App\sale_order_item;
+use App\Model\sales\sale_delivery;
+use App\Model\sales\sale_order;
+use App\Model\sales\sale_order_item;
 use Validator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\sale_delivery_item;
-use App\default_account;
-use App\other_transaction;
-use App\coa_detail;
-use App\company_logo;
-use App\company_setting;
-use App\other_tax;
-use App\product;
-use App\product_discount_item;
+use App\Model\sales\sale_delivery_item;
+use App\Model\coa\default_account;
+use App\Model\other\other_transaction;
+use App\Model\coa\coa_detail;
+use App\Model\company\company_logo;
+use App\Model\company\company_setting;
+use App\Model\other\other_tax;
+use App\Model\product\product;
+use App\Model\product\product_discount_item;
 use PDF;
-use App\sale_invoice;
+use App\Model\sales\sale_invoice;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

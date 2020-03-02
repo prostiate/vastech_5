@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\contact;
+use App\Model\contact\contact;
 use App\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;

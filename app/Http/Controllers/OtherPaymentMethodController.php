@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\other_payment_method;
+use App\Model\other\other_payment_method;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

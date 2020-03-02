@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\company_setting;
-use App\spk;
+use App\Model\company\company_setting;
+use App\Model\spk\spk;
 use App\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;

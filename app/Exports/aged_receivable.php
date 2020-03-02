@@ -2,9 +2,9 @@
 
 namespace App\Exports;
 
-use App\company_setting;
-use App\contact;
-use App\sale_invoice;
+use App\Model\company\company_setting;
+use App\Model\contact\contact;
+use App\Model\sales\sale_invoice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;

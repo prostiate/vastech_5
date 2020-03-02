@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
+use App\Model\coa\coa;
 use Illuminate\Http\Request;
-use App\coa_category;
+use App\Model\coa\coa_category;
 use App\tax;
-use App\coa_detail;
-use App\journal_entry;
-use App\opening_balance;
+use App\Model\coa\coa_detail;
+use App\Model\journal_opening_balance\journal_entry;
+use App\Model\opening_balance\opening_balance;
+use App\Model\opening_balance\opening_balance_detail;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -43,17 +44,19 @@ class CoAController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }*/
+        //dd($ob);
 
         return view('admin.accounts.index', compact(['coa', 'coa_detail', 'ob']));
     }
 
     public function create()
     {
-        $coac   = coa_category::all();
-        $taxes  = tax::all();
-        $coa    = coa::get();
+        $coac               = coa_category::all();
+        $taxes              = tax::all();
+        $coa                = coa::get();
+        $ob                 = opening_balance::where('user_id', Auth::id())->first();
 
-        return view('admin.accounts.create', compact(['coa', 'coac', 'taxes']));
+        return view('admin.accounts.create', compact(['coa', 'coac', 'taxes', 'ob']));
     }
 
     public function store(Request $request)
@@ -213,12 +216,20 @@ class CoAController extends Controller
 
     public function edit($id)
     {
-        $coac   = coa_category::all();
-        $taxes  = tax::all();
-        $coa    = coa::get();
-        $coa_curr = coa::find($id);
+        $coac           = coa_category::all();
+        $taxes          = tax::all();
+        $coa            = coa::get();
+        $coa_curr       = coa::find($id);
+        $ob             = opening_balance::where('user_id', Auth::id())->first();
+        $get_ob         = opening_balance_detail::where('account_id', $id)->first();
+        $amount         = 0;
+        if ($get_ob->debit != 0) {
+            $amount     = $get_ob->debit;
+        } else {
+            $amount     = $get_ob->credit;
+        }
 
-        return view('admin.accounts.edit', compact(['coa', 'coa_curr', 'coac', 'taxes']));
+        return view('admin.accounts.edit', compact(['coa', 'coa_curr', 'coac', 'taxes', 'ob', 'amount']));
     }
 
     public function update(Request $request)

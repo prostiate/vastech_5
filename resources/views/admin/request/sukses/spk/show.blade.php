@@ -7,7 +7,7 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">History
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">@lang("spk.show.history")
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -15,12 +15,12 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">History</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Surat Perintah Kerja #{{$spk->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang("spk.show.history")</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang("spk.show.title"){{$spk->number}}</strong></h3>
                                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Work In Progress History</a>
+                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">@lang("spk.show.wip_history")</a>
                                             </li>
-                                            <li role="presentation" class=""><a href="#tab_content2" id="sales-tab" role="tab" data-toggle="tab" aria-expanded="true">Sales Invoice History</a>
+                                            <li role="presentation" class=""><a href="#tab_content2" id="sales-tab" role="tab" data-toggle="tab" aria-expanded="true">@lang("spk.show.si_history")</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -32,11 +32,11 @@
                                                         <table id="example" class="table table-striped jambo_table bulk_action">
                                                             <thead>
                                                                 <tr class="headings">
-                                                                    <th class="column-title">Production Date</th>
-                                                                    <th class="column-title">Transaction Number</th>
-                                                                    <th class="column-title">Production Name</th>
-                                                                    <th class="column-title">Total</th>
-                                                                    <th class="column-title">Created Date</th>
+                                                                    <th class="column-title">@lang("spk.show.table_2.col_1")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_2.col_2")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_2.col_3")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_2.col_4")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_2.col_5")</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -70,13 +70,13 @@
                                                         <table id="example" class="table table-striped jambo_table bulk_action">
                                                             <thead>
                                                                 <tr class="headings">
-                                                                    <th class="column-title">Transaction Date</th>
-                                                                    <th class="column-title">Transaction Number</th>
-                                                                    <th class="column-title">Due Date</th>
-                                                                    <th class="column-title">Fabrication Only</th>
-                                                                    <th class="column-title">Grand Total</th>
-                                                                    <th class="column-title">Status</th>
-                                                                    <th class="column-title">Created Date</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_1")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_2")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_3")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_4")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_5")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_6")</th>
+                                                                    <th class="column-title">@lang("spk.show.table_3.col_7")</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -115,14 +115,14 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang("spk.show.close")</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">@lang("spk.show.action.action")
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Production')
@@ -130,37 +130,37 @@
                             @if($can >= 1)
                             @if($spk->user->company_id == 2)
                             @hasrole('Owner|Ultimate|Sales Invoice')
-                            <li><a href="/sales_invoice/new/fromSPK/{{$spk->id}}">Create Invoice</a></li>
+                            <li><a href="/sales_invoice/new/fromSPK/{{$spk->id}}">@lang("spk.show.action.action_1")</a></li>
                             @endrole
                             <li class="divider"></li>
                             @endif
                             @endif
                             @endcan
                             @endrole
-                            <li><a target="_blank" href="/spk/print/PDF/{{$spk->id}}">Print & Preview</a></li>
+                            <li><a target="_blank" href="/spk/print/PDF/{{$spk->id}}">@lang("spk.show.action.action_2")</a></li>
                         </ul>
                     </li>
                 </ul>
-                <h3><b>Surat Perintah Kerja #{{$spk->number}}</b></h3>
+                <h3><b>@lang("spk.show.title"){{$spk->number}}</b></h3>
                 <a>Status: </a>
                 @if($spk->status == 1)
-                <span class="label label-warning" style="color:white;">Open</span>
+                <span class="label label-warning" style="color:white;">@lang("status.open")</span>
                 @elseif($spk->status == 2)
-                <span class="label label-success" style="color:white;">Closed</span>
+                <span class="label label-success" style="color:white;">@lang("status.closed")</span>
                 @elseif($spk->status == 3)
-                <span class="label label-success" style="color:white;">Paid</span>
+                <span class="label label-success" style="color:white;">@lang("status.paid")</span>
                 @elseif($spk->status == 4)
-                <span class="label label-warning" style="color:white;">Partial</span>
+                <span class="label label-warning" style="color:white;">@lang("status.part")</span>
                 @elseif($spk->status == 5)
-                <span class="label label-danger" style="color:white;">Overdue</span>
+                <span class="label label-danger" style="color:white;">@lang("status.over")</span>
                 @elseif($spk->status == 6)
-                <span class="label label-success" style="color:white;">Sent</span>
+                <span class="label label-success" style="color:white;">@lang("status.sent")</span>
                 @elseif($spk->status == 7)
-                <span class="label label-success" style="color:white;">Active</span>
+                <span class="label label-success" style="color:white;">@lang("status.act")</span>
                 @elseif($spk->status == 8)
-                <span class="label label-success" style="color:white;">Sold</span>
+                <span class="label label-success" style="color:white;">@lang("status.sold")</span>
                 @elseif($spk->status == 9)
-                <span class="label label-success" style="color:white;">Disposed</span>
+                <span class="label label-success" style="color:white;">@lang("status.dis")</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -170,13 +170,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.show.trans_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$spk->number}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.show.trans_date")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$spk->transaction_date}}</h5>
                                 </div>
@@ -186,13 +186,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Contact</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.show.contact")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/contacts/{{$spk->contact_id}}">{{$spk->contact->display_name}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.show.warehouse")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$spk->warehouse_id}}">{{$spk->warehouse->name}}</a></h5>
                                 </div>
@@ -202,13 +202,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK Ref No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("spk.show.ref_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$spk->vendor_ref_no}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Note</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("spk.show.note")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$spk->desc}}</h5>
                                 </div>
@@ -222,12 +222,12 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 400px">Product Name</th>
-                                    <th class="column-title">Quantity Ready</th>
-                                    <th class="column-title">Requirement Quantity</th>
-                                    <th class="column-title">Quantity Remaining</th>
-                                    <th class="column-title">Status</th>
-                                    <th class="column-title text-center" style="width: 200px">Action</th>
+                                    <th class="column-title" style="width: 400px">@lang("spk.show.table.col_1")</th>
+                                    <th class="column-title">@lang("spk.show.table.col_2")</th>
+                                    <th class="column-title">@lang("spk.show.table.col_3")</th>
+                                    <th class="column-title">@lang("spk.show.table.col_4")</th>
+                                    <th class="column-title">@lang("spk.show.table.col_5")</th>
+                                    <th class="column-title text-center" style="width: 200px">@lang("spk.show.table.col_6")</th>
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
@@ -258,7 +258,7 @@
                                     @hasrole('Owner|Ultimate|Production')
                                     @can('Create')
                                     <td class="text-center">
-                                        <a href="/wip/new/fromSPK/{{$spk->id}}_{{$si->id}}" class="btn btn-dark">Create WIP</a>
+                                        <a href="/wip/new/fromSPK/{{$spk->id}}_{{$si->id}}" class="btn btn-dark">@lang("spk.show.create_wip")</a>
                                     </td>
                                     @endcan
                                     @else
@@ -272,17 +272,17 @@
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="{{ url('/spk') }}" class="btn btn-dark">Cancel</a>
+                            <a href="{{ url('/spk') }}" class="btn btn-dark">@lang("spk.show.cancel")</a>
                             @hasrole('Owner|Ultimate|Production')
                                 @if($statusajah == 0)
                                     @if($spk->status == 2)
                                     <!-- header close-->
                                     @can('Delete')
-                                        <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                        <button type="button" class="btn btn-danger" id="click">@lang("spk.show.delete")</button>
                                     @endcan
                                     @can('Edit')
                                         <div class="btn-group">
-                                            <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">Edit</button>
+                                            <button id="click" type="button" class="btn btn-success" onclick="window.location.href = '/spk/edit/{{$spk->id}}';">@lang("spk.show.edit")</button>
                                         </div>
                                     @endcan
                                     <input type="text" value="{{$spk->id}}" id="form_id" hidden>
@@ -299,5 +299,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/spk/deleteForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/spk/deleteForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

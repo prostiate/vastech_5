@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\coa;
-use App\coa_detail;
-use App\other_transaction;
+use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
+use App\Model\other\other_transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 

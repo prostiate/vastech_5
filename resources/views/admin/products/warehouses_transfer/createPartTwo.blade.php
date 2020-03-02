@@ -110,8 +110,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/warehouse_transfer_list/addmoreitem.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/warehouse_transfer_list/createForm.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200221-1431') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/warehouse_transfer_list/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/warehouse_transfer_list/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush

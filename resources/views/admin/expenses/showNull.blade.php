@@ -7,7 +7,7 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">View Journal Entry
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">@lang("expense.show.vje")
                         </button>
                         <div class="modal fade bs-example-modal-lg-2" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -15,18 +15,18 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Journal Report</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Expense #{{$pi->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang("expense.show.jr")</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang("expense.show.title"){{$pi->number}}</strong></h3>
                                     </div>
                                     <div class="modal-body">
                                         <div class="table-responsive my-5">
                                             <table id="example" class="table table-striped jambo_table bulk_action">
                                                 <thead>
                                                     <tr class="headings">
-                                                        <th class="column-title" style="width:200px">Account Number</th>
-                                                        <th class="column-title" style="width:250px">Account</th>
-                                                        <th class="column-title" style="width:150px">Debit</th>
-                                                        <th class="column-title" style="width:150px">Credit</th>
+                                                        <th class="column-title" style="width:200px">@lang("expense.show.table_vje.col_1")</th>
+                                                        <th class="column-title" style="width:250px">@lang("expense.show.table_vje.col_2")</th>
+                                                        <th class="column-title" style="width:150px">@lang("expense.show.table_vje.col_3")</th>
+                                                        <th class="column-title" style="width:150px">@lang("expense.show.table_vje.col_4")</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="neworderbody">
@@ -54,7 +54,7 @@
                                                     @endforeach
                                                     <tr class="headings">
                                                         <td>
-                                                            <strong><b>Total</b></strong>
+                                                            <strong><b>@lang("expense.show.total")</b></strong>
                                                         </td>
                                                         <td>
                                                         </td>
@@ -67,56 +67,55 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            <input type="button" class="btn btn-dark add" value="+ Add More Item" hidden>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang("expense.show.close")</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">@lang("expense.show.action.action_1")
                         </button>
                         <ul role="menu" class="dropdown-menu">
                             @hasrole('Owner|Ultimate|Expense')
                             @can('Delete')
                             @if($pi->status == 1 or $pi->status == 4)
                             @hasrole('Owner|Ultimate|Cash & Bank')
-                            <li><a href="#">Pay Bill</a></li>
+                            <li><a href="#">@lang("expense.show.action.action_2")</a></li>
                             @endrole
                             @endif
-                            <li><a href="#">Clone Transaction</a></li>
-                            <li><a href="#">Set as Recurring</a></li>
+                            <li><a href="#">@lang("expense.show.action.action_3")</a></li>
+                            <li><a href="#">@lang("expense.show.action.action_4")</a></li>
                             <li class="divider"></li>
                             @endcan
                             @endrole
-                            <li><a target="_blank" href="/expenses/print/PDF2/{{$pi->id}}">Print & Preview</a></li>
+                            <li><a target="_blank" href="/expenses/print/PDF2/{{$pi->id}}">@lang("expense.show.action.action_5")</a></li>
                         </ul>
                     </li>
                 </ul>
-                <h3><b>Expense #{{$pi->number}}</b></h3>
+                <h3><b>@lang("expense.show.title"){{$pi->number}}</b></h3>
                 <a>Status: </a>
                 @if($pi->status == 1)
-                <span class="label label-warning" style="color:white;">Open</span>
+                <span class="label label-warning" style="color:white;">@lang("status.open")</span>
                 @elseif($pi->status == 2)
-                <span class="label label-success" style="color:white;">Closed</span>
+                <span class="label label-success" style="color:white;">@lang("status.closed")</span>
                 @elseif($pi->status == 3)
-                <span class="label label-success" style="color:white;">Paid</span>
+                <span class="label label-success" style="color:white;">@lang("status.paid")</span>
                 @elseif($pi->status == 4)
-                <span class="label label-warning" style="color:white;">Partial</span>
+                <span class="label label-warning" style="color:white;">@lang("status.part")</span>
                 @elseif($pi->status == 5)
-                <span class="label label-danger" style="color:white;">Overdue</span>
+                <span class="label label-danger" style="color:white;">@lang("status.over")</span>
                 @elseif($pi->status == 6)
-                <span class="label label-success" style="color:white;">Sent</span>
+                <span class="label label-success" style="color:white;">@lang("status.sent")</span>
                 @elseif($pi->status == 7)
-                <span class="label label-success" style="color:white;">Active</span>
+                <span class="label label-success" style="color:white;">@lang("status.act")</span>
                 @elseif($pi->status == 8)
-                <span class="label label-success" style="color:white;">Sold</span>
+                <span class="label label-success" style="color:white;">@lang("status.sold")</span>
                 @elseif($pi->status == 9)
-                <span class="label label-success" style="color:white;">Disposed</span>
+                <span class="label label-success" style="color:white;">@lang("status.dis")</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -126,13 +125,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.trans_no")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->number}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Pay From</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.pay_from")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/chart_of_accounts/{{$pi->pay_from_coa_id}}">{{$pi->coa->name}}</a></h5>
                                 </div>
@@ -142,13 +141,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Beneficiary</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.bene")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/contacts/{{$pi->contact_id}}">{{$pi->expense_contact->display_name}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Payment Method</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.payment_method")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->payment_method->name}}</h5>
                                 </div>
@@ -158,7 +157,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.trans_date")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->transaction_date}}</h5>
                                 </div>
@@ -168,7 +167,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Billing Address</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang("expense.show.address")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->address}}</h5>
                                 </div>
@@ -182,10 +181,10 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 400px">Expense Account</th>
-                                    <th class="column-title">Description</th>
-                                    <th class="column-title">Tax</th>
-                                    <th class="column-title">Amount</th>
+                                    <th class="column-title" style="width: 400px">@lang("expense.show.table.col_1")</th>
+                                    <th class="column-title">@lang("expense.show.table.col_2")</th>
+                                    <th class="column-title">@lang("expense.show.table.col_3")</th>
+                                    <th class="column-title">@lang("expense.show.table.col_4")</th>
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
@@ -212,7 +211,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Memo</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang("expense.show.memo")</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$pi->memo}}</h5>
                                 </div>
@@ -222,12 +221,12 @@
                                     <div class="col-md-4">
                                     </div>
                                     <div class="col-md-4">
-                                        <h5> Sub Total </h5>
-                                        <h5> Tax Total </h5>
+                                        <h5>@lang("expense.show.sub")</h5>
+                                        <h5>@lang("expense.show.tax")</h5>
                                         <br>
-                                        <h3><b> Expense Paid </b></h3>
+                                        <h3><b>@lang("expense.show.expaid")</b></h3>
                                         <br>
-                                        <h3><b> Balance Due </b></h3>
+                                        <h3><b>@lang("expense.show.baldue")</b></h3>
                                     </div>
                                     <div class="col-md-4 float-right">
                                         <h5 class="subtotal text-right"> Rp @number($pi->subtotal) </h5>
@@ -250,14 +249,14 @@
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="{{ url('/expenses') }}" class="btn btn-dark">Cancel</a>
+                            <a href="{{ url('/expenses') }}" class="btn btn-dark">@lang("expense.show.cancel_btn")</a>
                             @hasrole('Owner|Ultimate|Expense')
                             @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            <button type="button" class="btn btn-danger" id="click">@lang("expense.show.delete_btn")</button>
                             @endcan
                             @can('Edit')
                             <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/expenses/edit/' + {{$pi->id}};">Edit
+                                <button class="btn btn-success" type="button" onclick="window.location.href = '/expenses/edit/' + {{$pi->id}};">@lang("expense.show.edit_btn")
                                 </button>
                             </div>
                             @endcan
@@ -273,5 +272,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expenses/deleteFormNull.js?v=5-20200221-1431') }}" charset="utf-8"></script>
+<script src="{{ asset('js/expenses/deleteFormNull.js?v=5-20200302-1755') }}" charset="utf-8"></script>
 @endpush
