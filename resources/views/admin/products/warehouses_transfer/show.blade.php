@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h3><b>Warehouse Transfer #{{$wt->number}}</b></h3>
+                <h3><b>@lang('product_4.show.title'){{$wt->number}}</b></h3>
                 <a>Status: </a>
                 @if($wt->status == 1)
                 <span class="label label-warning" style="color:white;">Open</span>
@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left text-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">From Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.show.from')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="/warehouses/{{$wt->from_warehouse_id}}">
                                         <h5>{{$wt->from_warehouse->name}}</h5>
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Transfer Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.show.trans_date')</label>
                                 <div class="col-md-7 xdisplay_inputx form-group has-feedback">
                                     <a>
                                         <h5>{{$wt->transaction_date}}</h5>
@@ -54,7 +54,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">To Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.show.to')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="/warehouses/{{$wt->to_warehouse_id}}">
                                         <h5>{{$wt->to_warehouse->name}}</h5>
@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Memo</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.show.memo')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a>
                                         <h5>{{$wt->memo}}</h5>
@@ -78,10 +78,10 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width:300px">Product Name</th>
+                                    <th class="column-title" style="width:300px">@lang('product_4.show.col_1')</th>
                                     <!--<th class="column-title" style="width:150px">Qty Before</th>
                                     <th class="column-title" style="width:150px">Qty After</th>-->
-                                    <th class="column-title" style="width:200px">Transfer Quantity</th>
+                                    <th class="column-title" style="width:200px">@lang('product_4.show.col_2')</th>
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
@@ -107,14 +107,14 @@
                     <br>
                     <div class="col-md-3 center-margin">
                         <div class="form-group">
-                            <a href="/warehouses_transfer" class="btn btn-dark">Back</a>
+                            <a href="/warehouses_transfer" class="btn btn-dark">@lang('product_4.show.back')</a>
                             @hasrole('Owner|Ultimate|Warehouse Transfer')
                             @can('Delete')
-                            <button type="button" class="btn btn-danger" id="click">Delete</button>
+                            <button type="button" class="btn btn-danger" id="click">@lang('product_4.show.delete')</button>
                             @endcan
                             @can('Edit')
                             <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/warehouses_transfer/edit/' + {{$wt->id}};">Edit
+                                <button class="btn btn-success" type="button" onclick="window.location.href = '/warehouses_transfer/edit/' + {{$wt->id}};">@lang('product_4.show.edit')
                                 </button>
                             </div>
                             @endcan
@@ -130,5 +130,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

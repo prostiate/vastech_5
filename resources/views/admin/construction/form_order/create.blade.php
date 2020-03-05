@@ -32,7 +32,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Form Order Name *</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input class="form-control" type="text" name="name">
+                                    <input value="{{$header_bq->name}}" class="form-control" type="text" name="name">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -58,7 +58,7 @@
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
                             <tbody>
-                            @foreach($grouped as $item)
+                                @foreach($grouped as $item)
                                 <thead>
                                     <tr class="headings">
                                         <th colspan="2" class="column-title" style="width: 350px; text-align: center" data-toggle="tooltip" data-placement="top" data-original-title="Working Description">{{$item[0]->offering_letter_detail->name}}</th>
@@ -78,16 +78,16 @@
                                 <?php $subtotal = 0; ?>
                                 @foreach($item as $item)
                                 <?php $subtotal += $item->amount; ?>
-                                <tbody class="neworderbody">
-                                    <tr>
-                                        <td>
-                                            {{$item->name}}
-                                            <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
-                                        </td>
-                                        <td>
-                                            {{$item->duration}}
-                                        </td>
-                                        <!--{{--<td>
+                            <tbody class="neworderbody">
+                                <tr>
+                                    <td>
+                                        {{$item->name}}
+                                        <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
+                                    </td>
+                                    <td>
+                                        {{$item->duration}}
+                                    </td>
+                                    <!--{{--<td>
                                             <input onClick="this.select();" type="number" min="0" class="form-control order_days" name="days[]" value="0"
                                             data-toggle="tooltip" data-placement="left" data-original-title="Progress : 0 %">
                                         </td>
@@ -97,10 +97,10 @@
                                         <td>
                                             <input onClick="this.select();" type="text" class="form-control order_late" name="late[]" value="0" readonly>
                                         </td>--}}-->
-                                    </tr>
-                                </tbody>
-                                @endforeach
-                                @endforeach
+                                </tr>
+                            </tbody>
+                            @endforeach
+                            @endforeach
                             </tbody>
                             <tfoot hidden>
                                 <tr>
@@ -115,8 +115,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group" style="text-align: center">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header_bq->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>
@@ -131,6 +131,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/form_order/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/form_order/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -1,0 +1,60 @@
+<?php
+return [
+	"index" => [
+		"title" => "Gudang",
+		"list_transaction" => "Daftar Gudang",
+		"sum_1" => "Ringkasan Di Bagan",
+		"sum_2" => "Total Gudang",
+		"new_btn" => "Gudang Baru",
+		"table" => [
+			"col_1" => "Kode Gudang",
+			"col_2" => "Nama Gudang",
+			"col_3" => "Alamat",
+			"col_4" => "Deskripsi",
+		],
+	],
+	"create" => [
+		"title" => "Buat Gudang",
+		"name" => "Nama Gudang *",
+		"code" => "Kode",
+		"address" => "Alamat",
+		"desc" => "Deskripsi",
+		"cancel" => "Batal",
+		"create" => "Buat",
+	],
+	"show" => [
+		"title" => "Informasi Gudang",
+		"delete" => "Hapus Gudang",
+		"edit" => "Edit Gudang",
+		"tab_1" => [
+			"title" => "Detail Gudang",
+			"code" => "Kode",
+			"address" => "Alamat",
+			"desc" => "Deskripsi",
+		],
+		"tab_2" => [
+			"title" => "Daftar Produk",
+			"col_1" => "Nama Produk",
+			"col_2" => "Kode Produk",
+			"col_3" => "Jumlah",
+		],
+		"tab_3" => [
+			"title" => "Daftar Transaksi",
+			"vtr" => "Lihat Laporan Transaksi",
+			"trans_list_btn" => "Daftar Transaksi",
+			"col_1" => "Nomor Transaksi",
+			"col_2" => "Tanggal Transaksi",
+			"col_3" => "Jumlah Produk",
+			"col_4" => "Tanggal Dibuat",
+		],
+	],
+	"edit" => [
+		"title" => "Ubah Gudang",
+		"name" => "Nama Gudang *",
+		"code" => "Kode",
+		"address" => "Alamat",
+		"desc" => "Deskripsi",
+		"cancel" => "Batal",
+		"update" => "Ubah",
+	],
+];

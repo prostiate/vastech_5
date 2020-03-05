@@ -1,0 +1,61 @@
+<?php
+return [
+	"index" => [
+		"title" => "Warehouse",
+		"list_transaction" => "List of Warehouse",
+		"sum_1" => "Summary In Chart",
+		"sum_2" => "Total Warehouse",
+		"new_btn" => "New Warehouse",
+		"table" => [
+			"col_1" => "Warehouse Code",
+			"col_2" => "Warehouse Name",
+			"col_3" => "Address",
+			"col_4" => "Description",
+		],
+	],
+	"create" => [
+		"title" => "Create Warehouse",
+		"name" => "Warehouse Name *",
+		"code" => "Code",
+		"address" => "Address",
+		"desc" => "Description",
+		"cancel" => "Cancel",
+		"create" => "Create",
+	],
+	"show" => [
+		"title" => " Warehouse Information",
+		"delete" => "Delete Warehouse",
+		"edit" => "Edit Warehouse",
+		"tab_1" => [
+			"title" => "Info Warehouse",
+			"name" => " Warehouse Details",
+			"code" => "Code",
+			"address" => "Address",
+			"desc" => "Description",
+		],
+		"tab_2" => [
+			"title" => "Product List",
+			"col_1" => "Product Name",
+			"col_2" => "Product Code",
+			"col_3" => "Quantity",
+		],
+		"tab_3" => [
+			"title" => "Transaction List",
+			"vtr" => "View Transaction Report",
+			"trans_list_btn" => "Transaction List",
+			"col_1" => "Transaction Number",
+			"col_2" => "Transaction Date",
+			"col_3" => "Number of Products",
+			"col_4" => "Created Date",
+		],
+	],
+	"edit" => [
+		"title" => "Edit Warehouse",
+		"name" => "Warehouse Name *",
+		"code" => "Code",
+		"address" => "Address",
+		"desc" => "Description",
+		"cancel" => "Cancel",
+		"update" => "Update",
+	],
+];

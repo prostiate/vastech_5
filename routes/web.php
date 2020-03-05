@@ -122,33 +122,75 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reports/expenses_details/pdf/start_date={start}&end_date={end}&contacts={con}',       'ReportController@expenses_details_pdf');
     // EXPENSES
     // PRODUCTS             
-    Route::get('/reports/inventory_summary',                                                                        'ReportController@inventory_summary');
-    Route::get('/reports/inventory_summary/excel/as_of={today}/start_year={startyear}&end_year={endyear}',          'ReportController@inventory_summary_excel');
-    Route::get('/reports/inventory_summary/csv/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_csv');
-    Route::get('/reports/inventory_summary/pdf/as_of={today}/start_year={startyear}&end_year={endyear}',            'ReportController@inventory_summary_pdf');
-    Route::get('/reports/inventory_summary/as_of={mulaidari}',                                                      'ReportController@inventory_summaryInput');
-    // Route::get('/reports/inventory_summary/{mulaidari}',                    'ReportController@inventory_summaryInput');
-    Route::get('/reports/warehouse_stock_quantity',                         'ReportController@warehouse_stock_quantity');
-    Route::get('/reports/warehouse_stock_quantity/{mulaidari}',             'ReportController@warehouse_stock_quantityInput');
-    Route::get('/reports/inventory_valuation',                              'ReportController@inventory_valuation');
-    Route::get('/reports/inventory_valuation/{start}&{end}',                'ReportController@inventory_valuationInput');
-    Route::get('/reports/warehouse_items_valuation',                        'ReportController@warehouse_items_valuation');
-    Route::get('/reports/warehouse_items_valuation/{mulaidari}',            'ReportController@warehouse_items_valuationInput');
-    Route::get('/reports/inventory_details',                                'ReportController@inventory_details');
-    Route::get('/reports/warehouse_items_stock_movement',                   'ReportController@warehouse_items_stock_movement');
+    Route::get('/reports/inventory_summary',                                                                            'ReportController@inventory_summary');
+    Route::get('/reports/inventory_summary/excel/as_of={today}/start_year={startyear}&end_year={endyear}',              'ReportController@inventory_summary_excel');
+    Route::get('/reports/inventory_summary/csv/as_of={today}/start_year={startyear}&end_year={endyear}',                'ReportController@inventory_summary_csv');
+    Route::get('/reports/inventory_summary/pdf/as_of={today}/start_year={startyear}&end_year={endyear}',                'ReportController@inventory_summary_pdf');
+    Route::get('/reports/inventory_summary/as_of={mulaidari}',                                                          'ReportController@inventory_summaryInput');
+    Route::get('/reports/warehouse_stock_quantity',                                                                     'ReportController@warehouse_stock_quantity');
+    Route::get('/reports/warehouse_stock_quantity/{mulaidari}',                                                         'ReportController@warehouse_stock_quantityInput');
+    Route::get('/reports/inventory_valuation',                                                                          'ReportController@inventory_valuation');
+    Route::get('/reports/inventory_valuation/{start}&{end}',                                                            'ReportController@inventory_valuationInput');
+    Route::get('/reports/warehouse_items_valuation',                                                                    'ReportController@warehouse_items_valuation');
+    Route::get('/reports/warehouse_items_valuation/{mulaidari}',                                                        'ReportController@warehouse_items_valuationInput');
+    Route::get('/reports/inventory_details',                                                                            'ReportController@inventory_details');
+    Route::get('/reports/warehouse_items_stock_movement',                                                               'ReportController@warehouse_items_stock_movement');
     // PRODUCTS
     // PRODUCTIONS
-    Route::get('/reports/spk_list',                                                                             'ReportController@spk_list');
-    Route::get('/reports/spk_list/start_date={start}&end_date={end}&warehouses={war}',                          'ReportController@spk_listInput');
-    Route::get('/reports/spk_list/excel/start_date={start}&end_date={end}&warehouses={war}',                    'ReportController@spk_list_excel');
-    Route::get('/reports/spk_list/csv/start_date={start}&end_date={end}&warehouses={war}',                      'ReportController@spk_list_csv');
-    Route::get('/reports/spk_list/pdf/start_date={start}&end_date={end}&warehouses={war}',                      'ReportController@spk_list_pdf');
-    Route::get('/reports/spk_details',                                                                          'ReportController@spk_details');
-    Route::get('/reports/spk_details/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                       'ReportController@spk_detailsInput');
-    Route::get('/reports/spk_details/excel/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                 'ReportController@spk_details_excel');
-    Route::get('/reports/spk_details/csv/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                   'ReportController@spk_details_csv');
-    Route::get('/reports/spk_details/pdf/start_date={start}&end_date={end}&products={prod}&warehouses={war}',                   'ReportController@spk_details_pdf');
+    Route::get('/reports/spk_list',                                                                                     'ReportController@spk_list');
+    Route::get('/reports/spk_list/start_date={start}&end_date={end}&warehouses={war}',                                  'ReportController@spk_listInput');
+    Route::get('/reports/spk_list/excel/start_date={start}&end_date={end}&warehouses={war}',                            'ReportController@spk_list_excel');
+    Route::get('/reports/spk_list/csv/start_date={start}&end_date={end}&warehouses={war}',                              'ReportController@spk_list_csv');
+    Route::get('/reports/spk_list/pdf/start_date={start}&end_date={end}&warehouses={war}',                              'ReportController@spk_list_pdf');
+    Route::get('/reports/spk_details',                                                                                  'ReportController@spk_details');
+    Route::get('/reports/spk_details/start_date={start}&end_date={end}&products={prod}&warehouses={war}',               'ReportController@spk_detailsInput');
+    Route::get('/reports/spk_details/excel/start_date={start}&end_date={end}&products={prod}&warehouses={war}',         'ReportController@spk_details_excel');
+    Route::get('/reports/spk_details/csv/start_date={start}&end_date={end}&products={prod}&warehouses={war}',           'ReportController@spk_details_csv');
+    Route::get('/reports/spk_details/pdf/start_date={start}&end_date={end}&products={prod}&warehouses={war}',           'ReportController@spk_details_pdf');
     // PRODUCTIONS
+    //* LAPORAN SUKSES SURABAYA //
+    //* SALES
+    Route::get('/reports/ss_surabaya/sales_list',                                                                                   'ReportController@sales_list_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/sales_list/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',        'ReportController@sales_list_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/sales_list/excel/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',  'ReportController@sales_list_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/sales_list/csv/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',    'ReportController@sales_list_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/sales_list/pdf/start_date={start}&end_date={end}&type={type}&customer={cus}&status={stat}',    'ReportController@sales_list_sukses_surabaya_pdf');
+    Route::get('/reports/ss_surabaya/sales_by_customer',                                                                            'ReportController@sales_by_customer_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/sales_by_customer/start_date={start}&end_date={end}&customer={con}',                           'ReportController@sales_by_customer_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/sales_by_customer/excel/start_date={start}&end_date={end}&customer={con}',                     'ReportController@sales_by_customer_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/sales_by_customer/csv/start_date={start}&end_date={end}&customer={con}',                       'ReportController@sales_by_customer_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/sales_by_customer/pdf/start_date={start}&end_date={end}&customer={con}',                       'ReportController@sales_by_customer_sukses_surabaya_pdf');
+    Route::get('/reports/ss_surabaya/customer_balance',                                                                             'ReportController@customer_balance_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/customer_balance/start_date={mulaidari}&end_date={end}&customer={con}',                        'ReportController@customer_balance_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/customer_balance/excel/start_date={mulaidari}&end_date={end}&customer={con}',                  'ReportController@customer_balance_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/customer_balance/csv/start_date={mulaidari}&end_date={end}&customer={con}',                    'ReportController@customer_balance_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/customer_balance/pdf/start_date={mulaidari}&end_date={end}&customer={con}',                    'ReportController@customer_balance_sukses_surabaya_pdf');
+    Route::get('/reports/ss_surabaya/aged_receivable',                                                                              'ReportController@aged_receivable_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/aged_receivable/start_date={start}&end_date={end}',                                            'ReportController@aged_receivable_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/aged_receivable/excel/start_date={start}&end_date={end}',                                      'ReportController@aged_receivable_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/aged_receivable/csv/start_date={start}&end_date={end}',                                        'ReportController@aged_receivable_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/aged_receivable/pdf/start_date={start}&end_date={end}',                                        'ReportController@aged_receivable_sukses_surabaya_pdf');
+    //* SALES
+    //* PURCHASES
+    Route::get('/reports/ss_surabaya/aged_payable',                                                                         'ReportController@aged_payable_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/aged_payable/start_date={start}&end_date={end}',                                       'ReportController@aged_payable_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/aged_payable/excel/start_date={start}&end_date={end}',                                 'ReportController@aged_payable_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/aged_payable/csv/start_date={start}&end_date={end}',                                   'ReportController@aged_payable_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/aged_payable/pdf/start_date={start}&end_date={end}',                                   'ReportController@aged_payable_sukses_surabaya_pdf');
+    //* PURCHASES
+    //* OVERVIEW
+    Route::get('/reports/ss_surabaya/balance_sheet',                                                                        'ReportController@balanceSheet_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/balance_sheet/start_date={start}&end_date={end}',                                      'ReportController@balanceSheet_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/balance_sheet/excel/start_date={start}&end_date={end}/start={startyear}&end={endyear}','ReportController@balanceSheet_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/balance_sheet/csv/start_date={start}&end_date={end}/start={startyear}&end={endyear}',  'ReportController@balanceSheet_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/balance_sheet/pdf/start_date={start}&end_date={end}/start={startyear}&end={endyear}',  'ReportController@balanceSheet_sukses_surabaya_pdf');
+    Route::get('/reports/ss_surabaya/profit_loss',                                                                          'ReportController@profitLoss_sukses_surabaya');
+    Route::get('/reports/ss_surabaya/profit_loss/start_date={start}&end_date={end}',                                        'ReportController@profitLoss_sukses_surabayaInput');
+    Route::get('/reports/ss_surabaya/profit_loss/excel/start_date={start}&end_date={end}',                                  'ReportController@profitLoss_sukses_surabaya_excel');
+    Route::get('/reports/ss_surabaya/profit_loss/csv/start_date={start}&end_date={end}',                                    'ReportController@profitLoss_sukses_surabaya_csv');
+    Route::get('/reports/ss_surabaya/profit_loss/pdf/start_date={start}&end_date={end}',                                    'ReportController@profitLoss_sukses_surabaya_pdf');
+    //* OVERVIEW
+    // LAPORAN SUKSES SURABAYA //
 
     /*---------CASH AND BANK --------------*/
     Route::get('/cashbank',                                                 'CashbankController@index');

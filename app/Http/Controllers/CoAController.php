@@ -52,11 +52,11 @@ class CoAController extends Controller
     public function create()
     {
         $coac               = coa_category::all();
-        $taxes              = tax::all();
+        //$taxes              = tax::all();
         $coa                = coa::get();
         $ob                 = opening_balance::where('user_id', Auth::id())->first();
 
-        return view('admin.accounts.create', compact(['coa', 'coac', 'taxes', 'ob']));
+        return view('admin.accounts.create', compact(['coa', 'coac', 'ob']));
     }
 
     public function store(Request $request)
@@ -217,19 +217,20 @@ class CoAController extends Controller
     public function edit($id)
     {
         $coac           = coa_category::all();
-        $taxes          = tax::all();
         $coa            = coa::get();
         $coa_curr       = coa::find($id);
         $ob             = opening_balance::where('user_id', Auth::id())->first();
         $get_ob         = opening_balance_detail::where('account_id', $id)->first();
         $amount         = 0;
-        if ($get_ob->debit != 0) {
-            $amount     = $get_ob->debit;
-        } else {
-            $amount     = $get_ob->credit;
+        if ($ob) {
+            if ($get_ob->debit != 0) {
+                $amount     = $get_ob->debit;
+            } else {
+                $amount     = $get_ob->credit;
+            }
         }
 
-        return view('admin.accounts.edit', compact(['coa', 'coa_curr', 'coac', 'taxes', 'ob', 'amount']));
+        return view('admin.accounts.edit', compact(['coa', 'coa_curr', 'coac', 'ob', 'amount']));
     }
 
     public function update(Request $request)

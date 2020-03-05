@@ -141,7 +141,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
                             <a href="{{ url('/cashbank') }}" class="btn btn-danger">Cancel</a>
                             <div class="btn-group">
@@ -172,7 +172,7 @@
         $('.text1, .text2').not(this).val(this.value);
     })
 </script>
-<script src="{{asset('js/jquery.formatCurrency-1.4.0/jquery.formatCurrency-1.4.0.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/jquery.formatCurrency-1.4.0/jquery.formatCurrency-1.4.0.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 <script type="text/javascript">
     $(function() {
         $('#warnOnDecimalsEntered2').blur(function() {
@@ -202,8 +202,8 @@
     });
 </script>
 
-<script src="{{asset('js/cashbank/createFormBankWithdrawalExpense.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/addmoreitem_cashbankwithdrawalexpense.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/cashbank/createFormBankWithdrawalExpense.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/addmoreitem_cashbankwithdrawalexpense.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

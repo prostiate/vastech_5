@@ -382,9 +382,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/request/joyday/products/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/request/joyday/products/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/request/joyday/products/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/request/joyday/products/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 <script>
     $(document).ready(function() {
         $('input[type="checkbox"]').click(function() {

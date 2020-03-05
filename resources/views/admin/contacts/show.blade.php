@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Contact Information</h3>
+        <h3>@lang("contact.show.title")</h3>
     </div>
 </div>
 @endsection
@@ -18,7 +18,7 @@
                         @hasrole('Owner|Ultimate|Contact')
                         @can('Edit')
                         <li>
-                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/edit/{{$contact->id}}';">Edit Profile
+                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/edit/{{$contact->id}}';">@lang("contact.show.edit")
                             </button>
                         </li>
                         @endcan
@@ -58,7 +58,7 @@
                         @hasrole('Owner|Ultimate|Contact')
                         @can('Edit')
                         <li>
-                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">Adjust Limit Balance
+                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">@lang("contact.show.adjust.col")
                             </button>
                             <div class="modal fade bs-example-modal-lg-2" tabindex="-1" role="dialog" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -67,13 +67,13 @@
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                                 </button>
-                                                <h3 class="modal-title" id="myModalLabel"><strong>Adjust Limit Balance</strong></h3>
+                                                <h3 class="modal-title" id="myModalLabel"><strong>@lang("contact.show.adjust.col")</strong></h3>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="col-md-6">
                                                     <div class="form-horizontal form-label-left">
                                                         <div class="form-group row">
-                                                            <label>Type Adjustment</label>
+                                                            <label>@lang("contact.show.adjust.col_2")</label>
                                                             <select name="type_limit_balance" class="form-control selectbankname">
                                                                 <option value="add" selected>Add</option>
                                                                 <option value="minus">Minus</option>
@@ -84,7 +84,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-horizontal form-label-left">
                                                         <div class="form-group row">
-                                                            <label>Value</label>
+                                                            <label>@lang("contact.show.adjust.col_5")</label>
                                                             <input onClick="this.select();" type="text" class="form-control to_limit_balance_display">
                                                             <input type="text" class="to_limit_balance_hidden" name="to_limit_balance" hidden>
                                                         </div>
@@ -94,7 +94,7 @@
                                                 <div class="col-md-1 center-margin">
                                                     <div class="form-horizontal">
                                                         <div class="form-group row">
-                                                            <button id="clickLimit" type="button" class="btn btn-success">Create</button>
+                                                            <button id="clickLimit" type="button" class="btn btn-success">@lang("contact.show.create")</button>
                                                             <input value="{{$contact->id}}" type="text" name="hidden_id" id="hidden_id" hidden>
                                                         </div>
                                                     </div>
@@ -105,12 +105,12 @@
                                                     <table id="example" class="table table-striped jambo_table bulk_action">
                                                         <thead>
                                                             <tr class="headings">
-                                                                <th class="column-title" style="width:200px">By</th>
-                                                                <th class="column-title" style="width:200px">Type Adjustment</th>
-                                                                <th class="column-title" style="width:200px">From</th>
-                                                                <th class="column-title" style="width:200px">To</th>
-                                                                <th class="column-title" style="width:200px">Value</th>
-                                                                <th class="column-title" style="width:200px">Created At</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_1")</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_2")</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_3")</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_4")</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_5")</th>
+                                                                <th class="column-title" style="width:200px">@lang("contact.show.adjust.col_6")</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -129,7 +129,7 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-dark" data-dismiss="modal">@lang("contact.show.close")</button>
                                             </div>
                                         </div>
                                     </form>
@@ -147,7 +147,7 @@
                                 <li><a href="#">Merge Contacts</a>-->
                                 @hasrole('Owner|Ultimate|Contact')
                                 @can('Delete')
-                                <li><a href="#" id="click">Delete</a>
+                                <li><a href="#" id="click">@lang("contact.show.delete")</a>
                                     <input type="text" value="{{$contact->id}}" id="form_id" hidden>
                                 </li>
                                 @endcan
@@ -175,9 +175,9 @@
             <div class="x_content">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Profile</a>
+                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">@lang("contact.show.profile")</a>
                         </li>
-                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">List Transactions</a>
+                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">@lang("contact.show.list_trans")</a>
                         </li>
                     </ul>
                     <div id="myTabContent" class="tab-content">
@@ -186,27 +186,27 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
-                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> General Information</h2>
+                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>@lang("contact.show.general")</h2>
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                            <h5>Contact Name</h5>
+                                            <h5>@lang("contact.show.contact_name")</h5>
                                             <h5><b>{{$contact->display_name}}</b></h5>
                                             <br>
-                                            <h5>Company Name</h5>
+                                            <h5>@lang("contact.show.company_name")</h5>
                                             @if($contact->company_name == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->company_name}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Email</h5>
+                                            <h5>@lang("contact.show.email")</h5>
                                             @if($contact->email == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->email}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Handphone</h5>
+                                            <h5>@lang("contact.show.handphone")</h5>
                                             @if($contact->handphone == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -214,28 +214,28 @@
                                             @endif
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                            <h5>Telephone</h5>
+                                            <h5>@lang("contact.show.telephone")</h5>
                                             @if($contact->telephone == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->telephone}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Fax</h5>
+                                            <h5>@lang("contact.show.fax")</h5>
                                             @if($contact->fax == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->fax}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Billing Address</h5>
+                                            <h5>@lang("contact.show.billing_address")</h5>
                                             @if($contact->billing_address == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->billing_address}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Shipping Address</h5>
+                                            <h5>@lang("contact.show.shipping_address")</h5>
                                             @if($contact->shipping_address == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -243,28 +243,28 @@
                                             @endif
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                            <h5>NPWP</h5>
+                                            <h5>@lang("contact.show.npwp")</h5>
                                             @if($contact->npwp == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->npwp}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Identity</h5>
+                                            <h5>@lang("contact.show.identity")</h5>
                                             @if($contact->identity_type == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->identity_type}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Identity Number</h5>
+                                            <h5>@lang("contact.show.identity_number")</h5>
                                             @if($contact->identity_id == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$contact->identity_id}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Another Info</h5>
+                                            <h5>@lang("contact.show.another_info")</h5>
                                             @if($contact->another_info == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -295,30 +295,30 @@
                             <blockquote>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h2><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Chart of Account</h2>
+                                        <h2><span class="glyphicon glyphicon-book" aria-hidden="true"></span>@lang("contact.show.coa")</h2>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Account Payable</h5>
+                                        <h5>@lang("contact.show.ap")</h5>
                                         <a href="/chart_of_accounts/{{$contact->account_payable_id}}">
                                             <h5><b>({{$contact->coaPayable->code}}) - {{$contact->coaPayable->name}}</b></h5>
                                         </a>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Account Receivable</h5>
+                                        <h5>@lang("contact.show.ar")</h5>
                                         <a href="/chart_of_accounts/{{$contact->account_receivable_id}}">
                                             <h5><b>({{$contact->coaReceivable->code}}) - {{$contact->coaReceivable->name}}</b></h5>
                                         </a>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Default Payment Terms</h5>
+                                        <h5>@lang("contact.show.term")</h5>
                                         <h5><b>{{$contact->term->name}}</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Limit Balance</h5>
+                                        <h5>@lang("contact.show.limit")</h5>
                                         <h5><b>Rp @number($contact->limit_balance)</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Current Limit Balance</h5>
+                                        <h5>@lang("contact.show.current_limit")</h5>
                                         <h5><b>Rp @number($contact->current_limit_balance)</b></h5>
                                     </div>
                                 </div>
@@ -327,10 +327,10 @@
                         <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="delivery-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>View Transaction Report</h2>
+                                    <h2>@lang("contact.show.title")</h2>
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
-                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">Transactions List
+                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">@lang("contact.show.list_trans_btn")
                                             </button>
                                         </li>
                                     </ul>
@@ -341,11 +341,11 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Transaction Date </th>
-                                                    <th class="column-title">Transaction Number </th>
-                                                    <th class="column-title">Due Date </th>
-                                                    <th class="column-title">Status </th>
-                                                    <th class="column-title">Amount </th>
+                                                    <th class="column-title">@lang("contact.show.table.col_1")</th>
+                                                    <th class="column-title">@lang("contact.show.table.col_2")</th>
+                                                    <th class="column-title">@lang("contact.show.table.col_3")</th>
+                                                    <th class="column-title">@lang("contact.show.table.col_4")</th>
+                                                    <th class="column-title">@lang("contact.show.table.col_5")</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -419,9 +419,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/contacts/createLimitForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{ asset('js/contacts/deleteForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/contacts/createLimitForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{ asset('js/contacts/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 <script>
     function inputMasking() {
         Inputmask.extendAliases({

@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Update Warehouse Transfer</h2>
+                <h2>@lang('product_4.edit.title')</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left text-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">From Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.edit.from')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="/warehouses/{{$wt->from_warehouse_id}}">
                                         <h5>{{$wt->from_warehouse->name}}</h5>
@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Transfer Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.edit.trans_date')</label>
                                 <div class="col-md-7 xdisplay_inputx form-group has-feedback">
                                     <input value="{{$wt->transaction_date}}" type="text" class="form-control" name="transfer_date" id="datepicker1">
                                 </div>
@@ -33,7 +33,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">To Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.edit.to')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <a href="/warehouses/{{$wt->to_warehouse_id}}">
                                         <h5>{{$wt->to_warehouse->name}}</h5>
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Memo</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">@lang('product_4.edit.memo')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea rows="4" class="form-control" name="memo">{{$wt->memo}}</textarea>
                                 </div>
@@ -56,10 +56,10 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width:300px">Product Name</th>
+                                    <th class="column-title" style="width:300px">@lang('product_4.edit.col_1')</th>
                                     <!--<th class="column-title" style="width:150px">Qty Before</th>
                                     <th class="column-title" style="width:150px">Qty After</th>-->
-                                    <th class="column-title" style="width:200px">Transfer Quantity</th>
+                                    <th class="column-title" style="width:200px">@lang('product_4.edit.col_2')</th>
                                     <th class="column-title" style="width:50px"></th>
                                 </tr>
                             </thead>
@@ -92,14 +92,14 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <input type="button" class="btn btn-dark add-item" value="+ Add More Item">
+                        <input type="button" class="btn btn-dark add-item" value="@lang('product_4.edit.more')">
                     </div>
                     <br>
-                    <div class="col-md-2 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
-                            <a href="/warehouses_transfer/{{$wt->id}}" class="btn btn-danger">Back</a>
+                            <a href="/warehouses_transfer/{{$wt->id}}" class="btn btn-danger">@lang('product_4.edit.back')</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Update</button>
+                                <button id="click" type="button" class="btn btn-success">@lang('product_4.edit.update')</button>
                                 <input value="{{$wt->number}}" type="text" name="trans_no" hidden>
                                 <input value="{{$wt->id}}" type="text" name="hidden_id" hidden>
                             </div>
@@ -113,8 +113,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/products/warehouse_transfer_list/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/warehouse_transfer_list/updateForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/warehouse_transfer_list/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/warehouse_transfer_list/updateForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

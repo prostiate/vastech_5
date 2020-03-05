@@ -162,8 +162,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group" style="text-align: center">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <input value="{{$header->id}}" type="text" name="hidden_id" hidden>
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/bill_quantities/{{$header->id}}';">Cancel</button>
                             <div class="btn-group">
@@ -179,8 +179,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/bill_quantities/updateForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/updateForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Product Detail</h3>
+        <h3>@lang('product_1.show.title')</h3>
     </div>
 </div>
 @endsection
@@ -17,7 +17,7 @@
                     @hasrole('Owner|Ultimate|Good & Services')
                     @can('Edit')
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/edit/{{$products->id}}';">Edit Profile
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/edit/{{$products->id}}';">@lang('product_1.show.edit')
                         </button>
                     </li>
                     @endcan
@@ -29,7 +29,7 @@
                             <!--<li><a href="#">Archive</a>-->
                             @hasrole('Owner|Ultimate|Good & Services')
                             @can('Delete')
-                            <li><a href="#" id="click">Delete</a>
+                            <li><a href="#" id="click">@lang('product_1.show.delete')</a>
                                 <input type="text" value="{{$products->id}}" id="form_id" hidden>
                             </li>
                             @endcan
@@ -38,7 +38,7 @@
                     </li>
                 </ul>
                 <h3><b>{{$products->name}}</b></h3>
-                <a>Price Lock : </a>
+                <a>@lang('product_1.show.price_lock')</a>
                 @if($products->is_lock_sales == 1)
                 <span class="label label-primary" style="color:white;">Sales</span>
                 @endif
@@ -53,22 +53,22 @@
             <div class="x_content">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Info Product / Service</a>
+                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">@lang('product_1.show.tab_1.name')</a>
                         </li>
-                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">List Transactions</a>
+                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="delivery-tab" data-toggle="tab" aria-expanded="false">@lang('product_1.show.tab_2.name')</a>
                         </li>
-                        <li role="presentation" class=""><a href="#tab_content6" role="tab" id="warehouses-tab" data-toggle="tab" aria-expanded="false">List Warehouses</a>
+                        <li role="presentation" class=""><a href="#tab_content6" role="tab" id="warehouses-tab" data-toggle="tab" aria-expanded="false">@lang('product_1.show.tab_3.name')</a>
                         </li>
-                        @if($products->is_bundle == 1)
+                        <!--@if($products->is_bundle == 1)
                         <li role="presentation" class=""><a href="#tab_content3" role="tab" id="bundle-tab" data-toggle="tab" aria-expanded="false">Product Bundle</a>
                         </li>
-                        @endif
+                        @endif-->
                         @if($products->is_discount == 1)
-                        <li role="presentation" class=""><a href="#tab_content4" role="tab" id="discount-tab" data-toggle="tab" aria-expanded="false">Discount Price List</a>
+                        <li role="presentation" class=""><a href="#tab_content4" role="tab" id="discount-tab" data-toggle="tab" aria-expanded="false">@lang('product_1.show.tab_4.name')</a>
                         </li>
                         @endif
                         @if($products->is_production_bundle == 1)
-                        <li role="presentation" class=""><a href="#tab_content5" role="tab" id="production-tab" data-toggle="tab" aria-expanded="false">Production Bundle</a>
+                        <li role="presentation" class=""><a href="#tab_content5" role="tab" id="production-tab" data-toggle="tab" aria-expanded="false">@lang('product_1.show.tab_5.name')</a>
                         </li>
                         @endif
                     </ul>
@@ -78,20 +78,20 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
-                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Product / Service Details</h2>
+                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>@lang('product_1.show.tab_1.row_1.row_name')</h2>
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
                                             <!--<h5>Product Image</h5>-->
-                                            <h5>Product Name</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.name')</h5>
                                             <h5><b>{{$products->name}}</b></h5>
                                             <br>
-                                            <h5>Average Price</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.avg')</h5>
                                             <h5><b>Rp @number($products->avg_price)</b></h5>
                                             <br>
-                                            <h5>Current Stock</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.cstock')</h5>
                                             <h5><b>{{$products->qty}} {{$products->other_unit->name}}</b></h5>
                                             <br>
-                                            <h5>Product Code / SKU</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.code')</h5>
                                             @if($products->code == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -105,24 +105,24 @@
                                             <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></h2>
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                            <h5>Product Unit</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.unit')</h5>
                                             @if($products->other_unit_id == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$products->other_unit->name}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Product Description</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.desc')</h5>
                                             @if($products->desc == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$products->desc}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Product Type</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.type')</h5>
                                             <h5><b>-</b></h5>
                                             <br>
-                                            <h5>Product Category</h5>
+                                            <h5>@lang('product_1.show.tab_1.row_1.category')</h5>
                                             @if($products->other_product_category_id == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -135,18 +135,18 @@
                             <blockquote>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h2><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Buy</h2>
+                                        <h2><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>@lang('product_1.show.tab_1.row_2.row_name')</h2>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Buy Unit Price</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_2.buy_4')</h5>
                                         <h5><b>Rp @number($products->buy_price)</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Purchases Account</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_2.buy_2')</h5>
                                         <h5><b>{{$products->coaBuyAccount->name}}</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Default Buy Tax</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_2.buy_3')</h5>
                                         @if($products->buy_tax == 0)
                                         <h5><b>-</b></h5>
                                         @else
@@ -158,18 +158,18 @@
                             <blockquote>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h2><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Sell</h2>
+                                        <h2><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>@lang('product_1.show.tab_1.row_3.row_name')</h2>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Sell Unit Price</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_3.buy_4')</h5>
                                         <h5><b>Rp @number($products->sell_price)</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Sales Account</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_3.buy_2')</h5>
                                         <h5><b>{{$products->coaSellAccount->name}}</b></h5>
                                     </div>
                                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                        <h5>Default Sell Tax</h5>
+                                        <h5>@lang('product_1.show.tab_1.row_3.buy_3')</h5>
                                         @if($products->sell_tax == 0)
                                         <h5><b>-</b></h5>
                                         @else
@@ -182,10 +182,10 @@
                         <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="delivery-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>View Transaction Report</h2>
+                                    <h2>@lang('product_1.show.tab_2.vtr')</h2>
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
-                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">Transactions List
+                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">@lang('product_1.show.tab_2.name')
                                             </button>
                                         </li>
                                     </ul>
@@ -196,12 +196,12 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Transaction Number </th>
-                                                    <th class="column-title">Transaction Date </th>
-                                                    <th class="column-title">Warehouse</th>
-                                                    <th class="column-title">Qty ({{$products->other_unit->name}})</th>
-                                                    <th class="column-title">Qty Movement</th>
-                                                    <th class="column-title">Created Date</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_1')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_2')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_3')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_4') ({{$products->other_unit->name}})</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_5')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_2.table.col_6')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -330,7 +330,7 @@
                                                         {{$so->sale_order->transaction_date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$so->sale_order->warehouse_id}}">{{$so->sale_order->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$so->sale_order->warehouse_id}}">{{$so->sale_order->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         {{$so->qty}}
@@ -352,9 +352,9 @@
                                                     <td>
                                                         {{$sd->sale_delivery->transaction_date}}
                                                     </td>
-                                                    <a>
-                                                    <a href="/warehouses/{{$sd->sale_delivery->warehouse_id}}">{{$sd->sale_delivery->warehouse->name}}</a>
-                                                    </a>
+                                                    <td>
+                                                        <a href="/warehouses/{{$sd->sale_delivery->warehouse_id}}">{{$sd->sale_delivery->warehouse->name}}</a>
+                                                    </td>
                                                     <td>
                                                         {{$sd->qty}}
                                                     </td>
@@ -376,7 +376,7 @@
                                                         {{$si->sale_invoice->transaction_date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$si->sale_invoice->warehouse_id}}">{{$si->sale_invoice->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$si->sale_invoice->warehouse_id}}">{{$si->sale_invoice->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         {{$si->qty}}
@@ -399,7 +399,7 @@
                                                         {{$sa->stock_adjustment->date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$sa->stock_adjustment->warehouse_id}}">{{$sa->stock_adjustment->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$sa->stock_adjustment->warehouse_id}}">{{$sa->stock_adjustment->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         {{$sa->difference}}
@@ -422,7 +422,7 @@
                                                         {{$wip->transaction_date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         {{$wip->result_qty}}
@@ -445,7 +445,7 @@
                                                         {{$wipi->wip->transaction_date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$wipi->wip->warehouse_id}}">{{$wipi->wip->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$wipi->wip->warehouse_id}}">{{$wipi->wip->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         -{{$wipi->qty_total}}
@@ -492,7 +492,7 @@
                                                         {{$pirs->purchase_invoice->transaction_date}}
                                                     </td>
                                                     <td>
-                                                    <a href="/warehouses/{{$pirs->purchase_invoice->warehouse_id}}">{{$pirs->purchase_invoice->warehouse->name}}</a>
+                                                        <a href="/warehouses/{{$pirs->purchase_invoice->warehouse_id}}">{{$pirs->purchase_invoice->warehouse->name}}</a>
                                                     </td>
                                                     <td>
                                                         {{$pirs->qty}}
@@ -515,10 +515,10 @@
                         <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="warehouses-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>View Warehouse Report</h2>
+                                    <h2>@lang('product_1.show.tab_3.vtr')</h2>
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
-                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses';">Warehouses List
+                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses';">@lang('product_1.show.tab_3.name')
                                             </button>
                                         </li>
                                     </ul>
@@ -529,8 +529,8 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Warehouse</th>
-                                                    <th class="column-title">Warehouse Qty</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_3.table.col_1')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_3.table.col_2')</th>
                                                     <!--<th class="column-title">Last Updated</th>-->
                                                 </tr>
                                             </thead>
@@ -556,6 +556,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!--
                         @if($products->is_bundle == 1)
                         <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="bundle-tab">
                             <div class="x_panel">
@@ -621,11 +622,12 @@
                             </div>
                         </div>
                         @endif
+                        -->
                         @if($products->is_discount == 1)
                         <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="discount-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Discount Price List</h2>
+                                    <h2>@lang('product_1.show.tab_3.name')</h2>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="x_content">
@@ -633,8 +635,8 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Quantity</th>
-                                                    <th class="column-title">Price</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_3.table.col_1')</th>
+                                                    <th class="column-title">@lang('product_1.show.tab_3.table.col_2')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -659,7 +661,7 @@
                         <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="production-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Product Bundled for Production</h2>
+                                    <h2>@lang('product_1.show.tab_5.vtr')</h2>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="x_content">
@@ -667,9 +669,9 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title" style="width: 450px">Product Name</th>
-                                                    <th class="column-title">Quantity</th>
-                                                    <th class="column-title" style="width: 350px">Price</th>
+                                                    <th class="column-title" style="width: 450px">@lang('product_1.show.tab_5.table.col_1')</th>
+                                                    <th class="column-title" style="width: 350px">@lang('product_1.show.tab_5.table.col_2')</th>
+                                                    <th class="column-title" style="width: 350px">@lang('product_1.show.tab_5.table.col_3')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -702,5 +704,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

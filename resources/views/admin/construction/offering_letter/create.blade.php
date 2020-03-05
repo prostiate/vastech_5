@@ -50,7 +50,7 @@
                             <thead>
                                 <tr class="headings">
                                     <th class="column-title" style="width: 350px">Working Description</th>
-                                    <th class="column-title" style="width: 350px">Specification</th>
+                                    <th class="column-title" style="width: 350px">Description</th>
                                     <th class="column-title" style="width: 350px">Price</th>
                                     <th class="column-title" style="width: 50px"></th>
                                 </tr>
@@ -85,8 +85,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/offering_letter';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>
@@ -101,7 +101,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/offering_letters/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/offering_letters/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/offering_letters/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/offering_letters/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

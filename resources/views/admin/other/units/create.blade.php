@@ -20,8 +20,8 @@
                         </div>
                         <div class="ln_solid"></div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <a href="{{ url('/other/units') }}" class="btn btn-primary">Cancel</a>
                             <button type="button" id="click" class="btn btn-success">Create</button>
                         </div>
@@ -34,5 +34,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/otherlists/units/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/otherlists/units/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

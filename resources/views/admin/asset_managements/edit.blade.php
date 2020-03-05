@@ -166,8 +166,8 @@
                     </div>
                 </div>
                 @endif
-                <div class="form-group row">
-                    <div class="offset-lg-9 col-lg-3 center-margin">
+                <div class="col-md-12 text-center">
+                    <div class="form-group">
                         <a href="{{ url('/asset_managements') }}" class="btn btn-danger">Cancel</a>
                         <div class="btn-group">
                             <input type="text" value="{{$asset->id}}" name="hidden_id" hidden>
@@ -186,8 +186,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/asset_management/updateForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/is_depreciable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/asset_management/updateForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/is_depreciable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -98,7 +98,7 @@
                                         <div class="form-group">
                                             <select class="select2 form-control form-control-sm expense_id selectaccount" name="expense_acc[]" required>
                                                 @foreach ($expenses as $expense)
-                                                <option value="{{$expense->id}}"  @if($product->coa_id === $expense->id) selected='selected' @endif>
+                                                <option value="{{$expense->id}}" @if($product->coa_id === $expense->id) selected='selected' @endif>
                                                     ({{$expense->code}}) - {{$expense->name}} ({{$expense->coa_category->name}})
                                                 </option>
                                                 @endforeach
@@ -169,7 +169,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
                             <a href="{{ url('/expenses/'.$ex->id) }}" class="btn btn-danger">@lang("expense.edit.cancel_btn")</a>
                             <div class="btn-group">
@@ -186,8 +186,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/expenses/updateFormNull.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/expenses/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/expenses/updateFormNull.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/expenses/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

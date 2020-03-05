@@ -58,7 +58,7 @@
                             </select>
                         </div>
                     </div>
-                    <!--<div class="form-group">
+                    <!--{{--<div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Default Tax</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <select id="default_tax" name="default_tax" class="form-control col-md-7 col-xs-12 selecttax" type="text" name="middle-name">
@@ -70,11 +70,11 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>-->
+                    </div>--}}-->
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Start Balance</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-12 col-xs-12"><?php echo 'Rp ' . number_format(0, 2, ',', '.');?> <a @if($ob && $ob->status == "Publish") href="/conversion_balance/{{$ob->id}}" @else href="/conversion/setup" @endif><u>Edit</u></a></label>
+                            <label class="control-label col-md-12 col-sm-12 col-xs-12"><?php echo 'Rp ' . number_format(0, 2, ',', '.'); ?> <a @if($ob && $ob->status == "Publish") href="/conversion_balance/{{$ob->id}}" @else href="/conversion/setup" @endif><u>Edit</u></a></label>
                         </div>
                     </div>
                     <!--<div class="form-group">
@@ -85,8 +85,8 @@
                         </div>
                     </div>-->
                     <div class="ln_solid"></div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/chart_of_accounts';">Cancel</button>
                             <button id="click" type="submit" class="btn btn-success">Create Account</button>
                         </div>
@@ -99,8 +99,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/accounts/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/accounts/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 <script>
     function getval(sel) {
         if (sel.value == 1) {

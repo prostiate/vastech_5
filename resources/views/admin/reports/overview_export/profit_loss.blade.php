@@ -34,7 +34,7 @@
                 @if($c->coa->coa_category_id == 13)
                     <tr>
                         <td></td>
-                        <td colspan="3"><a href="/chart_of_accounts/{{$c->id}}">{{$c->coa->code}} - {{$c->coa->name}}</a></td>
+                        <td colspan="3"><a>{{$c->coa->code}} - {{$c->coa->name}}</a></td>
                         <td class="text-right">@number(abs($c->total))</td>
                     </tr>
                 @endif
@@ -57,7 +57,7 @@
                 @if($c->coa->coa_category_id == 15)
                     <tr>
                         <td></td>
-                        <td colspan="3"><a href="/chart_of_accounts/{{$c->id}}">{{$c->coa->code}} - {{$c->coa->name}}</a></td>
+                        <td colspan="3"><a>{{$c->coa->code}} - {{$c->coa->name}}</a></td>
                         <td class="text-right">@if($c->total < 0) ( @number(abs($c->total)) ) @else @number($c->total) @endif</td>
                     </tr>
                 @endif
@@ -88,7 +88,7 @@
                 @if($c->coa->coa_category_id == 16)
                     <tr>
                         <td></td>
-                        <td colspan="3"><a href="/chart_of_accounts/{{$c->id}}">{{$c->coa->code}} - {{$c->coa->name}}</a></td>
+                        <td colspan="3"><a>{{$c->coa->code}} - {{$c->coa->name}}</a></td>
                         <td class="text-right">@if($c->total < 0) ( @number(abs($c->total)) ) @else @number($c->total) @endif</td>
                     </tr>
                 @endif
@@ -119,7 +119,7 @@
                 @if($c->coa->coa_category_id == 14)
                     <tr>
                         <td></td>
-                        <td colspan="3"><a href="/chart_of_accounts/{{$c->id}}">{{$c->coa->code}} - {{$c->coa->name}}</a></td>
+                        <td colspan="3"><a>{{$c->coa->code}} - {{$c->coa->name}}</a></td>
                         <td class="text-right">@if($c->total < 0) ( @number(abs($c->total)) ) @else @number($c->total) @endif</td>
                     </tr>
                 @endif
@@ -142,7 +142,7 @@
                 @if($c->coa->coa_category_id == 17)
                     <tr>
                         <td></td>
-                        <td colspan="3"><a href="/chart_of_accounts/{{$c->id}}">{{$c->coa->code}} - {{$c->coa->name}}</a></td>
+                        <td colspan="3"><a>{{$c->coa->code}} - {{$c->coa->name}}</a></a>
                         <td class="text-right">@if($c->total < 0) ( @number(abs($c->total)) ) @else @number($c->total) @endif</td>
                     </tr>
                 @endif

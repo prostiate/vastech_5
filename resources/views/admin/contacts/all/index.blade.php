@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>All Contact</h3>
+        <h3>@lang("contact.index.title")</h3>
     </div>
     {{-- notifikasi form validasi --}}
     @if ($errors->has('file'))
@@ -25,92 +25,36 @@
         <strong>{{ $sukses }}</strong>
     </div>
     @endif
-    <!--<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                </span>
-            </div>
-        </div>
-    </div>-->
 </div>
 @endsection
 
 @section('content')
-<!--{{--<div class="row">
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Summary In Chart</h2>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <input hidden type="text" value="{{$avail_stock}}" id="open_po">
-                <input hidden type="text" value="{{$low_stock}}" id="payment_last">
-                <input hidden type="text" value="{{$out_stock}}" id="overdue">
-                <div id="hehehehe" style="height: 350px;"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Total Stock</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/products/new';">New Product
-                        </button>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <div class="row tile_count">
-                    <div class="col-md-12 col-sm-6 col-xs-6 tile_stats_count">
-                        <span class="count_top">Available Stock</span>
-                        <div class="count">{{$avail_stock}}</div>
-                    </div>
-                    <div class="col-md-12 col-sm-6 col-xs-6 tile_stats_count">
-                        <span class="count_top">Low Stock</span>
-                        <div class="count">{{$low_stock}}</div>
-                    </div>
-                    <div class="col-md-12 col-sm-6 col-xs-6 tile_stats_count">
-                        <span class="count_top">Out of Stock</span>
-                        <div class="count">{{$out_stock}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>--}}-->
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>List of Contacts</h2>
+                <h2>@lang("contact.index.list_transaction")</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         @hasrole('Owner|Ultimate|Contact')
                         @can('Create')
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/new';">New Contact
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/contacts/new';">@lang("contact.index.new_btn")
                         </button>
                         @endcan
                         @endrole
                         <button data-toggle="dropdown" class="btn btn-dark mr-5 dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a href="/contacts/export_excel">Export as Excel</a>
+                            <li><a href="/contacts/export_excel">@lang("contact.index.action.action_1")</a>
                             </li>
-                            <li><a href="/contacts/export_csv">Export as CSV</a>
+                            <li><a href="/contacts/export_csv">@lang("contact.index.action.action_2")</a>
                             </li>
-                            <li><a target="_blank" href="/contacts/export_pdf">Export as PDF</a>
+                            <li><a target="_blank" href="/contacts/export_pdf">@lang("contact.index.action.action_3")</a>
                             </li>
                             <li class="divider"></li>
                             @hasrole('Owner|Ultimate|Contact')
                             @can('Create')
-                            <li><a data-toggle="modal" data-target="#importExcel">Import from Excel</a>
+                            <li><a data-toggle="modal" data-target="#importExcel">@lang("contact.index.action.action_4")</a>
                             </li>
                             @endcan
                             @endrole
@@ -120,19 +64,19 @@
                                 <form method="post" action="/contacts/import_excel" enctype="multipart/form-data">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">@lang("contact.index.action.action_4")</h5>
                                         </div>
                                         <div class="modal-body">
                                             {{ csrf_field() }}
-                                            <label>Pilih file excel</label>
+                                            <label>@lang("contact.index.upload")</label>
                                             <div class="form-group">
                                                 <input type="file" name="file" required="required">
                                             </div>
-                                            <a href="{{ url('/file_contact/SampleContact.xlsx') }}">Download Sample</a>
+                                            <a href="{{ url('/file_contact/SampleContact.xlsx') }}">@lang("contact.index.sample")</a>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Import</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang("contact.index.close")</button>
+                                            <button type="submit" class="btn btn-primary">@lang("contact.index.import")</button>
                                         </div>
                                     </div>
                                 </form>
@@ -147,14 +91,14 @@
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">Company Name</th>
-                                <th class="column-title">Name</th>
-                                <th class="column-title">Billing Address</th>
-                                <th class="column-title">Shipping Address</th>
-                                <th class="column-title">Email</th>
-                                <th class="column-title">Phone</th>
-                                <th class="column-title">Limit Balance</th>
-                                <th class="column-title">Current Limit Balance</th>
+                                <th class="column-title">@lang("contact.index.table.col_1")</th>
+                                <th class="column-title">@lang("contact.index.table.col_2")</th>
+                                <th class="column-title">@lang("contact.index.table.col_3")</th>
+                                <th class="column-title">@lang("contact.index.table.col_4")</th>
+                                <th class="column-title">@lang("contact.index.table.col_5")</th>
+                                <th class="column-title">@lang("contact.index.table.col_6")</th>
+                                <th class="column-title">@lang("contact.index.table.col_7")</th>
+                                <th class="column-title">@lang("contact.index.table.col_8")</th>
                             </tr>
                         </thead>
                     </table>
@@ -166,6 +110,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/contacts/all/dataTable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<!--{{--<script src="{{ asset('js/contacts/all/chartdiindex.js?v=5-20200302-1755') }}" charset="utf-8"></script>--}}-->
+<script src="{{ asset('js/contacts/all/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<!--{{--<script src="{{ asset('js/contacts/all/chartdiindex.js?v=5-20200305-1546') }}" charset="utf-8"></script>--}}-->
 @endpush

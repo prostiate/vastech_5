@@ -43,14 +43,6 @@ class PurchaseInvoiceController extends Controller
         DB::beginTransaction();
         try {
             $ambil_semua_product            = product::get();
-            //$ambil_pi                       = purchase_invoice::with('purchase_invoice_item')->orderBy('transaction_date')->get();
-            // $ambil_si                       = sale_invoice::with('sale_invoice_item')->orderBy('transaction_date')->get();
-            //$merged                         = $ambil_pi->merge($ambil_si);
-            //$sorted                         = $merged->sortBy('transaction_date');
-
-            //$new_date1                      = new Collection([]);
-            //$new_date2                      = new Collection([]);
-            //$gabung_date                    = new Collection([]);
             foreach ($ambil_semua_product as $asp) {
                 $ambil_pi_item                  = purchase_invoice_item::where('product_id', $asp->id)->with('purchase_invoice')->get()->sortBy(function ($pi) {
                     return $pi->purchase_invoice->transaction_date;
@@ -58,63 +50,23 @@ class PurchaseInvoiceController extends Controller
                 $ambil_si_item                  = sale_invoice_item::where('product_id', $asp->id)->with('sale_invoice')->get()->sortBy(function ($si) {
                     return $si->sale_invoice->transaction_date;
                 });
-                /*foreach ($sorted as $disort) {
-                    if ($disort->purchase_invoice_item) {
-                        foreach ($disort->purchase_invoice_item as $dipi) {
-                            if ($dipi->product_id == $asp->id) {
-                                dd('if');
-                            } else {
-                                dd('product');
-                            }
-                        }
-                    } else {
-                        foreach ($disort->sale_invoice_item as $disi) {
-                            if ($disi->product_id == $asp->id) {
-                                dd('elseif' . $disort->number);
-                            }
-                        }
-                    }
-
-                    if ($disort->sale_invoice_item->qty) {
-                        dd('if');
-                        $asp->update([
-                            'qty'                   => $asp->qty - $disort->sale_invoice_item->qty,
-                        ]);
-                    } else if ($disort->purchase_invoice_item->qty) {
-                        //dd('elseif');
-                        foreach ($disort->purchase_invoice_item as $kaka) {
-                            dd($kaka);
-                        }
-                        dd('ddeset');
-                        $dibagi                 = $asp->qty - $disort->purchase_invoice_item->qty;
-                        if ($dibagi == 0) {
-                            $avg_price              = (($asp->qty * $asp->avg_price) - ($disort->purchase_invoice_item->qty * $disort->purchase_invoice_item->unit_price));
-                        } else {
-                            $avg_price              = (($asp->qty * $asp->avg_price) - ($disort->purchase_invoice_item->qty * $disort->purchase_invoice_item->unit_price)) / ($dibagi);
-                        }
-                        $asp->update([
-                            'qty'                   => $asp->qty + $disort->purchase_invoice_item->qty,
-                            'avg_price'             => abs($avg_price),
-                        ]);
-                    }
-                }*/
                 $merged = $ambil_pi_item->merge($ambil_si_item);
                 $sorted = $merged->sortBy('transaction_date')->sortBy('created_at');
+                //dd($sorted[0]->sale_invoice);
                 foreach ($sorted as $disort) {
+                    //dd($disort->sale_invoice);
                     if ($disort->sale_invoice) {
-                        //dd('if');
                         $asp->update([
                             'qty'                   => $asp->qty - $disort->qty,
                         ]);
                     } else if ($disort->purchase_invoice) {
-                        //dd('elseif');
                         $dibagi                     = $asp->qty + $disort->qty;
                         if ($dibagi < 0) {
                             $avg_price              = $disort->unit_price;
                         } else if ($dibagi > 0) {
                             $avg_price              = (($asp->qty * $asp->avg_price) + ($disort->qty * $disort->unit_price)) / ($dibagi);
                         } else {
-                            $avg_price              = ($disort->qty * $disort->unit_price) / ($dibagi);
+                            $avg_price              = ($disort->qty * $disort->unit_price)/* / ($dibagi)*/;
                         }
                         $asp->update([
                             'qty'                   => $asp->qty + $disort->qty,

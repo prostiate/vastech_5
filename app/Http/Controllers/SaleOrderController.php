@@ -47,7 +47,7 @@ class SaleOrderController extends Controller
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -76,7 +76,7 @@ class SaleOrderController extends Controller
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -442,21 +442,21 @@ class SaleOrderController extends Controller
             }
             $number1            = $misahy[1] + 1;
             if (isset($number)) {
-                    $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
-                    if ($check_number) {
-                        if ($check_number != null) {
-                            $misahm = explode("/", $check_number->number);
-                            $misahy = explode(".", $misahm[1]);
-                        }
-                        if (isset($misahy[1]) == 0) {
-                            $misahy[1]      = 10000;
-                        }
-                        $number2    = $misahy[1] + 1;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
-                    } else {
-                        $number1    = 10001;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
                     }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                }
             } else {
                 $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
                 if ($check_number) {
@@ -508,9 +508,9 @@ class SaleOrderController extends Controller
         DB::beginTransaction();
         try {
             $check_closing_book             = closing_book::latest()->first();
-            $get_closing_book_date          = $check_closing_book->date;
-            $get_request_date               = $request->trans_date;
             if ($check_closing_book) {
+                $get_closing_book_date          = $check_closing_book->date;
+                $get_request_date               = $request->trans_date;
                 if ($get_request_date->greaterThanOrEqualTo($get_closing_book_date)) {
                     DB::rollBack();
                     return response()->json(['errors' => 'Transaction date cannot be less than closing book!']); // BENERIN LAGI INI KALIMATNYA
@@ -675,21 +675,21 @@ class SaleOrderController extends Controller
             }
             $number1            = $misahy[1] + 1;
             if (isset($number)) {
-                    $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
-                    if ($check_number) {
-                        if ($check_number != null) {
-                            $misahm = explode("/", $check_number->number);
-                            $misahy = explode(".", $misahm[1]);
-                        }
-                        if (isset($misahy[1]) == 0) {
-                            $misahy[1]      = 10000;
-                        }
-                        $number2    = $misahy[1] + 1;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
-                    } else {
-                        $number1    = 10001;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
                     }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                }
             } else {
                 $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
                 if ($check_number) {
@@ -913,21 +913,21 @@ class SaleOrderController extends Controller
             }
             $number1            = $misahy[1] + 1;
             if (isset($number)) {
-                    $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
-                    if ($check_number) {
-                        if ($check_number != null) {
-                            $misahm = explode("/", $check_number->number);
-                            $misahy = explode(".", $misahm[1]);
-                        }
-                        if (isset($misahy[1]) == 0) {
-                            $misahy[1]      = 10000;
-                        }
-                        $number2    = $misahy[1] + 1;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
-                    } else {
-                        $number1    = 10001;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                if ($check_number) {
+                    if ($check_number != null) {
+                        $misahm = explode("/", $check_number->number);
+                        $misahy = explode(".", $misahm[1]);
                     }
+                    if (isset($misahy[1]) == 0) {
+                        $misahy[1]      = 10000;
+                    }
+                    $number2    = $misahy[1] + 1;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SO';
+                } else {
+                    $number1    = 10001;
+                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SO';
+                }
             } else {
                 $check_number   = sale_order::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
                 if ($check_number) {

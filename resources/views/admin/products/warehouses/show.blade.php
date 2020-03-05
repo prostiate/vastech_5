@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Werehouse Information</h3>
+        <h3>@lang('product_3.show.title')</h3>
     </div>
 </div>
 @endsection
@@ -17,7 +17,7 @@
                 @can('Edit')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses/edit/{{$warehouses->id}}';">Edit Warehouse
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses/edit/{{$warehouses->id}}';">@lang('product_3.show.edit')
                         </button>
                     </li>
                 </ul>
@@ -28,7 +28,7 @@
                 @can('Delete')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" id="click">Delete Warehouse
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="click">@lang('product_3.show.delete')
                         </button>
                         <input type="text" value="{{$warehouses->id}}" id="form_id" hidden>
                     </li>
@@ -42,11 +42,11 @@
             <div class="x_content">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">Info Warehouse</a>
+                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="invoice-tab" data-toggle="tab" aria-expanded="true">@lang('product_3.show.tab_1.title')</a>
                         </li>
-                        <li role="presentation" class=""><a href="#tab_content3" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">Products List</a>
+                        <li role="presentation" class=""><a href="#tab_content3" role="tab" id="product-tab" data-toggle="tab" aria-expanded="false">@lang('product_3.show.tab_2.title')</a>
                         </li>
-                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="transaction-tab" data-toggle="tab" aria-expanded="false">Transactions List</a>
+                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="transaction-tab" data-toggle="tab" aria-expanded="false">@lang('product_3.show.tab_3.title')</a>
                         </li>
                     </ul>
                     <div id="myTabContent" class="tab-content">
@@ -55,24 +55,24 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="col-md-12">
-                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Warehouse Details</h2>
+                                            <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>@lang('product_3.show.tab_1.name')</h2>
                                         </div>
                                         <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                                            <h5>Warehouse Code</h5>
+                                            <h5>@lang('product_3.show.tab_1.code')</h5>
                                             @if($warehouses->code == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$warehouses->code}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Address</h5>
+                                            <h5>@lang('product_3.show.tab_1.address')</h5>
                                             @if($warehouses->address == null)
                                             <h5><b>-</b></h5>
                                             @else
                                             <h5><b>{{$warehouses->address}}</b></h5>
                                             @endif
                                             <br>
-                                            <h5>Description</h5>
+                                            <h5>@lang('product_3.show.tab_1.desc')</h5>
                                             @if($warehouses->desc == null)
                                             <h5><b>-</b></h5>
                                             @else
@@ -91,9 +91,9 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Product Name </th>
-                                                    <th class="column-title">Product Code </th>
-                                                    <th class="column-title">Quantity</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_2.col_1')</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_2.col_2')</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_2.col_3')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -120,10 +120,10 @@
                         <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="transaction-tab">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>View Transaction Report</h2>
+                                    <h2>@lang('product_3.show.tab_3.vtr')</h2>
                                     <ul class="nav navbar-right panel_toolbox">
                                         <li>
-                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">Transactions List
+                                            <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/other/transactions';">@lang('product_3.show.tab_3.trans_list_btn')
                                             </button>
                                         </li>
                                     </ul>
@@ -134,10 +134,10 @@
                                         <table class="table table-striped jambo_table bulk_action">
                                             <thead>
                                                 <tr class="headings">
-                                                    <th class="column-title">Transaction Number </th>
-                                                    <th class="column-title">Transaction Date </th>
-                                                    <th class="column-title">Number of Products</th>
-                                                    <th class="column-title">Created Date</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_3.col_1')</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_3.col_2')</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_3.col_3')</th>
+                                                    <th class="column-title">@lang('product_3.show.tab_3.col_4')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -356,5 +356,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouses/deleteForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouses/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

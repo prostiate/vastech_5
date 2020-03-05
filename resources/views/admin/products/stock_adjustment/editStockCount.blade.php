@@ -156,10 +156,10 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/updateFormStockCount.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCountAtEdit.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/product_data.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/updateFormStockCount.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCountAtEdit.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/product_data.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

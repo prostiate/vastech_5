@@ -43,7 +43,7 @@ class SaleQuoteController extends Controller
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;
@@ -72,7 +72,7 @@ class SaleQuoteController extends Controller
                     ->orderBy('name')
                     ->skip($offset)
                     ->take($resultCount)
-                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales']);
+                    ->get(['id', DB::raw('name as text'), 'code', 'other_unit_id', 'desc', 'sell_price', 'sell_tax', 'is_lock_sales', 'qty']);
 
                 $count = product::where('is_sell', 1)->count();
                 $endCount = $offset + $resultCount;

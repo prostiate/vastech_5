@@ -41,6 +41,10 @@
                         </li>
                         <li role="presentation" class=""><a href="#tab_content_production" role="tab" id="products-tab2" data-toggle="tab" aria-expanded="false">Production</a>
                         </li>
+                        @if(Auth::user()->company_id == 5)
+                        <li role="presentation" class=""><a href="#tab_content_request_ss_surabaya" role="tab" id="products-tab2" data-toggle="tab" aria-expanded="false">Laporan Sukses Surabaya</a>
+                        </li>
+                        @endif
                         <!--<li role="presentation" class=""><a href="#tab_content5" role="tab" id="assets-tab2" data-toggle="tab" aria-expanded="false">Assets</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content6" role="tab" id="bank-tab2" data-toggle="tab" aria-expanded="false">Bank</a>
@@ -513,6 +517,75 @@
                                             <h3 class="name">Sales Tax Reports</h3>
                                             <div class="divider"></div>
                                             <p>Showing summary of tax calculation with type adding used in your transactions.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="tab_content_request_ss_surabaya" aria-labelledby="delivery-tab">
+                            <a href="/reports/ss_surabaya/balance_sheet">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Balance Sheet</h3>
+                                            <div class="divider"></div>
+                                            <p>Lists what you own (assets), what your debts are (liabilities),
+                                                and what you've invested in your company (equity).</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/ss_surabaya/profit_loss">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Profit & Loss</h3>
+                                            <div class="divider"></div>
+                                            <p>Lists the individual transactions and totals for money you earned (income) and money you spent (expenses).</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/ss_surabaya/sales_list">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Sales List</h3>
+                                            <div class="divider"></div>
+                                            <p>Shows a chronological list of all your invoices, orders, quotes, and payments for a selected date range.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/ss_surabaya/sales_by_customer">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Sales by Customer</h3>
+                                            <div class="divider"></div>
+                                            <p>Lists the individual sales transactions for each customer, including dates, types, amounts, and totals.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/ss_surabaya/customer_balance">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Customer Balance</h3>
+                                            <div class="divider"></div>
+                                            <p>Lists unpaid invoices for each customer, including invoice date and number, due date, total, and amount owed to you (open balance).</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/reports/ss_surabaya/aged_payable">
+                                <div class="col-md-3 col-xs-12 widget widget_tally_box">
+                                    <div class="x_panel fixed_height_200">
+                                        <div class="x_content">
+                                            <h3 class="name">Aged Payable</h3>
+                                            <div class="divider"></div>
+                                            <p>This report gives summary of your account payables, showing each vendors you are owing to based on monthly basis, as well as a total amount over time.</p>
                                         </div>
                                     </div>
                                 </div>

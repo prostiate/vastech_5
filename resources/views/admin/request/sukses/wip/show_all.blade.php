@@ -7,7 +7,7 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">Surat Perintah Kerja History
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg">@lang('wip.show.spk_history')
                         </button>
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -15,10 +15,10 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Surat Perintah Kerja History</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Work In Progress #{{$wip->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang('wip.show.spk_history')</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang('wip.show.title'){{$wip->number}}</strong></h3>
                                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Surat Perintah Kerja History</a>
+                                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">@lang('wip.show.spk_history')</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -30,13 +30,13 @@
                                                         <table id="example" class="table table-striped jambo_table bulk_action">
                                                             <thead>
                                                                 <tr class="headings">
-                                                                    <th class="column-title">Transaction Date</th>
-                                                                    <th class="column-title">Number</th>
-                                                                    <th class="column-title">SPK Ref No</th>
-                                                                    <th class="column-title">Contact</th>
-                                                                    <th class="column-title">Warehouse</th>
-                                                                    <th class="column-title">Note</th>
-                                                                    <th class="column-title">Status</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_1')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_2')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_3')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_4')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_5')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_6')</th>
+                                                                    <th class="column-title">@lang('wip.show.table_2.col_7')</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="neworderbody">
@@ -71,14 +71,14 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang('wip.show.close')</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">View Journal Entry
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';" data-toggle="modal" data-target=".bs-example-modal-lg-2">@lang('wip.show.vje')
                         </button>
                         <div class="modal fade bs-example-modal-lg-2" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -86,18 +86,18 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="modal-title" id="myModalLabel">Journal Report</h5>
-                                        <h3 class="modal-title" id="myModalLabel"><strong>Work In Progress #{{$wip->number}}</strong></h3>
+                                        <h5 class="modal-title" id="myModalLabel">@lang('wip.show.vje_report')</h5>
+                                        <h3 class="modal-title" id="myModalLabel"><strong>@lang('wip.show.title'){{$wip->number}}</strong></h3>
                                     </div>
                                     <div class="modal-body">
                                         <div class="table-responsive my-5">
                                             <table id="example" class="table table-striped jambo_table bulk_action">
                                                 <thead>
                                                     <tr class="headings">
-                                                        <th class="column-title" style="width:200px">Account Number</th>
-                                                        <th class="column-title" style="width:250px">Account</th>
-                                                        <th class="column-title" style="width:150px">Debit</th>
-                                                        <th class="column-title" style="width:150px">Credit</th>
+                                                        <th class="column-title" style="width:200px">@lang('wip.show.table_3.col_1')</th>
+                                                        <th class="column-title" style="width:250px">@lang('wip.show.table_3.col_2')</th>
+                                                        <th class="column-title" style="width:150px">@lang('wip.show.table_3.col_3')</th>
+                                                        <th class="column-title" style="width:150px">@lang('wip.show.table_3.col_4')</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="neworderbody">
@@ -142,40 +142,40 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">@lang('wip.show.close')</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">@lang('wip.show.action.action_1')
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a target="_blank" href="/wip/print/PDF/{{$wip->id}}">Print & Preview</a></li>
+                            <li><a target="_blank" href="/wip/print/PDF/{{$wip->id}}">@lang('wip.show.action.action_2')</a></li>
                         </ul>
                     </li>
                 </ul>
-                <h3><b>Work In Progress #{{$wip->number}}</b></h3>
+                <h3><b>@lang('wip.show.title'){{$wip->number}}</b></h3>
                 <a>Status: </a>
                 @if($wip->status == 1)
-                <span class="label label-warning" style="color:white;">Open</span>
+                <span class="label label-warning" style="color:white;">@lang("status.open")</span>
                 @elseif($wip->status == 2)
-                <span class="label label-success" style="color:white;">Closed</span>
+                <span class="label label-success" style="color:white;">@lang("status.closed")</span>
                 @elseif($wip->status == 3)
-                <span class="label label-success" style="color:white;">Paid</span>
+                <span class="label label-success" style="color:white;">@lang("status.paid")</span>
                 @elseif($wip->status == 4)
-                <span class="label label-warning" style="color:white;">Partial</span>
+                <span class="label label-warning" style="color:white;">@lang("status.part")</span>
                 @elseif($wip->status == 5)
-                <span class="label label-danger" style="color:white;">Overdue</span>
+                <span class="label label-danger" style="color:white;">@lang("status.over")</span>
                 @elseif($wip->status == 6)
-                <span class="label label-success" style="color:white;">Sent</span>
+                <span class="label label-success" style="color:white;">@lang("status.sent")</span>
                 @elseif($wip->status == 7)
-                <span class="label label-success" style="color:white;">Active</span>
+                <span class="label label-success" style="color:white;">@lang("status.act")</span>
                 @elseif($wip->status == 8)
-                <span class="label label-success" style="color:white;">Sold</span>
+                <span class="label label-success" style="color:white;">@lang("status.sold")</span>
                 @elseif($wip->status == 9)
-                <span class="label label-success" style="color:white;">Disposed</span>
+                <span class="label label-success" style="color:white;">@lang("status.dis")</span>
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -185,13 +185,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.trans_no')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a>{{$wip->number}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.trans_date')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a>{{$wip->transaction_date}}</a></h5>
                                 </div>
@@ -201,13 +201,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.spk')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/spk/{{$wip->selected_spk_id}}">Surat Perintah Kerja #{{$wip->transaction_no_spk}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Contact</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.contact')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/contacts/{{$wip->contact_id}}">{{$wip->contact->display_name}}</a></h5>
                                 </div>
@@ -217,13 +217,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">SPK Ref No</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.ref_no')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/spk/{{$wip->selected_spk_id}}">{{$wip->spk->vendor_ref_no}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.warehouse')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$wip->warehouse_id}}">{{$wip->warehouse->name}}</a></h5>
                                 </div>
@@ -233,13 +233,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Product Name</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang('wip.show.product_name')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/products/{{$wip->result_product}}">{{$wip->product->name}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Product Qty</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('wip.show.product_qty')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a>{{$wip->result_qty}} {{$wip->product->other_unit->name}}</a></h5>
                                 </div>
@@ -249,13 +249,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Note</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang('wip.show.note')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a>{{$wip->desc}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">Production Method</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="memoForm" style="text-align: left;">@lang('wip.show.method')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a>@if($wip->production_method == 0) Material Per Product Qty @else Material For All Product Qty @endif</a></h5>
                                 </div>
@@ -266,7 +266,7 @@
                     <div class="form-group tiles"></div>
                     <br>
                     <div>
-                        <a>Note* : Below product material is used to make <strong><span class="text_product_qty">{{$wip->result_qty}}</span></strong> of <strong>{{$wip->product->name}}</strong></a>
+                        <a>@lang('wip.show.footnote.note_1')<strong><span class="text_product_qty">{{$wip->result_qty}}</span></strong>@lang('wip.show.spk_history')<strong>{{$wip->product->name}}</strong></a>
                     </div>
                     <br>
                     <div class="table-responsive my-5">
@@ -355,5 +355,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/deleteForm_all.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/deleteForm_all.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -15,6 +15,9 @@ class bill_quantities_detail_con extends Model implements Auditable
         'tenant_id',
         'company_id'
     ];
+    protected $casts = [
+        'qty' => 'float',
+    ];
 
     public function tenant()
     {

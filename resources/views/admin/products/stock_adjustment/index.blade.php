@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Stock Adjustment</h3>
+        <h3>@lang('product_2.index.title')</h3>
     </div>
 </div>
 @endsection
@@ -13,12 +13,12 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>List of Stock Adjustment</h2>
+                <h2>@lang('product_2.index.list_transaction')</h2>
                 @hasrole('Owner|Ultimate|Stock Adjustment')
                 @can('Create')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/stock_adjustment/new';">New Stock Adjustment
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/stock_adjustment/new';">@lang('product_2.index.new_btn')
                         </button>
                     </li>
                 </ul>
@@ -31,12 +31,12 @@
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">Transaction Date </th>
-                                <th class="column-title">Transaction No </th>
-                                <th class="column-title">Adjustment Type </th>
-                                <th class="column-title">Adjustment Account </th>
-                                <th class="column-title">Warehouse </th>
-                                <th class="column-title">Memo </th>
+                                <th class="column-title">@lang('product_2.index.table.col_1')</th>
+                                <th class="column-title">@lang('product_2.index.table.col_2')</th>
+                                <th class="column-title">@lang('product_2.index.table.col_3')</th>
+                                <th class="column-title">@lang('product_2.index.table.col_4')</th>
+                                <th class="column-title">@lang('product_2.index.table.col_5')</th>
+                                <th class="column-title">@lang('product_2.index.table.col_6')</th>
                             </tr>
                         </thead>
                     </table>
@@ -48,5 +48,5 @@
 @endsection
 
 @push('scripts')
-<<script src="{{ asset('js/products/stock_adjustment/dataTable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<<script src="{{ asset('js/products/stock_adjustment/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

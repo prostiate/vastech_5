@@ -32,7 +32,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Bill of Quantities Name *</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input class="form-control" type="text" name="name">
+                                    <input value="{{$header_bp->name}}" class="form-control" type="text" name="name">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -75,70 +75,70 @@
                                     <th class="column-title" style="width: 350px">Total Price</th>
                                     <th class="column-title" style="width: 50px"></th>
                                 </tr>
-                                <tbody class="neworderbody">
-                                    <tr class="head" hidden>
-                                        <td>
+                            <tbody class="neworderbody">
+                                <tr class="head" hidden>
+                                    <td>
                                         <input value="{{$item->id}}" type="text" name="budget_plan_detail_id[]" hidden>
                                         <input value="{{$item->duration}}" type="text" name="budget_plan_detail_duration[]" hidden>
                                         <input class="budget_plan_detail_price" value="{{$item->amount}}" type="text" name="budget_plan_detail_price[]" hidden>
-                                        <td>
-                                    </tr>
-                                    <tr class="initialtr">
-                                        <td>
-                                            <div class="form-group">
-                                                <select class="select_product form-control product_id" name="product[]">
-                                                    <option></option>
-                                                </select>
-                                                <input class="selected_product_id" hidden>
-                                                <input class="selected_product_unit" hidden>
-                                                <input class="tampungan_product_id" hidden>
-                                                <input class="tampungan_product_unit" hidden>
-                                            </div>
-                                            <input value="{{$item->id}}" type="text" name="item_budget_plan_id[]" class="item_budget_plan_id" hidden>
-                                            <input value="{{$item->offering_letter_detail_id}}" type="text" name="item_offering_letter_id[]" class="item_offering_letter_id" hidden>
-                                        </td>
-                                        <td>
-                                            <div class="form-group">
-                                                <select class="selectunit form-control unit" name="unit[]">
-                                                    @foreach($unit as $a)
-                                                    <option value="{{$a->id}}">
-                                                        {{$a->name}}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input onClick="this.select();" type="text" class="form-control qty" name="quantity[]" value="0">
-                                        </td>
-                                        <td>
-                                            <input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">
-                                            <input type="text" class="price_hidden" name="price[]" value="0" hidden>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control total_price_display" value="0" readonly>
-                                            <input type="text" class="total_price_hidden" name="total_price[]" value="0" hidden>
-                                        </td>
-                                        <td>
-                                            <input type="button" class="btn btn-dark add" value="+">
-                                        </td>
-                                    </tr>
-                                    <tr class="warning" hidden>
-                                        <td colspan="6" style="text-align: right">
-                                            <small><strong>Sub total cannot be more than the price that already assigned.</strong></small>
-                                        </td>
-                                    </tr>
-                                    <tr class="outputbody">
-                                        <td colspan="4" style="text-align: right">
-                                            <h4><strong>Sub Total</strong></h4>
-                                        </td>
-                                        <td colspan="2">
-                                            <input type="text" class="form-control sub_display" value="0" readonly>
-                                            <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                @endforeach
+                                    <td>
+                                </tr>
+                                <tr class="initialtr">
+                                    <td>
+                                        <div class="form-group">
+                                            <select class="select_product form-control product_id" name="product[]">
+                                                <option></option>
+                                            </select>
+                                            <input class="selected_product_id" hidden>
+                                            <input class="selected_product_unit" hidden>
+                                            <input class="tampungan_product_id" hidden>
+                                            <input class="tampungan_product_unit" hidden>
+                                        </div>
+                                        <input value="{{$item->id}}" type="text" name="item_budget_plan_id[]" class="item_budget_plan_id" hidden>
+                                        <input value="{{$item->offering_letter_detail_id}}" type="text" name="item_offering_letter_id[]" class="item_offering_letter_id" hidden>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <select class="selectunit form-control unit" name="unit[]">
+                                                @foreach($unit as $a)
+                                                <option value="{{$a->id}}">
+                                                    {{$a->name}}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input onClick="this.select();" type="text" class="form-control qty" name="quantity[]" value="0">
+                                    </td>
+                                    <td>
+                                        <input onClick="this.select();" type="text" class="form-control price_display" name="price_display[]" value="0">
+                                        <input type="text" class="price_hidden" name="price[]" value="0" hidden>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control total_price_display" value="0" readonly>
+                                        <input type="text" class="total_price_hidden" name="total_price[]" value="0" hidden>
+                                    </td>
+                                    <td>
+                                        <input type="button" class="btn btn-dark add" value="+">
+                                    </td>
+                                </tr>
+                                <tr class="warning" hidden>
+                                    <td colspan="6" style="text-align: right">
+                                        <small><strong>Sub total cannot be more than the price that already assigned.</strong></small>
+                                    </td>
+                                </tr>
+                                <tr class="outputbody">
+                                    <td colspan="4" style="text-align: right">
+                                        <h4><strong>Sub Total</strong></h4>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="text" class="form-control sub_display" value="0" readonly>
+                                        <input type="text" class="sub_hidden" name="subtotal[]" value="0" hidden>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            @endforeach
                             </tbody>
                             <tfoot hidden>
                                 <tr>
@@ -153,8 +153,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                    <div class="col-md-12 text-center">
+                        <div class="form-group">
                             <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan/{{$header_bp->id}}';">Cancel</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">Create</button>
@@ -169,8 +169,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/bill_quantities/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

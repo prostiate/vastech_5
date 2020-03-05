@@ -3,7 +3,7 @@
 @section('contentheader')
 <div class="page-title">
     <div class="title_left">
-        <h3>Warehouse Transfer</h3>
+        <h3>@lang('product_4.index.title')</h3>
     </div>
     <!--<div class="title_right">
         <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
@@ -23,12 +23,12 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>List of Warehouse Transfer</h2>
+                <h2>@lang('product_4.index.list_transaction')</h2>
                 @hasrole('Owner|Ultimate|Warehouse Transfer')
                 @can('Create')
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses_transfer/new';">New Transfer
+                        <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '/warehouses_transfer/new';">@lang('product_4.index.title')
                         </button>
                     </li>
                 </ul>
@@ -41,11 +41,11 @@
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">Transfer Date</th>
-                                <th class="column-title">Transfer No</th>
-                                <th class="column-title">From Warehouse</th>
-                                <th class="column-title">To Warehouse</th>
-                                <th class="column-title">Memo</th>
+                                <th class="column-title">@lang('product_4.index.table.col_1')</th>
+                                <th class="column-title">@lang('product_4.index.table.col_2')</th>
+                                <th class="column-title">@lang('product_4.index.table.col_3')</th>
+                                <th class="column-title">@lang('product_4.index.table.col_4')</th>
+                                <th class="column-title">@lang('product_4.index.table.col_5')</th>
                                 <!--<th class="column-title" style="width:90px">Action </th>-->
                             </tr>
                         </thead>
@@ -58,5 +58,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouse_transfer_list/dataTable.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouse_transfer_list/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -105,26 +105,23 @@ function selectProduct() {
         $(".selected_product_price").val(repo.sell_price);
         $(".selected_product_tax").val(repo.sell_tax);
         $(".selected_product_is_lock_sales").val(repo.is_lock_sales);
+        $(".selected_product_qty").val(repo.qty);
         if (repo.code) {
             return (
                 repo.code + " - " + repo.text || repo.code + " - " + repo.text
             );
         } else {
-            return (
-                repo.text || repo.text
-            );
+            return repo.text || repo.text;
         }
     }
 
     function formatResult(result) {
         //console.log('%o', result);
         if (result.loading) return result.text;
-        if(result.code){
+        if (result.code) {
             var html = "<a>" + result.code + " - " + result.text + "</a>";
-
-        }else{
+        } else {
             var html = "<a>" + result.text + "</a>";
-
         }
         //return html;
         return $(html);
@@ -170,26 +167,23 @@ function selectProduct2() {
         $(".selected_product_price").val(repo.sell_price);
         $(".selected_product_tax").val(repo.sell_tax);
         $(".selected_product_is_lock_sales").val(repo.is_lock_sales);
+        $(".selected_product_qty").val(repo.qty);
         if (repo.code) {
             return (
                 repo.code + " - " + repo.text || repo.code + " - " + repo.text
             );
         } else {
-            return (
-                repo.text || repo.text
-            );
+            return repo.text || repo.text;
         }
     }
 
     function formatResult(result) {
         //console.log('%o', result);
         if (result.loading) return result.text;
-        if(result.code){
+        if (result.code) {
             var html = "<a>" + result.code + " - " + result.text + "</a>";
-
-        }else{
+        } else {
             var html = "<a>" + result.text + "</a>";
-
         }
         //return html;
         return $(html);
@@ -385,17 +379,15 @@ $(document).ready(function() {
             var unit = $(".selected_product_unit").val();
             var price = $(".selected_product_price").val();
             var tax = $(".selected_product_tax").val();
-            var is_lock_sales = $(
-                ".selected_product_is_lock_sales"
-            ).val();
+            var is_lock_sales = $(".selected_product_is_lock_sales").val();
+            var product_qty = $(".selected_product_qty").val();
             tr.find(".tampungan_product_id").val(id);
             tr.find(".tampungan_product_desc").val(desc);
             tr.find(".tampungan_product_unit").val(unit);
             tr.find(".tampungan_product_price").val(price);
             tr.find(".tampungan_product_tax").val(tax);
-            tr.find(".tampungan_product_is_lock_sales").val(
-                is_lock_sales
-            );
+            tr.find(".tampungan_product_is_lock_sales").val(is_lock_sales);
+            tr.find(".tampungan_product_qty").val(product_qty);
             var tampungan_desc = tr.find(".tampungan_product_desc").val();
             var tampungan_unit = tr.find(".tampungan_product_unit").val();
             var tampungan_price = tr.find(".tampungan_product_price").val();

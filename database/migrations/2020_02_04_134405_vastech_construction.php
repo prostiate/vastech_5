@@ -606,7 +606,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->boolean('is_track')->default('1');
-            $table->boolean('is_bundle')->default('1');
+            $table->boolean('is_bundle')->default('0');
             $table->boolean('is_production_bundle')->default('0');
             $table->boolean('is_discount')->default('0');
             $table->boolean('is_lock_sales')->default('0');
@@ -1847,12 +1847,12 @@ class VastechConstruction extends Migration
             $table->decimal('taxtotal', 17, 2)->default('0');
             $table->decimal('balance_due', 17, 2)->default('0');
             $table->decimal('grandtotal', 17, 2)->default('0');
-            $table->unsignedBigInteger('selected_pq_id');
+            $table->unsignedBigInteger('selected_pq_id')->nullable();
             $table->foreign('selected_pq_id')
                 ->references('id')->on('purchase_quotes')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('selected_po_id');
+            $table->unsignedBigInteger('selected_po_id')->nullable();
             $table->foreign('selected_po_id')
                 ->references('id')->on('purchase_orders')
                 ->onDelete('cascade')

@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Create Contact</h2>
+                <h2>@lang('contact.create.title')</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -13,52 +13,52 @@
                     <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel">
                             <a class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                <h4 class="panel-title"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> General Information</h4>
+                                <h4 class="panel-title"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>@lang('contact.create.general')</h4>
                             </a>
                             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                 <div class="panel-body">
                                     <div id="demo-form2" class="form-horizontal form-label-left">
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="display_name"><span class="required">*</span> Display Name
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="display_name"><span class="required">@lang('contact.create.display_name')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Display Name" type="text" id="display_name" name="display_name" required="required" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_type"><span class="required">*</span> Contact Type
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_type"><span class="required">@lang('contact.create.contact_type.contact_type')
                                             </label>
                                             <div class="col-md-1 col-sm-1 col-xs-4">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" id="contact_type1" name="contact_type1" value="1"> Customer
+                                                        <input type="checkbox" id="contact_type1" name="contact_type1" value="1">@lang('contact.create.contact_type.contact_type_1')
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-md-1 col-sm-1 col-xs-4">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" id="contact_type2" name="contact_type2" value="1"> Vendor
+                                                        <input type="checkbox" id="contact_type2" name="contact_type2" value="1">@lang('contact.create.contact_type.contact_type_2')
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-md-1 col-sm-1 col-xs-4">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" id="contact_type3" name="contact_type3" value="1"> Employee
+                                                        <input type="checkbox" id="contact_type3" name="contact_type3" value="1">@lang('contact.create.contact_type.contact_type_3')
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-md-1 col-sm-1 col-xs-4">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" id="contact_type4" name="contact_type4" value="1"> Others
+                                                        <input type="checkbox" id="contact_type4" name="contact_type4" value="1">@lang('contact.create.contact_type.contact_type_4')
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="limit">Limit Balance
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="limit">@lang('contact.create.limit')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input onClick="this.select();" value="0" type="text" class="form-control col-md-7 col-xs-12 limit_balance_display">
@@ -80,7 +80,7 @@
                                         @endif
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_name">Contact Name
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact_name">@lang('contact.create.contact_name.contact_name')
                                             </label>
                                             <div class="col-lg-2 col-sm-2 col-xs-12">
                                                 <input placeholder="First Name" type="text" id="first_name" name="first_name" class="form-control col-md-7 col-xs-12">
@@ -93,14 +93,14 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="handphone">Handphone
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="handphone">@lang('contact.create.handphone')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Handphone" type="text" id="handphone" name="handphone" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="identity">Identity
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="identity">@lang('contact.create.identity')
                                             </label>
                                             <div class="col-md-3 col-sm-3 col-xs-12">
                                                 <select id="identity_type" name="identity_type" class="form-control col-md-7 col-xs-12 selectidenfitytype">
@@ -115,56 +115,56 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">@lang('contact.create.email')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Email" type="email" id="email" name="email" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="another_info">Another Info
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="another_info">@lang('contact.create.another_info')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Another Info" type="text" id="another_info" name="another_info" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="company_name">Company Name
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="company_name">@lang('contact.create.company_name')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Company Name" type="text" id="company_name" name="company_name" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone">Telephone
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone">@lang('contact.create.telephone')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Telephone" type="text" id="telephone" name="telephone" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fax">Fax
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fax">@lang('contact.create.fax')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Fax" type="text" id="fax" name="fax" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="npwp">NPWP
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="npwp">@lang('contact.create.npwp')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="(99.999.999.9-999.999)" type="text" id="npwp" name="npwp" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="billing_address">Billing Address
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="billing_address">@lang('contact.create.billing_address')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Billing Address" type="text" id="billing_address" name="billing_address" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shipping_address">Shipping Address
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="shipping_address">@lang('contact.create.shipping_address')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <input placeholder="Shipping Address" type="text" id="shipping_address" name="shipping_address" class="form-control col-md-7 col-xs-12">
@@ -220,13 +220,13 @@
                         </div>-->
                         <div class="panel">
                             <a class="panel-heading collapsed" role="tab" id="headingThree" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                <h4 class="panel-title"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Chart of Account</h4>
+                                <h4 class="panel-title"><span class="glyphicon glyphicon-book" aria-hidden="true"></span>@lang('contact.create.coa')</h4>
                             </a>
                             <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                                 <div class="panel-body">
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="account_receivable">Account Receivable
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="account_receivable">@lang('contact.create.ar')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <select class="form-control selectaccount" name="account_receivable">
@@ -240,7 +240,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="account_payable">Account Payable
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="account_payable">@lang('contact.create.ap')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <select class="form-control selectaccount" name="account_payable">
@@ -254,7 +254,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="default_payment_terms">Default Payment Terms
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="default_payment_terms">@lang('contact.create.term')
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <select class="form-control selectterm" name="default_term">
@@ -272,19 +272,19 @@
                             </div>
                         </div>
                         <br>
-                        <div class="col-md-3 center-margin">
+                        <div class="col-md-12 text-center">
                             <div class="form-group">
-                                <a href="{{ url('/contacts_all') }}" class="btn btn-danger">Cancel</a>
+                                <a href="{{ url('/contacts_all') }}" class="btn btn-danger">@lang('contact.create.cancel')</a>
                                 <div class="btn-group">
-                                    <button id="click" type="button" class="btn btn-success">Create </button>
+                                    <button id="click" type="button" class="btn btn-success">@lang('contact.create.create')</button>
                                     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                         <span class="caret"></span>
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a id="clicknew">Create & New </a>
+                                        <li><a id="clicknew">@lang('contact.create.create_new')</a>
                                         </li>
-                                        <li><a id="click">Create </a>
+                                        <li><a id="click">@lang('contact.create.create')</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -299,8 +299,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/contacts/createForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/contacts/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 <script>
     function inputMasking() {
         Inputmask.extendAliases({

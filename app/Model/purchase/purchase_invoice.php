@@ -49,7 +49,7 @@ class purchase_invoice extends Model implements Auditable
 
     public function purchase_invoice_item()
     {
-        return $this->hasMany('App\Model\purchase\purchase_invoice_item');
+        return $this->hasMany('App\Model\purchase\purchase_invoice_item', 'purchase_invoice_id');
     }
 
     public function status()

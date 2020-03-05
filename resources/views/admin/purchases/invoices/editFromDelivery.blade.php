@@ -16,7 +16,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Transaction No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$pi->number}}" type="text" class="form-control"name="trans_no" readonly>
+                                    <input value="{{$pi->number}}" type="text" class="form-control" name="trans_no" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -35,7 +35,7 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Vendor Ref No</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$pi->vendor_ref_no}}" type="text" class="form-control"name="vendor_no">
+                                    <input value="{{$pi->vendor_ref_no}}" type="text" class="form-control" name="vendor_no">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -124,7 +124,7 @@
                                 </tr>
                             </thead>
                             <tbody class="neworderbody">
-                            @foreach ($pi_item as $product)
+                                @foreach ($pi_item as $product)
                                 <tr>
                                     <td>
                                         <div class="form-group">
@@ -228,7 +228,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
                             <a href="{{ url('/purchases_invoice') }}" class="btn btn-danger">Cancel</a>
                             <div class="btn-group">
@@ -245,9 +245,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/purchases/invoices/updateFormFromDelivery.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/invoices/updateFormFromDelivery.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

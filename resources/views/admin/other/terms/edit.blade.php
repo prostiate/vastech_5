@@ -27,7 +27,7 @@
                         </div>
                         <div class="ln_solid"></div>
                     </div>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
                             <button class="btn btn-dark" type="button" onclick="window.location.href = '/other/terms/' + {{$term->id}};">Cancel
                             </button>
@@ -46,7 +46,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/otherlists/terms/updateForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/otherlists/terms/updateForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

@@ -5,7 +5,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Create Stock Adjustment</h2>
+                <h2>@lang('product_2.create_2.title')</h2>
                 <!--<ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" onclick="window.location.href = '#';">Preview Stock card PDF
@@ -24,14 +24,14 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Adjustment Type</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.type_1')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>@if($adtype == 1) Stock Count @else Stock In / Out @endif</h5>
+                                    <h5>@if($adtype == 1) @lang('product_2.create_2.type_2') @else @lang('product_2.create_2.type_3') @endif</h5>
                                     <input hidden type="text" name="type" value="{{$adtype}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Adjustment Date</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.adjust_date')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <input value="{{$today}}" type="text" class="form-control" name="trans_date" id="datepicker1">
                                 </div>
@@ -41,7 +41,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Category</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.category')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select id="adjustment_category" name="adjustment_category" class="form-control col-md-7 col-xs-12 selectadjustmentcategory">
                                         <option value="General" @if($adcat=='General' ) selected @endif>General</option>
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Warehouse</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.warehouse')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5><a href="/warehouses/{{$warehouses->id}}">{{$warehouses->name}}</a></h5>
                                     <input type="text" name="warehouse" value="{{$warehouses->id}}" hidden>
@@ -63,7 +63,7 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Account</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.account')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <select class="form-control selectaccount" name="account">
                                         @foreach($accounts as $a)
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">Memo</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('product_2.create_2.memo')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <textarea rows="4" class="form-control" name="memo"></textarea>
                                 </div>
@@ -89,11 +89,11 @@
                         <table id="example" class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width:500px">Product Name</th>
-                                    <th class="column-title" style="width:200px">Product Code</th>
-                                    <th class="column-title" style="width:200px">Recorded Quantity</th>
-                                    <th class="column-title" style="width:200px">Actual Quantity</th>
-                                    <th class="column-title" style="width:200px">Average Price</th>
+                                    <th class="column-title" style="width:500px">@lang('product_2.create_2.table.col_1')</th>
+                                    <th class="column-title" style="width:200px">@lang('product_2.create_2.table.col_2')</th>
+                                    <th class="column-title" style="width:200px">@lang('product_2.create_2.table.col_3')</th>
+                                    <th class="column-title" style="width:200px">@lang('product_2.create_2.table.col_4')</th>
+                                    <th class="column-title" style="width:200px">@lang('product_2.create_2.table.col_5')</th>
                                     <th class="column-title" style="width:50px"></th>
                                 </tr>
                             </thead>
@@ -128,14 +128,14 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <input type="button" class="btn btn-dark add-item" value="+ Add More Item">
+                        <input type="button" class="btn btn-dark add-item" value="@lang('product_2.create_2.more')">
                     </div>
                     <br>
-                    <div class="col-md-2 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
-                            <a href="{{ url('/stock_adjustment/new') }}" class="btn btn-danger">Back</a>
+                            <a href="{{ url('/stock_adjustment/new') }}" class="btn btn-danger">@lang('product_2.create_2.back')</a>
                             <div class="btn-group">
-                                <button id="click" type="button" class="btn btn-success">Create</button>
+                                <button id="click" type="button" class="btn btn-success">@lang('product_2.create_2.create')</button>
                             </div>
                         </div>
                     </div>
@@ -152,9 +152,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/createFormStockCount.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/addmoreitemStockCount.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/products/stock_adjustment/category_to_account.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

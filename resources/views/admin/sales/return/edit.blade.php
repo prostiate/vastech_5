@@ -250,7 +250,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="col-md-3 center-margin">
+                    <div class="col-md-12 text-center">
                         <div class="form-group">
                             <a href="{{ url('/sales_return/'.$header->id) }}" class="btn btn-danger">Cancel</a>
                             <div class="btn-group">
@@ -267,8 +267,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/sales/return/updateForm.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/sales/return/addmoreitem.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200302-1755') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{asset('js/sales/return/updateForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/sales/return/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

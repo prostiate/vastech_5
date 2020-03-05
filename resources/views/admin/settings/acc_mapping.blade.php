@@ -47,7 +47,7 @@
                 <a class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     <h4 class="panel-title">Sales</h4>
                 </a>
-                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true" style="">
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true">
                     <div class="panel-body">
                         <div class="col-md-6 form-group">
                             <div class="col-md-12 form-group">
@@ -337,5 +337,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/setting/updateForm_account.js?v=5-20200302-1755') }}" charset="utf-8"></script>
+<script src="{{ asset('js/setting/updateForm_account.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush
