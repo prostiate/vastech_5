@@ -2,7 +2,7 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[0, "desc"], [3, "desc"]],
+        aaSorting: [[0, "desc"], [3, "asc"]],
         ajax: {
             url: "/sales_delivery"
         },

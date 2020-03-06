@@ -4,74 +4,39 @@ $(document).ready(function() {
         serverSide: true,
         aaSorting: [[0, 'asc']],
         ajax: {
-            url: "/other/units"
+            url: "/other/audits"
         },
         columns: [
             {
-                data: "name",
-                name: "name",
-                render:function(data, type, row){
-                    return '<a href="/other/units/' + row.id + '">' + row.name + '</a>'
-                },
-            },
+                data: "user_id",
+                name: "user_id",
+            }
+            ,
             {
-                data: "action",
-                name: "action",
-                orderable: false,
-                searchable: false
+                data: "event",
+                name: "event",
+            }
+            ,
+            {
+                data: "auditable_type",
+                name: "auditable_type",
+            }
+            ,
+            {
+                data: "old_values",
+                name: "old_values",
+            }
+            ,
+            {
+                data: "new_values",
+                name: "new_values",
+            }
+            ,
+            {
+                data: "ip_address",
+                name: "ip_address",
             }
         ]
     });
 
-    var user_id;
-
-    $(document).on('click', '.delete', function() {
-        user_id = $(this).attr('id');
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.value) {
-                $.ajax({
-                    url: "/other/units/delete/" + user_id,
-                    success: function(data) {
-                        var html = "";
-                        var typeswal = "";
-                        var titleswal = "";
-                        if (data.errors) {
-                            typeswal = "error";
-                            titleswal = "Oops...";
-                            html = data.errors;
-                        }
-                        if (data.success) {
-                            typeswal = "success";
-                            titleswal = "Success...";
-                            html = data.success;
-                            $('#dataTable').DataTable().ajax.reload();
-                        }
-                        Swal.fire({
-                            type: typeswal,
-                            title: titleswal,
-                            html: html
-                        });
-                    }
-                })
-                Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                )
-            }
-        })
-    });
-
-    $(document).on('click', '.edit', function() {
-        user_id = $(this).attr('id');
-        window.location.href = '/other/units/edit/' + user_id;
-    });
 });

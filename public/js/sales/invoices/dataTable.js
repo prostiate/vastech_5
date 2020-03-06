@@ -2,7 +2,7 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[6, "asc"], [0, "desc"]],
+        aaSorting: [[0, "desc"], [7, "asc"]],
         ajax: {
             url: "/sales_invoice"
         },

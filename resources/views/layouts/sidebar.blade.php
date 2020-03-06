@@ -81,13 +81,20 @@
             <div class="menu_section">
                 <h3>Construction</h3>
                 <ul class="nav side-menu">
+                    <li><a href="/construction/project"><i class="fa fa-close"></i> @lang("sidebar.cp") </a></li>
+                    <li><a href="/construction/budget_plan"><i class="fa fa-close"></i> @lang("sidebar.bp") </a></li>
+                </ul>
+            </div>
+            <!--<div class="menu_section">
+                <h3>Construction</h3>
+                <ul class="nav side-menu">
                     <li><a href="/construction/offering_letter"><i class="fa fa-close"></i> @lang("sidebar.ofl") </a></li>
                     <li><a href="/construction/budget_plan"><i class="fa fa-close"></i> @lang("sidebar.bp") </a></li>
                     <li><a href="/construction/bill_quantities"><i class="fa fa-close"></i> @lang("sidebar.bq") </a></li>
                     <li><a href="/construction/form_order"><i class="fa fa-close"></i> @lang("sidebar.fo") </a></li>
                     <li><a href="/construction/progress"><i class="fa fa-close"></i> @lang("sidebar.pro") </a></li>
                 </ul>
-            </div>
+            </div>-->
             @endif
             <div class="menu_section">
 

@@ -32,6 +32,7 @@ return [
 	'caba' => 'Cash & Bank',
 	'asset' => 'Assets Management',
 	'coa' => 'Chart of Accounts',
+	'cp' => 'Project',
 	'ofl' => 'Offering Letter',
 	'bp' => 'Budget Plan',
 	'bq' => 'Bill of Quantities',

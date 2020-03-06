@@ -3221,7 +3221,137 @@ class VastechConstruction extends Migration
             $table->softDeletes();
         });
         //*** START CONSTRUCTION
-        Schema::create('offering_letter_cons', function (Blueprint $table) {
+        Schema::create('project_cons', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->string('number');
+            $table->string('name');
+            $table->unsignedBigInteger('status');
+            $table->foreign('status')
+                ->references('id')->on('other_statuses')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('budget_plan_cons', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('project_id');
+            $table->foreign('project_id')
+                ->references('id')->on('project_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->string('number');
+            $table->text('address');
+            $table->string('date');
+            $table->boolean('is_approved')->default('0');
+            $table->decimal('grandtotal', 17, 2)->default('0');
+            $table->unsignedBigInteger('status');
+            $table->foreign('status')
+                ->references('id')->on('other_statuses')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('budget_plan_area_cons', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('budget_plan_id');
+            $table->foreign('budget_plan_id')
+                ->references('id')->on('budget_plan_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('budget_plan_detail_cons', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->foreign('tenant_id')
+                ->references('id')->on('tenants')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreign('company_id')
+                ->references('id')->on('companies')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('budget_plan_area_id');
+            $table->foreign('budget_plan_area_id')
+                ->references('id')->on('budget_plan_area_cons')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')
+                ->references('id')->on('products')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('unit_id');
+            $table->foreign('unit_id')
+                ->references('id')->on('other_units')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->double('qty', 20, 6)->default('0');
+            $table->decimal('amount', 17, 2)->default('0');
+            $table->decimal('amounttotal', 17, 2)->default('0');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        /*Schema::create('offering_letter_cons', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
             $table->unsignedBigInteger('tenant_id')->nullable();
             $table->foreign('tenant_id')
@@ -3615,6 +3745,7 @@ class VastechConstruction extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        */
         //*** END CONSTRUCTION
     }
 
@@ -3695,15 +3826,16 @@ class VastechConstruction extends Migration
         Schema::dropIfExists('sale_payment_items');
         Schema::dropIfExists('sale_returns');
         Schema::dropIfExists('sale_return_items');
-        Schema::dropIfExists('offering_letter_cons');
-        Schema::dropIfExists('offering_letter_detail_cons');
+        Schema::dropIfExists('project_cons');
+        //Schema::dropIfExists('offering_letter_cons');
+        //Schema::dropIfExists('offering_letter_detail_cons');
         Schema::dropIfExists('budget_plan_cons');
         Schema::dropIfExists('budget_plan_detail_cons');
-        Schema::dropIfExists('bill_quantities_cons');
-        Schema::dropIfExists('bill_quantities_detail_cons');
-        Schema::dropIfExists('form_order_cons');
-        Schema::dropIfExists('form_order_detail_cons');
-        Schema::dropIfExists('progress_cons');
-        Schema::dropIfExists('progress_detail_cons');
+        //Schema::dropIfExists('bill_quantities_cons');
+        //Schema::dropIfExists('bill_quantities_detail_cons');
+        //Schema::dropIfExists('form_order_cons');
+        //Schema::dropIfExists('form_order_detail_cons');
+        //Schema::dropIfExists('progress_cons');
+        //Schema::dropIfExists('progress_detail_cons');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class budget_plan_con extends Model implements Auditable
+class budget_plan_area_con extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
@@ -14,7 +14,6 @@ class budget_plan_con extends Model implements Auditable
     protected $auditExclude = [
         'tenant_id',
         'company_id',
-        'status'
     ];
 
     public function tenant()
@@ -32,13 +31,13 @@ class budget_plan_con extends Model implements Auditable
         return $this->belongsTo('App\User');
     }
 
-    public function project()
+    public function budget_plan()
     {
-        return $this->belongsTo('App\Model\construction\project_con', 'project_id');
+        return $this->belongsTo('App\Model\construction\budget_plan_con', 'budget_plan_id');
     }
 
-    public function budget_plan_area()
+    public function budget_plan_detail()
     {
-        return $this->hasMany('App\Model\construction\budget_plan_area_con', 'budget_plan_id');
+        return $this->hasMany('App\Model\construction\budget_plan_detail_con', 'budget_plan_area_id');
     }
 }

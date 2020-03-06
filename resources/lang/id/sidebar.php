@@ -32,6 +32,7 @@ return [
 	'caba' => 'Kas & Bank',
 	'asset' => 'Manajemen Aset',
 	'coa' => 'Chart of Accounts',
+	'cp' => 'Project',
 	'ofl' => 'Surat Penawaran',
 	'bp' => 'Rencana Anggaran Biaya',
 	'bq' => 'Daftar Kuantitas',

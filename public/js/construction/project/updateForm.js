@@ -6,17 +6,18 @@ $.ajaxSetup({
 $(document).ready(function() {
     $("#click").click(function() {
         event.preventDefault();
-        $("#click").prop("disabled", true);
-        $("#click").html("Processing");
+        $('#click').prop('disabled', true);
+        $('#click').html('Processing');
         var form = document.getElementById("formCreate");
         $.ajax({
-            url: "/construction/budget_plan/newBP",
+            url: "/construction/form_order/updateOL",
             method: "POST",
             data: new FormData(form),
             contentType: false,
             cache: false,
             processData: false,
             dataType: "json",
+            timeout: 5000,
             success: function(data) {
                 var html = "";
                 var typeswal = "";
@@ -27,15 +28,14 @@ $(document).ready(function() {
                     for (var count = 0; count < data.errors.length; count++) {
                         html += data.errors[count];
                     }
-                    $("#click").prop("disabled", false);
-                    $("#click").html("Create");
+                    $('#click').prop('disabled', false);
+                    $('#click').html('Update');
                 }
                 if (data.success) {
                     typeswal = "success";
                     titleswal = "Success...";
                     html = data.success;
-                    window.location.href =
-                        "/construction/budget_plan/new/area_id=" + data.id;
+                    window.location.href = "/construction/form_order/" + data.id;
                 }
                 Swal.fire({
                     type: typeswal,

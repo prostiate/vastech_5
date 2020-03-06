@@ -2,7 +2,7 @@ $(document).ready(function() {
     $("#dataTable").DataTable({
         processing: true,
         serverSide: true,
-        aaSorting: [[5, "desc"], [0, "desc"]],
+        aaSorting: [[0, "desc"], [5, "asc"]],
         ajax: {
             url: "/sales_quote"
         },

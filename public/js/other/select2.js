@@ -19,6 +19,11 @@ $(document).ready(function() {
         placeholder: "Select Contact"
     });
 
+    $(".selectproject").select2({
+        width: "100%",
+        placeholder: "Select Project"
+    });
+
     $(".selectstatus").select2({
         width: "100%",
         placeholder: "Select Status"

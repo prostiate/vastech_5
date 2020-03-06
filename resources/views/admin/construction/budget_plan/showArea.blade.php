@@ -17,7 +17,7 @@
                     </li>
                 </ul>
                 <h3>
-                    <b>@lang('construction.show_bp.title'){{$header->number}}</b>
+                    <b>@lang('construction.show_bp_area.title'){{$header->number}}</b>
                 </h3>
                 <a>Status: </a>
                 @if($header->is_approved == 1)
@@ -34,13 +34,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp.number')</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp_area.number')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$header->number}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp.date')</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp_area.date')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$header->date}}</h5>
                                 </div>
@@ -50,13 +50,13 @@
                     <div class="form-group">
                         <div class="form-horizontal form-label-left">
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp.project_name')</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp_area.project_name')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$header->project->name}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp.address')</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.show_bp_area.address')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                     <h5>{{$header->address}}</h5>
                                 </div>
@@ -68,30 +68,18 @@
                         <table class="table table-striped jambo_table bulk_action">
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title" style="width: 350px">@lang('construction.show_bp.table.col_1')</th>
-                                    <th class="column-title" style="width: 150px">@lang('construction.show_bp.table.col_2')</th>
-                                    <th class="column-title" style="width: 150px">@lang('construction.show_bp.table.col_3')</th>
-                                    <th class="column-title text-center" style="width: 350px">@lang('construction.show_bp.table.col_4')</th>
-                                    <th class="column-title text-center" style="width: 350px">@lang('construction.show_bp.table.col_5')</th>
+                                    <th class="column-title text-center" style="width: 350px">@lang('construction.show_bp_area.table.col_1')</th>
+                                    <th class="column-title" style="width: 50px"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($header->budget_plan_detail as $item)
+                                @foreach($header->budget_plan_area as $item)
                                 <tr>
-                                    <td>
-                                        <h5><a href="/products/{{$item->product_id}}">{{$item->product->name}}</a></h5>
-                                    </td>
-                                    <td>
-                                        <h5>{{$item->unit->name}}</h5>
-                                    </td>
-                                    <td>
-                                        <h5>{{$item->qty}}</h5>
+                                    <td class="text-center">
+                                        <h5>{{$item->name}}</h5>
                                     </td>
                                     <td class="text-center">
-                                        <h5><?php echo 'Rp ' . number_format($item->amount, 2, ',', '.') ?></h5>
-                                    </td>
-                                    <td class="text-center">
-                                        <h5><?php echo 'Rp ' . number_format($item->amounttotal, 2, ',', '.') ?></h5>
+                                        <a href="/construction/budget_plan/new/area_id={{$item->id}}" class="btn btn-dark">@lang('construction.show_bp_area.table.col_2')</a>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -99,13 +87,13 @@
                         </table>
                     </div>
                     @if($header->is_approved == 0)
-                    <div class="form-group" style="text-align: center">
+                    <div class="form-group text-center">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <input value="{{$header->id}}" type="text" id="form_id" hidden>
-                            <button type="button" class="btn btn-danger" id="clickDelete">@lang('construction.show_bp.delete')</button>
-                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan';">@lang('construction.show_bp.cancel')</button>
+                            <button type="button" class="btn btn-danger" id="clickDelete">@lang('construction.show_bp_area.delete')</button>
+                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan';">@lang('construction.show_bp_area.cancel')</button>
                             <div class="btn-group">
-                                <button class="btn btn-success" type="button" onclick="window.location.href = '/construction/budget_plan/edit/{{$header->id}}';">@lang('construction.show_bp.edit')</button>
+                                <button class="btn btn-success" type="button" onclick="window.location.href = '/construction/budget_plan/editArea/{{$header->id}}';">@lang('construction.show_bp_area.edit')</button>
                             </div>
                         </div>
                     </div>
@@ -119,5 +107,5 @@
 
 @push('scripts')
 <script src="{{asset('js/construction/budget_plans/approval.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/deleteFormArea.js?v=5-20200305-1546') }}" charset="utf-8"></script>
 @endpush

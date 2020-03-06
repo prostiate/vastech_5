@@ -747,7 +747,33 @@ Route::group(['middleware' => 'auth'], function () {
     ##############################################################
     ######################## CONSTRUCTION ########################
     ##############################################################
-    Route::get('/construction/offering_letter',                                         'ConOfferingLetterController@index');
+    Route::get('/construction/project',                                                 'ConProjectController@index');
+    Route::get('/construction/project/new',                                             'ConProjectController@create');
+    Route::post('/construction/project/newPR',                                          'ConProjectController@store');
+    Route::get('/construction/project/{id}',                                            'ConProjectController@show');
+    Route::get('/construction/project/edit/{id}',                                       'ConProjectController@edit');
+    Route::post('/construction/project/updatePR',                                       'ConProjectController@update');
+    Route::get('/construction/project/delete/{id}',                                     'ConProjectController@destroy');
+    Route::post('/construction/project/approval={id}',                                  'ConProjectController@approval');
+    Route::get('/construction/print/PDF/{id}',                                          'ConProjectController@cetak_pdf');
+
+    Route::get('/construction/budget_plan',                                             'ConBudgetPlanController@index');
+    Route::get('/construction/budget_plan/newArea/project_id={id}',                     'ConBudgetPlanController@createArea');
+    Route::get('/construction/budget_plan/new/area_id={id}',                            'ConBudgetPlanController@create');
+    Route::post('/construction/budget_plan/newBPArea',                                  'ConBudgetPlanController@storeArea');
+    Route::post('/construction/budget_plan/newBP',                                      'ConBudgetPlanController@store');
+    Route::get('/construction/budget_plan/area/{id}',                                   'ConBudgetPlanController@showArea');
+    Route::get('/construction/budget_plan/{id}',                                        'ConBudgetPlanController@show');
+    Route::get('/construction/budget_plan/editArea/{id}',                               'ConBudgetPlanController@editArea');
+    Route::get('/construction/budget_plan/edit/{id}',                                   'ConBudgetPlanController@edit');
+    Route::post('/construction/budget_plan/updateBPArea',                               'ConBudgetPlanController@updateArea');
+    Route::post('/construction/budget_plan/updateBP',                                   'ConBudgetPlanController@update');
+    Route::get('/construction/budget_plan/deleteArea/{id}',                             'ConBudgetPlanController@destroyArea');
+    Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
+    Route::post('/construction/budget_plan/approval={id}',                              'ConBudgetPlanController@approval');
+    Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
+    
+    /*Route::get('/construction/offering_letter',                                         'ConOfferingLetterController@index');
     Route::get('/construction/offering_letter/new',                                     'ConOfferingLetterController@create');
     Route::post('/construction/offering_letter/newOL',                                  'ConOfferingLetterController@store');
     Route::get('/construction/offering_letter/{id}',                                    'ConOfferingLetterController@show');
@@ -796,7 +822,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/construction/progress/updatePR',                                      'ConProgressController@update');
     Route::get('/construction/progress/delete/{id}',                                    'ConProgressController@destroy');
     Route::post('/construction/progress/approval={id}',                                 'ConProgressController@approval');
-    Route::get('/construction/print/PDF/{id}',                                          'ConProgressController@cetak_pdf');
+    Route::get('/construction/print/PDF/{id}',                                          'ConProgressController@cetak_pdf');*/
     ##############################################################
     ######################## CONSTRUCTION ########################
     ##############################################################
