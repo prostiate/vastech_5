@@ -49,8 +49,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 <script>
     function next() {
         var vendor_name = document.getElementById('vendor_name');

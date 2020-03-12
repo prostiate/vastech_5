@@ -7,12 +7,13 @@
             <div class="x_title">
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
-                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">Actions
+                        <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false">@lang('construction.show_bp_area.action.action')
                         </button>
                         <ul role="menu" class="dropdown-menu">
-                            <li><a id="click" href="">Approve this</a></li>
+                            <li><a id="{{$header->id}}" onclick="modalSelectedArea(this.id);">@lang('construction.show_bp_area.action.col_5')</a></li>
+                            <li><a id="clickApprove">@lang('construction.show_bp_area.action.col_4')</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Archive</a></li>
+                            <li><a id="clickArchive">@lang('construction.show_bp_area.action.col_3')</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -66,24 +67,104 @@
                     <div class="ln_solid"></div>
                     <div class="table-responsive">
                         <table class="table table-striped jambo_table bulk_action">
+                            <div class="modal fade modal_selected_area" id="modal_selected_area" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                            </button>
+                                            <h3 class="modal-title" id="myModalLabel"><strong><span id="span_title"></span></strong></h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-horizontal form-label-left">
+                                                <div class="form-group row">
+                                                    <label>@lang('construction.index_project.name')</label>
+                                                    <input type="text" id="input_id_selected_area" name="input_id_selected_area">
+                                                    <input type="text" id="input_id_budget_plan" name="input_id_budget_plan">
+                                                    <input type="text" id="input_name_selected_area" name="input_name_selected_area" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-dismiss="modal">@lang('construction.show_bp_area.close')</button>
+                                            <button type="button" class="btn btn-primary" id="clickExecute"><span id="span_execute"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @foreach($header->budget_plan_area as $item)
                             <thead>
                                 <tr class="headings">
-                                    <th class="column-title text-center" style="width: 350px">@lang('construction.show_bp_area.table.col_1')</th>
-                                    <th class="column-title" style="width: 50px"></th>
+                                    <th colspan="4" class="column-title text-center">
+                                        <h4><a href="/construction/budget_plan/new/area_id={{$item->id}}" style="color:whitesmoke;border-bottom: 1px dotted white;">{{$item->name}}</a></h4>
+                                    </th>
+                                    <th class="column-title text-center">
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            @if($item->budget_plan_detail->count() > 0)
+                                            <li><a href='/construction/budget_plan/new/area_id={{$item->id}}' class="btn btn-dark">
+                                                    @lang('construction.show_bp_area.table.col_3')
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
+                                                </button>
+                                                <ul role="menu" class="dropdown-menu">
+                                                    <li><a id="{{$item->id}}" name="{{$item->name}}" onclick="modalSelectedArea(this.id, this.name);">@lang('construction.show_bp_area.action.col_1')</a></li>
+                                                    <li class="divider"></li>
+                                                    <li><a id="{{$item->id}}" onclick="emptySelectedArea(this.id);">@lang('construction.show_bp_area.action.col_6')</a></li>
+                                                </ul>
+                                            </li>
+                                            @else
+                                            <li><a href='/construction/budget_plan/new/area_id={{$item->id}}' class="btn btn-dark">
+                                                    @lang('construction.show_bp_area.table.col_2')
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button data-toggle="dropdown" class="btn btn-dark dropdown-toggle" type="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
+                                                </button>
+                                                <ul role="menu" class="dropdown-menu">
+                                                    <li><a id="{{$item->id}}" name="{{$item->name}}" onclick="modalSelectedArea(this.id, this.name);">@lang('construction.show_bp_area.action.col_1')</a></li>
+                                                    <li class="divider"></li>
+                                                    <li><a id="clickDeleteSelectedArea" value="{{$item->id}}">@lang('construction.show_bp_area.action.col_2')</a></li>
+                                                </ul>
+                                            </li>
+                                            @endif
+                                        </ul>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($header->budget_plan_area as $item)
                                 <tr>
-                                    <td class="text-center">
-                                        <h5>{{$item->name}}</h5>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="/construction/budget_plan/new/area_id={{$item->id}}" class="btn btn-dark">@lang('construction.show_bp_area.table.col_2')</a>
-                                    </td>
+                                    <th class="text-center" style="width: 350px">@lang('construction.create_bp.table.col_1')</th>
+                                    <th class="text-center" style="width: 350px">@lang('construction.create_bp.table.col_2')</th>
+                                    <th class="text-center" style="width: 350px">@lang('construction.create_bp.table.col_3')</th>
+                                    <th class="text-center" style="width: 350px">@lang('construction.create_bp.table.col_4')</th>
+                                    <th class="text-center" style="width: 350px">@lang('construction.create_bp.table.col_5')</th>
+                                </tr>
+                                @if($item->budget_plan_detail->count() > 0)
+                                <?php $subtotal = 0; ?>
+                                @foreach($item->budget_plan_detail as $item2)
+                                <tr>
+                                    <td class="text-center"><a href="/products/{{$item2->product_id}}">{{$item2->product->name}}</a></td>
+                                    <td class="text-center"><a href="/other/units/{{$item2->unit_id}}">{{$item2->unit->name}}</a></td>
+                                    <td class="text-center">{{$item2->qty}}</td>
+                                    <td class="text-center"><?php echo 'Rp ' . number_format($item2->amount, 2, ',', '.') ?></td>
+                                    <td class="text-center"><?php echo 'Rp ' . number_format($item2->amounttotal, 2, ',', '.') ?></td>
+                                    <?php $subtotal += $item2->amounttotal; ?>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td class="text-center"><strong>@lang('construction.create_bp.table.col_6')</strong></td>
+                                    <td class="text-center"><strong><?php echo 'Rp ' . number_format($subtotal, 2, ',', '.') ?></strong></td>
+                                </tr>
+                                @else
+                                <tr>
+                                    <td colspan="5" class="text-center">Data is not available.</td>
+                                </tr>
+                                @endif
                             </tbody>
+                            @endforeach
                         </table>
                     </div>
                     @if($header->is_approved == 0)
@@ -106,6 +187,23 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/approval.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/deleteFormArea.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/showAreaForm.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script>
+    function modalSelectedArea(id, name) {
+        $("#modal_selected_area").modal("show");
+        if (name) {
+            $("#input_id_selected_area").val(id);
+            $("#input_name_selected_area").val(name);
+            $("#input_id_budget_plan").val('');
+            $("#span_title").html("@lang('construction.show_bp_area.span_title2')");
+            $("#span_execute").html("@lang('construction.show_bp_area.update')");
+        } else {
+            $("#input_id_selected_area").val('');
+            $("#input_name_selected_area").val('');
+            $("#input_id_budget_plan").val(id);
+            $("#span_title").html("@lang('construction.show_bp_area.span_title1')");
+            $("#span_execute").html("@lang('construction.show_bp_area.add')");
+        }
+    };
+</script>
 @endpush

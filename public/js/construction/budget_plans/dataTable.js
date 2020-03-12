@@ -8,10 +8,12 @@ $(document).ready(function() {
         },
         columns: [
             {
-                data: "project",
+                data: "project_id",
                 render: function(data, type, row) {
                     return (
-                        '<a href="/construction/project>' +
+                        '<a href="/construction/budget_plan/area/' +
+                        row.id +
+                        '">' +
                         row.project.name +
                         "</a>"
                     );

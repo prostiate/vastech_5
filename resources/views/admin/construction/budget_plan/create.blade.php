@@ -16,13 +16,13 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.create_bp.number')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$header_area->budget_plan->number}}" class="form-control" type="text" name="trans_no" disabled>
+                                    <h5>{{$header_area->budget_plan->number}}</h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.create_bp.date')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$header_area->budget_plan->date}}" type="text" class="form-control" name="date" id="datepicker1">
+                                    <h5>{{$header_area->budget_plan->date}}</h5>
                                 </div>
                             </div>
                         </div>
@@ -32,13 +32,13 @@
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.create_bp.project_name')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <h5>{{$header_area->budget_plan->project->name}}</h5>
+                                    <h5><a href="/construction/budget_plan/area/{{$header_area->budget_plan->id}}">{{$header_area->budget_plan->project->name}}</a></h5>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" style="text-align: left;">@lang('construction.create_bp.address')</label>
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <input value="{{$header_area->budget_plan->address}}" class="form-control" type="text" name="address">
+                                    <h5>{{$header_area->budget_plan->address}}</h5>
                                 </div>
                             </div>
                         </div>
@@ -232,7 +232,7 @@
                     </div>
                     <div class="col-md-12 text-center">
                         <div class="form-group">
-                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan';">@lang('construction.create_bp.cancel')</button>
+                            <button class="btn btn-primary" type="button" onclick="window.location.href = '/construction/budget_plan/area/{{$header_area->budget_plan->id}}';">@lang('construction.create_bp.cancel')</button>
                             <div class="btn-group">
                                 <button id="click" type="button" class="btn btn-success">@lang('construction.create_bp.save')</button>
                                 <input type="text" name="hidden_area_id" value="{{$header_area->id}}" hidden>
@@ -247,8 +247,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/addmoreitem2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/addmoreitem2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/createForm.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 @endpush

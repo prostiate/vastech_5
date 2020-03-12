@@ -25,11 +25,15 @@ use Validator;
 use App\Model\other\other_transaction;
 use PDF;
 use App\Model\company\company_logo;
+use App\Model\product\product_fifo_in;
+use App\Model\product\product_fifo_in_fk_pi;
+use App\Model\product\product_fifo_out;
 use App\Model\purchase\purchase_quote;
 use App\Model\purchase\purchase_quote_item;
 use App\Model\purchase\purchase_invoice_po_item;
 use App\Model\purchase\purchase_payment_item;
 use App\Model\purchase\purchase_return;
+use App\Model\sales\sale_invoice;
 use App\Model\sales\sale_invoice_item;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +47,7 @@ class PurchaseInvoiceController extends Controller
         DB::beginTransaction();
         try {
             $ambil_semua_product            = product::get();
-            foreach ($ambil_semua_product as $asp) {
+            /*foreach ($ambil_semua_product as $asp) {
                 $ambil_pi_item                  = purchase_invoice_item::where('product_id', $asp->id)->with('purchase_invoice')->get()->sortBy(function ($pi) {
                     return $pi->purchase_invoice->transaction_date;
                 });
@@ -51,10 +55,12 @@ class PurchaseInvoiceController extends Controller
                     return $si->sale_invoice->transaction_date;
                 });
                 $merged = $ambil_pi_item->merge($ambil_si_item);
-                $sorted = $merged->sortBy('transaction_date')->sortBy('created_at');
+                $sorted = $merged->sortBy('transaction_date');
+                //dd($sorted);
                 //dd($sorted[0]->sale_invoice);
                 foreach ($sorted as $disort) {
                     //dd($disort->sale_invoice);
+                    $sebelum = $asp->avg_price;
                     if ($disort->sale_invoice) {
                         $asp->update([
                             'qty'                   => $asp->qty - $disort->qty,
@@ -66,18 +72,271 @@ class PurchaseInvoiceController extends Controller
                         } else if ($dibagi > 0) {
                             $avg_price              = (($asp->qty * $asp->avg_price) + ($disort->qty * $disort->unit_price)) / ($dibagi);
                         } else {
-                            $avg_price              = ($disort->qty * $disort->unit_price)/* / ($dibagi)*/;
+                            $avg_price              = $disort->unit_price/* / ($dibagi)*/ //;
+            //  }
+            //$asp->update([
+            //    'qty'                   => $asp->qty + $disort->qty,
+            //    'avg_price'             => abs($avg_price),
+            // ]);
+            //}
+            //
+            //$sesudah = $asp->avg_price;
+            //var_dump('avg_sebelum' . $sebelum . 'avg_sesudah' . $sesudah);
+            /*if ($disort->sale_invoice) {
+                        $coa_detail_debit = coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $disort->sale_invoice->number)->where('debit', 0)->get();
+                        //dd($coa_detail_debit);
+                        //dd($coa_detail_debit);
+                        //dd($disort->sale_invoice->number);
+                        foreach ($coa_detail_debit as $cdb) {
+                            if ($cdb->coa_id == 7) {
+                                // INVENTORY
+                                //dd($cdb);
+                                $cdb->update([
+                                    'credit' => $asp->avg_price * $asp->qty
+                                ]);
+                                //dd($sebelum . 'sesudah ' . $cdb->debit);
+                            break;
+                            }
                         }
-                        $asp->update([
-                            'qty'                   => $asp->qty + $disort->qty,
-                            'avg_price'             => abs($avg_price),
-                        ]);
+                        $coa_detail_credit = coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $disort->sale_invoice->number)->where('credit', 0)->get();
+                        foreach ($coa_detail_credit as $cdc) {
+                            if ($cdc->coa_id == 69) {
+                                // COST OF SALES
+                                //var_dump($cdc->debit);
+                                $cdc->update([
+                                    'debit' => $asp->avg_price * $asp->qty
+                                ]);
+                            break;
+                            }
+                        }
+                    }*/
+            //  }
+            //   }
+            foreach ($ambil_semua_product as $asp) { // 1
+                $ambil_pi_item                  = purchase_invoice_item::where('product_id', $asp->id)->with('purchase_invoice')->get()->sortBy(function ($pi) {
+                    return $pi->purchase_invoice->transaction_date;
+                });
+                $ambil_si_item                  = sale_invoice_item::where('product_id', $asp->id)->with('sale_invoice')->get()->sortBy(function ($si) {
+                    return $si->sale_invoice->transaction_date;
+                });
+                $merged = $ambil_pi_item->merge($ambil_si_item);
+                $sorted = $merged->sortBy('transaction_date');
+                foreach ($sorted as $disort) { // 7 = 7 product_id
+                    // 1
+                    // detail ada 6
+                    /// 1 ambil
+                    /// 2
+                    /// 3
+                    /// 4
+                    /// 5
+                    /// 6
+                    // 2
+                    // detail ada 6
+                    /// 1
+                    /// 2 ambil
+                    /// 3
+                    /// 4
+                    /// 5
+                    /// 6
+                    // 3
+                    // 4
+                    // 5
+                    // 6
+                    if ($disort->sale_invoice) {
+                        foreach ($disort->sale_invoice->sale_invoice_item as $key => $disort2) {
+                            $coa_detail_debit = coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $disort->sale_invoice->number)->where('debit', 0)->where('coa_id', 7)->get(); // 7 debit
+                            //dd($disort->sale_invoice->sale_invoice_item);
+                            //dd($disort2);
+                            foreach ($coa_detail_debit as $key2 => $cdb) { // 0 = abc
+                                // INVENTORY
+                                if ($key2 == $key) {
+                                    var_dump($key, $key2 . 'end ');
+                                    $cdb->update([
+                                        'credit' => $asp->avg_price * $disort2->qty
+                                    ]);
+                                }
+                            }
+                            $coa_detail_credit = coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $disort->sale_invoice->number)->where('credit', 0)->where('coa_id', 69)->get();
+                            foreach ($coa_detail_credit as $key3 => $cdc) {
+                                // COST OF SALES
+                                if ($key3 == $key) {
+                                    $cdc->update([
+                                        'debit' => $asp->avg_price * $disort2->qty
+                                    ]);
+                                }
+                            }
+                        }
                     }
                 }
             }
             //dd($sorted);
             DB::commit();
             return response()->json(['errors' => 'berhasil']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function benerin_avg_price2()
+    {
+        DB::beginTransaction();
+        try {
+            // PAKE LAST BUY PRICE
+            $get_purchase_invoice       = purchase_invoice::with('purchase_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            //var_dump($get_purchase_invoice);
+            $get_sale_invoice           = sale_invoice::with('sale_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_product                = product::get();
+            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0]);
+            product_fifo_in::query()->truncate();
+            product_fifo_out::query()->truncate();
+            foreach ($get_purchase_invoice as $key_gpi => $gpi) {
+                echo '<pre><strong>purchase tanggal: ', var_dump($gpi->transaction_date), '</strong></pre>';
+                foreach ($gpi->purchase_invoice_item as $key_gpii => $gpii) {
+                    foreach ($get_product as $key_gp => $gp) {
+                        if ($gp->id == $gpii->product_id) {
+                            //echo '<pre>avg_sebelum: ', print_r($gp->avg_price), '| product_id: ', print_r($gp->id), '| product_name: ', print_r($gp->name), '</pre>';
+                            $gp->update([
+                                'qty'                   => $gp->qty + $gpii->qty,
+                                // FIFO GAPAKE 'avg_price'             => abs($gpii->unit_price),
+                            ]);
+                            // MULAI FIFO
+                            $create_product_fifo_in = new product_fifo_in([
+                                'purchase_invoice_item_id'    => $gpii->id, // ID SI PURCHASE INVOICE ITEM
+                                'type'          => 'purchase invoice',
+                                'number'        => $gpi->number,
+                                'product_id'    => $gpii->product_id,
+                                'warehouse_id'  => $gpi->warehouse_id,
+                                'qty'           => $gpii->qty,
+                                'unit_price'    => $gpii->unit_price,
+                                'total_price'   => $gpii->amount,
+                                'date'          => $gpi->transaction_date,
+                            ]);
+                            $create_product_fifo_in->save();
+                            /*$create_product_fifo_in_fk_pi = new product_fifo_in_fk_pi([
+                                'product_fifo_in'       => $create_product_fifo_in->id,
+                                'purchase_invoice_id'   => $gpi->id,
+                            ]);
+                            $create_product_fifo_in_fk_pi->save();*/
+                            // SELESAI FIFO
+                            //echo '<pre>avg_seesudah: ', print_r($gp->avg_price), '</pre>';
+                        }
+                    }
+                }
+            }
+            foreach ($get_sale_invoice as $key_gsi => $gsi) {
+                echo '<pre><strong>sales tanggal: ', var_dump($gsi->transaction_date), '</strong></pre>';
+                foreach ($gsi->sale_invoice_item as $key_gsii => $gsii) {
+                    foreach ($get_product as $key_gp => $gp) { // PRODUCT PUNYA TABLE
+                        if ($gp->id == $gsii->product_id) {
+                            //echo '<pre>avg_sebelum: ', print_r($gp->avg_price), '| product_id: ', print_r($gp->id), '| product_name: ', print_r($gp->name), '</pre>';
+                            $gp->update([
+                                'qty'                   => $gp->qty - $gsii->qty,
+                            ]);
+                            $create_product_fifo_out    = new product_fifo_out([
+                                'sale_invoice_item_id'  => $gsii->id, // ID SI SALES INVOICE ITEM
+                                'type'                  => 'sales invoice',
+                                'number'                => $gsi->number,
+                                'product_id'            => $gsii->product_id,
+                                'warehouse_id'          => $gsi->warehouse_id,
+                                'qty'                   => $gsii->qty,
+                                'unit_price'            => $gsii->unit_price,
+                                'total_price'           => $gsii->amount,
+                                'date'                  => $gsi->transaction_date,
+                            ]);
+                            $create_product_fifo_out->save(); // SAVE FIFO OUT
+                            $get_product_fifo_in        = product_fifo_in::where('product_id', $gsii->product_id)->where('qty', '>', 0)
+                                ->get()->sortBy(function ($item) { // GET FIFO IN AND SORT BY TRANSACTION DATE HEADER
+                                    return $item->transaction_date;
+                                });
+                            // 0                        = 30;
+                            $ambil_qty_fifo_out         = $gsii->qty;
+                            $qty_pool                   = collect([]);
+                            foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                                echo '<pre>fifo_in_sebelum: ', print_r($gpfi->qty), '</pre>';
+                                echo '<pre>product_id: ', print_r($gpfi->product_id), '</pre>';
+                                //if ($gsi->transaction_date == $gpfi->date) {
+                                // 0                =       30            -     20
+                                // 10
+                                $deducted_qty       = $ambil_qty_fifo_out - $gpfi->qty;
+                                // 10 lebih dari 0
+                                if ($deducted_qty >= 0) {
+                                    $gpfi->update([
+                                        'qty' => 0
+                                    ]);
+                                    if ($gpfi[$key_gpfi + 1]) {
+                                        $qty_pool->push([
+                                            'qty' => $gpfi->qty,
+                                            'unit_price' => $gpfi->unit_price,
+                                            'product_id' => $gpfi->product_id,
+                                            'gpfi_id' => $gpfi->id
+                                        ]);
+                                        // 30 - 20 == 20
+                                        $ambil_qty_fifo_out -= $gpfi->qty;
+                                        var_dump('lanjut');
+                                    } else {
+                                        var_dump('tidak ada dan harus terpaksa update jadi minus atau jadi 0');
+                                        $qty_pool->push([
+                                            'qty' => $ambil_qty_fifo_out,
+                                            'unit_price' => $gpfi->unit_price,
+                                            'product_id' => $gpfi->product_id,
+                                            'gpfi_id' => $gpfi->id
+                                        ]);
+                                        break;
+                                    }
+                                    echo '<pre>fifo_in_setelah: ', print_r($gpfi->qty), '</pre>';
+                                } else {
+                                    $gpfi->update([
+                                        'qty' => abs($deducted_qty)
+                                    ]);
+                                    $qty_pool->push([
+                                        'qty' => $ambil_qty_fifo_out,
+                                        'unit_price' => $gpfi->unit_price,
+                                        'product_id' => $gpfi->product_id,
+                                        'gpfi_id' => $gpfi->id
+                                    ]);
+                                    echo '<pre>fifo_in_setelah: ', print_r($gpfi->qty), '</pre>';
+                                    break; //SETELAH SELESAI DI UPDATE HARUS DI BREAK BIAR DIA STOP PAS UPDATE FIFO IN NYA
+                                }
+                                //dd('lala' . $qty_pool);
+                                //}
+                            }
+                            //dd($qty_pool, $get_product_fifo_in, $gsii->qty);
+                            $total_sum_qty_pool         = 0;
+                            foreach ($qty_pool as $key_qp => $qp) {
+                                $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                            }
+                            //echo '<pre>avg_sesudah: ', print_r($gp->avg_price), '</pre>';
+                            // INI ADALAH UPDATE COA DETAIL YANG BENER SEBELUM DI UBAH2 YANG KYK DIATAS
+                            $coa_detail_debit           = coa_detail::where('type', 'sales invoice')
+                                ->where('number', 'Sales Invoice #' . $gsi->number)->where('debit', 0)->where('coa_id', 7)->get();
+                            foreach ($coa_detail_debit as $key_cdb => $cdb) {
+                                if ($key_gsii == $key_cdb) {
+                                    echo '<pre>credit_sebelum: ', print_r($cdb->credit), '</pre>';
+                                    $cdb->update(['credit' => $total_sum_qty_pool]);
+                                    echo '<pre>credit_sesudah: ', print_r($cdb->credit), '</pre>';
+                                }
+                            }
+                            $coa_detail_credit      = coa_detail::where('type', 'sales invoice')
+                                ->where('number', 'Sales Invoice #' . $gsi->number)->where('credit', 0)->where('coa_id', 69)->get();
+                            foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                                if ($key_gsii == $key_cdc) {
+                                    echo '<pre>debit_sebelum: ', print_r($cdc->debit), '</pre>';
+                                    $cdc->update(['debit' => $total_sum_qty_pool]);
+                                    echo '<pre>debit_sesudah: ', print_r($cdc->debit), '</pre>';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //dd('stop');
+            DB::commit();
+            return response()->json(['success' => 'berhasil']);
         } catch (\Exception $e) {
             DB::rollBack();
             return $e->getMessage();

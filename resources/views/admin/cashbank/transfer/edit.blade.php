@@ -92,6 +92,6 @@
 @endsection
 
 @push('scripts')
-<script type="text/javascript" src="{{asset('js/multiply.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script type="text/javascript" src="{{asset('js/sum.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/multiply.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{asset('js/sum.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 @endpush

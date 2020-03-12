@@ -131,6 +131,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/sales/payment/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{ asset('js/sales/payment/chartdiindex.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/sales/payment/dataTable.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/payment/chartdiindex.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 @endpush

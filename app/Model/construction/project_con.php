@@ -36,4 +36,9 @@ class project_con extends Model implements Auditable
     {
         return $this->belongsTo('App\Model\other\other_status', 'status');
     }
+
+    public function budget_plan()
+    {
+        return $this->hasMany('App\Model\construction\budget_plan_con', 'budget_plan_id');
+    }
 }

@@ -67,6 +67,7 @@ class ContactImport implements ToCollection, WithStartRow, WithMultipleSheets
             ]);
             $contact->save();
         }
+        return 'sukses';
     }
 
     public function startRow(): int

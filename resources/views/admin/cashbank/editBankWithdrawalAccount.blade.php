@@ -166,8 +166,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/cashbank/updateFormBankWithdrawalAccount.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/addmoreitem_expenses.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/cashbank/updateFormBankWithdrawalAccount.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/addmoreitem_expenses.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 @endpush

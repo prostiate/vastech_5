@@ -97,7 +97,7 @@ class ReportController extends Controller
         $start_last_periode                         = $last_periode->toDateString();
         $endmonth_last_periode                      = new Carbon('last day of last month');
         $end_last_periode                           = $endmonth_last_periode->toDateString();
-        $current_periode                            = new Carbon('first day of this month');
+        $current_periode                            = new Carbon('first day of this year');
         //dd($current_periode);
         $today                                      = Carbon::today()->toDateString();
         $today2                                     = $current_periode->toDateString();
@@ -219,7 +219,7 @@ class ReportController extends Controller
         $today                                      = Carbon::today()->toDateString();
         $today2                                     = $mulaidari;
         $today3                                     = Carbon::parse($mulaidari);
-        $mulaidariYear                              = new Carbon('first day of ' . $today3->format('F'));
+        $mulaidariYear                              = new Carbon('first day of January ' . $today3->format('Y'));
         //if (Carbon::parse($today)->gt(Carbon::now())) {
         //    $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
         //           ->orderBy('coa_id')
@@ -233,6 +233,8 @@ class ReportController extends Controller
             ->groupBy('coa_id')
             ->get();
         //}
+        //dd($today2, $today3, $mulaidariYear);
+        //dd($coa_detail);
         $total_current_assets                       = 0;
         foreach ($coa_detail as $cd) {
             if ($cd->coa->coa_category_id == 1 or $cd->coa->coa_category_id == 2 or $cd->coa->coa_category_id == 3 or $cd->coa->coa_category_id == 4) {
@@ -334,7 +336,7 @@ class ReportController extends Controller
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
         $today2                                     = Carbon::parse($today);
-        $current_periode                            = new Carbon('first day of ' . $today2->format('F'));
+        $current_periode                            = new Carbon('first day of January ' . $today2->format('Y'));
         $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $today])
             ->orderBy('date', 'ASC')
             ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')

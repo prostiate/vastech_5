@@ -24,7 +24,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/error_notif_email','MailController@error_notif_email');
     Route::get('lang/{language}',                                                                               'LocalizationController@switch')->name('localization.switch');
-    Route::get('/testing',                                                                                      'PurchaseInvoiceController@benerin_avg_price');
+    Route::get('/benerin_avg_price',                                                                            'PurchaseInvoiceController@benerin_avg_price2');
 
     /*---------REPORTS --------------*/
     Route::get('/reports', function () {
@@ -771,6 +771,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/construction/budget_plan/deleteArea/{id}',                             'ConBudgetPlanController@destroyArea');
     Route::get('/construction/budget_plan/delete/{id}',                                 'ConBudgetPlanController@destroy');
     Route::post('/construction/budget_plan/approval={id}',                              'ConBudgetPlanController@approval');
+    Route::post('/construction/budget_plan/addOrUpdateAreaName',                        'ConBudgetPlanController@addOrUpdateAreaName');
+    Route::post('/construction/budget_plan/emptyArea/{id}',                             'ConBudgetPlanController@emptyArea');
     Route::get('/construction/print/PDF/{id}',                                          'ConBudgetPlanController@cetak_pdf');
     
     /*Route::get('/construction/offering_letter',                                         'ConOfferingLetterController@index');

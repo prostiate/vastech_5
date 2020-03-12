@@ -2742,8 +2742,8 @@ class VastechConstruction extends Migration
             $table->text('message')->nullable();
             $table->text('memo')->nullable();
             $table->decimal('costtotal', 17, 2)->default('0');
-            $table->decimal('subtotal', 17, 2)->default('0');
-            $table->decimal('taxtotal', 17, 2)->default('0');
+            $table->decimal('subtotal', 17, 2)->default('0')->nullable();
+            $table->decimal('taxtotal', 17, 2)->default('0')->nullable();
             $table->decimal('amount_paid', 17, 2)->default('0');
             $table->decimal('total_return', 17, 2)->default('0');
             $table->decimal('credit_memo', 17, 2)->default('0');
@@ -3747,6 +3747,10 @@ class VastechConstruction extends Migration
         });
         */
         //*** END CONSTRUCTION
+        //*** FIFO IN OUT DI PISAH
+
+
+        //*** FIFO IN OUT DI PISAH
     }
 
     /**
@@ -3830,6 +3834,7 @@ class VastechConstruction extends Migration
         //Schema::dropIfExists('offering_letter_cons');
         //Schema::dropIfExists('offering_letter_detail_cons');
         Schema::dropIfExists('budget_plan_cons');
+        Schema::dropIfExists('budget_plan_area_cons');
         Schema::dropIfExists('budget_plan_detail_cons');
         //Schema::dropIfExists('bill_quantities_cons');
         //Schema::dropIfExists('bill_quantities_detail_cons');

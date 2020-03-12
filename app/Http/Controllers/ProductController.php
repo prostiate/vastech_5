@@ -126,9 +126,9 @@ class ProductController extends Controller
             if (request()->ajax()) {
                 return datatables()->of(
                     product::where('id', '>', 0)->with('other_product_category', 'other_unit')
-                        //->with(['warehouse_detail' => function ($query) {
-                        //    $query->selectRaw('SUM(qty_in - qty_out) as qty, product_id')->groupBy('product_id');
-                        //}])
+                        ->with(['warehouse_detail' => function ($query) {
+                            $query->selectRaw('SUM(qty_in - qty_out) as qty, product_id')->groupBy('product_id');
+                        }])
                 )
                     ->make(true);
             }
@@ -913,7 +913,7 @@ class ProductController extends Controller
 
             try {
                 // import data
-                Excel::import(new ProductImport, public_path('/file_product/' . $nama_file));// First sheet
+                Excel::import(new ProductImport, public_path('/file_product/' . $nama_file)); // First sheet
                 //Excel::selectSheetsByIndex(0)->load();
             } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                 $failures = $e->failures();

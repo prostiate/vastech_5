@@ -33,7 +33,7 @@ class balance_sheet implements FromView, ShouldAutoSize
         $user                                       = User::find(Auth::id());
         $company                                    = company_setting::where('company_id', $user->company_id)->first();
         $today2                                     = Carbon::parse($this->today);
-        $current_periode                            = new Carbon('first day of ' . $today2->format('F'));
+        $current_periode                            = new Carbon('first day of January ' . $today2->format('Y'));
         $coa_detail                                 = coa_detail::whereBetween('date', [$current_periode->toDateString(), $this->today])
             ->orderBy('date', 'ASC')
             ->selectRaw('SUM(debit - credit) as total, SUM(credit - debit) as total2, coa_id')

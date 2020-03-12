@@ -42,7 +42,7 @@
                                                             @foreach($project as $a)
                                                             <option value="{{$a->id}}">{{$a->name}} - ({{$a->number}})</option>
                                                             @endforeach
-                                                        </select></select>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -85,8 +85,8 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{ asset('js/construction/budget_plans/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{ asset('js/construction/budget_plans/dataTable.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 <script>
     function next() {
         var id = $('#project_name').val();

@@ -293,7 +293,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/purchases/payment/deleteForm.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{ asset('js/purchases/payment/deleteForm.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

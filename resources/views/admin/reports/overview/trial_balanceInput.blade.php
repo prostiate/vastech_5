@@ -137,19 +137,19 @@
                                                 @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
-                                                    @if(isset($coa_detail3[$coa->id])){
+                                                    @if(isset($coa_detail3[$coa->id]))
                                                         <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
                                                               $init_credit = $coa_detail3[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $init_debit = 0; $init_credit = 0?>
-                                                    }@endif
+                                                    @endif
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
-                                                    @if(isset($coa_detail2[$coa->id])){
+                                                    @if(isset($coa_detail2[$coa->id]))
                                                         <?php $debit = $coa_detail2[$coa->id]->first()->debit;
                                                               $credit = $coa_detail2[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $debit = 0; $credit = 0;?>
-                                                    }@endif
+                                                    @endif
                                                     <?php
                                                      $init_balance = ($init_debit - $init_credit);
                                                      $move_balance = ($debit - $credit);
@@ -196,19 +196,19 @@
                                                 @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
-                                                    @if(isset($coa_detail3[$coa->id])){
+                                                    @if(isset($coa_detail3[$coa->id]))
                                                         <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
                                                               $init_credit = $coa_detail3[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $init_debit = 0; $init_credit = 0?>
-                                                    }@endif
+                                                    @endif
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
-                                                    @if(isset($coa_detail2[$coa->id])){
+                                                    @if(isset($coa_detail2[$coa->id]))
                                                         <?php $debit = $coa_detail2[$coa->id]->first()->debit;
                                                               $credit = $coa_detail2[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $debit = 0; $credit = 0;?>
-                                                    }@endif
+                                                    @endif
                                                     <?php
                                                      $init_balance = ($init_debit - $init_credit);
                                                      $move_balance = ($debit - $credit);
@@ -255,19 +255,19 @@
                                                 @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
-                                                    @if(isset($coa_detail3[$coa->id])){
+                                                    @if(isset($coa_detail3[$coa->id]))
                                                         <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
                                                               $init_credit = $coa_detail3[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $init_debit = 0; $init_credit = 0?>
-                                                    }@endif
+                                                    @endif
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
-                                                    @if(isset($coa_detail2[$coa->id])){
+                                                    @if(isset($coa_detail2[$coa->id]))
                                                         <?php $debit = $coa_detail2[$coa->id]->first()->debit;
                                                               $credit = $coa_detail2[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $debit = 0; $credit = 0;?>
-                                                    }@endif
+                                                    @endif
                                                     <?php
                                                      $init_balance = ($init_debit - $init_credit);
                                                      $move_balance = ($debit - $credit);
@@ -314,19 +314,19 @@
                                                 @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
-                                                    @if(isset($coa_detail3[$coa->id])){
+                                                    @if(isset($coa_detail3[$coa->id]))
                                                         <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
                                                               $init_credit = $coa_detail3[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $init_debit = 0; $init_credit = 0?>
-                                                    }@endif
+                                                    @endif
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
-                                                    @if(isset($coa_detail2[$coa->id])){
+                                                    @if(isset($coa_detail2[$coa->id]))
                                                         <?php $debit = $coa_detail2[$coa->id]->first()->debit;
                                                               $credit = $coa_detail2[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $debit = 0; $credit = 0;?>
-                                                    }@endif
+                                                    @endif
                                                     <?php
                                                      $init_balance = ($init_debit - $init_credit);
                                                      $move_balance = ($debit - $credit);
@@ -373,19 +373,19 @@
                                                 @if(isset($coa_detail3[$coa->id]) || isset($coa_detail2[$coa->id]))
                                                 <tr>
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL OPENING BALANCE-->
-                                                    @if(isset($coa_detail3[$coa->id])){
+                                                    @if(isset($coa_detail3[$coa->id]))
                                                         <?php $init_debit = $coa_detail3[$coa->id]->first()->debit;
                                                               $init_credit = $coa_detail3[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $init_debit = 0; $init_credit = 0?>
-                                                    }@endif
+                                                    @endif
                                                     <!--UNTUK CARI CREDIT/DEBIT DARI COA DETAIL NON-OPENING BALANCE-->
-                                                    @if(isset($coa_detail2[$coa->id])){
+                                                    @if(isset($coa_detail2[$coa->id]))
                                                         <?php $debit = $coa_detail2[$coa->id]->first()->debit;
                                                               $credit = $coa_detail2[$coa->id]->first()->credit?>
-                                                    }@else{
+                                                    @else
                                                         <?php $debit = 0; $credit = 0;?>
-                                                    }@endif
+                                                    @endif
                                                     <?php
                                                      $init_balance = ($init_debit - $init_credit);
                                                      $move_balance = ($debit - $credit);
@@ -450,7 +450,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200312-1327') }}" charset="utf-8"></script>
 <script>
     function next() {
         var date1   = document.getElementById('datepicker1');

@@ -34,6 +34,7 @@ class ConBudgetPlanController extends Controller
                 ->rawColumns(['action'])*/
                 ->make(true);
         }
+        //dd(budget_plan_con::with('project')->get());
         return view('admin.construction.budget_plan.index');
     }
 
@@ -86,7 +87,7 @@ class ConBudgetPlanController extends Controller
         $today                          = Carbon::today()->toDateString();
         $header_area                    = budget_plan_area_con::find($id);
         $unit                           = other_unit::get();
-        $get_area                       = budget_plan_area_con::get();
+        $get_area                       = budget_plan_area_con::where('budget_plan_id', $header_area->budget_plan_id)->get();
         $header_detail                  = budget_plan_detail_con::where('budget_plan_area_id', $id)->get();
         //$item_ol_page                   = offering_letter_detail_con::where('offering_letter_id', $ol)->simplePaginate(1);
         return view('admin.construction.budget_plan.create', compact(['today', 'trans_no', 'header_area', 'header_detail', 'get_area', 'unit']));
@@ -158,8 +159,6 @@ class ConBudgetPlanController extends Controller
     {
         $user                           = User::find(Auth::id());
         $rules = array(
-            'date'                      => 'required',
-            'address'                   => 'required',
             'product.*'                 => 'required',
             'unit.*'                    => 'required',
             'price.*'                   => 'required',
@@ -180,16 +179,6 @@ class ConBudgetPlanController extends Controller
             $get_detail                 = budget_plan_detail_con::where('budget_plan_area_id', $id_area)->get();
             if ($get_detail->count() > 0) {
                 budget_plan_detail_con::where('budget_plan_area_id', $id_area)->delete();
-            }
-            if ($get_area->date != $request->date) {
-                $get_header->update([
-                    'date'              => $request->date,
-                ]);
-            }
-            if ($get_area->address != $request->address) {
-                $get_header->update([
-                    'address'           => $request->address,
-                ]);
             }
             $get_header->update([
                 'grandtotal'            => $request->subtotal,
@@ -460,16 +449,11 @@ class ConBudgetPlanController extends Controller
     {
         DB::beginTransaction();
         try {
-            $header                 = budget_plan_con::with('budget_plan_area.budget_plan_detail')->find($id);
-            if (is_null($header->budget_plan_area->budget_plan_detail)) {
-                dd('if');
-                DB::rollBack();
-                return response()->json(['errors' => 'Cannot delete budget plan with transactions!']);
-            }
-            budget_plan_area_con::where('budget_plan_id', $id)->delete();
+            $header                 = budget_plan_area_con::find($id);
+            $id_bp                  = $header->budget_plan_id;
             $header->delete();
             DB::commit();
-            return response()->json(['success' => 'Data is successfully deleted']);
+            return response()->json(['success' => 'Data is successfully deleted', 'id' => $id_bp]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -500,6 +484,62 @@ class ConBudgetPlanController extends Controller
             $header->update(['is_approved' => 1]);
             DB::commit();
             return response()->json(['success' => 'Data is successfully approved', 'id' => $header->id]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function addOrUpdateAreaName(Request $request)
+    {
+        $user                           = User::find(Auth::id());
+        $rules = array(
+            'name.*'                    => 'required',
+        );
+
+        $error = Validator::make($request->all(), $rules);
+        // ngecek apakah semua inputan sudah valid atau belum
+        if ($error->fails()) {
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+        DB::beginTransaction();
+        try {
+            if (isset($request->input_id_selected_area)) {
+                $id     = $request->input_id_selected_area;
+                $area   = budget_plan_area_con::find($id);
+                $id_bp  = $area->budget_plan_id;
+                $area->update(['name' => $request->input_name_selected_area]);
+                DB::commit();
+                return response()->json(['success' => 'Data is successfully updated', 'id' => $id_bp]);
+            } else {
+                $id     = $request->input_id_budget_plan;
+                $item = new budget_plan_area_con([
+                    'tenant_id'         => $user->tenant_id,
+                    'company_id'        => $user->company_id,
+                    'user_id'           => Auth::id(),
+                    'budget_plan_id'    => $id,
+                    'name'              => $request->input_name_selected_area,
+                ]);
+                $item->save();
+                DB::commit();
+                return response()->json(['success' => 'Data is successfully added', 'id' => $id]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+    public function emptyArea($id)
+    {
+        DB::beginTransaction();
+        try {
+            $header                     = budget_plan_detail_con::with('budget_plan_area')->where('budget_plan_area_id', $id)->get();
+            $id_area                    = $header;
+            dd($id_area);
+            $header->delete();
+            DB::commit();
+            return response()->json(['success' => 'Data is successfully deleted', 'id' => $header->id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);

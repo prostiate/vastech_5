@@ -160,7 +160,7 @@ class SaleDeliveryController extends Controller
             }
             $number1            = $misahy[1] + 1;
             if (isset($number)) {
-                    $check_number   = sale_delivery::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                    $check_number   = sale_delivery::whereMonth('transaction_date', Carbon::parse($request->shipping_date))->latest()->first();
                     if ($check_number) {
                         if ($check_number != null) {
                             $misahm = explode("/", $check_number->number);
@@ -170,13 +170,13 @@ class SaleDeliveryController extends Controller
                             $misahy[1]      = 10000;
                         }
                         $number2    = $misahy[1] + 1;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SD';
+                        $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number2 . '.SD';
                     } else {
                         $number1    = 10001;
-                        $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SD';
+                        $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number1 . '.SD';
                     }
             } else {
-                $check_number   = sale_delivery::whereMonth('transaction_date', Carbon::parse($request->trans_date))->latest()->first();
+                $check_number   = sale_delivery::whereMonth('transaction_date', Carbon::parse($request->shipping_date))->latest()->first();
                 if ($check_number) {
                     if ($check_number != null) {
                         $misahm = explode("/", $check_number->number);
@@ -186,10 +186,10 @@ class SaleDeliveryController extends Controller
                         $misahy[1]      = 10000;
                     }
                     $number2    = $misahy[1] + 1;
-                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number2 . '.SD';
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number2 . '.SD';
                 } else {
                     $number1    = 10001;
-                    $trans_no   = Carbon::parse($request->trans_date)->format('m') . '/' . Carbon::parse($request->trans_date)->format('y') . '.' . $number1 . '.SD';
+                    $trans_no   = Carbon::parse($request->shipping_date)->format('m') . '/' . Carbon::parse($request->shipping_date)->format('y') . '.' . $number1 . '.SD';
                 }
             }
         } else {
@@ -376,7 +376,7 @@ class SaleDeliveryController extends Controller
                         'ref_id'                    => $pd->id,
                         'other_transaction_id'      => $transactions->id,
                         'coa_id'                    => $default_product_account->buy_account,
-                        'date'                      => $request->get('trans_date'),
+                        'date'                      => $request->get('shipping_date'),
                         'type'                      => 'sales delivery',
                         'number'                    => 'Sales Delivery #' . $trans_no,
                         'contact_id'                => $request->get('vendor_name'),
@@ -390,7 +390,7 @@ class SaleDeliveryController extends Controller
                         'ref_id'                    => $pd->id,
                         'other_transaction_id'      => $transactions->id,
                         'coa_id'                    => $default_product_account->default_inventory_account,
-                        'date'                      => $request->get('trans_date'),
+                        'date'                      => $request->get('shipping_date'),
                         'type'                      => 'sales delivery',
                         'number'                    => 'Sales Delivery #' . $trans_no,
                         'contact_id'                => $request->get('vendor_name'),
@@ -422,7 +422,7 @@ class SaleDeliveryController extends Controller
                 'ref_id'                    => $pd->id,
                 'other_transaction_id'      => $transactions->id,
                 'coa_id'                    => $default_unbilled_receivable->account_id,
-                'date'                      => $request->get('trans_date'),
+                'date'                      => $request->get('shipping_date'),
                 'type'                      => 'sales delivery',
                 'number'                    => 'Sales Delivery #' . $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
@@ -436,7 +436,7 @@ class SaleDeliveryController extends Controller
                 'ref_id'                    => $pd->id,
                 'other_transaction_id'      => $transactions->id,
                 'coa_id'                    => $default_unbilled_revenue->account_id,
-                'date'                      => $request->get('trans_date'),
+                'date'                      => $request->get('shipping_date'),
                 'type'                      => 'sales delivery',
                 'number'                    => 'Sales Delivery #' . $trans_no,
                 'contact_id'                => $request->get('vendor_name'),
@@ -623,7 +623,7 @@ class SaleDeliveryController extends Controller
                         ->where('coa_id', $default_product_account->buy_account)
                         ->update([
                             'coa_id'            => $default_product_account->buy_account,
-                            'date'              => $request->get('trans_date'),
+                            'date'              => $request->get('shipping_date'),
                             'contact_id'        => $request->get('vendor_name'),
                             'debit'             => $total_avg,
                         ]);
@@ -640,7 +640,7 @@ class SaleDeliveryController extends Controller
                         ->where('coa_id', $default_product_account->default_inventory_account)
                         ->update([
                             'coa_id'            => $default_product_account->default_inventory_account,
-                            'date'              => $request->get('trans_date'),
+                            'date'              => $request->get('shipping_date'),
                             'contact_id'        => $request->get('vendor_name'),
                             'credit'            => $total_avg,
                         ]);
@@ -682,7 +682,7 @@ class SaleDeliveryController extends Controller
                 ->where('credit', 0)
                 ->update([
                     'coa_id'                => $default_unbilled_receivable->account_id,
-                    'date'                  => $request->get('trans_date'),
+                    'date'                  => $request->get('shipping_date'),
                     'contact_id'            => $request->get('vendor_name'),
                     'debit'                 => $grandtotal_header_other,
                 ]);
@@ -693,7 +693,7 @@ class SaleDeliveryController extends Controller
                 ->where('debit', 0)
                 ->update([
                     'coa_id'                => $default_unbilled_revenue->account_id,
-                    'date'                  => $request->get('trans_date'),
+                    'date'                  => $request->get('shipping_date'),
                     'contact_id'            => $request->get('vendor_name'),
                     'credit'                => $grandtotal_header_other,
                 ]);
