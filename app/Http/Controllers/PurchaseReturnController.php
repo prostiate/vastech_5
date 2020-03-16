@@ -355,6 +355,9 @@ class PurchaseReturnController extends Controller
     public function edit($id)
     {
         $header                     = purchase_return::find($id);
+        if($header->status != 1){
+            return redirect('/purchases_return');
+        }
         $item                       = purchase_return_item::where('purchase_return_id', $id)->get();
         $other_return               = purchase_return::where('selected_pi_id', $header->selected_pi_id)->where('id', '!=', $id)->sum('grandtotal');
         //dd($other_return);

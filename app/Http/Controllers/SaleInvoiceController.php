@@ -24,6 +24,8 @@ use App\Model\coa\coa;
 use App\Model\company\company_logo;
 use App\Model\product\product_bundle_cost;
 use App\Model\product\product_discount_item;
+use App\Model\product\product_fifo_in;
+use App\Model\product\product_fifo_out;
 use App\Model\sales\sale_invoice_cost;
 use App\Model\sales\sale_payment_item;
 use PDF;
@@ -609,6 +611,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -813,7 +816,76 @@ class SaleInvoiceController extends Controller
                 $pi->sale_invoice_item()->save($pp[$i]);
 
                 $avg_price                      = product::find($request->products[$i]);
-                $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                $total_avg                      = 0;
+                if ($cs->is_avg_price == 1) {
+                    $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                } else if ($cs->is_fifo == 1) {
+                    $create_product_fifo_out    = new product_fifo_out([
+                        'sale_invoice_item_id'  => $pp[$i]->id, // ID SI SALES INVOICE ITEM
+                        'type'                  => 'sales invoice',
+                        'number'                => $pi->number,
+                        'product_id'            => $pp[$i]->product_id,
+                        'warehouse_id'          => $pi->warehouse_id,
+                        'qty'                   => $pp[$i]->qty,
+                        'unit_price'            => $pp[$i]->unit_price,
+                        'total_price'           => $pp[$i]->amount,
+                        'date'                  => $pi->transaction_date,
+                    ]);
+                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                    $get_product_fifo_in        = product_fifo_in::where('product_id', $request->products[$i])->where('qty', '>', 0)
+                        ->get()->sortBy(function ($item) {
+                            return $item->transaction_date;
+                        });
+                    //dd($get_product_fifo_in);
+                    $ambil_qty_fifo_out         = $request->qty[$i];
+                    $qty_pool                   = collect([]);
+                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                        //dd($deducted_qty);
+                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                        if ($deducted_qty >= 0) {
+                            if ($next) {
+                                $qty_pool->push([
+                                    'qty' => $gpfi->qty,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                            } else {
+                                $qty_pool->push([
+                                    'qty' => $ambil_qty_fifo_out,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                                break;
+                            }
+                        } else {
+                            $gpfi->update([
+                                'qty' => abs($deducted_qty)
+                            ]);
+                            $qty_pool->push([
+                                'qty' => $ambil_qty_fifo_out,
+                                'unit_price' => $gpfi->unit_price,
+                                'product_id' => $gpfi->product_id,
+                                'gpfi_id' => $gpfi->id
+                            ]);
+                            break;
+                        }
+                    }
+                    $total_sum_qty_pool         = 0;
+                    foreach ($qty_pool as $key_qp => $qp) {
+                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                    }
+                    $total_avg                  = $total_sum_qty_pool;
+                }
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
@@ -955,6 +1027,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -1151,7 +1224,76 @@ class SaleInvoiceController extends Controller
                 $pi->sale_invoice_item()->save($pp[$i]);
 
                 $avg_price                      = product::find($request->products[$i]);
-                $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                $total_avg                      = 0;
+                if ($cs->is_avg_price == 1) {
+                    $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                } else if ($cs->is_fifo == 1) {
+                    $create_product_fifo_out    = new product_fifo_out([
+                        'sale_invoice_item_id'  => $pp[$i]->id, // ID SI SALES INVOICE ITEM
+                        'type'                  => 'sales invoice',
+                        'number'                => $pi->number,
+                        'product_id'            => $pp[$i]->product_id,
+                        'warehouse_id'          => $pi->warehouse_id,
+                        'qty'                   => $pp[$i]->qty,
+                        'unit_price'            => $pp[$i]->unit_price,
+                        'total_price'           => $pp[$i]->amount,
+                        'date'                  => $pi->transaction_date,
+                    ]);
+                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                    $get_product_fifo_in        = product_fifo_in::where('product_id', $request->products[$i])->where('qty', '>', 0)
+                        ->get()->sortBy(function ($item) {
+                            return $item->transaction_date;
+                        });
+                    //dd($get_product_fifo_in);
+                    $ambil_qty_fifo_out         = $request->qty[$i];
+                    $qty_pool                   = collect([]);
+                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                        //dd($deducted_qty);
+                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                        if ($deducted_qty >= 0) {
+                            if ($next) {
+                                $qty_pool->push([
+                                    'qty' => $gpfi->qty,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                            } else {
+                                $qty_pool->push([
+                                    'qty' => $ambil_qty_fifo_out,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                                break;
+                            }
+                        } else {
+                            $gpfi->update([
+                                'qty' => abs($deducted_qty)
+                            ]);
+                            $qty_pool->push([
+                                'qty' => $ambil_qty_fifo_out,
+                                'unit_price' => $gpfi->unit_price,
+                                'product_id' => $gpfi->product_id,
+                                'gpfi_id' => $gpfi->id
+                            ]);
+                            break;
+                        }
+                    }
+                    $total_sum_qty_pool         = 0;
+                    foreach ($qty_pool as $key_qp => $qp) {
+                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                    }
+                    $total_avg                  = $total_sum_qty_pool;
+                }
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
@@ -1248,6 +1390,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -1514,7 +1657,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $trans_no;
                 $wh->product_id                 = $request->products[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -1538,6 +1681,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -1759,7 +1903,76 @@ class SaleInvoiceController extends Controller
                 ]);
                 // CREATE COA DETAIL BERDASARKAN PRODUCT SETTING
                 $avg_price                      = product::find($request->products[$i]);
-                $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                $total_avg                      = 0;
+                if ($cs->is_avg_price == 1) {
+                    $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                } else if ($cs->is_fifo == 1) {
+                    $create_product_fifo_out    = new product_fifo_out([
+                        'sale_invoice_item_id'  => $pp[$i]->id, // ID SI SALES INVOICE ITEM
+                        'type'                  => 'sales invoice',
+                        'number'                => $pd->number,
+                        'product_id'            => $pp[$i]->product_id,
+                        'warehouse_id'          => $pd->warehouse_id,
+                        'qty'                   => $pp[$i]->qty,
+                        'unit_price'            => $pp[$i]->unit_price,
+                        'total_price'           => $pp[$i]->amount,
+                        'date'                  => $pd->transaction_date,
+                    ]);
+                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                    $get_product_fifo_in        = product_fifo_in::where('product_id', $request->products[$i])->where('qty', '>', 0)
+                        ->get()->sortBy(function ($item) {
+                            return $item->transaction_date;
+                        });
+                    //dd($get_product_fifo_in);
+                    $ambil_qty_fifo_out         = $request->qty[$i];
+                    $qty_pool                   = collect([]);
+                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                        //dd($deducted_qty);
+                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                        if ($deducted_qty >= 0) {
+                            if ($next) {
+                                $qty_pool->push([
+                                    'qty' => $gpfi->qty,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                            } else {
+                                $qty_pool->push([
+                                    'qty' => $ambil_qty_fifo_out,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                                break;
+                            }
+                        } else {
+                            $gpfi->update([
+                                'qty' => abs($deducted_qty)
+                            ]);
+                            $qty_pool->push([
+                                'qty' => $ambil_qty_fifo_out,
+                                'unit_price' => $gpfi->unit_price,
+                                'product_id' => $gpfi->product_id,
+                                'gpfi_id' => $gpfi->id
+                            ]);
+                            break;
+                        }
+                    }
+                    $total_sum_qty_pool         = 0;
+                    foreach ($qty_pool as $key_qp => $qp) {
+                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                    }
+                    $total_avg                  = $total_sum_qty_pool;
+                }
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
@@ -1854,6 +2067,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -2072,8 +2286,77 @@ class SaleInvoiceController extends Controller
                 ]);
                 $pd->sale_invoice_item()->save($pp[$i]);
                 // CREATE COA DETAIL BASED ON PRODUCT SETTING
-                $avg_price                  = product::find($request->products2[$i]);
-                $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                $avg_price                      = product::find($request->products2[$i]);
+                $total_avg                      = 0;
+                if ($cs->is_avg_price == 1) {
+                    $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                } else if ($cs->is_fifo == 1) {
+                    $create_product_fifo_out    = new product_fifo_out([
+                        'sale_invoice_item_id'  => $pp[$i]->id, // ID SI SALES INVOICE ITEM
+                        'type'                  => 'sales invoice',
+                        'number'                => $pd->number,
+                        'product_id'            => $pp[$i]->product_id,
+                        'warehouse_id'          => $pd->warehouse_id,
+                        'qty'                   => $pp[$i]->qty,
+                        'unit_price'            => $pp[$i]->unit_price,
+                        'total_price'           => $pp[$i]->amount,
+                        'date'                  => $pd->transaction_date,
+                    ]);
+                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                    $get_product_fifo_in        = product_fifo_in::where('product_id', $request->products[$i])->where('qty', '>', 0)
+                        ->get()->sortBy(function ($item) {
+                            return $item->transaction_date;
+                        });
+                    //dd($get_product_fifo_in);
+                    $ambil_qty_fifo_out         = $request->qty[$i];
+                    $qty_pool                   = collect([]);
+                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                        //dd($deducted_qty);
+                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                        if ($deducted_qty >= 0) {
+                            if ($next) {
+                                $qty_pool->push([
+                                    'qty' => $gpfi->qty,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                            } else {
+                                $qty_pool->push([
+                                    'qty' => $ambil_qty_fifo_out,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                                break;
+                            }
+                        } else {
+                            $gpfi->update([
+                                'qty' => abs($deducted_qty)
+                            ]);
+                            $qty_pool->push([
+                                'qty' => $ambil_qty_fifo_out,
+                                'unit_price' => $gpfi->unit_price,
+                                'product_id' => $gpfi->product_id,
+                                'gpfi_id' => $gpfi->id
+                            ]);
+                            break;
+                        }
+                    }
+                    $total_sum_qty_pool         = 0;
+                    foreach ($qty_pool as $key_qp => $qp) {
+                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                    }
+                    $total_avg                  = $total_sum_qty_pool;
+                }
                 $default_product_account    = product::find($request->products2[$i]);
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
@@ -2209,10 +2492,11 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromSPK(Request $request)
+    public function storeFromSPK(Request $request) // GAPAKE FIFO KARENA PUNYA FAS
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -2690,6 +2974,7 @@ class SaleInvoiceController extends Controller
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
+        $cs                     = company_setting::where('company_id', $user->company_id)->first();
         if ($user->company_id == 5) {
             $number             = sale_invoice::latest()->first();
             if ($number != null) {
@@ -2902,7 +3187,76 @@ class SaleInvoiceController extends Controller
                 ]);
                 // CREATE COA DETAIL BERDASARKAN PRODUCT SETTING
                 $avg_price                      = product::find($request->products[$i]);
-                $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                $total_avg                      = 0;
+                if ($cs->is_avg_price == 1) {
+                    $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
+                } else if ($cs->is_fifo == 1) {
+                    $create_product_fifo_out    = new product_fifo_out([
+                        'sale_invoice_item_id'  => $pp[$i]->id, // ID SI SALES INVOICE ITEM
+                        'type'                  => 'sales invoice',
+                        'number'                => $pd->number,
+                        'product_id'            => $pp[$i]->product_id,
+                        'warehouse_id'          => $pd->warehouse_id,
+                        'qty'                   => $pp[$i]->qty,
+                        'unit_price'            => $pp[$i]->unit_price,
+                        'total_price'           => $pp[$i]->amount,
+                        'date'                  => $pd->transaction_date,
+                    ]);
+                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                    $get_product_fifo_in        = product_fifo_in::where('product_id', $request->products[$i])->where('qty', '>', 0)
+                        ->get()->sortBy(function ($item) {
+                            return $item->transaction_date;
+                        });
+                    //dd($get_product_fifo_in);
+                    $ambil_qty_fifo_out         = $request->qty[$i];
+                    $qty_pool                   = collect([]);
+                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                        //dd($deducted_qty);
+                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                        if ($deducted_qty >= 0) {
+                            if ($next) {
+                                $qty_pool->push([
+                                    'qty' => $gpfi->qty,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                            } else {
+                                $qty_pool->push([
+                                    'qty' => $ambil_qty_fifo_out,
+                                    'unit_price' => $gpfi->unit_price,
+                                    'product_id' => $gpfi->product_id,
+                                    'gpfi_id' => $gpfi->id
+                                ]);
+                                $gpfi->update([
+                                    'qty' => 0
+                                ]);
+                                break;
+                            }
+                        } else {
+                            $gpfi->update([
+                                'qty' => abs($deducted_qty)
+                            ]);
+                            $qty_pool->push([
+                                'qty' => $ambil_qty_fifo_out,
+                                'unit_price' => $gpfi->unit_price,
+                                'product_id' => $gpfi->product_id,
+                                'gpfi_id' => $gpfi->id
+                            ]);
+                            break;
+                        }
+                    }
+                    $total_sum_qty_pool         = 0;
+                    foreach ($qty_pool as $key_qp => $qp) {
+                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                    }
+                    $total_avg                  = $total_sum_qty_pool;
+                }
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     // CREATE COA DETAIL YANG DARI BUY ACCOUNT
@@ -3074,6 +3428,9 @@ class SaleInvoiceController extends Controller
     public function edit($id)
     {
         $pi             = sale_invoice::find($id);
+        if ($pi->status != 1) {
+            return redirect('/sales_invoice');
+        }
         $pi_item        = sale_invoice_item::where('sale_invoice_id', $id)->get();
         $vendors        = contact::where('type_customer', true)->get();
         $warehouses     = warehouse::all();
@@ -3149,6 +3506,7 @@ class SaleInvoiceController extends Controller
     public function update(Request $request)
     {
         $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -3195,6 +3553,9 @@ class SaleInvoiceController extends Controller
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
+                if ($cs->is_fifo == 1) {
+                    product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                }
                 $default_product_account        = product::find($a->product_id);
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
@@ -3240,6 +3601,7 @@ class SaleInvoiceController extends Controller
                     ]);
                 }
             }
+
             // FINALLY DELETE THE COA DETAIL WITH DEBIT = 0
             coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'sales invoice')->where('number', 'Sales Invoice #' . $pi->number)->where('credit', 0)->delete();
@@ -3478,9 +3840,24 @@ class SaleInvoiceController extends Controller
                     'credit'                => $taxtotal_header_other,
                 ]);
             }
+            if ($cs->is_fifo == 1) {
+                app(\App\Http\Controllers\PurchaseInvoiceController::class)->fifoAll();
+                $a = response()->json(['fifo_success' => 'fifo_berhasil']);
+                if ($a->getData()->fifo_success) {
+                    //dd('of');
+                    DB::commit();
+                    return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+                } else {
+                    //dd('else');
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Check log!']);
+                }
+            }
+            //$a->getData()->fifo_success;
+            //dd($a);
 
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+            //DB::commit();
+            //return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -3489,6 +3866,8 @@ class SaleInvoiceController extends Controller
 
     public function updateFromDelivery(Request $request)
     {
+        $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         DB::beginTransaction();
         try {
             $id                                 = $request->hidden_id;
@@ -3526,6 +3905,7 @@ class SaleInvoiceController extends Controller
     public function updateFromOrder(Request $request)
     {
         $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -3595,6 +3975,9 @@ class SaleInvoiceController extends Controller
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
+                if ($cs->is_fifo == 1) {
+                    product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                }
                 $ambilpoo                       = sale_order_item::find($a->sale_order_item_id);
                 $ambilpoo->update([
                     'qty_remaining'             => $ambilpoo->qty_remaining + $a->qty,
@@ -3814,8 +4197,19 @@ class SaleInvoiceController extends Controller
                     'qty'                       => $produk->qty - $qty,
                 ]);
             };
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+            if ($cs->is_fifo == 1) {
+                app(\App\Http\Controllers\PurchaseInvoiceController::class)->fifoAll();
+                $a = response()->json(['fifo_success' => 'fifo_berhasil']);
+                if ($a->getData()->fifo_success) {
+                    //dd('of');
+                    DB::commit();
+                    return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+                } else {
+                    //dd('else');
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Check log!']);
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -3825,6 +4219,7 @@ class SaleInvoiceController extends Controller
     public function updateFromQuote(Request $request)
     {
         $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         $rules = array(
             'vendor_name'   => 'required',
             'term'          => 'required',
@@ -3878,6 +4273,9 @@ class SaleInvoiceController extends Controller
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
+                if ($cs->is_fifo == 1) {
+                    product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                }
                 $default_product_account        = product::find($a->product_id);
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
@@ -4151,9 +4549,19 @@ class SaleInvoiceController extends Controller
                     'credit'                => $taxtotal_header_other,
                 ]);
             }
-
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+            if ($cs->is_fifo == 1) {
+                app(\App\Http\Controllers\PurchaseInvoiceController::class)->fifoAll();
+                $a = response()->json(['fifo_success' => 'fifo_berhasil']);
+                if ($a->getData()->fifo_success) {
+                    //dd('of');
+                    DB::commit();
+                    return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+                } else {
+                    //dd('else');
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Check log!']);
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -4163,6 +4571,7 @@ class SaleInvoiceController extends Controller
     public function updateFromOrderRequestSukses(Request $request)
     {
         $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         DB::beginTransaction();
         try {
             $id                                 = $request->hidden_id;
@@ -4207,6 +4616,9 @@ class SaleInvoiceController extends Controller
             // HAPUS BALANCE PER ITEM INVOICE
             $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
             foreach ($pi_details as $a) {
+                if ($cs->is_fifo == 1) {
+                    product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                }
                 $ambilpoo                       = sale_order_item::find($a->sale_order_item_id);
                 $ambilpoo->update([
                     'qty_remaining'             => $ambilpoo->qty_remaining + $a->qty,
@@ -4427,7 +4839,7 @@ class SaleInvoiceController extends Controller
                 $wh->number                     = 'Sales Invoice #' . $pi->number;
                 $wh->product_id                 = $request->products[$i];
                 $wh->warehouse_id               = $request->warehouse;
-                $wh->date                   = $request->trans_date;
+                $wh->date                       = $request->trans_date;
                 $wh->qty_out                    = $request->qty[$i];
                 $wh->save();
 
@@ -4439,8 +4851,19 @@ class SaleInvoiceController extends Controller
                     'qty'                       => $produk->qty - $qty,
                 ]);
             };
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+            if ($cs->is_fifo == 1) {
+                app(\App\Http\Controllers\PurchaseInvoiceController::class)->fifoAll();
+                $a = response()->json(['fifo_success' => 'fifo_berhasil']);
+                if ($a->getData()->fifo_success) {
+                    //dd('of');
+                    DB::commit();
+                    return response()->json(['success' => 'Data is successfully updated', 'id' => $pi->id]);
+                } else {
+                    //dd('else');
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Check log!']);
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);
@@ -4449,6 +4872,8 @@ class SaleInvoiceController extends Controller
 
     public function destroy($id)
     {
+        $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         DB::beginTransaction();
         try {
             $pi                                     = sale_invoice::find($id);
@@ -4470,6 +4895,9 @@ class SaleInvoiceController extends Controller
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
+                    if ($cs->is_fifo == 1) {
+                        product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                    }
                     $default_product_account        = product::find($a->product_id);
                     if ($default_product_account->is_track == 1) {
                         // DEFAULT BUY ACCOUNT
@@ -4533,6 +4961,9 @@ class SaleInvoiceController extends Controller
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
+                    if ($cs->is_fifo == 1) {
+                        product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                    }
                     $default_product_account        = product::find($a->product_id);
                     if ($default_product_account->is_track == 1) {
                         // DELETE WAREHOUSE DETAIL SESUAI DENGAN PRODUCT
@@ -4592,6 +5023,9 @@ class SaleInvoiceController extends Controller
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
+                    if ($cs->is_fifo == 1) {
+                        product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                    }
                     $ambilpoo                       = sale_order_item::find($a->sale_order_item_id);
                     $ambilpoo->update([
                         'qty_remaining'             => $ambilpoo->qty_remaining + $a->qty,
@@ -4644,6 +5078,9 @@ class SaleInvoiceController extends Controller
                     // HAPUS BALANCE PER ITEM INVOICE
                     $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                     foreach ($pi_details as $a) {
+                        if ($cs->is_fifo == 1) {
+                            product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                        }
                         $ambilspkitem                   = spk_item::where('product_id', $a->product_id)->first();
                         $ambilspkitem->update([
                             'qty_remaining_sent' => $ambilspkitem->qty_remaining_sent + $a->qty
@@ -4745,6 +5182,9 @@ class SaleInvoiceController extends Controller
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
+                    if ($cs->is_fifo == 1) {
+                        product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                    }
                     $ambilpoo                       = sale_order_item::find($a->sale_order_item_id);
                     $ambilpoo->update([
                         'qty_remaining'             => $ambilpoo->qty_remaining + $a->qty,
@@ -4796,6 +5236,9 @@ class SaleInvoiceController extends Controller
                 // HAPUS BALANCE PER ITEM INVOICE
                 $pi_details                         = sale_invoice_item::where('sale_invoice_id', $id)->get();
                 foreach ($pi_details as $a) {
+                    if ($cs->is_fifo == 1) {
+                        product_fifo_out::where('sale_invoice_item_id', $a->id)->delete();
+                    }
                     $default_product_account        = product::find($a->product_id);
                     if ($default_product_account->is_track == 1) {
                         // DEFAULT BUY ACCOUNT
@@ -4850,8 +5293,21 @@ class SaleInvoiceController extends Controller
                 // FINALLY DELETE THE INVOICE
                 $pi->delete();
             }
-            DB::commit();
-            return response()->json(['success' => 'Data is successfully deleted']);
+            if ($cs->is_fifo == 1) {
+                app(\App\Http\Controllers\PurchaseInvoiceController::class)->fifoAll();
+                $a = response()->json(['fifo_success' => 'fifo_berhasil']);
+                if ($a->getData()->fifo_success) {
+                    //dd('of');
+                    DB::commit();
+                    return response()->json(['success' => 'Data is successfully deleted']);
+                } else {
+                    //dd('else');
+                    DB::rollBack();
+                    return response()->json(['errors' => 'Check log!']);
+                }
+            }
+            //DB::commit();
+            //return response()->json(['success' => 'Data is successfully deleted']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);

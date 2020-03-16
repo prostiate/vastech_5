@@ -392,6 +392,9 @@ class SaleReturnController extends Controller
     public function edit($id)
     {
         $header                     = sale_return::find($id);
+        if($header->status != 1){
+            return redirect('/sales_return');
+        }
         $item                       = sale_return_item::where('sale_return_id', $id)->get();
         $other_return               = sale_return::where('selected_si_id', $header->selected_si_id)->where('id', '!=', $id)->sum('grandtotal');
         //dd($other_return);

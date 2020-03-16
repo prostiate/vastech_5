@@ -289,6 +289,9 @@ class SalePaymentController extends Controller
     public function edit($id)
     {
         $po                     = sale_payment::find($id);
+        if($po->status != 3){
+            return redirect('/sales_payment');
+        }
         $get_all_invoice        = sale_payment_item::where('sale_payment_id', $id)->with('sale_invoice', 'sale_payment')->get();
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_method::get();

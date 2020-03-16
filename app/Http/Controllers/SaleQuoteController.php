@@ -478,6 +478,9 @@ class SaleQuoteController extends Controller
     public function edit(sale_quote $sale_quote, $id)
     {
         $sq             = sale_quote::find($id);
+        if($sq->status != 1){
+            return redirect('/sales_quote');
+        }
         $sq_item        = sale_quote_item::where('sale_quote_id', $id)->get();
         $vendors        = contact::where('type_customer', true)->get();
         $terms          = other_term::all();

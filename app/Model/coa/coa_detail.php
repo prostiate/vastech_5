@@ -4,17 +4,11 @@ namespace App\Model\coa;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class coa_detail extends Model implements Auditable
+class coa_detail extends Model
 {
-    use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
     protected $guarded = [];
-    protected $auditExclude = [
-        'tenant_id',
-        'company_id',
-    ];
 
     public function coa()
     {

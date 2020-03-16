@@ -1109,6 +1109,9 @@ class SaleOrderController extends Controller
     public function edit($id)
     {
         $po                     = sale_order::find($id);
+        if($po->status != 1){
+            return redirect('/sales_order');
+        }
         $po_item                = sale_order_item::where('sale_order_id', $id)->get();
         $vendors                = contact::where('type_customer', true)->get();
         $warehouses             = warehouse::all();

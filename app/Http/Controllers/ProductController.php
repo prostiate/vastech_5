@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Imports\ProductImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
+use App\Model\company\company_setting;
 use App\Model\product\product_discount_item;
 use App\Model\product\product_production_item;
 use App\Model\purchase\purchase_invoice_po_item;
@@ -112,6 +113,7 @@ class ProductController extends Controller
     public function index()
     {
         $user               = User::find(Auth::id());
+        $cs                 = company_setting::where('company_id', $user->company_id)->first();
         $avail_stock        = product::where('is_track', 1)->where('qty', '>', 0)->where('qty', '>=', 'min_qty')->count();
         $get_track_stock    = product::where('is_track', 1)->get();
         $low_stock          = product::where('is_track', 1)->where('qty', '>', 0)->where('qty', '<', 'min_qty')->count();
@@ -133,7 +135,7 @@ class ProductController extends Controller
                     ->make(true);
             }
         }
-        return view('admin.products.products.index', compact(['avail_stock', 'low_stock', 'out_stock']));
+        return view('admin.products.products.index', compact(['avail_stock', 'low_stock', 'out_stock', 'cs']));
     }
     // INI ADALAH SELECT ALL PRODUCT TAPI YANG DI SIMPAN DI API HANYA ID, TEXT, AVG_PRICE
     /*public function selectProduct()
@@ -477,6 +479,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $user                       = User::find(Auth::id());
+        $cs                         = company_setting::where('company_id', $user->company_id)->first();
         $products                   = product::find($id);
         $bundle_item                = product_bundle_item::where('product_id', $id)->get();
         $bundle_cost                = product_bundle_cost::where('product_id', $id)->get();
@@ -562,7 +565,7 @@ class ProductController extends Controller
                 'default_sell_account',
                 'default_buy_account',
                 'default_inventory_account',
-                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse'
+                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse', 'cs',
             ]));
         } else {
             return view('admin.products.products.show', compact([
@@ -580,7 +583,7 @@ class ProductController extends Controller
                 'default_sell_account',
                 'default_buy_account',
                 'default_inventory_account',
-                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse'
+                'other_transaction', 'pq', 'po', 'pd', 'pi', 'sq', 'so', 'sd', 'si', 'sa', 'wip', 'wipi', 'wt', 'pirs', 'warehouse_detail', 'warehouse', 'cs',
             ]));
         }
     }

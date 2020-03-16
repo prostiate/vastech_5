@@ -97,6 +97,8 @@ class VastechConstruction extends Migration
             $table->string('tax_number')->nullable();
             $table->string('website')->nullable();
             $table->string('email')->nullable();
+            $table->boolean('is_avg_price')->default('0');
+            $table->boolean('is_fifo')->default('0');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -568,6 +570,7 @@ class VastechConstruction extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->decimal('avg_price', 17, 2)->default('0');
+            $table->decimal('last_buy_price', 17, 2)->default('0');
             $table->string('name');
             $table->string('code')->nullable();
             $table->unsignedBigInteger('other_product_category_id');

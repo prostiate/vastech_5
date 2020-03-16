@@ -4,17 +4,11 @@ namespace App\Model\expense;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class expense_item extends Model implements Auditable
+class expense_item extends Model implements 
 {
-    use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
     protected $guarded = [];
-    protected $auditExclude = [
-        'tenant_id',
-        'company_id'
-    ];
 
     public function expense()
     {

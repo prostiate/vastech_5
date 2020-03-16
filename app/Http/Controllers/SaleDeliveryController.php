@@ -470,6 +470,9 @@ class SaleDeliveryController extends Controller
     public function edit($id)
     {
         $pd                 = sale_delivery::find($id);
+        if($pd->status != 6){
+            return redirect('/sales_delivery');
+        }
         $products           = sale_delivery_item::where('sale_delivery_id', $id)->get();
 
         return view('admin.sales.delivery.edit', compact(['pd', 'products']));

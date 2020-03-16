@@ -695,7 +695,7 @@
                                                 <td colspan="3"><b>Total Equity</b></td>
                                                 <td class="text-right"><b>@if($total_equity2 < 0) ( @number(abs($total_equity2)) ) @else @number($total_equity2) @endif</b> </td> </tr> <tr>
                                                 <td colspan="4"><b>Total Liability & Equity</b></td>
-                                                <td class="text-right"><b>@if($total_lia_eq < 0) ( @number(abs($total_lia_eq)) ) @else @number($total_lia_eq) @endif</b> </td> </tr> </tbody> </table> </div> </div> </div> </div> </div> </div> </div> </div> </div> @endsection @push('scripts') <script src="{{ asset('js/other/zebradatepicker.js?v=5-20200312-1327') }}" charset="utf-8">
+                                                <td class="text-right"><b>@if($total_lia_eq < 0) ( @number(abs($total_lia_eq)) ) @else @number($total_lia_eq) @endif</b> </td> </tr> </tbody> </table> </div> </div> </div> </div> </div> </div> </div> </div> </div> @endsection @push('scripts') <script src="{{ asset('js/other/zebradatepicker.js?v=5-20200315-0243') }}" charset="utf-8">
                                                             </script>
                                                             <script>
                                                                 function next() {

@@ -20,6 +20,11 @@ class sale_invoice_item extends Model
         return $this->belongsTo('App\Model\sales\sale_invoice');
     }
 
+    public function sale_return_item()
+    {
+        return $this->hasMany('App\Model\sales\sale_return_item', 'sale_invoice_item_id');
+    }
+
     public function product()
     {
         return $this->belongsTo('App\Model\product\product');

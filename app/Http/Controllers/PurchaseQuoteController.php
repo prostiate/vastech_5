@@ -345,6 +345,9 @@ class PurchaseQuoteController extends Controller
     public function edit($id)
     {
         $pq                 = purchase_quote::find($id);
+        if($pq->status != 1){
+            return redirect('/purchases_quote');
+        }
         $pq_item            = purchase_quote_item::where('purchase_quote_id', $id)->get();
         $vendors            = contact::where('type_vendor', true)->get();
         $warehouses         = warehouse::all();

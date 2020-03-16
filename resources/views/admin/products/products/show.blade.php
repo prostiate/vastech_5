@@ -85,8 +85,13 @@
                                             <h5>@lang('product_1.show.tab_1.row_1.name')</h5>
                                             <h5><b>{{$products->name}}</b></h5>
                                             <br>
-                                            <h5>@lang('product_1.show.tab_1.row_1.avg')</h5>
+                                            @if($cs->is_avg_price == 1)
+                                            <h5>Average Price</h5>
                                             <h5><b>Rp @number($products->avg_price)</b></h5>
+                                            @else
+                                            <h5>Last Buy Price</h5>
+                                            <h5><b>Rp @number($products->last_buy_price)</b></h5>
+                                            @endif
                                             <br>
                                             <h5>@lang('product_1.show.tab_1.row_1.cstock')</h5>
                                             <h5><b>{{$products->qty}} {{$products->other_unit->name}}</b></h5>
@@ -704,5 +709,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
 @endpush

@@ -24,7 +24,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('/error_notif_email','MailController@error_notif_email');
     Route::get('lang/{language}',                                                                               'LocalizationController@switch')->name('localization.switch');
-    Route::get('/benerin_avg_price',                                                                            'PurchaseInvoiceController@benerin_avg_price2');
+    Route::get('/benerin_avg_price_avg',                                                                        'PurchaseInvoiceController@benerin_avg_price1');
+    Route::get('/benerin_avg_price_fifo',                                                                       'PurchaseInvoiceController@benerin_avg_price2');
+    Route::get('/benerin_avg_price_fifoall',                                                                    'PurchaseInvoiceController@fifoAll');
 
     /*---------REPORTS --------------*/
     Route::get('/reports', function () {
@@ -705,6 +707,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/company',                                              'SettingController@company_index')->name('company.index');
         Route::post('/companyStore',                                        'SettingController@company_store')->name('company.store');
+
+        Route::get('/product',                                              'SettingController@product_index')->name('product_management.index');
+        Route::post('/product',                                             'SettingController@product_store')->name('product_management.store');
     });
     Route::get('/coa/select_account',                                       'SettingController@select_account');
     Route::post('/settings/account/store',                                  'SettingController@account_store');

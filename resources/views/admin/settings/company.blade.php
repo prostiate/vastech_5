@@ -122,6 +122,23 @@
             </div>
         </div>
         <div class="col-md-6 form-group">
+            <div class="col-md-12 form-group">
+                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;">
+                    <h2><strong>Inventory Setting</strong></h2>
+                </label>
+                <br>
+                <br>
+                <br>
+            </div>
+            <div class="col-md-12 form-group">
+                <label class="control-label col-md-5 col-sm-5 col-xs-12" style="text-align: left;" data-toggle="tooltip" data-placement="top" @if($check_trans) data-original-title="Cannot change method because there is already a transaction!" @else data-original-title="The method used for journal calculations!" @endif>Inventory Cost Method</label>
+                <div class="col-md-7 col-sm-7 col-xs-12">
+                    <select class="form-control selectterm" name="inventory_cost_method" data-toggle="tooltip" data-placement="top" @if($check_trans) disabled @endif>
+                        <option value="avg_price" @if($cs->is_avg_price == 1) selected @endif>Average Price</option>
+                        <option value="fifo" @if($cs->is_fifo == 1) selected @endif>FIFO</option>
+                    </select>
+                </div>
+            </div>
             {{--
             <div class="col-md-12 form-group">
                 <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">
@@ -241,5 +258,5 @@
 @endsection
 
 {{--@push('scripts')
-<script src="{{ asset('js/settings/user/dataTable.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{ asset('js/settings/user/dataTable.js?v=5-20200315-0243') }}" charset="utf-8"></script>
 @endpush--}}

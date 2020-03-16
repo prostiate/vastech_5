@@ -12,27 +12,67 @@
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
-           <div class="x_content">
+            <div class="x_content">
                 <div class="table-responsive">
                     <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
                         <thead>
                             <tr class="headings">
-                                <th class="column-title">User Id </th>
-                                <th class="column-title">Event </th>
-                                <th class="column-title">Type Audit </th>
-                                <th class="column-title">Old Value </th>
-                                <th class="column-title">New Value </th>
-                                <th class="column-title">IP Address </th>
+                                <th scope="col">Model</th>
+                                <th scope="col">Action</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Old Values</th>
+                                <th scope="col">New Values</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach($audits as $audit)
+                            <tr>
+                                <td>{{ $audit->auditable_type }} (id: {{ $audit->auditable_id }})</td>
+                                <td>{{ $audit->event }}</td>
+                                <td>{{ $audit->user->name }}</td>
+                                <td>{{ $audit->created_at }}</td>
+                                @if($audit->old_values)
+                                <td>
+                                    <table class="table">
+                                        @foreach($audit->old_values as $attribute => $value)
+                                        <tr>
+                                            <td><b>{{ $attribute }}</b></td>
+                                            <td>{{ $value }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </table>
+                                </td>
+                                @else
+                                <td>-</td>
+                                @endif
+                                @if($audit->new_values)
+                                <td>
+                                    <table class="table">
+                                        @foreach($audit->new_values as $attribute => $value)
+                                        <tr>
+                                            <td><b>{{ $attribute }}</b></td>
+                                            <td>{{ $value }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </table>
+                                </td>
+                                @else
+                                <td>-</td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    {{ $audits->links() }}
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-
+{{--
 @push('scripts')
-<script src="{{ asset('js/otherlists/audits/dataTable.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{ asset('js/otherlists/audits/dataTable.js?v=5-20200315-0243') }}" charset="utf-8"></script>
 @endpush
+--}}

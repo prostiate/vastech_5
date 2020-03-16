@@ -375,6 +375,9 @@ class PurchaseDeliveryController extends Controller
     public function edit($id)
     {
         $pd                 = purchase_delivery::find($id);
+        if($pd->status != 6){
+            return redirect('/purchases_delivery');
+        }
         $products           = purchase_delivery_item::where('purchase_delivery_id', $id)->get();
 
         return view('admin.purchases.delivery.edit', compact(['pd', 'products']));

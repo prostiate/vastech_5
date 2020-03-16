@@ -128,7 +128,7 @@
             </div>
             <div class="x_content">
                 <div class="table-responsive">
-                    <table class="table table-striped jambo_table bulk_action" id="dataTable" style="width:100%">
+                    <table class="table table-striped jambo_table bulk_action" @if($cs->is_avg_price == 1) id="dataTable1" @else id="dataTable2" @endif style="width:100%">
                         <thead>
                             <tr class="headings">
                                 <!--<th class="column-title">Product Image </th>-->
@@ -137,7 +137,11 @@
                                 <th class="column-title">@lang('product_1.index.table.col_3')</th>
                                 <!--<th class="column-title">Minimum Stock </th>-->
                                 <th class="column-title">@lang('product_1.index.table.col_4')</th>
-                                <th class="column-title">@lang('product_1.index.table.col_5')</th>
+                                @if($cs->is_avg_price == 1)
+                                <th class="column-title">Average Price</th>
+                                @else
+                                <th class="column-title">Last Buy Price</th>
+                                @endif
                                 <!--<th class="column-title">Last Buy Price </th>-->
                                 <th class="column-title">@lang('product_1.index.table.col_6')</th>
                                 <th class="column-title">@lang('product_1.index.table.col_7')</th>
@@ -154,6 +158,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/products/dataTable.js?v=5-20200305-1546') }}" charset="utf-8"></script>
-<script src="{{ asset('js/products/products/chartdiindex.js?v=5-20200305-1546') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/products/dataTable.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/products/chartdiindex.js?v=5-20200315-0243') }}" charset="utf-8"></script>
 @endpush

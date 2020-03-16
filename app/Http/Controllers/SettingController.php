@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\coa\coa;
+use App\Model\coa\coa_detail;
 use App\Model\company\company_logo;
 use App\Model\company\company_setting;
 use App\Model\coa\default_account;
@@ -30,29 +31,28 @@ class SettingController extends Controller
 
     public function company_index()
     {
-        $users = User::find(Auth::id());
-        $roles = Role::pluck('name', 'name')->all();
+        $users          = User::find(Auth::id());
+        $roles          = Role::pluck('name', 'name')->all();
+        $cs             = company_setting::where('company_id', $users->company_id)->first();
+        $logo           = company_logo::where('company_id', $users->company_id)->latest()->first();
+        $check_trans    = coa_detail::get();
 
-        $cs = company_setting::where('company_id', $users->company_id)->first();
-        //$logo = logo_uploaded::where('company_id', 1)->first();
-        $logo = company_logo::where('company_id', $users->company_id)->latest()->first();
-
-        return view('admin.settings.company', compact(['cs', 'users', 'roles', 'logo']));
+        return view('admin.settings.company', compact(['cs', 'users', 'roles', 'logo', 'check_trans']));
     }
 
     public function company_store(Request $request)
     {
         DB::beginTransaction();
         try {
-            $users                  = User::find(Auth::id());
-
-            $is_logo                = $request->get('is_logo');
+            $users                      = User::find(Auth::id());
+            $cs                         = company_setting::where('company_id', $users->company_id)->first();
+            $is_logo                    = $request->get('is_logo');
             if ($is_logo) {
-                $is_logo            = 1;
+                $is_logo                = 1;
             } else {
-                $is_logo            = 0;
+                $is_logo                = 0;
             }
-            $cover                  = $request->file('logo');
+            $cover                      = $request->file('logo');
             if ($cover) {
                 $extension              = $cover->getClientOriginalExtension();
                 //Storage::disk('public')->put($cover->getFilename() . '.' . $extension,  File::get($cover));
@@ -67,18 +67,35 @@ class SettingController extends Controller
                 ]);
             }
 
+            if ($request->inventory_cost_method == 'avg_price') {
+                $is_avg_price           = 1;
+                $is_fifo                = 0;
+            } else {
+                $is_avg_price           = 0;
+                $is_fifo                = 1;
+            }
+            if ($cs->is_avg_price != $is_avg_price) {
+                company_setting::where('company_id', $users->company_id)->update([
+                    'is_avg_price'      => $is_avg_price,
+                ]);
+            } else if ($cs->is_fifo != $is_fifo) {
+                company_setting::where('company_id', $users->company_id)->update([
+                    'is_fifo'           => $is_fifo,
+                ]);
+            }
+
             company_setting::where('company_id', $users->company_id)->update([
-                'company_id'        => $users->company_id,
-                'user_id'           => Auth::id(),
-                'is_logo'           => $is_logo,
-                'name'              => $request->get('name'),
-                'address'           => $request->get('address'),
-                'shipping_address'  => $request->get('shipping_address'),
-                'phone'             => $request->get('phone'),
-                'fax'               => $request->get('fax'),
-                'tax_number'        => $request->get('tax_number'),
-                'website'           => $request->get('website'),
-                'email'             => $request->get('email'),
+                'company_id'            => $users->company_id,
+                'user_id'               => Auth::id(),
+                'is_logo'               => $is_logo,
+                'name'                  => $request->get('name'),
+                'address'               => $request->get('address'),
+                'shipping_address'      => $request->get('shipping_address'),
+                'phone'                 => $request->get('phone'),
+                'fax'                   => $request->get('fax'),
+                'tax_number'            => $request->get('tax_number'),
+                'website'               => $request->get('website'),
+                'email'                 => $request->get('email'),
             ]);
             DB::commit();
             // notifikasi dengan session

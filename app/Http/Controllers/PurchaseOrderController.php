@@ -849,6 +849,9 @@ class PurchaseOrderController extends Controller
     public function edit($id)
     {
         $po             = purchase_order::find($id);
+        if($po->status != 1){
+            return redirect('/purchases_order');
+        }
         $po_item        = purchase_order_item::where('purchase_order_id', $id)->get();
         $vendors        = contact::where('type_vendor', true)->get();
         $warehouses     = warehouse::all();

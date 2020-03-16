@@ -280,6 +280,9 @@ class PurchasePaymentController extends Controller
     public function edit($id)
     {
         $po                     = purchase_payment::find($id);
+        if($po->status != 3){
+            return redirect('/purchases_delivery');
+        }
         $get_all_invoice        = purchase_payment_item::where('purchase_payment_id', $id)->with('purchase_invoice', 'purchase_payment')->get();
         $coa                    = coa::where('coa_category_id', 3)->get();
         $payment_method         = other_payment_method::get();

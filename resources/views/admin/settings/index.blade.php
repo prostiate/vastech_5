@@ -35,7 +35,6 @@
                         </li>
                         <li role="presentation" class="{{ (request()->is('settings/user')) ? 'active' : '' }}"><a href="{{route('user')}}">User Management</a>
                         </li>
-
                     </ul>
                     <div id="myTabContent" class="tab-content">
                         <div role="tabpanel" class="tab-pane fade active in" id="tab_content1"
@@ -51,5 +50,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-20200312-1327') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200315-0243') }}" charset="utf-8"></script>
 @endpush
