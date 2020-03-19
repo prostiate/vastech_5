@@ -187,7 +187,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/construction/budget_plans/showAreaForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{asset('js/construction/budget_plans/showAreaForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script>
     function modalSelectedArea(id, name) {
         $("#modal_selected_area").modal("show");

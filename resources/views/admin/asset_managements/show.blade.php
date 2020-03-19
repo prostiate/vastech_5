@@ -269,9 +269,13 @@
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <!--<li><a href="/asset_managements/dispose/{{$assets->id}}">Sell/Dispose</a></li>-->
+                    @if(Auth::user()->company_id == 5)
+                    @if(Auth::user()->id == 999999)
                     <li><a href="#" id="click">Delete</a>
                         <input type="text" value="{{$assets->id}}" id="form_id" hidden>
                     </li>
+                    @endif
+                    @endif
                 </ul>
             </div>
         </div>
@@ -280,5 +284,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/asset_management/dataTable.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/asset_management/dataTable.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

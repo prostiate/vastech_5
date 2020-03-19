@@ -238,7 +238,6 @@ class JournalEntryController extends Controller
         //
     }
 
-
     public function destroy($id)
     {
         //

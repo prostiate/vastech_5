@@ -111,6 +111,10 @@
                         <div class="form-group">
                             <a href="{{ url('/chart_of_accounts') }}" class="btn btn-dark">Cancel</a>
                             <div class="btn-group">
+                                @if(Auth::user()->company_id == 5)
+                                @if(Auth::user()->id == 999999)
+                                @endif
+                                @endif
                                 <button class="btn btn-success" type="button" onclick="window.location.href = '/journal_entry/edit';">Edit
                                 </button>
                             </div>

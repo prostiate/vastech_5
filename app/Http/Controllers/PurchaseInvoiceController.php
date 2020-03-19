@@ -36,6 +36,8 @@ use App\Model\purchase\purchase_return;
 use App\Model\sales\sale_invoice;
 use App\Model\sales\sale_invoice_item;
 use App\Model\stock_adjustment\stock_adjustment;
+use App\Model\warehouse\warehouse_transfer;
+use App\Model\wip\wip;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -303,7 +305,7 @@ class PurchaseInvoiceController extends Controller
                 return $header->transaction_date;
             });
             $get_product                = product::get();
-            product::where('id', '>', 0)->update([/*'qty' => 0, */'avg_price' => 0]);
+            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0, 'last_buy_price' => 0]);
             product_fifo_in::query()->truncate();
             product_fifo_out::query()->truncate();
             foreach ($get_purchase_invoice as $key_gpi => $gpi) {
@@ -378,9 +380,6 @@ class PurchaseInvoiceController extends Controller
                                 $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
                                 // 10 lebih dari 0
                                 if ($deducted_qty >= 0) {
-                                    $gpfi->update([
-                                        'qty' => 0
-                                    ]);
                                     if ($next) {
                                         $qty_pool->push([
                                             'qty' => $gpfi->qty,
@@ -401,6 +400,9 @@ class PurchaseInvoiceController extends Controller
                                         ]);
                                         break;
                                     }
+                                    $gpfi->update([
+                                        'qty' => 0
+                                    ]);
                                     echo '<pre>fifo_in_setelah: ', print_r($gpfi->qty), '</pre>';
                                 } else {
                                     $gpfi->update([
@@ -471,7 +473,14 @@ class PurchaseInvoiceController extends Controller
             $get_stock_adjustment       = stock_adjustment::with('stock_adjustment_detail')->get()->sortBy(function ($header) {
                 return $header->date;
             });
-            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0]);
+            $get_warehouse_transfer     = warehouse_transfer::with('warehouse_transfer_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_wip                    = wip::with('wip_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+
+            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0, 'last_buy_price' => 0]);
             product_fifo_in::query()->truncate();
             product_fifo_out::query()->truncate();
             foreach ($get_stock_adjustment as $key_gsa => $gsa) {
@@ -499,7 +508,519 @@ class PurchaseInvoiceController extends Controller
                         }
                     }
                 }
-                
+            }
+            foreach ($get_purchase_invoice as $key_gpi => $gpi) {
+                foreach ($gpi->purchase_invoice_item as $key_gpii => $gpii) {
+                    foreach ($get_product as $key_gp => $gp) {
+                        if ($gp->id == $gpii->product_id) {
+                            $gp->update([
+                                'qty'                   => $gp->qty + $gpii->qty,
+                                'avg_price'             => abs($gpii->unit_price),
+                                'last_buy_price'        => abs($gpii->unit_price),
+                            ]);
+                            $create_product_fifo_in = new product_fifo_in([
+                                'purchase_invoice_item_id'    => $gpii->id, // ID SI PURCHASE INVOICE ITEM
+                                'type'          => 'purchase invoice',
+                                'number'        => $gpi->number,
+                                'product_id'    => $gpii->product_id,
+                                'warehouse_id'  => $gpi->warehouse_id,
+                                'qty'           => $gpii->qty,
+                                'unit_price'    => $gpii->unit_price,
+                                'total_price'   => $gpii->amount,
+                                'date'          => $gpi->transaction_date,
+                            ]);
+                            $create_product_fifo_in->save();
+                        }
+                    }
+                }
+            }
+            foreach ($get_sale_invoice as $key_gsi => $gsi) {
+                foreach ($gsi->sale_invoice_item as $key_gsii => $gsii) {
+                    foreach ($get_product as $key_gp => $gp) { // PRODUCT PUNYA TABLE
+                        if ($gp->id == $gsii->product_id) {
+                            $gp->update([
+                                'qty'                   => $gp->qty - $gsii->qty,
+                            ]);
+                            $create_product_fifo_out    = new product_fifo_out([
+                                'sale_invoice_item_id'  => $gsii->id, // ID SI SALES INVOICE ITEM
+                                'type'                  => 'sales invoice',
+                                'number'                => $gsi->number,
+                                'product_id'            => $gsii->product_id,
+                                'warehouse_id'          => $gsi->warehouse_id,
+                                'qty'                   => $gsii->qty,
+                                'unit_price'            => $gsii->unit_price,
+                                'total_price'           => $gsii->amount,
+                                'date'                  => $gsi->transaction_date,
+                            ]);
+                            $create_product_fifo_out->save(); // SAVE FIFO OUT
+                            $get_product_fifo_in        = product_fifo_in::where('product_id', $gsii->product_id)->where('qty', '>', 0)
+                                ->get()->sortBy(function ($item) { // GET FIFO IN AND SORT BY TRANSACTION DATE HEADER
+                                    return $item->transaction_date;
+                                });
+                            $ambil_qty_fifo_out         = $gsii->qty;
+                            $qty_pool                   = collect([]);
+                            foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                                $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                                //dd($deducted_qty);
+                                $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                                if ($deducted_qty >= 0) {
+                                    if ($next) {
+                                        $qty_pool->push([
+                                            'qty' => $gpfi->qty,
+                                            'unit_price' => $gpfi->unit_price,
+                                            'product_id' => $gpfi->product_id,
+                                            'gpfi_id' => $gpfi->id
+                                        ]);
+                                        $ambil_qty_fifo_out -= $gpfi->qty;
+                                    } else {
+                                        $qty_pool->push([
+                                            'qty' => $ambil_qty_fifo_out,
+                                            'unit_price' => $gpfi->unit_price,
+                                            'product_id' => $gpfi->product_id,
+                                            'gpfi_id' => $gpfi->id
+                                        ]);
+                                        break;
+                                    }
+                                    $gpfi->update([
+                                        'qty' => 0
+                                    ]);
+                                } else {
+                                    $qty_pool->push([
+                                        'qty' => $ambil_qty_fifo_out,
+                                        'unit_price' => $gpfi->unit_price,
+                                        'product_id' => $gpfi->product_id,
+                                        'gpfi_id' => $gpfi->id
+                                    ]);
+                                    $gpfi->update([
+                                        'qty' => abs($deducted_qty)
+                                    ]);
+                                    break;
+                                }
+                            }
+                            $total_sum_qty_pool         = 0;
+                            foreach ($qty_pool as $key_qp => $qp) {
+                                $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                            }
+                            $coa_detail_debit           = coa_detail::where('type', 'sales invoice')
+                                ->where('number', 'Sales Invoice #' . $gsi->number)->where('debit', 0)->where('coa_id', 7)->get();
+                            foreach ($coa_detail_debit as $key_cdb => $cdb) {
+                                if ($key_gsii == $key_cdb) {
+                                    $cdb->update(['credit' => $total_sum_qty_pool]);
+                                }
+                            }
+                            $coa_detail_credit      = coa_detail::where('type', 'sales invoice')
+                                ->where('number', 'Sales Invoice #' . $gsi->number)->where('credit', 0)->where('coa_id', 69)->get();
+                            foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                                if ($key_gsii == $key_cdc) {
+                                    $cdc->update(['debit' => $total_sum_qty_pool]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            DB::commit();
+            return response()->json(['fifo_success' => 'fifo_berhasil']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function avgPrice()
+    {
+        DB::beginTransaction();
+        try {
+            $get_purchase_invoice       = purchase_invoice::with('purchase_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_purchase_delivery      = purchase_delivery::with('purchase_delivery_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_sale_invoice           = sale_invoice::with('sale_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0]);
+            foreach ($get_purchase_invoice as $key_gpi => $gpi) {
+                echo '<pre><strong>header invoice tanggal: ', var_dump($gpi->transaction_date), '</strong></pre>';
+                echo '<pre><strong>header invoice number: ', var_dump($gpi->number), '</strong></pre>';
+                foreach ($gpi->purchase_invoice_item as $key_gpii => $gpii) {
+                    echo '<pre><strong>item: ', var_dump($gpii->id), '</strong></pre>';
+                    $produk                     = product::find($gpii->product_id);
+                    echo '<pre><strong>product: ', var_dump($produk->name), '</strong></pre>';
+                    echo '<pre><strong>product qty: ', var_dump($produk->qty), '</strong></pre>';
+                    $qty                        = $gpii->qty;
+                    echo '<pre><strong>gpii qty: ', var_dump($gpii->qty), '</strong></pre>';
+                    $price                      = $gpii->unit_price;
+                    echo '<pre><strong>gpii unit price: ', var_dump($gpii->unit_price), '</strong></pre>';
+                    $dibagi                     = $produk->qty + $qty;
+                    echo '<pre><strong>dibagi: ', var_dump($dibagi), '</strong></pre>';
+                    $total_price                = $qty * $price;
+                    echo '<pre><strong>total_price: ', var_dump($total_price), '</strong></pre>';
+                    $curr_avg_price             = 0;
+                    if ($dibagi == 0) {
+                        $curr_avg_price         = $produk->avg_price;
+                    } else if ($dibagi < 0) {
+                        $curr_avg_price         = $price;
+                    } else if ($dibagi > 0) {
+                        $curr_avg_price         = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                    }
+                    echo '<pre><strong>curr_avg_price: ', var_dump($curr_avg_price), '</strong></pre>';
+                    $coa_detail_credit      = coa_detail::where('type', 'purchase invoice')
+                        ->where('number', 'Purchase Invoice #' . $gpi->number)->where('credit', 0)->where('coa_id', 69)->get();
+                    foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                        echo '<pre><strong>cdc_debit_sebelum: ', var_dump($cdc->debit), '</strong></pre>';
+                        $cdc->update([
+                            'coa_id'        => $produk->default_inventory_account,
+                            'debit'         => $total_price
+                        ]);
+                        echo '<pre><strong>cdc_debit_sesudah: ', var_dump($cdc->debit), '</strong></pre>';
+                    }
+                    if ($gpi->selected_pd_id) { } else {
+                        $produk->update([
+                            'qty'                   => $dibagi,
+                            'avg_price'             => abs($curr_avg_price),
+                        ]);
+                    }
+                }
+            }
+            foreach ($get_purchase_delivery as $key_gpi => $gpd) {
+                echo '<pre><strong>header delivery tanggal: ', var_dump($gpd->transaction_date), '</strong></pre>';
+                echo '<pre><strong>header delivery number: ', var_dump($gpd->number), '</strong></pre>';
+                foreach ($gpd->purchase_delivery_item as $key_gpdi => $gpdi) {
+                    echo '<pre><strong>item: ', var_dump($gpdi->id), '</strong></pre>';
+                    $produk                     = product::find($gpdi->product_id);
+                    echo '<pre><strong>product: ', var_dump($produk->name), '</strong></pre>';
+                    echo '<pre><strong>product qty: ', var_dump($produk->qty), '</strong></pre>';
+                    $qty                        = $gpdi->qty;
+                    echo '<pre><strong>gpdi qty: ', var_dump($gpdi->qty), '</strong></pre>';
+                    $price                      = $gpdi->unit_price;
+                    echo '<pre><strong>gpdi unit price: ', var_dump($gpdi->unit_price), '</strong></pre>';
+                    $dibagi                     = $produk->qty + $qty;
+                    echo '<pre><strong>dibagi: ', var_dump($dibagi), '</strong></pre>';
+                    $total_price                = $qty * $price;
+                    echo '<pre><strong>total_price: ', var_dump($total_price), '</strong></pre>';
+                    $curr_avg_price             = 0;
+                    if ($dibagi == 0) {
+                        $curr_avg_price         = $produk->avg_price;
+                    } else if ($dibagi < 0) {
+                        $curr_avg_price         = $price;
+                    } else if ($dibagi > 0) {
+                        $curr_avg_price         = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                    }
+                    echo '<pre><strong>curr_avg_price: ', var_dump($curr_avg_price), '</strong></pre>';
+                    $coa_detail_credit      = coa_detail::where('type', 'purchase delivery')
+                        ->where('number', 'Purchase Delivery #' . $gpd->number)->where('credit', 0)->where('coa_id', 69)->get();
+                    foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                        echo '<pre><strong>cdc_coa_id_sebelum: ', var_dump($cdc->coa_id), '</strong></pre>';
+                        echo '<pre><strong>cdc_debit_sebelum: ', var_dump($cdc->debit), '</strong></pre>';
+                        $cdc->update([
+                            'coa_id'        => $produk->default_inventory_account,
+                            'debit'         => $total_price
+                        ]);
+                        echo '<pre><strong>cdc_coa_id_sesudah: ', var_dump($cdc->coa_id), '</strong></pre>';
+                        echo '<pre><strong>cdc_debit_sesudah: ', var_dump($cdc->debit), '</strong></pre>';
+                    }
+                    $produk->update([
+                        'qty'                   => $dibagi,
+                        'avg_price'             => abs($curr_avg_price),
+                    ]);
+                }
+            }
+            foreach ($get_sale_invoice as $key_gsi => $gsi) {
+                foreach ($gsi->sale_invoice_item as $key_gsii => $gsii) {
+                    $produk                     = product::find($gsii->product_id);
+                    $total_avg                  = $gsii->qty * $produk->avg_price;
+                    $coa_detail_debit           = coa_detail::where('type', 'sales invoice')
+                        ->where('number', 'Sales Invoice #' . $gsi->number)->where('debit', 0)->where('coa_id', 7)->get();
+                    foreach ($coa_detail_debit as $key_cdb => $cdb) {
+                        if ($key_gsii == $key_cdb) {
+                            $cdb->update(['credit' => $total_avg]);
+                        }
+                    }
+                    $coa_detail_credit      = coa_detail::where('type', 'sales invoice')
+                        ->where('number', 'Sales Invoice #' . $gsi->number)->where('credit', 0)->where('coa_id', 69)->get();
+                    foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                        if ($key_gsii == $key_cdc) {
+                            $cdc->update(['debit' => $total_avg]);
+                        }
+                    }
+                    $produk->update([
+                        'qty'                   => $produk->qty - $gsii->qty,
+                    ]);
+                }
+            }
+            DB::commit();
+            return response()->json(['fifo_success' => 'fifo_berhasil']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function fifoAll_NEW()
+    {
+        DB::beginTransaction();
+        try {
+            $get_purchase_invoice       = purchase_invoice::with('purchase_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_sale_invoice           = sale_invoice::with('sale_invoice_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            //$get_product                = product::get();
+            // UPDATE PRODUCT QTY BASED ON STOCK ADJUSTMENT
+            $get_stock_adjustment       = stock_adjustment::with('stock_adjustment_detail')->get()->sortBy(function ($header) {
+                return $header->date;
+            });
+            $get_warehouse_transfer     = warehouse_transfer::with('warehouse_transfer_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $get_wip                    = wip::with('wip_item')->get()->sortBy(function ($header) {
+                return $header->transaction_date;
+            });
+            $gather_all_collection      = collect([]);
+            foreach ($get_purchase_invoice as $header) {
+                $gather_all_collection->push([
+                    'type'      => 'purchase_invoice',
+                    'date'      => $header->transaction_date,
+                    'number'    => $header->number,
+                ]);
+            }
+            foreach ($get_sale_invoice as $header) {
+                $gather_all_collection->push([
+                    'type'      => 'sales_invoice',
+                    'date'      => $header->transaction_date,
+                    'number'    => $header->number,
+                ]);
+            }
+            foreach ($get_stock_adjustment as $header) {
+                $gather_all_collection->push([
+                    'type'      => 'stock_adjustment',
+                    'date'      => $header->date,
+                    'number'    => $header->number,
+                ]);
+            }
+            foreach ($get_warehouse_transfer as $header) {
+                $gather_all_collection->push([
+                    'type'      => 'warehouse_transfer',
+                    'date'      => $header->transaction_date,
+                    'number'    => $header->number,
+                ]);
+            }
+            foreach ($get_wip as $header) {
+                $gather_all_collection->push([
+                    'type'      => 'wip',
+                    'date'      => $header->transaction_date,
+                    'number'    => $header->number,
+                ]);
+            }
+            dd($gather_all_collection->sortBy('date'));
+            product::where('id', '>', 0)->update(['qty' => 0, 'avg_price' => 0, 'last_buy_price' => 0]);
+            product_fifo_in::query()->truncate();
+            product_fifo_out::query()->truncate();
+            foreach ($gather_all_collection->sortBy('date') as $key_gac => $gac) {
+                if ($gac->type == 'purchase_invoice') {
+                    //dd('ifpurchase_invoice');
+                    foreach ($get_purchase_invoice as $key_gpi => $gpi) {
+                        foreach ($gpi->purchase_invoice_item as $key_gpii => $gpii) {
+                            $get_product                = product::find($gpii->product_id);
+                            $get_product->update([
+                                'qty'                   => $get_product->qty + $gpii->qty,
+                                'avg_price'             => abs($gpii->unit_price),
+                                'last_buy_price'        => abs($gpii->unit_price),
+                            ]);
+                            $create_product_fifo_in = new product_fifo_in([
+                                'purchase_invoice_item_id'    => $gpii->id, // ID SI PURCHASE INVOICE ITEM
+                                'type'          => 'purchase invoice',
+                                'number'        => $gpi->number,
+                                'product_id'    => $gpii->product_id,
+                                'warehouse_id'  => $gpi->warehouse_id,
+                                'qty'           => $gpii->qty,
+                                'unit_price'    => $gpii->unit_price,
+                                'total_price'   => $gpii->amount,
+                                'date'          => $gpi->transaction_date,
+                            ]);
+                            $create_product_fifo_in->save();
+                        }
+                    }
+                } else if ($gac->type == 'sales_invoice') {
+                    //dd('elseifsalesinvoice');
+                    foreach ($get_sale_invoice as $key_gsi => $gsi) {
+                        foreach ($gsi->sale_invoice_item as $key_gsii => $gsii) {
+                            $get_product                = product::find($gpii->product_id);
+                            foreach ($get_product as $key_gp => $gp) { // PRODUCT PUNYA TABLE
+                                if ($gp->id == $gsii->product_id) {
+                                    $gp->update([
+                                        'qty'                   => $gp->qty - $gsii->qty,
+                                    ]);
+                                    $create_product_fifo_out    = new product_fifo_out([
+                                        'sale_invoice_item_id'  => $gsii->id, // ID SI SALES INVOICE ITEM
+                                        'type'                  => 'sales invoice',
+                                        'number'                => $gsi->number,
+                                        'product_id'            => $gsii->product_id,
+                                        'warehouse_id'          => $gsi->warehouse_id,
+                                        'qty'                   => $gsii->qty,
+                                        'unit_price'            => $gsii->unit_price,
+                                        'total_price'           => $gsii->amount,
+                                        'date'                  => $gsi->transaction_date,
+                                    ]);
+                                    $create_product_fifo_out->save(); // SAVE FIFO OUT
+                                    $get_product_fifo_in        = product_fifo_in::where('product_id', $gsii->product_id)->where('qty', '>', 0)
+                                        ->get()->sortBy(function ($item) { // GET FIFO IN AND SORT BY TRANSACTION DATE HEADER
+                                            return $item->transaction_date;
+                                        });
+                                    $ambil_qty_fifo_out         = $gsii->qty;
+                                    $qty_pool                   = collect([]);
+                                    foreach ($get_product_fifo_in as $key_gpfi => $gpfi) {
+                                        $deducted_qty           = $ambil_qty_fifo_out - $gpfi->qty;
+                                        //dd($deducted_qty);
+                                        $next                   = isset($get_product_fifo_in[$key_gpfi + 1]);
+                                        if ($deducted_qty >= 0) {
+                                            if ($next) {
+                                                $qty_pool->push([
+                                                    'qty' => $gpfi->qty,
+                                                    'unit_price' => $gpfi->unit_price,
+                                                    'product_id' => $gpfi->product_id,
+                                                    'gpfi_id' => $gpfi->id
+                                                ]);
+                                                $ambil_qty_fifo_out -= $gpfi->qty;
+                                                $gpfi->update([
+                                                    'qty' => 0
+                                                ]);
+                                            } else {
+                                                $qty_pool->push([
+                                                    'qty' => $ambil_qty_fifo_out,
+                                                    'unit_price' => $gpfi->unit_price,
+                                                    'product_id' => $gpfi->product_id,
+                                                    'gpfi_id' => $gpfi->id
+                                                ]);
+                                                $gpfi->update([
+                                                    'qty' => 0
+                                                ]);
+                                                break;
+                                            }
+                                        } else {
+                                            $gpfi->update([
+                                                'qty' => abs($deducted_qty)
+                                            ]);
+                                            $qty_pool->push([
+                                                'qty' => $ambil_qty_fifo_out,
+                                                'unit_price' => $gpfi->unit_price,
+                                                'product_id' => $gpfi->product_id,
+                                                'gpfi_id' => $gpfi->id
+                                            ]);
+                                            break;
+                                        }
+                                    }
+                                    $total_sum_qty_pool         = 0;
+                                    foreach ($qty_pool as $key_qp => $qp) {
+                                        $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
+                                    }
+                                    $coa_detail_debit           = coa_detail::where('type', 'sales invoice')
+                                        ->where('number', 'Sales Invoice #' . $gsi->number)->where('debit', 0)->where('coa_id', 7)->get();
+                                    foreach ($coa_detail_debit as $key_cdb => $cdb) {
+                                        if ($key_gsii == $key_cdb) {
+                                            $cdb->update(['credit' => $total_sum_qty_pool]);
+                                        }
+                                    }
+                                    $coa_detail_credit      = coa_detail::where('type', 'sales invoice')
+                                        ->where('number', 'Sales Invoice #' . $gsi->number)->where('credit', 0)->where('coa_id', 69)->get();
+                                    foreach ($coa_detail_credit as $key_cdc => $cdc) {
+                                        if ($key_gsii == $key_cdc) {
+                                            $cdc->update(['debit' => $total_sum_qty_pool]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if ($gac->type == 'stock_adjustment') {
+                    //dd('elseifstockadjustment');
+                    foreach ($get_stock_adjustment as $key_gsa => $gsa) {
+                        echo '<pre><strong>stock adjustment tanggal: ', var_dump($gsa->date), '</strong></pre>';
+                        foreach ($gsa->stock_adjustment_detail as $key_gsad => $gsad) {
+                            foreach ($get_product as $key_gp2 => $gp2) {
+                                if ($gp2->id == $gsad->product_id) {
+                                    echo '<pre><strong>qty_sebelum: ', var_dump($gp2->qty), '</strong></pre>';
+                                    $gp2->update([
+                                        'qty'                   => $gsad->actual
+                                    ]);
+                                    $create_product_fifo_in = new product_fifo_in([
+                                        'stock_adjustment_detail_id'    => $gsad->id, // ID SI PURCHASE INVOICE ITEM
+                                        'type'          => 'stock adjustment',
+                                        'number'        => $gsa->number,
+                                        'product_id'    => $gsad->product_id,
+                                        'warehouse_id'  => $gsa->warehouse_id,
+                                        'qty'           => $gsad->actual,
+                                        'unit_price'    => 0,
+                                        'total_price'   => 0,
+                                        'date'          => $gsa->date,
+                                    ]);
+                                    $create_product_fifo_in->save();
+                                    echo '<pre><strong>qty_sesudah: ', var_dump($gp2->qty), '</strong></pre>';
+                                }
+                            }
+                        }
+                    }
+                } else if ($gac->type == 'warehouse_transfer') {
+                    //dd('elseifwarehousetransfer');
+                    foreach ($get_warehouse_transfer as $key_gwt => $gwt) {
+                        echo '<pre><strong>warehouse transfer tanggal: ', var_dump($gwt->date), '</strong></pre>';
+                        $get_product_fifo_in    = product_fifo_in::where('warehouse_id', $gwt->warehouse_id)->first();
+                        foreach ($gwt->warehouse_transfer_item as $key_gwti => $gwti) {
+                            foreach ($get_product as $key_gp => $gp) {
+                                if ($gp->id == $gwti->product_id) {
+                                    if ($get_product_fifo_in) {
+                                        $create_product_fifo_in = new product_fifo_in([
+                                            'warheouse_transfer_item_id'    => $gwt->id, // ID SI PURCHASE INVOICE ITEM
+                                            'type'          => 'warehouse transfer',
+                                            'number'        => $gwt->number,
+                                            'product_id'    => $gsad->product_id,
+                                            'warehouse_id'  => $gsa->warehouse_id,
+                                            'qty'           => $gsad->actual,
+                                            'unit_price'    => 0,
+                                            'total_price'   => 0,
+                                            'date'          => $gsa->date,
+                                        ]);
+                                        $create_product_fifo_in->save();
+                                    } else {
+                                        product_fifo_in::where('product_id', $gwti->product_id)->update([]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if ($gac->type == 'wip') {
+                    //dd('elseifwip');
+                    foreach ($get_wip as $key_gw => $gw) { }
+                }
+            }
+            /*foreach ($get_stock_adjustment as $key_gsa => $gsa) {
+                echo '<pre><strong>stock adjustment tanggal: ', var_dump($gsa->date), '</strong></pre>';
+                foreach ($gsa->stock_adjustment_detail as $key_gsad => $gsad) {
+                    foreach ($get_product as $key_gp2 => $gp2) {
+                        if ($gp2->id == $gsad->product_id) {
+                            echo '<pre><strong>qty_sebelum: ', var_dump($gp2->qty), '</strong></pre>';
+                            $gp2->update([
+                                'qty'                   => $gsad->actual
+                            ]);
+                            $create_product_fifo_in = new product_fifo_in([
+                                //'purchase_invoice_item_id'    => 1, // ID SI PURCHASE INVOICE ITEM
+                                'type'          => 'stock adjustment',
+                                'number'        => $gsa->number,
+                                'product_id'    => $gsad->product_id,
+                                'warehouse_id'  => $gsa->warehouse_id,
+                                'qty'           => $gsad->actual,
+                                'unit_price'    => 0,
+                                'total_price'   => 0,
+                                'date'          => $gsa->date,
+                            ]);
+                            $create_product_fifo_in->save();
+                            echo '<pre><strong>qty_sesudah: ', var_dump($gp2->qty), '</strong></pre>';
+                        }
+                    }
+                }
             }
             foreach ($get_purchase_invoice as $key_gpi => $gpi) {
                 foreach ($gpi->purchase_invoice_item as $key_gpii => $gpii) {
@@ -613,7 +1134,7 @@ class PurchaseInvoiceController extends Controller
                         }
                     }
                 }
-            }
+            }*/
             DB::commit();
             return response()->json(['fifo_success' => 'fifo_berhasil']);
         } catch (\Exception $e) {
@@ -1617,9 +2138,6 @@ class PurchaseInvoiceController extends Controller
                 } else if ($request->r_qty[$i] < 0) {
                     DB::rollBack();
                     return response()->json(['errors' => 'Quantity cannot be more than stock']);
-                } else if ($request->qty[$i] == 0) {
-                    DB::rollBack();
-                    return response()->json(['errors' => 'Quantity must be more than zero']);
                 }
             }
             // CREATE COA DETAIL BERDASARKAN DARI CONTACT DEFAULT
@@ -2631,11 +3149,11 @@ class PurchaseInvoiceController extends Controller
                 $curr_avg_price             = 0;
                 if ($cs->is_avg_price == 1) {
                     if ($dibagi == 0) {
-                        $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                        $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                     } else if ($dibagi < 0) {
                         $curr_avg_price     = $price;
                     } else {
-                        $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                        $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                     }
                 } else if ($cs->is_fifo == 1) {
                     $curr_avg_price         = 0;
@@ -2897,9 +3415,6 @@ class PurchaseInvoiceController extends Controller
                 } else if ($request->r_qty[$i] < 0) {
                     DB::rollBack();
                     return response()->json(['errors' => 'Quantity cannot be more than stock']);
-                } else if ($request->qty[$i] == 0) {
-                    DB::rollBack();
-                    return response()->json(['errors' => 'Quantity cannot be 0']);
                 }
             }
             // DELETE COA DETAILS
@@ -2940,11 +3455,11 @@ class PurchaseInvoiceController extends Controller
                 $curr_avg_price             = 0;
                 if ($cs->is_avg_price == 1) {
                     if ($dibagi == 0) {
-                        $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                        $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                     } else if ($dibagi < 0) {
                         $curr_avg_price     = $price;
                     } else {
-                        $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                        $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                     }
                 } else if ($cs->is_fifo == 1) {
                     $curr_avg_price         = 0;
@@ -3130,7 +3645,7 @@ class PurchaseInvoiceController extends Controller
                     $create_product_fifo_in->save();
                 }
                 //menyimpan jumlah perubahan pada produk
-                product::where('id', $request->products2[$i])->update([
+                product::where('id', $request->products[$i])->update([
                     'qty'                   => $produk->qty + $qty,
                     'avg_price'             => abs($curr_avg_price),
                     'last_buy_price'        => abs($curr_avg_price),
@@ -3214,11 +3729,11 @@ class PurchaseInvoiceController extends Controller
                     $curr_avg_price             = 0;
                     if ($cs->is_avg_price == 1) {
                         if ($dibagi == 0) {
-                            $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                            $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                         } else if ($dibagi < 0) {
                             $curr_avg_price     = $price;
                         } else {
-                            $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                            $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                         }
                     } else if ($cs->is_fifo == 1) {
                         $curr_avg_price         = 0;
@@ -3432,8 +3947,13 @@ class PurchaseInvoiceController extends Controller
 
     public function destroy($id)
     {
-        $user               = User::find(Auth::id());
-        $cs                 = company_setting::where('company_id', $user->company_id)->first();
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $pi                                     = purchase_invoice::find($id);
@@ -3492,11 +4012,11 @@ class PurchaseInvoiceController extends Controller
                                 $price                      = $api->unit_price;
                                 $dibagi                     = $produk->qty - $qty;
                                 if ($dibagi == 0) {
-                                    $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                                    $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price));
                                 } else if ($dibagi < 0) {
                                     $curr_avg_price             = $price;
                                 } else {
-                                    $curr_avg_price             = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                                    $curr_avg_price             = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                                 }
                                 //menyimpan jumlah perubahan pada produk
                                 product::where('id', $api->product_id)->update([
@@ -3604,11 +4124,11 @@ class PurchaseInvoiceController extends Controller
                         $curr_avg_price             = 0;
                         if ($cs->is_avg_price == 1) {
                             if ($dibagi == 0) {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                             } else if ($dibagi < 0) {
                                 $curr_avg_price     = $price;
                             } else {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                             }
                         } else if ($cs->is_fifo == 1) {
                             $curr_avg_price         = 0;
@@ -3646,11 +4166,11 @@ class PurchaseInvoiceController extends Controller
                         $curr_avg_price             = 0;
                         if ($cs->is_avg_price == 1) {
                             if ($dibagi == 0) {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                             } else if ($dibagi < 0) {
                                 $curr_avg_price     = $price;
                             } else {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                             }
                         } else if ($cs->is_fifo == 1) {
                             $curr_avg_price         = 0;
@@ -3743,11 +4263,11 @@ class PurchaseInvoiceController extends Controller
                         $curr_avg_price             = 0;
                         if ($cs->is_avg_price == 1) {
                             if ($dibagi == 0) {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                             } else if ($dibagi < 0) {
                                 $curr_avg_price     = $price;
                             } else {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                             }
                         } else if ($cs->is_fifo == 1) {
                             $curr_avg_price         = 0;
@@ -3758,6 +4278,7 @@ class PurchaseInvoiceController extends Controller
                             'qty'                   => $produk->qty - $qty,
                             'avg_price'             => abs($curr_avg_price),
                         ]);
+                        //dd($produk->qty . $qty);
                     }
                     purchase_invoice_item::where('purchase_invoice_id', $id)->delete();
                     other_transaction::where('number', $pi->number)->where('type', 'purchase invoice')->where('ref_id', $pi->id)->delete();
@@ -3783,11 +4304,11 @@ class PurchaseInvoiceController extends Controller
                         $curr_avg_price             = 0;
                         if ($cs->is_avg_price == 1) {
                             if ($dibagi == 0) {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price));
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price));
                             } else if ($dibagi < 0) {
                                 $curr_avg_price     = $price;
                             } else {
-                                $curr_avg_price     = (($produk->qty * $produk->avg_price) + ($qty * $price)) / ($dibagi);
+                                $curr_avg_price     = (($produk->qty * $produk->avg_price) - ($qty * $price)) / ($dibagi);
                             }
                         } else if ($cs->is_fifo == 1) {
                             $curr_avg_price         = 0;

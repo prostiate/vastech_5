@@ -252,7 +252,11 @@
                             <a href="{{ url('/expenses') }}" class="btn btn-dark">@lang("expense.show.cancel_btn")</a>
                             @hasrole('Owner|Ultimate|Expense')
                             @can('Delete')
+                            @if(Auth::user()->company_id == 5)
+                            @if(Auth::user()->id == 999999)
                             <button type="button" class="btn btn-danger" id="click">@lang("expense.show.delete_btn")</button>
+                            @endif
+                            @endif
                             @endcan
                             @can('Edit')
                             <div class="btn-group">
@@ -272,5 +276,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/expenses/deleteFormNull.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/expenses/deleteFormNull.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

@@ -53,7 +53,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/other/select2.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script>
     function next() {
         var warehouse_from = document.getElementById('warehouse_from');

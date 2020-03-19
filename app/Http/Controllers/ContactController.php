@@ -515,6 +515,13 @@ class ContactController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user       = User::find(Auth::id());
+            $cs         = company_setting::where('company_id', $user->company_id)->first();
+            if ($cs->company_id == 5) {
+                if(Auth::id() != 999999){
+                    return redirect('/dashboard');
+                }
+            }
             $data = contact::find($contact);
             if (
                 $data->sale_delivery()->exists() or $data->sale_invoice()->exists() or $data->sale_payment()->exists()

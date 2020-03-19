@@ -230,7 +230,6 @@ class PurchaseQuoteController extends Controller
                 $number         = 10000;
             $trans_no           = $number + 1;
         }
-        dd($trans_no);
         $rules = array(
             'vendor_name'   => 'required',
             //'term'          => 'required',
@@ -455,6 +454,13 @@ class PurchaseQuoteController extends Controller
 
     public function destroy($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $pq = purchase_quote::find($id);

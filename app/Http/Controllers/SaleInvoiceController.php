@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SalesInvoiceStoredEvent;
 use App\Model\sales\sale_invoice;
 use App\Model\sales\sale_invoice_item;
 use App\Model\sales\sale_delivery;
@@ -816,7 +817,8 @@ class SaleInvoiceController extends Controller
                 $pi->sale_invoice_item()->save($pp[$i]);
 
                 $avg_price                      = product::find($request->products[$i]);
-                $total_avg                      = 0;
+                $total_avg                      = $request->qty[$i] * $avg_price->avg_price;
+                /*$total_avg                      = 0;
                 if ($cs->is_avg_price == 1) {
                     $total_avg                  = $request->qty[$i] * $avg_price->avg_price;
                 } else if ($cs->is_fifo == 1) {
@@ -885,7 +887,7 @@ class SaleInvoiceController extends Controller
                         $total_sum_qty_pool     += $qp['qty'] * $qp['unit_price'];
                     }
                     $total_avg                  = $total_sum_qty_pool;
-                }
+                }*/
                 $default_product_account        = product::find($request->products[$i]);
                 if ($default_product_account->is_track == 1) {
                     // DEFAULT BUY ACCOUNT
@@ -1014,6 +1016,7 @@ class SaleInvoiceController extends Controller
                     'credit'                => $taxtotal_header_other,
                 ]);
             }
+            event(new SalesInvoiceStoredEvent());
 
             DB::commit();
             return response()->json(['success' => 'Data is successfully added', 'id' => $pi->id]);
@@ -4872,11 +4875,21 @@ class SaleInvoiceController extends Controller
 
     public function destroy($id)
     {
-        $user               = User::find(Auth::id());
-        $cs                 = company_setting::where('company_id', $user->company_id)->first();
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $pi                                     = sale_invoice::find($id);
+            if($cs->company_id == 5){
+                if ($pi->status < 10) {
+                    return redirect('/sales_invoice');
+                }
+            }
             $contact_id                             = contact::find($pi->contact_id);
             $default_revenue                        = default_account::find(1);
             $default_tax                            = default_account::find(8);
@@ -5305,9 +5318,10 @@ class SaleInvoiceController extends Controller
                     DB::rollBack();
                     return response()->json(['errors' => 'Check log!']);
                 }
+            } else {
+                DB::commit();
+                return response()->json(['success' => 'Data is successfully deleted']);
             }
-            //DB::commit();
-            //return response()->json(['success' => 'Data is successfully deleted']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()]);

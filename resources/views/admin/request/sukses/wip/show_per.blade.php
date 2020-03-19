@@ -338,7 +338,11 @@
                             <a href="{{ url('/wip') }}" class="btn btn-dark">@lang("wip.show.cancel")</a>
                             @hasrole('Owner|Ultimate|Production')
                             @can('Delete')
+                            @if(Auth::user()->company_id == 5)
+                            @if(Auth::user()->id == 999999)
                             <button type="button" class="btn btn-danger" id="click">@lang("wip.show.delete")</button>
+                            @endif
+                            @endif
                             @endcan
                             @endrole
                             <div class="btn-group">
@@ -355,5 +359,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/request/sukses/wip/deleteForm_per.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/request/sukses/wip/deleteForm_per.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

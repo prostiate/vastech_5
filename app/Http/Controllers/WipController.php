@@ -1302,6 +1302,13 @@ class WipController extends Controller
 
     public function destroy_per($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $wip                                = wip::find($id);
@@ -1376,6 +1383,13 @@ class WipController extends Controller
 
     public function destroy_all($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $wip                                = wip::find($id);

@@ -18,6 +18,8 @@
                 @endrole
                 @role('Owner|Ultimate|Chart of Account')
                 @can('Delete')
+                @if(Auth::user()->company_id == 5)
+                @if(Auth::user()->id == 999999)
                 @if($coa->id > 143)
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
@@ -26,6 +28,8 @@
                         <input type="text" value="{{$coa->id}}" id="form_id" hidden>
                     </li>
                 </ul>
+                @endif
+                @endif
                 @endif
                 @endcan
                 @endrole
@@ -104,5 +108,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/accounts/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/accounts/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

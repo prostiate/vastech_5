@@ -346,17 +346,17 @@ class ExpenseController extends Controller
     {
         $ex         = expense::find($id);
         $ex_item    = expense_item::where('expense_id', $id)->get();
-        $accounts = coa::where('coa_category_id', '!=', 16)
+        $accounts   = coa::where('coa_category_id', '!=', 16)
             ->orWhere('coa_category_id', '!=', 17)
             ->get();
-        $vendors = contact::get();
-        $expenses = coa::where('coa_category_id', 16)
+        $vendors    = contact::get();
+        $expenses   = coa::where('coa_category_id', 16)
             ->orWhere('coa_category_id', 17)
             ->orWhere('coa_category_id', 15)
             ->get();
-        $taxes  = other_tax::all();
+        $taxes      = other_tax::all();
         $payment_method     = other_payment_method::get();
-        $terms  = other_term::get();
+        $terms      = other_term::get();
         if ($ex->due_date == null) {
             return view('admin.expenses.editNull', compact(['ex', 'ex_item', 'accounts', 'vendors', 'expenses', 'taxes', 'payment_method', 'terms']));
         } else {
@@ -583,6 +583,13 @@ class ExpenseController extends Controller
 
     public function destroyNotNull($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $check_caba                         = cashbank_item::where('expense_id', $id)->first();
@@ -610,6 +617,13 @@ class ExpenseController extends Controller
 
     public function destroyNull($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         DB::beginTransaction();
         try {
             $ex                                     = expense::find($id);

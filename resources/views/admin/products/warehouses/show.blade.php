@@ -26,6 +26,8 @@
                 @if($warehouses->is_first_created != 1)
                 @hasrole('Owner|Ultimate|Warehouses')
                 @can('Delete')
+                @if(Auth::user()->company_id == 5)
+                @if(Auth::user()->id == 999999)
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <button class="btn btn-dark dropdown-toggle" type="button" id="click">@lang('product_3.show.delete')
@@ -33,6 +35,8 @@
                         <input type="text" value="{{$warehouses->id}}" id="form_id" hidden>
                     </li>
                 </ul>
+                @endif
+                @endif
                 @endcan
                 @endrole
                 @endif
@@ -356,5 +360,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouses/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouses/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

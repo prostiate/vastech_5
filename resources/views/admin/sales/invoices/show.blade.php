@@ -599,7 +599,11 @@
                             @hasrole('Owner|Ultimate|Sales Invoice')
                                 @if($pi->status == 1 or $pi->status == 5 && $check_pi_history == null && $check_pr_history == null)
                                     @can('Delete')
+                                        @if(Auth::user()->company_id == 5)
+                                        @if(Auth::user()->id == 999999)
                                         <button type="button" class="btn btn-danger" id="click">Delete</button>
+                                        @endif
+                                        @endif
                                     @endcan
                                     @can('Edit')
                                         <div class="btn-group">
@@ -620,7 +624,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/sales/invoices/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script>
     $('#click_print').click(function() {
         var get_type = $('#template_type').find(":selected").val();

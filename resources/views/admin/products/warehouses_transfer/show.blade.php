@@ -110,7 +110,11 @@
                             <a href="/warehouses_transfer" class="btn btn-dark">@lang('product_4.show.back')</a>
                             @hasrole('Owner|Ultimate|Warehouse Transfer')
                             @can('Delete')
+                            @if(Auth::user()->company_id == 5)
+                            @if(Auth::user()->id == 999999)
                             <button type="button" class="btn btn-danger" id="click">@lang('product_4.show.delete')</button>
+                            @endif
+                            @endif
                             @endcan
                             @can('Edit')
                             <div class="btn-group">
@@ -130,5 +134,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/warehouse_transfer_list/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

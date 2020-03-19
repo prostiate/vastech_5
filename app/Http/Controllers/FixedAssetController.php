@@ -646,6 +646,13 @@ class FixedAssetController extends Controller
 
     public function destroy($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         IlluminateDB::beginTransaction();
         try {
             $asset                                      = asset::find($id);

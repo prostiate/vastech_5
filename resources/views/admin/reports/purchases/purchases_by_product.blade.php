@@ -31,7 +31,7 @@
                                             <tr class="btn-dark">
                                                 <th class="text-left">Product Code</th>
                                                 <th class="text-left">Product</th>
-                                                <th class="text-right">Sell Qty</th>
+                                                <th class="text-right">Buy Qty</th>
                                                 <th class="text-right">Returned Qty</th>
                                                 <th class="text-left">Unit</th>
                                                 <th class="text-right">Total Value Sold</th>
@@ -106,7 +106,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/zebradatepicker.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script>
     function next() {
         var start   = document.getElementById('datepicker1');

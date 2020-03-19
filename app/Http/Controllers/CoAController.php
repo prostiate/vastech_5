@@ -283,6 +283,13 @@ class CoAController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user       = User::find(Auth::id());
+            $cs         = company_setting::where('company_id', $user->company_id)->first();
+            if ($cs->company_id == 5) {
+                if(Auth::id() != 999999){
+                    return redirect('/dashboard');
+                }
+            }
             $data = coa::findOrFail($id);
             $data->delete();
             DB::commit();

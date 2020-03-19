@@ -1039,6 +1039,13 @@ class StockAdjustmentController extends Controller
 
     public function destroyStockCount($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         $sa                                 = stock_adjustment::find($id);
         $sd                                 = stock_adjustment_detail::where('stock_adjustment_id', $id)->get();
 

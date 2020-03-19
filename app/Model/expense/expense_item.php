@@ -5,7 +5,7 @@ namespace App\Model\expense;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class expense_item extends Model implements 
+class expense_item extends Model
 {
     use SoftDeletes;
     protected $guarded = [];

@@ -29,9 +29,13 @@
                             <!--<li><a href="#">Archive</a>-->
                             @hasrole('Owner|Ultimate|Good & Services')
                             @can('Delete')
+                            @if(Auth::user()->company_id == 5)
+                            @if(Auth::user()->id == 999999)
                             <li><a href="#" id="click">@lang('product_1.show.delete')</a>
                                 <input type="text" value="{{$products->id}}" id="form_id" hidden>
                             </li>
+                            @endif
+                            @endif
                             @endcan
                             @endrole
                         </ul>
@@ -709,5 +713,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/products/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

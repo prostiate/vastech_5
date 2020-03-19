@@ -147,9 +147,13 @@
                                 <li><a href="#">Merge Contacts</a>-->
                                 @hasrole('Owner|Ultimate|Contact')
                                 @can('Delete')
+                                @if(Auth::user()->company_id == 5)
+                                @if(Auth::user()->id == 999999)
                                 <li><a href="#" id="click">@lang("contact.show.delete")</a>
                                     <input type="text" value="{{$contact->id}}" id="form_id" hidden>
                                 </li>
+                                @endif
+                                @endif
                                 @endcan
                                 @endrole
                             </ul>
@@ -419,9 +423,9 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/contacts/createLimitForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{ asset('js/contacts/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/contacts/createLimitForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{ asset('js/contacts/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script>
     function inputMasking() {
         Inputmask.extendAliases({

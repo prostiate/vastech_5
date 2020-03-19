@@ -172,7 +172,7 @@
         $('.text1, .text2').not(this).val(this.value);
     })
 </script>
-<script src="{{asset('js/jquery.formatCurrency-1.4.0/jquery.formatCurrency-1.4.0.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{asset('js/jquery.formatCurrency-1.4.0/jquery.formatCurrency-1.4.0.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 <script type="text/javascript">
     $(function() {
         $('#warnOnDecimalsEntered2').blur(function() {
@@ -202,8 +202,8 @@
     });
 </script>
 
-<script src="{{asset('js/cashbank/createFormBankWithdrawalExpense.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/addmoreitem_cashbankwithdrawalexpense.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{asset('js/cashbank/createFormBankWithdrawalExpense.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/addmoreitem_cashbankwithdrawalexpense.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

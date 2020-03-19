@@ -481,6 +481,25 @@ class ProductController extends Controller
         $user                       = User::find(Auth::id());
         $cs                         = company_setting::where('company_id', $user->company_id)->first();
         $products                   = product::find($id);
+        $test                       = product::with(
+            [
+                'purchase_quote_item.purchase_quote' => function ($query) {
+                    $query->orderBy('transaction_date');
+                },
+                'purchase_invoice_item.purchase_invoice' => function ($query) {
+                    $query->orderBy('transaction_date');
+                }
+            ],
+        )->get();
+        foreach ($test as $key_test => $t) {
+            //dd($t);
+            //echo '<pre><strong>table product: ', print_r($t->name), '</strong></pre>';
+            foreach ($t->purchase_invoice_item->sortBy('purchase_invoice_item.purchase_invoice') as $tpii) {
+                //echo '<pre><strong>purchase invoice tanggal: ', var_dump($tpii->purchase_invoice->transaction_date), '</strong></pre>';
+                //echo '<pre><strong>purchase invoice item product: ', var_dump($tpii->product_id), '</strong></pre>';
+            }
+        }
+        //dd($test);
         $bundle_item                = product_bundle_item::where('product_id', $id)->get();
         $bundle_cost                = product_bundle_cost::where('product_id', $id)->get();
         $discount                   = product_discount_item::where('product_id', $id)->get();
@@ -855,6 +874,13 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        $user       = User::find(Auth::id());
+        $cs         = company_setting::where('company_id', $user->company_id)->first();
+        if ($cs->company_id == 5) {
+            if(Auth::id() != 999999){
+                return redirect('/dashboard');
+            }
+        }
         IlluminateDB::beginTransaction();
         try {
             $product            = product::find($id);

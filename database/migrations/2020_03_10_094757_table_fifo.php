@@ -31,9 +31,24 @@ class TableFifo extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('purchase_invoice_item_id');
+            $table->unsignedBigInteger('purchase_invoice_item_id')->nullable();
             $table->foreign('purchase_invoice_item_id')
                 ->references('id')->on('purchase_invoice_items')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('warehouse_transfer_item_id')->nullable();
+            $table->foreign('warehouse_transfer_item_id')
+                ->references('id')->on('warehouse_transfer_items')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('stock_adjustment_detail_id')->nullable();
+            $table->foreign('stock_adjustment_detail_id')
+                ->references('id')->on('stock_adjustments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('wip_item_id')->nullable();
+            $table->foreign('wip_item_id')
+                ->references('id')->on('wip_items')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('type')->nullable();
@@ -73,9 +88,24 @@ class TableFifo extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->unsignedBigInteger('sale_invoice_item_id');
+            $table->unsignedBigInteger('sale_invoice_item_id')->nullable();
             $table->foreign('sale_invoice_item_id')
                 ->references('id')->on('sale_invoice_items')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('warehouse_transfer_item_id')->nullable();
+            $table->foreign('warehouse_transfer_item_id')
+                ->references('id')->on('warehouse_transfer_items')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('stock_adjustment_detail_id')->nullable();
+            $table->foreign('stock_adjustment_detail_id')
+                ->references('id')->on('stock_adjustments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->unsignedBigInteger('wip_item_id')->nullable();
+            $table->foreign('wip_item_id')
+                ->references('id')->on('wip_items')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('type')->nullable();

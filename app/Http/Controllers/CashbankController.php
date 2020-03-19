@@ -1519,6 +1519,13 @@ class CashbankController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user       = User::find(Auth::id());
+            $cs         = company_setting::where('company_id', $user->company_id)->first();
+            if ($cs->company_id == 5) {
+                if(Auth::id() != 999999){
+                    return redirect('/dashboard');
+                }
+            }
             $caba               = cashbank::find($id);
             $debit              = coa_detail::where('type', 'banktransfer')->where('number', 'Bank Transfer #' . $caba->number)->where('debit', 0)->first();
             $debit->delete();
@@ -1540,6 +1547,13 @@ class CashbankController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user       = User::find(Auth::id());
+            $cs         = company_setting::where('company_id', $user->company_id)->first();
+            if ($cs->company_id == 5) {
+                if(Auth::id() != 999999){
+                    return redirect('/dashboard');
+                }
+            }
             $caba               = cashbank::find($id);
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('debit', 0)->delete();
             coa_detail::where('type', 'bankdeposit')->where('number', 'Bank Deposit #' . $caba->number)->where('credit', 0)->delete();
@@ -1561,6 +1575,13 @@ class CashbankController extends Controller
     {
         DB::beginTransaction();
         try {
+            $user               = User::find(Auth::id());
+            $cs                 = company_setting::where('company_id', $user->company_id)->first();
+            if ($cs->company_id == 5) {
+                if(Auth::id() != 999999){
+                    return redirect('/dashboard');
+                }
+            }
             $caba                                   = cashbank::find($id);
             $default_tax                            = default_account::find(14);
             $default_trade_payable                  = default_account::find(16);

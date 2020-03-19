@@ -173,8 +173,12 @@
                     <div class="col-md-12 text-center">
                         <div class="form-group">
                             <a href="{{ url('/stock_adjustment') }}" class="btn btn-dark">@lang('product_2.show.cancel')</a>
+                            @if(Auth::user()->company_id == 5)
+                            @if(Auth::user()->id == 999999)
                             <button type="button" class="btn btn-danger" id="click">@lang('product_2.show.delete')</button>
                             <input type="text" value="{{$header->id}}" id="form_id" hidden>
+                            @endif
+                            @endif
                             <!--<div class="btn-group">
                                 <a href="{{ url('/stock_adjustment/edit/stock_count/'.$header->id) }}" class="btn btn-success">Edit</a>
                             </div>-->
@@ -188,5 +192,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/products/stock_adjustment/deleteForm.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{ asset('js/products/stock_adjustment/deleteForm.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

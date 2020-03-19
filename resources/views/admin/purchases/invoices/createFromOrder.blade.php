@@ -145,9 +145,9 @@
                                         <textarea value="{{$product->desc}}" class="form-control desc" name="desc[]" rows="1">{{$product->desc}}</textarea>
                                     </td>
                                     <td>
-                                        <input onClick="this.select();" r_val="{{$product->qty_remaining}}" value="0" type="text" class="qty form-control" name='qty[]'>
+                                        <input onClick="this.select();" r_val="{{$product->qty_remaining}}" type="text" class="qty form-control" name='qty[]'>
                                         <small>Remaining : <span class="remaining rqty">{{$product->qty_remaining}}</span></small>
-                                        <input type="hidden" class="r_qty" name="r_qty[]">
+                                        <input type="text" class="r_qty" name="r_qty[]" hidden>
                                     </td>
                                     <td>
                                         <div class="form-group">
@@ -251,10 +251,10 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('js/purchases/invoices/createFormFromOrder.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/zebradatepicker.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/select2.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{asset('js/other/duedate_format.js?v=5-20200315-0243') }}" charset="utf-8"></script>
-<script src="{{ asset('js/other/qty_remaining.js?v=5-20200315-0243') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/invoices/createFormFromOrder.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/purchases/invoices/addmoreitem.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/zebradatepicker.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/select2.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{asset('js/other/duedate_format.js?v=5-20200319-0916') }}" charset="utf-8"></script>
+<script src="{{ asset('js/other/qty_remaining.js?v=5-20200319-0916') }}" charset="utf-8"></script>
 @endpush

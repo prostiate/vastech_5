@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/benerin_avg_price_avg',                                                                        'PurchaseInvoiceController@benerin_avg_price1');
     Route::get('/benerin_avg_price_fifo',                                                                       'PurchaseInvoiceController@benerin_avg_price2');
     Route::get('/benerin_avg_price_fifoall',                                                                    'PurchaseInvoiceController@fifoAll');
+    Route::get('/benerin_avg_price_avgPrice',                                                                   'PurchaseInvoiceController@avgPrice');
 
     /*---------REPORTS --------------*/
     Route::get('/reports', function () {
