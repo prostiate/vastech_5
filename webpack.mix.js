@@ -18,14 +18,6 @@ const mix = require("laravel-mix");
  |
  */
 
-mix.scripts(
-    [
-        "node_modules/jquery/dist/jquery.js",
-        //"resources/assets/js/app.js"
-    ],
-    "public/assets/app/js/app.js"
-).version();
-
 mix.styles(
     [
         "node_modules/font-awesome/css/font-awesome.css",
@@ -74,11 +66,12 @@ mix.styles(
 
 mix.scripts(
     [
+        //jQuery
+        "node_modules/gentelella/vendors/jquery/dist/jquery.js",
         //Bootstrap
         "node_modules/gentelella/vendors/bootstrap/dist/js/bootstrap.min.js",
         //Progress Bar
         "node_modules/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js",
-        "node_modules/gentelella/build/js/custom.js",
         //iCheck
         "node_modules/gentelella/vendors/iCheck/icheck.min.js",
         //nProgress
@@ -111,38 +104,38 @@ mix.scripts(
         "node_modules/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js",
         //Custom Scrollbar
         "node_modules/gentelella/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js",
-        //SweetAlert2
-        "node_modules/sweetalert2/dist/sweetalert2.all.min.js",
-        //ZEBRA DATEPICKER
-        "node_modules/zebra_datepicker/dist/zebra_datepicker.min.js",
+        //Skyicons
+        "node_modules/gentelella/vendors/skycons/skycons.js",
+        //JQuery Sparkline
+        "node_modules/gentelella/vendors/jquery-sparkline/dist/jquery.sparkline.min.js",
+        //JQuery Easy Pie
+        "node_modules/gentelella/vendors/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js",
+        //JQuery Flot
+        "node_modules/gentelella/vendors/Flot/jquery.flot.js",
+        "node_modules/gentelella/vendors/Flot/jquery.flot.pie.js",
+        "node_modules/gentelella/vendors/Flot/jquery.flot.time.js",
+        "node_modules/gentelella/vendors/Flot/jquery.flot.stack.js",
+        "node_modules/gentelella/vendors/Flot/jquery.flot.resize.js",
+        //JQuery Flot
+        "node_modules/gentelella/vendors/flot.orderbars/js/jquery.flot.orderBars.js",
+        "node_modules/gentelella/vendors/flot-spline/js/jquery.flot.spline.min.js",
+        "node_modules/gentelella/vendors/flot.curvedlines/curvedLines.js",
 
         "node_modules/gentelella/vendors/jszip/dist/jszip.min.js",
         "node_modules/gentelella/vendors/pdfmake/build/pdfmake.min.js",
         "node_modules/gentelella/vendors/pdfmake/build/vfs_fonts.js",
-        "node_modules/guidechimp/dist/guidechimp.min.js",
-        "node_modules/guidechimp/dist/plugins/multiPage.min.js",
+
+        "node_modules/gentelella/build/js/custom.min.js",
+        //SweetAlert2
+        "node_modules/sweetalert2/dist/sweetalert2.all.min.js",
         //Select2
-        "node_modules/select2/dist/js/select2.full.min.js"
+        "node_modules/select2/dist/js/select2.full.min.js",
+        //ZEBRA DATEPICKER
+        "node_modules/zebra_datepicker/dist/zebra_datepicker.min.js",
         //'resources/assets/admin/js/admin.js',
         /* MAYBE ADD THIS SCRIPT LATER IF NEEDED OR DELETE IT
         <!-- Gauge JS -->
         <script src="{{ asset('assets/gentelella/vendors/gauge.js/dist/gauge.min.js') }}"></script>
-        <!-- Skyicons -->
-        <script src="{{ asset('assets/gentelella/vendors/skycons/skycons.js') }}"></script>
-        <!-- JQuery Sparkline -->
-        <script src="{{ asset('assets/gentelella/vendors/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
-        <!-- JQuery Easy Pie -->
-        <script src="{{ asset('assets/gentelella/vendors/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
-        <!-- JQuery Flot -->
-        <script src="{{ asset('assets/gentelella/vendors/Flot/jquery.flot.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/Flot/jquery.flot.pie.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/Flot/jquery.flot.time.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/Flot/jquery.flot.stack.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/Flot/jquery.flot.resize.js') }}"></script>
-        <!-- JQuery Flot -->
-        <script src="{{ asset('assets/gentelella/vendors/flot.orderbars/js/jquery.flot.orderBars.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/flot-spline/js/jquery.flot.spline.min.js') }}"></script>
-        <script src="{{ asset('assets/gentelella/vendors/flot.curvedlines/curvedLines.js') }}"></script>
         <!-- JQVMAP -->
         <script src="{{ asset('assets/gentelella/vendors/jqvmap/dist/jquery.vmap.js') }}"></script>
         <script src="{{ asset('assets/gentelella/vendors/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
@@ -179,8 +172,6 @@ mix.scripts(
         <script src="{{ asset('assets/gentelella/vendors/starrr/dist/starrr.js') }}"></script>
         <!-- JQuery Smart Wizard -->
         <script src="{{ asset('assets/gentelella/vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js') }}"></script>
-        <!-- Custom Theme Scripts -->
-        <script src="{{ asset('assets/gentelella/build/js/custom.min.js') }}"></script>
         */
     ],
     "public/assets/admin/js/admin.js"
@@ -202,20 +193,24 @@ mix.styles(
         "node_modules/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css",
         //Normalize
         "node_modules/gentelella/vendors/normalize-css/normalize.css",
+        //Ion Range Slider
         "node_modules/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.css",
         "node_modules/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css",
         //Progress Bar
         "node_modules/gentelella/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css",
         //Datepicker Range
         "node_modules/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css",
-        "node_modules/guidechimp/dist/guidechimp.min.css",
+        //Custom Scrollbar
+        "node_modules/gentelella/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css",
+
         //Select2
         "node_modules/select2/dist/css/select2.min.css",
         //SweetAlert2
         "node_modules/sweetalert2/dist/sweetalert2.min.css",
         //Zebra Datepicker
-        "node_modules/zebra_datepicker/dist/css/bootstrap/zebra_datepicker.min.css"
+        "node_modules/zebra_datepicker/dist/css/bootstrap/zebra_datepicker.min.css",
         //'resources/assets/admin/css/admin.css',
+        "node_modules/gentelella/build/css/custom.min.css",
     ],
     "public/assets/admin/css/admin.css"
 ).version();
@@ -233,18 +228,12 @@ mix.styles(
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/jqvmap/dist/jqvmap.min.css') }}">
     //Custom Scrollbar
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}">
-    //SweetAlert2
-    <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/sweetalert2/sweetalert2.min.css') }}">
-    //ZEBRA DATEPICKER
-    <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/zebradatepicker/dist/css/bootstrap/zebra_datepicker.css') }}">
     //Prettify
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/google-code-prettify/bin/prettify.min.css') }}">
     //Switchery
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/switchery/dist/switchery.min.css') }}">
     //Starr
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/starrr/dist/starrr.css') }}">
-    //Custom Theme Style
-    <link rel="stylesheet" href="{{ asset('assets/gentelella/build/css/custom.min.css') }}"></link>
 */
 
 mix.copy(
