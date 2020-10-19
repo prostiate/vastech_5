@@ -126,6 +126,8 @@ mix.scripts(
         "node_modules/gentelella/vendors/pdfmake/build/vfs_fonts.js",
 
         "node_modules/gentelella/build/js/custom.min.js",
+        //Inputmask
+        "node_modules/inputmask/dist/jquery.inputmask.min.js",
         //SweetAlert2
         "node_modules/sweetalert2/dist/sweetalert2.all.min.js",
         //Select2
