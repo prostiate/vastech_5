@@ -48,8 +48,8 @@
                         </ul>
                     </li>
                     <li><a href="/expenses"><i class="fa fa-outdent"></i> @lang("sidebar.ex") </a></li>
-                    <li><a href="/spk"><i class="fa fa-pencil-square"></i> @lang("sidebar.spk") </a></li>
-                    <li><a href="/wip"><i class="fa fa-cogs"></i> @lang("sidebar.wip") </a></li>
+                    <!--<li><a href="/spk"><i class="fa fa-pencil-square"></i> @lang("sidebar.spk") </a></li>
+                    <li><a href="/wip"><i class="fa fa-cogs"></i> @lang("sidebar.wip") </a></li>-->
                 </ul>
             </div>
             <div class="menu_section">
@@ -73,7 +73,7 @@
                         </ul>
                     </li>
                     <li><a href="/cashbank"><i class="fa fa-bank"></i> @lang("sidebar.caba") </a></li>
-                    <li><a href="/asset_managements"><i class="fa fa-desktop"></i> @lang("sidebar.asset") </a></li>
+                    <!--<li><a href="/asset_managements"><i class="fa fa-desktop"></i> @lang("sidebar.asset") </a></li>-->
                     <li><a href="/chart_of_accounts"><i class="fa fa-book"></i> @lang("sidebar.coa") </a></li>
                 </ul>
             </div>

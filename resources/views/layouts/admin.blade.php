@@ -12,8 +12,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="icon" type="image/png" href="/assets/img/logovastech.webp">
 
-    <link rel="stylesheet" href="{{ mix('assets/app/css/app.css') }}">
-    <link rel="stylesheet" href="{{ mix('assets/admin/css/admin.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/app/css/app.css')}}">
+    <link rel="stylesheet" href="{{ mix('assets/admin/css/admin.css')}}">
 
 </head>
 
@@ -90,7 +90,6 @@
         </div>
     </div>
 
-    <script src="{{ mix('assets/app/js/app.js') }}"></script>
     <script src="{{ mix('assets/admin/js/admin.js') }}"></script>
     @stack('scripts')
 </body>
