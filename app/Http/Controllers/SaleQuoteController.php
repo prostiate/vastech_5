@@ -7,10 +7,7 @@ use App\Model\sales\sale_quote;
 use App\Model\contact\contact;
 use App\Model\company\company_setting;
 use App\Model\product\product;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Model\warehouse\warehouse;
-use Validator;
 use App\Model\other\other_term;
 use App\Model\other\other_unit;
 use App\Model\other\other_tax;
@@ -19,10 +16,13 @@ use App\Model\product\product_discount_item;
 use App\Model\sales\sale_quote_item;
 use App\Model\sales\sale_order;
 use App\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use PDF;
+use Validator;
+use Illuminate\Http\Request as SaleQuoteRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 class SaleQuoteController extends Controller
 {
@@ -31,12 +31,12 @@ class SaleQuoteController extends Controller
         $user               = User::find(Auth::id());
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Request::input("term") . '%')->orWhere('code', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('is_sell', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
@@ -61,12 +61,12 @@ class SaleQuoteController extends Controller
             }
         } else {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Request::input("term") . '%')->orWhere('code', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('is_sell', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('name')
@@ -96,12 +96,12 @@ class SaleQuoteController extends Controller
         $user               = User::find(Auth::id());
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('type_customer', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
@@ -126,12 +126,12 @@ class SaleQuoteController extends Controller
             }
         } else {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('type_customer', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('display_name')
@@ -247,7 +247,7 @@ class SaleQuoteController extends Controller
         ]));
     }
 
-    public function store(Request $request)
+    public function store(SaleQuoteRequest $request)
     {
         $user                   = User::find(Auth::id());
         if ($user->company_id == 5) {
@@ -492,7 +492,7 @@ class SaleQuoteController extends Controller
         return view('admin.sales.quote.edit', compact(['vendors', 'terms', 'products', 'units', 'taxes', 'today', 'sq', 'sq_item']));
     }
 
-    public function update(Request $request)
+    public function update(SaleQuoteRequest $request)
     {
         $rules = array(
             'vendor_name'   => 'required',

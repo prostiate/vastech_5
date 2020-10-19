@@ -14,12 +14,9 @@ use App\Model\other\other_term;
 use App\Model\other\other_unit;
 use App\Model\other\other_tax;
 use App\Model\company\company_setting;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Model\coa\coa_detail;
 use App\Model\coa\default_account;
 use App\Model\warehouse\warehouse_detail;
-use Validator;
 use App\Model\other\other_transaction;
 use App\Model\coa\coa;
 use App\Model\company\company_logo;
@@ -29,7 +26,6 @@ use App\Model\product\product_fifo_in;
 use App\Model\product\product_fifo_out;
 use App\Model\sales\sale_invoice_cost;
 use App\Model\sales\sale_payment_item;
-use PDF;
 use App\Model\sales\sale_quote;
 use App\Model\sales\sale_quote_item;
 use App\Model\sales\sale_order;
@@ -38,9 +34,13 @@ use App\Model\sales\sale_return;
 use App\Model\spk\spk;
 use App\Model\spk\spk_item;
 use App\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\PDF;
+use Illuminate\Http\Request as SaleInvoiceRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SaleInvoiceController extends Controller
 {
@@ -49,12 +49,12 @@ class SaleInvoiceController extends Controller
         $user                       = User::find(Auth::id());
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
-                $page               = Input::get('page');
+                $page               = Request::input('page');
                 $resultCount        = 10;
 
                 $offset             = ($page - 1) * $resultCount;
 
-                $breeds             = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds             = product::where('name', 'LIKE',  '%' . Request::input("term") . '%')->orWhere('code', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('is_sell', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
@@ -79,12 +79,12 @@ class SaleInvoiceController extends Controller
             }
         } else {
             if (request()->ajax()) {
-                $page               = Input::get('page');
+                $page               = Request::input('page');
                 $resultCount        = 10;
 
                 $offset             = ($page - 1) * $resultCount;
 
-                $breeds = product::where('name', 'LIKE',  '%' . Input::get("term") . '%')->orWhere('code', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = product::where('name', 'LIKE',  '%' . Request::input("term") . '%')->orWhere('code', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('is_sell', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('name')
@@ -114,12 +114,12 @@ class SaleInvoiceController extends Controller
         $user               = User::find(Auth::id());
         if ($user->getRoleNames()->first() == 'GT' or $user->getRoleNames()->first() == 'MT' or $user->getRoleNames()->first() == 'WS') {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('type_customer', 1)
                     ->where('sales_type', $user->getRoleNames()->first())
                     //->where('is_bundle', 0)
@@ -144,12 +144,12 @@ class SaleInvoiceController extends Controller
             }
         } else {
             if (request()->ajax()) {
-                $page = Input::get('page');
+                $page = Request::input('page');
                 $resultCount = 10;
 
                 $offset = ($page - 1) * $resultCount;
 
-                $breeds = contact::where('display_name', 'LIKE',  '%' . Input::get("term") . '%')
+                $breeds = contact::where('display_name', 'LIKE',  '%' . Request::input("term") . '%')
                     ->where('type_customer', 1)
                     //->where('is_bundle', 0)
                     ->orderBy('display_name')
@@ -608,7 +608,7 @@ class SaleInvoiceController extends Controller
         return view('admin.request.sukses.sales.invoices.createFromOrder', compact(['today', 'trans_no', 'terms', 'warehouses', 'po', 'po_item']));
     }
 
-    public function store(Request $request)
+    public function store(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -1026,7 +1026,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeRequestSukses(Request $request)
+    public function storeRequestSukses(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -1389,7 +1389,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromDelivery(Request $request)
+    public function storeFromDelivery(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -1680,7 +1680,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromOrder(Request $request)
+    public function storeFromOrder(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -2066,7 +2066,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromQuote(Request $request)
+    public function storeFromQuote(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -2495,7 +2495,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromSPK(Request $request) // GAPAKE FIFO KARENA PUNYA FAS
+    public function storeFromSPK(SaleInvoiceRequest $request) // GAPAKE FIFO KARENA PUNYA FAS
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -2973,7 +2973,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function storeFromOrderRequestSukses(Request $request)
+    public function storeFromOrderRequestSukses(SaleInvoiceRequest $request)
     {
         $dt                     = Carbon::now();
         $user                   = User::find(Auth::id());
@@ -3506,7 +3506,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(SaleInvoiceRequest $request)
     {
         $user               = User::find(Auth::id());
         $cs                 = company_setting::where('company_id', $user->company_id)->first();
@@ -3867,7 +3867,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function updateFromDelivery(Request $request)
+    public function updateFromDelivery(SaleInvoiceRequest $request)
     {
         $user               = User::find(Auth::id());
         $cs                 = company_setting::where('company_id', $user->company_id)->first();
@@ -3905,7 +3905,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function updateFromOrder(Request $request)
+    public function updateFromOrder(SaleInvoiceRequest $request)
     {
         $user               = User::find(Auth::id());
         $cs                 = company_setting::where('company_id', $user->company_id)->first();
@@ -4219,7 +4219,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function updateFromQuote(Request $request)
+    public function updateFromQuote(SaleInvoiceRequest $request)
     {
         $user               = User::find(Auth::id());
         $cs                 = company_setting::where('company_id', $user->company_id)->first();
@@ -4571,7 +4571,7 @@ class SaleInvoiceController extends Controller
         }
     }
 
-    public function updateFromOrderRequestSukses(Request $request)
+    public function updateFromOrderRequestSukses(SaleInvoiceRequest $request)
     {
         $user               = User::find(Auth::id());
         $cs                 = company_setting::where('company_id', $user->company_id)->first();
