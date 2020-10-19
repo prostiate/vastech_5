@@ -120,6 +120,8 @@ mix.scripts(
         "node_modules/gentelella/vendors/flot.orderbars/js/jquery.flot.orderBars.js",
         "node_modules/gentelella/vendors/flot-spline/js/jquery.flot.spline.min.js",
         "node_modules/gentelella/vendors/flot.curvedlines/curvedLines.js",
+        //Switchery
+        "node_modules/gentelella/vendors/switchery/dist/switchery.min.js",
 
         "node_modules/gentelella/vendors/jszip/dist/jszip.min.js",
         "node_modules/gentelella/vendors/pdfmake/build/pdfmake.min.js",
@@ -204,6 +206,8 @@ mix.styles(
         "node_modules/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css",
         //Custom Scrollbar
         "node_modules/gentelella/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css",
+        //Switchery
+        "node_modules/gentelella/vendors/switchery/dist/switchery.min.css",
 
         //Select2
         "node_modules/select2/dist/css/select2.min.css",
@@ -232,8 +236,7 @@ mix.styles(
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}">
     //Prettify
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/google-code-prettify/bin/prettify.min.css') }}">
-    //Switchery
-    <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/switchery/dist/switchery.min.css') }}">
+
     //Starr
     <link rel="stylesheet" href="{{ asset('assets/gentelella/vendors/starrr/dist/starrr.css') }}">
 */
